@@ -56,215 +56,210 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $prontuario        = $_POST['prontuario'];
     $palavras = explode(" ", $nome);
 
-    if ((count($palavras) < 2) and $nome != '') {
-        $pesquisa = 'qwwwqq';
-        echo  "<script>alert('Consulta Invalida! Seja Especifico. Digite o nome e o sobrenome');</script>";
-    } else {
+    // if ((count($palavras) < 2) and $nome != '') {
+    //     $pesquisa = 'qwwwqq';
+    //     echo  "<script>alert('Consulta Invalida! Seja Especifico. Digite o nome e o sobrenome');</script>";
+    // } else {
 
 
-        $where = "";
-        if (isset($_POST['semana'])) {
-            $start          = date('d/m/Y', strtotime("-7 days"));
-            $end          = date('d/m/Y');
-        }
-        if (isset($_POST['hoje'])) {
-            $start          = date('d/m/Y');
-            $end          = date('d/m/Y');
-        }
-        if (isset($_POST['ontem'])) {
-            $start          = date('d/m/Y', strtotime("-1 days"));
-            $end          = date('d/m/Y', strtotime("-1 days"));
-        }
-        if ($start == "") {
-            $start          = date('d/m/Y');
-            $end          = date('d/m/Y');
-            echo  "<script>alert('A consulta a ser executada será realizada na data de hoje. Caso queira pesquisar em datas anteriores seja mais especifico.');</script>";
-        }
-        $modalidades = "";
+    $where = "";
+    if (isset($_POST['semana'])) {
+        $start          = date('d/m/Y', strtotime("-7 days"));
+        $end          = date('d/m/Y');
+    }
+    if (isset($_POST['hoje'])) {
+        $start          = date('d/m/Y');
+        $end          = date('d/m/Y');
+    }
+    if (isset($_POST['ontem'])) {
+        $start          = date('d/m/Y', strtotime("-1 days"));
+        $end          = date('d/m/Y', strtotime("-1 days"));
+    }
+    $modalidades = "";
 
-        if ($CM != "") {
-            $modalidades = $modalidades . "'Consultorio Adulto',";
+    if ($CM != "") {
+        $modalidades = $modalidades . "'Consultorio Adulto',";
+    }
+
+    if ($OR != "") {
+        $modalidades = $modalidades . "'Ortopedia',";
+    }
+
+    $modalidades = substr($modalidades, 0, -1);
+
+    if ($nome != "") {
+        $where = $where . " c.nome like '" . $nome . "%' ";
+    }
+
+    if ($procedimentox != "") {
+        if ($where != "") {
+            $where = $where . " and a.exame_id = $procedimentox";
+        } else {
+            $where = $where . " a.exame_id = $procedimentox";
         }
+    }
 
-        if ($OR != "") {
-            $modalidades = $modalidades . "'Ortopedia',";
+    if ($xbox != "") {
+        if ($where != "") {
+            $where = $where . " and box = $xbox";
+        } else {
+            $where = $where . " box = $xbox";
         }
+    }
 
-        $modalidades = substr($modalidades, 0, -1);
-
-        if ($nome != "") {
-            $where = $where . " c.nome like '" . $nome . "%' ";
+    if ($modalidades != "") {
+        if ($where != "") {
+            $where = $where . " and a.especialidade in ($modalidades) ";
+        } else {
+            $where = $where . " a.especialidade in ($modalidades) ";
         }
+    }
 
-        if ($procedimentox != "") {
+    if ($start != "") {
+        $data = inverteData($start);
+        if ($where != "") {
+            $where = $where . " and (a.dat_cad >= '$data')";
+        } else {
+            $where = $where . " (a.dat_cad >= '$data')";
+        }
+    }
+
+    if ($end != "") {
+        $data = inverteData($end);
+        if ($where != "") {
+            $where = $where . " and (a.dat_cad <= '$data')";
+        } else {
+            $where = $where . " (a.dat_cad <= '$data')";
+        }
+    }
+
+    if ($situacao != "") {
+        if ($situacao != "Pendentes") {
             if ($where != "") {
-                $where = $where . " and a.exame_id = $procedimentox";
+                $where = $where . " and (a.status = '$situacao')";
             } else {
-                $where = $where . " a.exame_id = $procedimentox";
+                $where = $where . " (a.status = '$situacao')";
+            }
+        } else {
+            if ($where != "" and $status == "Pendentes") {
+                $where = $where . " and (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
+            } else {
+                $where = $where . " (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
             }
         }
+    }
 
-        if ($xbox != "") {
-            if ($where != "") {
-                $where = $where . " and box = $xbox";
-            } else {
-                $where = $where . " box = $xbox";
-            }
+
+    if ($prontuario != '') {
+        if ($where != "") {
+            $where = $where . " and (a.paciente_id = '$prontuario')";
+        } else {
+            $where = $where . " (a.paciente_id = '$prontuario')";
         }
+    }
 
-        if ($modalidades != "") {
-            if ($where != "") {
-                $where = $where . " and a.especialidade in ($modalidades) ";
-            } else {
-                $where = $where . " a.especialidade in ($modalidades) ";
-            }
+
+    if ($cb_meus != "") {
+        if ($where != "") {
+            $where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
+        } else {
+            $where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
         }
+    }
 
-        if ($start != "") {
-            $data = inverteData($start);
-            if ($where != "") {
-                $where = $where . " and (a.dat_cad >= '$data')";
-            } else {
-                $where = $where . " (a.dat_cad >= '$data')";
-            }
+    if ($cb_conf != "") {
+        if ($where != "") {
+            $where = $where . " and (a.med_confere = '$cb_conf')";
+        } else {
+            $where = $where . " (a.med_confere = '$cb_conf')";
         }
+    }
+    $stmtx = "nao entrei";
 
-        if ($end != "") {
-            $data = inverteData($end);
-            if ($where != "") {
-                $where = $where . " and (a.dat_cad <= '$data')";
-            } else {
-                $where = $where . " (a.dat_cad <= '$data')";
-            }
-        }
+    if ($transfere != "") {
+        if (isset($_POST["transferir"])) {
 
-        if ($situacao != "") {
-            if ($situacao != "Pendentes") {
-                if ($where != "") {
-                    $where = $where . " and (a.status = '$situacao')";
-                } else {
-                    $where = $where . " (a.status = '$situacao')";
-                }
-            } else {
-                if ($where != "" and $status == "Pendentes") {
-                    $where = $where . " and (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
-                } else {
-                    $where = $where . " (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
-                }
-            }
-        }
+            include('conexao.php');
+            $stmty = "Select username from pessoas where pessoa_id = $profissional";
 
-
-        if ($prontuario != '') {
-            if ($where != "") {
-                $where = $where . " and (a.paciente_id = '$prontuario')";
-            } else {
-                $where = $where . " (a.paciente_id = '$prontuario')";
-            }
-        }
-
-
-        if ($cb_meus != "") {
-            if ($where != "") {
-                $where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
-            } else {
-                $where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
-            }
-        }
-
-        if ($cb_conf != "") {
-            if ($where != "") {
-                $where = $where . " and (a.med_confere = '$cb_conf')";
-            } else {
-                $where = $where . " (a.med_confere = '$cb_conf')";
-            }
-        }
-        $stmtx = "nao entrei";
-
-        if ($transfere != "") {
-            if (isset($_POST["transferir"])) {
-
+            $sth = pg_query($stmty) or die($stmty);
+            $row = pg_fetch_object($sth);
+            $username = $row->username;
+            if ($username != "") {
                 include('conexao.php');
-                $stmty = "Select username from pessoas where pessoa_id = $profissional";
-
-                $sth = pg_query($stmty) or die($stmty);
-                $row = pg_fetch_object($sth);
-                $username = $row->username;
-                if ($username != "") {
-                    include('conexao.php');
-                    $stmtx = "Update itenspedidos set med_analise = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Editado' or situacao='Cadastrado')";
-                    $sth = pg_query($stmtx) or die($stmtx);
-
-                    foreach ($transfere as $item) {
-                        include('conexao.php');
-                        $data  = date('Y-m-d H:i:s');
-                        $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
-                        $sth   = pg_query($stmtx) or die($stmtx);
-                    }
-                }
-            }
-            if (isset($_POST["transfconf"])) {
-
-                include('conexao.php');
-                $stmty = "Select username from pessoas where pessoa_id = $profissional";
-
-                $sth = pg_query($stmty) or die($stmty);
-                $row = pg_fetch_object($sth);
-                $username = $row->username;
-                if ($username != "") {
-                    include('conexao.php');
-                    $stmtx = "Update itenspedidos set med_confere = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Laudado' or situacao='Editado')";
-                    $sth = pg_query($stmtx) or die($stmtx);
-
-                    foreach ($transfere as $item) {
-                        include('conexao.php');
-                        $data  = date('Y-m-d H:i:s');
-                        $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
-                        $sth   = pg_query($stmtx) or die($stmtx);
-                    }
-                }
-            }
-            if (isset($_POST["imprimir"])) {
-                echo "<script>alert('Imprimir')</script>";
-            }
-            if (isset($_POST["enviar"])) {
-
-                include('conexao.php');
-                $stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
-                where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Finalizado' or situacao='Impresso')";
+                $stmtx = "Update itenspedidos set med_analise = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Editado' or situacao='Cadastrado')";
                 $sth = pg_query($stmtx) or die($stmtx);
 
                 foreach ($transfere as $item) {
                     include('conexao.php');
                     $data  = date('Y-m-d H:i:s');
-                    $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Env Recepcao', '$usuario', '$data' )";
+                    $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
                     $sth   = pg_query($stmtx) or die($stmtx);
                 }
             }
         }
+        if (isset($_POST["transfconf"])) {
+
+            include('conexao.php');
+            $stmty = "Select username from pessoas where pessoa_id = $profissional";
+
+            $sth = pg_query($stmty) or die($stmty);
+            $row = pg_fetch_object($sth);
+            $username = $row->username;
+            if ($username != "") {
+                include('conexao.php');
+                $stmtx = "Update itenspedidos set med_confere = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Laudado' or situacao='Editado')";
+                $sth = pg_query($stmtx) or die($stmtx);
+
+                foreach ($transfere as $item) {
+                    include('conexao.php');
+                    $data  = date('Y-m-d H:i:s');
+                    $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
+                    $sth   = pg_query($stmtx) or die($stmtx);
+                }
+            }
+        }
+        if (isset($_POST["imprimir"])) {
+            echo "<script>alert('Imprimir')</script>";
+        }
+        if (isset($_POST["enviar"])) {
+
+            include('conexao.php');
+            $stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
+                where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Finalizado' or situacao='Impresso')";
+            $sth = pg_query($stmtx) or die($stmtx);
+
+            foreach ($transfere as $item) {
+                include('conexao.php');
+                $data  = date('Y-m-d H:i:s');
+                $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Env Recepcao', '$usuario', '$data' )";
+                $sth   = pg_query($stmtx) or die($stmtx);
+            }
+        }
     }
+}
 
-    if (isset($_POST["excel"])) {
+if (isset($_POST["excel"])) {
 
-        $arquivo = 'Relatorio Atendimento.xls';
-        // Criamos uma tabela HTML com o formato da planilha
-        $html = '';
-        $html .= '<table style="font-size:8px" border="1">';
-        $html .= '<tr>';
-        $html .= '<td colspan="5" align=\'center\'>UPA PARQUE DO MIRANTE - RELACAO ATENDIMENTOS</td>';
-        $html .= '</tr>';
-        $html .= '<tr>';
-        $html .= '<tr align=\'center\'>';
-        $html .= '<td><b>Solicitacao</b></td>';
-        $html .= '<td><b>Paciente</b></td>';
-        $html .= '<td><b>Origem</b></td>';
-        $html .= '<td><b>Chegada</b></td>';
-        $html .= '<td><b>Triagem</b></td>';
-        $html .= '<td><b>Atendimento</b></td>';
-        $html .= '<td><b>Situacao</b></td>';
-        $html .= '</tr>';
-        include('conexao.php');
-        $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento,
+    $arquivo = 'Relatorio Atendimento.xls';
+    // Criamos uma tabela HTML com o formato da planilha
+    $html = '';
+    $html .= '<table style="font-size:8px" border="1">';
+    $html .= '<tr>';
+    $html .= '<td colspan="5" align=\'center\'>UPA PARQUE DO MIRANTE - RELACAO ATENDIMENTOS</td>';
+    $html .= '</tr>';
+    $html .= '<tr>';
+    $html .= '<tr align=\'center\'>';
+    $html .= '<td><b>Solicitacao</b></td>';
+    $html .= '<td><b>Paciente</b></td>';
+    $html .= '<td><b>Origem</b></td>';
+    $html .= '<td><b>Chegada</b></td>';
+    $html .= '<td><b>Triagem</b></td>';
+    $html .= '<td><b>Atendimento</b></td>';
+    $html .= '<td><b>Situacao</b></td>';
+    $html .= '</tr>';
+    include('conexao.php');
+    $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento,
 						 a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
 						CASE prioridade 
 									WHEN 'VERMELHO' THEN '0' 
@@ -278,54 +273,54 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						left join pessoas d on a.med_atendimento = d.username
 						left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo  ";
 
-        if ($where != "") {
-            $stmt = $stmt . " where " . $where;
-        } else {
-            $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
-        }
-
-        $stmt = $stmt . " order by a.dat_cad desc,a.hora_cad desc ";
-        $sth = pg_query($stmt) or die($stmt);
-        //echo $stmt;
-        $qtde = 0;
-        while ($row = pg_fetch_object($sth)) {
-
-            $html .= '<tr>';
-            $html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
-            $html .= '<td>' . $row->nome . '</td>';
-            $html .= '<td>' . $row->origem . '</td>';
-            $html .= '<td>' . $row->hora_cad . '</td>';
-            $html .= '<td>' . $row->hora_triagem . '</td>';
-            $html .= '<td>' . $row->hora_destino . '</td>';
-            $html .= '<td>' . $row->status . '</td>';
-            $html .= '</tr>';
-
-            $qtde = $qtde + 1;
-        }
-        $html .= '<tr>';
-        $html .= '<td>Quantidade de Pacientes</td>';
-        $html .= '<td></td>';
-        $html .= '<td></td>';
-        $html .= '<td></td>';
-        $html .= '<td></td>';
-        $html .= '<td></td>';
-        $html .= '<td>' . $qtde . '</td>';
-        $html .= '</tr>';
-        $html .= '</table>';
-
-        // Configurações header para forçar o download
-        header("Expires: Mon, 26 Jul 2017 05:00:00 GMT");
-        header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
-        header("Cache-Control: no-cache, must-revalidate");
-        header("Pragma: no-cache");
-        header("Content-type: application/x-msexcel");
-        header("Content-Disposition: attachment; filename=\"{$arquivo}\"");
-        header("Content-Description: PHP Generated Data");
-        // Envia o conteúdo do arquivo
-        echo $html;
-        exit;
+    if ($where != "") {
+        $stmt = $stmt . " where " . $where;
+    } else {
+        $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
     }
+
+    $stmt = $stmt . " order by a.dat_cad desc,a.hora_cad desc ";
+    $sth = pg_query($stmt) or die($stmt);
+    //echo $stmt;
+    $qtde = 0;
+    while ($row = pg_fetch_object($sth)) {
+
+        $html .= '<tr>';
+        $html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
+        $html .= '<td>' . $row->nome . '</td>';
+        $html .= '<td>' . $row->origem . '</td>';
+        $html .= '<td>' . $row->hora_cad . '</td>';
+        $html .= '<td>' . $row->hora_triagem . '</td>';
+        $html .= '<td>' . $row->hora_destino . '</td>';
+        $html .= '<td>' . $row->status . '</td>';
+        $html .= '</tr>';
+
+        $qtde = $qtde + 1;
+    }
+    $html .= '<tr>';
+    $html .= '<td>Quantidade de Pacientes</td>';
+    $html .= '<td></td>';
+    $html .= '<td></td>';
+    $html .= '<td></td>';
+    $html .= '<td></td>';
+    $html .= '<td></td>';
+    $html .= '<td>' . $qtde . '</td>';
+    $html .= '</tr>';
+    $html .= '</table>';
+
+    // Configurações header para forçar o download
+    header("Expires: Mon, 26 Jul 2017 05:00:00 GMT");
+    header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Pragma: no-cache");
+    header("Content-type: application/x-msexcel");
+    header("Content-Disposition: attachment; filename=\"{$arquivo}\"");
+    header("Content-Description: PHP Generated Data");
+    // Envia o conteúdo do arquivo
+    echo $html;
+    exit;
 }
+// }
 ?>
 
 <!DOCTYPE html>

@@ -80,6 +80,9 @@
                                 <a href="relatoriodiario.php" class="menu-item">REL. DIARIO</a>
                             </li>
                             <li class="is-shown">
+                                <a href="relatoriotempopermanencia.php" class="menu-item">REL. TEMPO PERMANENCIA</a>
+                            </li>
+                            <li class="is-shown">
                                 <a href="relatorioatendimento.php" class="menu-item">REL. DE ATENDIMENTOS</a>
                             </li>
                             <li class="is-shown">
@@ -92,7 +95,13 @@
                                 <a href="relatorioatendimentosexames.php" class="menu-item">REL. DE EXAMES</a>
                             </li>
                             <li class="is-shown">
+                                <a href="relatorio_grafico.php" class="menu-item">REL. GRAFICO</a>
+                            </li>
+                            <li class="is-shown">
                                 <a href="relatorioproducaomed.php" class="menu-item">PRODUÇÃO MEDICA</a>
+                            </li>
+                            <li class="is-shown">
+                                <a href="acoes_usuario.php" class="menu-item">LOGS</a>
                             </li>
                             <li class="has-sub nav-item">
                                 <a href="#"><span class="menu-title">FORMULARIOS</span></a>

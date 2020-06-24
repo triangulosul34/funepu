@@ -445,7 +445,7 @@ if ($destino != '') {
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/chartist.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/css/app.css">
     <link rel="stylesheet" type="text/css" href="app-assets/css/tsul.css">
-    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/chosen/1.1.0/chosen.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.css" />
 
 
 
@@ -619,7 +619,7 @@ if ($destino != '') {
                 </div>
 
                 <div class="modal-body col-md-12" id="conteudoEvolucao">
-                    <select data-placeholder="Escolha todos os exames" class="selectpicker" id="procedimento_laboratorio" data-width="auto" multiple data-size="5" data-dropdown-auto="false">
+                    <select class="" id="procedimento_laboratorio" multiple>
                         <?php
 
                         include('conexao_laboratorio.php');
@@ -629,7 +629,7 @@ if ($destino != '') {
                 inner join tabela_precos c on a.procedimentos_id = c.procedimento_id where modalidade_id not in (32 , 22) and a.procedimentos_id in (746, 769) and c.convenio_id = 1 ORDER BY a.descricao";
                         } else {
                             $sql = "select a.procedimentos_id as procedimento_id, a.descricao, a.codigo from procedimentos a
-                inner join modalidades b on a.setor = b.modalidade_id where modalidade_id not in (32 , 22) and a.descricao not in('GLICOSE', 'PROTEINA C REATIVA - [ULTRA-SENSIVEL]') ORDER BY a.descricao";
+                inner join modalidades b on a.setor = b.modalidade_id where modalidade_id not in (32 , 22) and a.descricao not in('GLICOSE', 'PROTEINA C REATIVA - [ULTRA-SENSIVEL]') and a.procedimentos_id not in (822) ORDER BY a.descricao";
                         }
                         $sth = pg_query($sql) or die($sql);
                         echo "<option value=\"\">Selecione o Procedimento</option>";
@@ -1625,13 +1625,10 @@ if ($destino != '') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.jss"></script>
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <script>
-        $(function() {
-            $('.selectpicker').selectpicker();
-        });
     </script>
     <script>
         var contador = 2;

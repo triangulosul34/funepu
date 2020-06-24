@@ -500,7 +500,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <?php if ($tipo == 'M') { ?>
+                                                <?php if ($tipo == 'M' or $perfilu == '08') { ?>
                                                     <h4 class="form-section"><i class="fas fa-id-card-alt"></i> Dados Medicos</h4>
                                                     <div class="row">
                                                         <div class="col-md-4">

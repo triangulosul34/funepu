@@ -89,6 +89,9 @@ if ($usuario == 'hsm') {
 </style>
 <nav class="navbar navbar-expand-lg navbar-light bg-faded header-navbar" style="padding-top: 0px;">
     <div class="container-fluid" style="height: 75px;">
+        <div class="navbar-header">
+            <button type="button" data-toggle="collapse" class="navbar-toggle d-lg-none float-left"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
         <div onclick="javascript:location.href='http://mr.midaspa.com.br/mr/funepu/index.php'" class="navbar-header teste" style="background-color: #12A1A6; border-top-right-radius: 30px;border-bottom-right-radius:30px">
             <h5 style="margin: 0; padding: 0"><strong>UNIDADE <?php echo UNIDADE_CONFIG; ?></strong></h5>
         </div>

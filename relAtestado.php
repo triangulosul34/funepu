@@ -37,7 +37,7 @@ $next = "select nextval('atestados_atestado_id_seq'::regclass)";
 $sthnext = pg_query($next);
 $rownext = pg_fetch_object($sthnext);
 
-$sql = "INSERT INTO atestados(atestado_id,pessoa_id,profissional_id,atendimento_id,hora_atendimento,qtd_dias,partir_dia,cid) VALUES($rownext->nextval,$pessoa_id,'$med_atendimento',$atendimento,'$hora_atendimento',$dias_atestado,'$data_atendimento','$cidAtestado')";
+$sql = "INSERT INTO atestados(atestado_id,pessoa_id,profissional_id,atendimento_id,hora_atendimento,qtd_dias,partir_dia,cid) VALUES($rownext->nextval,$pessoa_id,'$med_atendimento',$atendimento,'$hora_atendimento','$dias_atestado','$data_atendimento','$cidAtestado')";
 $result = pg_query($sql) or die($sql);
 
 

@@ -51,15 +51,15 @@
                                             <div class="px-3 py-3" onclick="window.location='novoatendimento.php';">
                                                 <div class="media">
                                                     <div class="media-body white text-left">
-                                                    <?php
-													
-														include ('conexao.php');
-														$stmt = "Select count(*) as qtde from atendimentos where dat_cad='".date('Y-m-d')."' and hora_triagem is null ";
-														$sth = pg_query ( $stmt ) or die ( $stmt );
-														$row = pg_fetch_object ( $sth );
-													
-                                                        echo '<h3>'.str_pad($row->qtde, 3, '0', STR_PAD_LEFT).'</h3>';
-													?>               
+                                                        <?php
+
+                                                        include('conexao.php');
+                                                        $stmt = "Select count(*) as qtde from atendimentos where dat_cad='" . date('Y-m-d') . "' and hora_triagem is null ";
+                                                        $sth = pg_query($stmt) or die($stmt);
+                                                        $row = pg_fetch_object($sth);
+
+                                                        echo '<h3>' . str_pad($row->qtde, 3, '0', STR_PAD_LEFT) . '</h3>';
+                                                        ?>
                                                         <span>RECEPÇÃO</span>
                                                     </div>
                                                     <div class="media-right align-self-center">
@@ -76,15 +76,15 @@
                                             <div class="px-3 py-3" onclick="window.location='triagemRecepcao.php';">
                                                 <div class="media">
                                                     <div class="media-body white text-left">
-                                                    <?php
-													
-														include ('conexao.php');
-														$stmt = "Select count(*) as qtde from atendimentos where dat_cad='".date('Y-m-d')."' and hora_triagem is not null ";
-														$sth = pg_query ( $stmt ) or die ( $stmt );
-														$row = pg_fetch_object ( $sth );
-													
-                                                        echo '<h3>'.str_pad($row->qtde, 3, '0', STR_PAD_LEFT).'</h3>';
-													?>
+                                                        <?php
+
+                                                        include('conexao.php');
+                                                        $stmt = "Select count(*) as qtde from atendimentos where dat_cad='" . date('Y-m-d') . "' and hora_triagem is not null ";
+                                                        $sth = pg_query($stmt) or die($stmt);
+                                                        $row = pg_fetch_object($sth);
+
+                                                        echo '<h3>' . str_pad($row->qtde, 3, '0', STR_PAD_LEFT) . '</h3>';
+                                                        ?>
                                                         <span>TRIAGEM</span>
                                                     </div>
                                                     <div class="media-right align-self-center">
@@ -101,15 +101,15 @@
                                             <div class="px-3 py-3" onclick="window.location='monitor_medico.php';">
                                                 <div class="media">
                                                     <div class="media-body white text-left">
-                                                    <?php
-													
-														include ('conexao.php');
-														$stmt = "Select count(*) as qtde from atendimentos where dat_cad='".date('Y-m-d')."' and hora_atendimento is not null ";
-														$sth = pg_query ( $stmt ) or die ( $stmt );
-														$row = pg_fetch_object ( $sth );
-													
-                                                        echo '<h3>'.str_pad($row->qtde, 3, '0', STR_PAD_LEFT).'</h3>';
-													?>
+                                                        <?php
+
+                                                        include('conexao.php');
+                                                        $stmt = "Select count(*) as qtde from atendimentos where dat_cad='" . date('Y-m-d') . "' and hora_atendimento is not null ";
+                                                        $sth = pg_query($stmt) or die($stmt);
+                                                        $row = pg_fetch_object($sth);
+
+                                                        echo '<h3>' . str_pad($row->qtde, 3, '0', STR_PAD_LEFT) . '</h3>';
+                                                        ?>
                                                         <span>ATENDIMENTO MEDICO</span>
                                                     </div>
                                                     <div class="media-right align-self-center">
@@ -146,7 +146,7 @@
                                 </div>
                             </div>
                             <div class="row" matchheight="card">
-                                <div class="col-4">
+                                <div class="col-md-4 col-sm-6">
                                     <div class="card bg-danger">
                                         <div class="card-content">
                                             <div class="px-3 py-3" onclick="window.location='triagemRecepcao.php';">
@@ -156,7 +156,7 @@
 
                                                     </div>
                                                     <div class="media-body white text-right">
-													
+
                                                         <h3>000</h3>
                                                         <span>AGUARDANDO TRIAGEM</span>
                                                     </div>
@@ -165,7 +165,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-md-4 col-sm-6">
                                     <div class="card bg-success">
                                         <div class="card-content">
                                             <div class="px-3 py-3" onclick="window.location='atendimentoRecepcao.php';">
@@ -182,7 +182,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-md-4 col-sm-6">
                                     <div class="card bg-warning">
                                         <div class="card-content">
                                             <div class="px-3 py-3" onclick="window.location='monitorAtendMedicos.php';">
@@ -201,7 +201,7 @@
                                 </div>
                             </div>
                             <div class="row" matchheight="card">
-                                <div class="col-4">
+                                <div class="col-md-4 col-sm-6">
                                     <div class="card bg-warning">
                                         <div class="card-content">
                                             <div class="px-3 py-3" onclick="window.location='painel_us.php';">
@@ -218,7 +218,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-md-4 col-sm-6">
                                     <div class="card bg-success">
                                         <div class="card-content">
                                             <div class="px-3 py-3" onclick="window.location='painel_rx.php';">
@@ -235,7 +235,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-md-4 col-sm-6">
                                     <div class="card bg-danger">
                                         <div class="card-content">
                                             <div class="px-3 py-3" onclick="window.location='painel_ecg.php';">
