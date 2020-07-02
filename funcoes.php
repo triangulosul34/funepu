@@ -47,11 +47,11 @@ function validaCPF($cpf = null)
 
             for ($d = 0, $c = 0; $c < $t; $c++) {
                 $d += $cpf{
-                $c} * (($t + 1) - $c);
+                    $c} * (($t + 1) - $c);
             }
             $d = ((10 * $d) % 11) % 10;
             if ($cpf{
-            $c} != $d) {
+                $c} != $d) {
                 return false;
             }
         }

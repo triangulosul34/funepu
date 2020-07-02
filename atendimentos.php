@@ -642,10 +642,11 @@ if (isset($_POST["excel"])) {
                                                     <tbody>
                                                         <?php
                                                         include('conexao.php');
-                                                        $stmt = "select a.transacao,a.med_atendimento as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
+                                                        $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
                                                         CASE prioridade WHEN 'VERMELHO' THEN '0' WHEN 'LARANJA' THEN '1' WHEN 'AMARELO' THEN '2' WHEN 'VERDE' THEN '3'  WHEN 'AZUL' THEN '4' ELSE '5'
                                                         END as ORDEM, a.coronavirus from atendimentos a 
                                                         left join pessoas c on a.paciente_id=c.pessoa_id
+                                                        left join pessoas d on a.med_atendimento=d.username
                                                         left join tipo_origem k on cast(k.tipo_id as varchar)=a.tipo ";
                                                         if ($where != "") {
                                                             $stmt = $stmt . " where " . $where;
@@ -698,7 +699,7 @@ if (isset($_POST["excel"])) {
                                                                     echo "<td class='blink'>" . $row->status . "<br>";
                                                                     echo "<small>" . substr($row->nomemed, 0, 21) . "</small></td>";
                                                                 } else {
-                                                                    echo "<td class='blink'>" . $row->status . "</td>";
+                                                                    echo "<td class='blink'>" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
                                                                 }
                                                             } else {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
@@ -712,7 +713,7 @@ if (isset($_POST["excel"])) {
                                                                     echo "<td>" . $row->status . "<br>";
                                                                     echo "<small>" . substr($row->nomemed, 0, 21) . "</small></td>";
                                                                 } else {
-                                                                    echo "<td>" . $row->status . "</td>";
+                                                                    echo "<td>" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
                                                                 }
                                                             }
 
@@ -737,11 +738,13 @@ if (isset($_POST["excel"])) {
                                                             <?php } ?>
                                                             <?php //}
 
-                                                            if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
-                                                                <a id="mudasituacao" data-id="<?php echo $row->transacao; ?>" class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn" data-target="#modalConteudoSitu" data-toggle="modal" data-original-title="Mudar Situação" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white" <?php } ?> onClick="valorSituacao(this);">
-                                                                    <i class="fa fa-user" aria-hidden="true" onclick=""></i>
-                                                                </a>
-                                                            <?php } ?>
+                                                            //if ($perfil == '06' or $perfil == '04' or $perfil == '01') { 
+                                                            ?>
+                                                            <a id="mudasituacao" data-id="<?php echo $row->transacao; ?>" class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn" data-target="#modalConteudoSitu" data-toggle="modal" data-original-title="Mudar Situação" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white" <?php } ?> onClick="valorSituacao(this);">
+                                                                <i class="fa fa-user" aria-hidden="true" onclick=""></i>
+                                                            </a>
+                                                            <?php //} 
+                                                            ?>
 
                                                         <?php echo "</tr>";
                                                         }

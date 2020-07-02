@@ -1,8 +1,16 @@
 <?php
 
+function inverteData($data)
+{
+    if (count(explode("/", $data)) > 1) {
+        return implode("-", array_reverse(explode("/", $data)));
+    } elseif (count(explode("-", $data)) > 1) {
+        return implode("/", array_reverse(explode("-", $data)));
+    }
+}
 error_reporting(0);
 include('verifica.php');
-include('funcoes.php');
+//include('funcoes.php');
 
 $convenio = "";
 $username    = "";
@@ -142,11 +150,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($nome == "") {
         $erro = "Nome - Campo Obrigatorio";
     }
-    if ($dtn != "") {
-        if (!(ValidaData($dtnasc))) {
-            $erro = "Data de Nascimento - Campo Obrigatorio";
-        }
-    }
+    // if ($dtn != "") {
+    //     if (!(ValidaData($dtnasc))) {
+    //         $erro = "Data de Nascimento - Campo Obrigatorio";
+    //     }
+    // }
     if ($tipo != "C") {
         if ($username == "") {
             $erro = "Usuario - Campo Obrigatorio";
@@ -155,11 +163,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $erro = "Senha - Campo Obrigatorio";
         }
     }
-    if ($cpf != "") {
-        if (!(validaCPF($cpf))) {
-            $erro = "CPF - Valor Invalido";
-        }
-    }
+    // if ($cpf != "") {
+    //     if (!(validaCPF($cpf))) {
+    //         $erro = "CPF - Valor Invalido";
+    //     }
+    // }
 
     if ($username != '') {
         include('conexao.php');

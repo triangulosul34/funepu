@@ -1,8 +1,17 @@
 <?php
 
+function inverteData($data)
+{
+    if (count(explode("/", $data)) > 1) {
+        return implode("-", array_reverse(explode("/", $data)));
+    } elseif (count(explode("-", $data)) > 1) {
+        return implode("/", array_reverse(explode("-", $data)));
+    }
+}
+
 error_reporting(0);
 include('verifica.php');
-include('funcoes.php');
+//include('funcoes.php');
 $menu_grupo = '2';
 $menu_sgrupo = '4';
 
@@ -163,11 +172,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = "Nome - Campo Obrigatorio";
     }
     //if ($dtn=="")   {$erro="Data de Nascimento - Campo Obrigatorio";}
-    if ($cpf != "") {
-        if (!(validaCPF($cpf))) {
-            $erro = "CPF - Valor Invalido";
-        }
-    }
+    // if ($cpf != "") {
+    //     if (!(validaCPF($cpf))) {
+    //         $erro = "CPF - Valor Invalido";
+    //     }
+    // }
     if ($especialidade == "") {
         $especialidade = '0';
     }

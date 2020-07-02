@@ -53,7 +53,7 @@ $pdf->SetFont('Helvetica', 'B', 16);
 
 $pdf->SetXY(115, 59);
 $pdf->Write(8, $nome);
-$pdf->Image('http://' . UNIDADEABV_CONFIG . '.midaspa.com.br/' . UNIDADEABV_CONFIG . '/funepu/qrcode.php?a=' . $rownext->nextval . '&c=' . $atendimento, 18, 105, 20, 20, 'png');
+//$pdf->Image('http://201.48.4.90/' . UNIDADEABV_CONFIG . '/funepu/qrcode.php?a=' . $rownext->nextval . '&c=' . $atendimento, 18, 105, 20, 20, 'png');
 
 $pdf->SetXY(25, 82);
 $pdf->Write(8, $hora_atendimento);

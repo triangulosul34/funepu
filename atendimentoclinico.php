@@ -629,7 +629,7 @@ if ($destino != '') {
                 inner join tabela_precos c on a.procedimentos_id = c.procedimento_id where modalidade_id not in (32 , 22) and a.procedimentos_id in (746, 769) and c.convenio_id = 1 ORDER BY a.descricao";
                         } else {
                             $sql = "select a.procedimentos_id as procedimento_id, a.descricao, a.codigo from procedimentos a
-                inner join modalidades b on a.setor = b.modalidade_id where modalidade_id not in (32 , 22) and a.descricao not in('GLICOSE', 'PROTEINA C REATIVA - [ULTRA-SENSIVEL]') and a.procedimentos_id not in (822) ORDER BY a.descricao";
+                inner join modalidades b on a.setor = b.modalidade_id where modalidade_id not in (32 , 22) and a.descricao not in('GLICOSE', 'PROTEINA C REATIVA - [ULTRA-SENSIVEL]') ORDER BY a.descricao";
                         }
                         $sth = pg_query($sql) or die($sql);
                         echo "<option value=\"\">Selecione o Procedimento</option>";

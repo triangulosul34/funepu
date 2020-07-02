@@ -31,7 +31,7 @@ if ($sexo == '2') {
 if ($sexo == '1') {
     $sexo = 'Masculino';
 }
-$origem = ORIGEM_CONFIG;
+$origem = UNIDADE_CONFIG;
 // $origem = $row->origem;
 // if ($origem == '02') {
 //     $origem = 'UPA SAO BENEDITO';

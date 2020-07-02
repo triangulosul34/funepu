@@ -61,7 +61,7 @@ $horacad = date('H:i');
 $stmt = "insert into pedidos (transacao, cad_user, dat_cad, convenio_id, dt_solicitacao, paciente_id, solicitante_id,  tipo, 
 		num_socio, status,  box, hora_cad, local, atendimento_id)
 	values ($transacao, '$usuario', '$dt_transacao', '1', '$dt_solicitacao', $prontuario, $profissional, '$origem', '00', 'Cadastrado',  '1',  
-		'$horacad', '01', $atendimento  );";
+		'$horacad', '" . ORIGEM_CONFIG . "', $atendimento  );";
 $sth = pg_query($stmt) or die($stmt);
 
 $data = date('Y-m-d');
@@ -79,7 +79,7 @@ if (in_array("82", $procedimentos) and in_array("81", $procedimentos)) {
 }
 
 include('conexao_laboratorio.php');
-$sql = "select count(*), exame_id from pedido_item where 01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . " = substring(ordem_servico, 5,9)::integer and exame_id in ($procedi) group by 2 order by count";
+$sql = "select count(*), exame_id from pedido_item where " . ORIGEM_CONFIG  . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . " = substring(ordem_servico, 5,9)::integer and exame_id in ($procedi) group by 2 order by count";
 $result = pg_query($sql) or die($sql);
 $row = pg_fetch_object($result);
 
@@ -224,7 +224,7 @@ foreach ($procedimentos as $procedimento) {
                 $result = pg_query($sql) or die($sql);
                 $row = pg_fetch_object($result);
 
-                $cod = str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                $cod = str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                 $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 					VALUES ($guia_id, $procedimento, 0, 0, 0, 0, '$cod', '$prioridade')";
                 $result = pg_query($sql) or die($sql);
@@ -361,7 +361,7 @@ foreach ($procedimentos as $procedimento) {
                     $row = pg_fetch_object($result);
 
                     if ($procedimento == 779) {
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . "1";
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . "1";
                         $pedido_tp1 = $pedido_id . "1";
                         $guia_tp1 = $guia_id . "1";
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
@@ -376,7 +376,7 @@ foreach ($procedimentos as $procedimento) {
                             $aux2 = $aux2 . "," . $row->pedido_item_id;
                         }
                     } else if ($procedimento == 821) {
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . "2";
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . "2";
                         $pedido_tp3 = $pedido_id . "2";
                         $guia_tp3 = $guia_id . "2";
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
@@ -391,7 +391,7 @@ foreach ($procedimentos as $procedimento) {
                             $aux2 = $aux2 . "," . $row->pedido_item_id;
                         }
                     } else if ($procedimento == 822) {
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . "3";
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . "3";
                         $pedido_tp6 = $pedido_id . "3";
                         $guia_tp6 = $guia_id . "3";
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
@@ -407,7 +407,7 @@ foreach ($procedimentos as $procedimento) {
                         }
                         $result = pg_query($sql) or die($sql);
                     } else if ($procedimento == 825) {
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 							VALUES ($guia_id, 771, 0, 0, 0, 0, '$cod', '$prioridade')";
                         $result = pg_query($sql) or die($sql);
@@ -419,7 +419,7 @@ foreach ($procedimentos as $procedimento) {
                         } else {
                             $aux2 = $aux2 . "," . $row->pedido_item_id;
                         }
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 							VALUES ($guia_id, 754, 0, 0, 0, 0, '$cod', '$prioridade')";
                         $result = pg_query($sql) or die($sql);
@@ -431,7 +431,7 @@ foreach ($procedimentos as $procedimento) {
                         } else {
                             $aux2 = $aux2 . "," . $row->pedido_item_id;
                         }
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 							VALUES ($guia_id, 756, 0, 0, 0, 0, '$cod', '$prioridade')";
                         $sql = "SELECT pedido_item_id FROM pedido_item where pedido_guia_id = $guia_id and exame_id = 756 and pendente = 0 and nao_autorizado = 0 and coletado = 0 and recoleta = 0 and ordem_servico = '$cod' and prioridade = '$prioridade'";
@@ -443,7 +443,7 @@ foreach ($procedimentos as $procedimento) {
                             $aux2 = $aux2 . "," . $row->pedido_item_id;
                         }
                         $result = pg_query($sql) or die($sql);
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 							VALUES ($guia_id, 18, 0, 0, 0, 0, '$cod', '$prioridade')";
                         $sql = "SELECT pedido_item_id FROM pedido_item where pedido_guia_id = $guia_id and exame_id = 18 and pendente = 0 and nao_autorizado = 0 and coletado = 0 and recoleta = 0 and ordem_servico = '$cod' and prioridade = '$prioridade'";
@@ -455,7 +455,7 @@ foreach ($procedimentos as $procedimento) {
                             $aux2 = $aux2 . "," . $row->pedido_item_id;
                         }
                         $result = pg_query($sql) or die($sql);
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 							VALUES ($guia_id, 310, 0, 0, 0, 0, '$cod', '$prioridade')";
                         $result = pg_query($sql) or die($sql);
@@ -469,7 +469,7 @@ foreach ($procedimentos as $procedimento) {
                         }
                     } else if ($procedimento == 82) {
                         if ($n == 0) {
-                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "02" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                             $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 								VALUES ($guia_id, 82, 0, 0, 0, 0, '$cod', '$prioridade')";
                             $result = pg_query($sql) or die($sql);
@@ -481,7 +481,7 @@ foreach ($procedimentos as $procedimento) {
                             } else {
                                 $aux2 = $aux2 . "," . $row->pedido_item_id;
                             }
-                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "02" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                             $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 								VALUES ($guia_id, 81, 0, 0, 0, 0, '$cod', '$prioridade')";
                             $result = pg_query($sql) or die($sql);
@@ -494,7 +494,7 @@ foreach ($procedimentos as $procedimento) {
                                 $aux2 = $aux2 . "," . $row->pedido_item_id;
                             }
                         } else {
-                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "02" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                             $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 								VALUES ($guia_id, 82, 0, 0, 0, 0, '$cod', '$prioridade')";
                             $result = pg_query($sql) or die($sql);
@@ -509,7 +509,7 @@ foreach ($procedimentos as $procedimento) {
                         }
                     } else if ($procedimento == 81) {
                         if ($n == 0) {
-                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "02" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                             $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 								VALUES ($guia_id, 82, 0, 0, 0, 0, '$cod', '$prioridade')";
                             $result = pg_query($sql) or die($sql);
@@ -521,7 +521,7 @@ foreach ($procedimentos as $procedimento) {
                             } else {
                                 $aux2 = $aux2 . "," . $row->pedido_item_id;
                             }
-                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "02" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                             $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 								VALUES ($guia_id, 81, 0, 0, 0, 0, '$cod', '$prioridade')";
                             $result = pg_query($sql) or die($sql);
@@ -534,7 +534,7 @@ foreach ($procedimentos as $procedimento) {
                                 $aux2 = $aux2 . "," . $row->pedido_item_id;
                             }
                         } else {
-                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "02" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                            $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                             $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 								VALUES ($guia_id, 81, 0, 0, 0, 0, '$cod', '$prioridade')";
                             $result = pg_query($sql) or die($sql);
@@ -548,7 +548,7 @@ foreach ($procedimentos as $procedimento) {
                             }
                         }
                     } else {
-                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . "01" . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
+                        $cod = str_pad($df, 2, '0', STR_PAD_LEFT) . str_pad($row->setor, 2, '0', STR_PAD_LEFT) . ORIGEM_CONFIG . str_pad($atendimento, 7, '0', STR_PAD_LEFT);
                         $sql = "INSERT INTO pedido_item(pedido_guia_id, exame_id, pendente, nao_autorizado, coletado, recoleta, ordem_servico, prioridade)
 								VALUES ($guia_id, $procedimento, 0, 0, 0, 0, '$cod', '$prioridade')";
                         $result = pg_query($sql) or die($sql);
