@@ -1106,7 +1106,7 @@ if ($destino != '') {
                                                                 </tr>
                                                                 <tr>
                                                                     <td>
-                                                                        <select class="selectpicker input-small" data-live-search="true" data-size="4" data-toggle="dropdown" name="procedimento" id="procedimento" title="Selecione o Procedimento">
+                                                                        <select name="procedimento" id="procedimento" title="Selecione o Procedimento">
                                                                             <?php
                                                                             include('conexao.php');
                                                                             $sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 

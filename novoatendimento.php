@@ -73,8 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $stmt = "select a.transacao, a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.acompanhante,
 		a.oque_faz, a.com_oqfaz, a.tempo_faz, a.como_faz, c.nome_mae, c.numero, c.complemento, c.bairro, c.cep, c.num_carteira_convenio as cns, c.cidade, c.estado, a.observacao, k.origem,
 		c.identidade, c.org_expeditor,c.cpf, a.coronavirus
-		from atendimentos a 
-		left join pessoas c on a.paciente_id=c.pessoa_id  
+		from atendimentos a
+		left join pessoas c on a.paciente_id=c.pessoa_id
 		left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) where a.transacao=$transacao";
         $sth = pg_query($stmt) or die($stmt);
         $row = pg_fetch_object($sth);
@@ -240,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $org_expeditor = $_POST['org_expeditor'];
     $cpf = $_POST['cpf'];
     $identidade = $_POST['rg'];
-    $validaCPF = validaCPF($cpf);
+    //$validaCPF = validaCPF($cpf);
     // $coronavirus = $_POST['coronavirus'];
 
     if (isset($_POST['coronavirus'])) {
@@ -269,9 +269,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = "Sexo deve ser Informado";
     }
 
-    if ($validaCPF == false && $cpf != '') {
-        $erro = "CPF inválido";
-    }
+    // if ($validaCPF == false && $cpf != '') {
+    //     $erro = "CPF inválido";
+    // }
 
     if ($prontuario == "") {
         $erro = 'Paciente deve ser Informado';
@@ -980,11 +980,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </div>
 
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Sexo</label> <input type="text" name="sexo" id="sexo" class="form-control" value="<?php echo $sexo; ?>" onkeyup="maiuscula(this)"> <input type="hidden" name="pendencia" id="pendencia" class="form-control" value="<?php echo $pendencia; ?>" readonly>
+                                                            <label class="control-label">Sexo</label> <select name="sexo" id="sexo" class="form-control">
+                                                                <option></option>
+                                                                <option value="F" <?php if ($sexo == 'F') {
+                                                                                        echo 'selected';
+                                                                                    } ?>>Feminino</option>
+                                                                <option value="M" <?php if ($sexo == 'M') {
+                                                                                        echo 'selected';
+                                                                                    } ?>>Masculino</option>
+                                                            </select> <input type="hidden" name="pendencia" id="pendencia" class="form-control" value="<?php echo $pendencia; ?>" readonly> <input type="hidden" name="pendencia" id="pendencia" class="form-control" value="<?php echo $pendencia; ?>" readonly>
                                                         </div>
 
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">CPF</label> <input type="text" name="cpf" OnKeyPress="formatar('###.###.###-##', this)" maxlength="14" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
+                                                            <label class="control-label">CPF</label> <input type="text" name="cpf" maxlength="14" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
                                                         </div>
 
                                                         <div class="col-sm-2">
