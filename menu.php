@@ -194,6 +194,8 @@
                                 </li>
                         </ul>
                     </li>
+                <?php }
+                if ($perfil == '07' or $perfil == '06') { ?>
                     <li class="nav-item">
                         <a href="pedidos.php"><i class="fas fa-file-prescription"></i><span class="menu-title">LAUDOS</span></a>
                     </li>
@@ -202,7 +204,12 @@
                     <li class="nav-item">
                         <a href="farmacia.php"><i class="fas fa-pills"></i><span class="menu-title">FARMACIA</span></a>
                     </li>
-                <?php } ?>
+                <?php }
+                if ($perfil == '14' or $perfil == '06') { ?>
+                    <li class="nav-item">
+                        <a href="novopedido.php"><i class="fas fa-pills"></i><span class="menu-title">SOLICITAR EXAMES</span></a>
+                    </li>
+                <?php } ?> ?>
             </ul>
         </div>
     </div>
