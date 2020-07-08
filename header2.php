@@ -90,7 +90,7 @@ if ($usuario == 'hsm') {
 </style>
 <nav class="navbar navbar-expand-lg navbar-light bg-faded header-navbar" style="padding-top: 0px;">
     <div class="container-fluid" style="height: 75px;">
-        <div onclick="javascript:location.href='http://mr.midaspa.com.br/mr/funepu/index.php'" class="navbar-header teste" style="background-color: #12A1A6; border-top-right-radius: 30px;border-bottom-right-radius:30px;">
+        <div onclick="javascript:location.href='http://<?php echo URL_BASE; ?>/<?php echo UNIDADE_CONFIG; ?>/funepu/index.php'" class="navbar-header teste" style="background-color: #12A1A6; border-top-right-radius: 30px;border-bottom-right-radius:30px;">
             <h3 style="margin: 0; padding: 0"><strong>UNIDADE <?php echo UNIDADE_CONFIG; ?></strong></h3>
         </div>
         <div class="navbar-container">
@@ -98,7 +98,7 @@ if ($usuario == 'hsm') {
                 <p><?php echo $nome_med; ?></p>
                 <div class="fonticon-container">
                     <div class="fonticon-wrap" style=" margin-left: 0px;">
-                        <i class="icon-user-following" style="font-size: 18pt"></i>
+                    <a href="login.html"><i class="icon-user-following" style="font-size: 18pt"></i></a>
                     </div>
                 </div>
             </div>

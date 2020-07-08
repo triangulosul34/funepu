@@ -73,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //função javascript que retornará o codigo 
         function retorna(id, nome, sexo, dtnasc, idade, endereco, numero, complemento, bairro, cidade, estado, telefone, celular, cep, ocorrencia, cpf, imagem, email, carteirinha) //passando um parametro 
         {
-            alert(id + "," + nome + "," + sexo + "," + dtnasc + "," + idade + "," + endereco + "," + numero + "," + complemento + "," + bairro + "," + cidade + "," + estado + "," + telefone + "," + celular + "," + cep + "," + ocorrencia + "," + cpf + "," + imagem + "," + email + "," + carteirinha);
             window.opener.document.pedido.prontuario.value = id; //a janela mãe recebe o id, você precisa passar o nome do formulario e do textfield que receberá o valor passado por parametro. 
             window.opener.document.pedido.nome.value = nome;
             window.opener.document.pedido.sexo.value = sexo;
@@ -88,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             window.opener.document.pedido.telefone.value = telefone;
             window.opener.document.pedido.celular.value = celular;
             window.opener.document.pedido.cpf.value = cpf;
+            window.opener.document.pedido.cns.value = carteirinha;
 
             if (cep.length == 9) {
                 window.opener.document.pedido.end_cep.value = cep;
@@ -286,7 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                                 $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias																
                                                                 echo "<tr>";
-                                                                echo "<td><a href=\"javascript:retorna('" . $row->pessoa_id . "','" . $row->nome . "','" . $row->sexo . "','" . inverteData($row->dt_nasc) . "','" . $idade . "','" . $row->endereco . "','" . $row->numero . "','" . $row->complemento . "','" . $row->bairro . "','" . $row->cidade . "','" . $row->estado . "','" . $row->telefone . "','" . $row->celular . "','" . $row->cep . "','" . $row->qtde . "','" . $row->cpf . "','" . $row->num_carteira_convenio . "','" . $row->imagem . "','" . $row->nome_mae . "','" . $row->num_carteira_convenio . "')\" <i class=\"icon fas fa-check-circle\"></i></a></td>";
+                                                                echo "<td><a href=\"javascript:retorna('" . $row->pessoa_id . "','" . $row->nome . "','" . $row->sexo . "','" . inverteData($row->dt_nasc) . "','" . $idade . "','" . $row->endereco . "','" . $row->numero . "','" . $row->complemento . "','" . $row->bairro . "','" . $row->cidade . "','" . $row->estado . "','" . $row->telefone . "','" . $row->celular . "','" . $row->cep . "','" . $row->qtde . "','" . $row->cpf . "','" . $row->imagem . "','" . $row->nome_mae . "','" . $row->num_carteira_convenio . "')\" <i class=\"icon fas fa-check-circle\"></i></a></td>";
                                                                 echo "<td>" . $row->nome . "</td>";
                                                                 echo "<td>" . $row->qtde . "</td>";
                                                                 echo "<td>" . inverteData($row->dt_nasc) . "</td>";
