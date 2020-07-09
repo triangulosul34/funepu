@@ -92,7 +92,7 @@ if ($usuario == 'hsm') {
         <div class="navbar-header">
             <button type="button" data-toggle="collapse" class="navbar-toggle d-lg-none float-left"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
         </div>
-        <div onclick="javascript:location.href='http://<?php echo URL_BASE; ?>/<?php echo UNIDADE_CONFIG; ?>/funepu/index.php'" class="navbar-header teste" style="background-color: #12A1A6; border-top-right-radius: 30px;border-bottom-right-radius:30px">
+        <div onclick="javascript:location.href='http://<?php echo URL_BASE; ?>/index.php'" class="navbar-header teste" style="background-color: #12A1A6; border-top-right-radius: 30px;border-bottom-right-radius:30px">
             <h5 style="margin: 0; padding: 0"><strong>UNIDADE <?php echo UNIDADE_CONFIG; ?></strong></h5>
         </div>
         <div class="navbar-container">

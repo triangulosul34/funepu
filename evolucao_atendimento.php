@@ -389,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="row">
                                         <div class="col-12">
                                             <label>Exame Físico</label>
-                                            <textarea name="exame_fisico" class="form-control square" rows="15" <?php if ($status == 'Atendimento Finalizado') {
+                                            <textarea name="exame_fisico" class="form-control square" rows="30" <?php if ($status == 'Atendimento Finalizado') {
                                                                                                                     echo 'readonly';
                                                                                                                 } ?>><?php echo $exame_fisico; ?></textarea> </br>
                                         </div>

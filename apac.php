@@ -1,4 +1,5 @@
 <?php
+require("../vendor/autoload.php");
 include('conexao.php');
 
 function inverteData($data)
@@ -187,7 +188,7 @@ $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->Image('app-assets/img/pages/laudo_apacx.png', 0, 0, $pdf->GetPageWidth(), $pdf->GetPageHeight());
 $pdf->SetFont("Arial", "", 9);
-$pdf->Text(18, 42, utf8_decode("UPA SÃO BENEDITO"));
+$pdf->Text(18, 42, utf8_decode("UPA ") . UNIDADE_CONFIG);
 $pdf->Text(170, 42, ("2164817"));
 $pdf->Text(18, 56, $nome);
 $pdf->Text(173, 56, $pessoa_id);
