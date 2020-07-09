@@ -39,28 +39,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $html = '';
         $html .= '<table style="font-size:8px" border="1">';
         $html .= '<tr>';
-        $html .= '<td colspan="3" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - RELACAO ATENDIMENTOS</td>';
+        $html .= '<td colspan="5" align=\'center\'>UPA PARQUE DO MIRANTE - RELACAO ATENDIMENTOS</td>';
         $html .= '</tr>';
         $html .= '<tr>';
         $html .= '<tr align=\'center\'>';
         $html .= '<td><b>Solicitacao</b></td>';
         $html .= '<td><b>Paciente</b></td>';
         $html .= '<td><b>Origem</b></td>';
+        $html .= '<td><b>Chegada</b></td>';
+        $html .= '<td><b>Triagem</b></td>';
+        $html .= '<td><b>Atendimento</b></td>';
+        $html .= '<td><b>Situacao</b></td>';
         $html .= '</tr>';
         include('conexao.php');
         $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento,
-                     a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
-                    CASE prioridade 
-                                WHEN 'VERMELHO' THEN '0' 
-                                WHEN 'LARANJA' THEN '1' 
-                                WHEN 'AMARELO' THEN '2'
-                                WHEN 'VERDE' THEN '3'  
-                                WHEN 'AZUL' THEN '4' 
-                                ELSE '5'
-                                END as ORDEM from atendimentos a 
-                    left join pessoas c on a.paciente_id = c.pessoa_id
-                    left join pessoas d on a.med_atendimento = d.username
-                    left join tipo_origem k on cast(k.tipo_id as varchar)=a.tipo ";
+						 a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
+						CASE prioridade 
+									WHEN 'VERMELHO' THEN '0' 
+									WHEN 'LARANJA' THEN '1' 
+									WHEN 'AMARELO' THEN '2'
+									WHEN 'VERDE' THEN '3'  
+									WHEN 'AZUL' THEN '4' 
+									ELSE '5'
+									END as ORDEM from atendimentos a 
+						left join pessoas c on a.paciente_id = c.pessoa_id
+						left join pessoas d on a.med_atendimento = d.username
+						left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo  ";
 
         if ($where != "") {
             $stmt = $stmt . " where " . $where;
@@ -68,8 +72,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
         }
 
-        $stmt = $stmt . " order by a.dat_cad desc,c.nome asc";
+        $stmt = $stmt . " order by a.dat_cad desc,a.hora_cad desc ";
         $sth = pg_query($stmt) or die($stmt);
+        //echo $stmt;
         $qtde = 0;
         while ($row = pg_fetch_object($sth)) {
 
@@ -77,12 +82,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
             $html .= '<td>' . $row->nome . '</td>';
             $html .= '<td>' . $row->origem . '</td>';
+            $html .= '<td>' . $row->hora_cad . '</td>';
+            $html .= '<td>' . $row->hora_triagem . '</td>';
+            $html .= '<td>' . $row->hora_destino . '</td>';
+            $html .= '<td>' . $row->status . '</td>';
             $html .= '</tr>';
 
             $qtde = $qtde + 1;
         }
         $html .= '<tr>';
         $html .= '<td>Quantidade de Pacientes</td>';
+        $html .= '<td></td>';
+        $html .= '<td></td>';
+        $html .= '<td></td>';
+        $html .= '<td></td>';
         $html .= '<td></td>';
         $html .= '<td>' . $qtde . '</td>';
         $html .= '</tr>';
