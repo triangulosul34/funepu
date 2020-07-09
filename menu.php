@@ -28,6 +28,12 @@
                         <?php
                         if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                             <li class="is-shown">
+                                <a href="atendimento_retroativo.php" class="menu-item">ATENDIMENTO RETROATIVO</a>
+                            </li>
+                        <?php
+                        }
+                        if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
+                            <li class="is-shown">
                                 <a href="resultado_exames.php" class="menu-item">RESULTADO DE EXAMES</a>
                             </li>
                         <?php }

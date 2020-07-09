@@ -240,11 +240,11 @@ class PDF extends FPDF
 	}
 	if ($_SESSION['unidade']=='2')
 	{*/
-        $this->Cell(126, 5, 'UNIDADE DE PRONTO ATENDIMENTO UPA '. utf8_decode(UNIDADE_CONFIG) , 0, 0, 'L');
+        $this->Cell(126, 5, 'UNIDADE DE PRONTO ATENDIMENTO UPA ' . utf8_decode(UNIDADE_CONFIG), 0, 0, 'L');
         $this->SetFont('Arial', '', 9);
         $this->Cell(15, 5, ' CNES:', 0, 'L');
         $this->SetFont('Arial', '', 9);
-        $this->Cell(40, 5, '2164817', 0, 0, 'L');
+        $this->Cell(40, 5, CNES, 0, 0, 'L');
         //}
 
         $this->Ln(5);
