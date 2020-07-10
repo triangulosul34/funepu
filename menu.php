@@ -86,9 +86,6 @@
                                 <a href="relatoriodiario.php" class="menu-item">REL. DIARIO</a>
                             </li>
                             <li class="is-shown">
-                                <a href="relatoriotempopermanencia.php" class="menu-item">REL. TEMPO PERMANENCIA</a>
-                            </li>
-                            <li class="is-shown">
                                 <a href="relatorioatendimento.php" class="menu-item">REL. DE ATENDIMENTOS</a>
                             </li>
                             <li class="is-shown">

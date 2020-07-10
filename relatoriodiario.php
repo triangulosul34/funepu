@@ -32,6 +32,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $where = $where . " (a.dat_cad <= '$data')";
         }
     }
+    if (isset($_POST["permanencia"])) {
+        $arquivo = 'Relatorio Tempo Permanencia.xls';
+        $html = '';
+        $html .= '<table style="font-size:12px" border="1">';
+        $html .= '<tr>';
+        $html .= '<td colspan="9" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - TEMPO DE PERMANENCIA -- ' . inverteData($start) . '</td>';
+        $html .= '</tr>';
+        $html .= '<tr>';
+        $html .= '<tr align=\'center\'>';
+        $html .= '<td><b>Atendimento</b></td>';
+        $html .= '<td><b>Paciente</b></td>';
+        $html .= '<td><b>Contato</b></td>';
+        $html .= '<td><b>Origem</b></td>';
+        $html .= '<td><b>Hora Entrada</b></td>';
+        $html .= '<td><b>Hora Triagem</b></td>';
+        $html .= '<td><b>Hora Atendimento</b></td>';
+        $html .= '<td><b>Hora Alta</b></td>';
+        $html .= '<td><b>Tempo Permanencia</b></td>';
+        $html .= '</tr>';
+        include('conexao.php');
+        $stmt = "select a.transacao, c.nome, case when c.celular is null then case when c.celular2 is null then case when c.telefone is null then c.telefone2 else c.telefone end else c.celular2 end  else c.celular end as contato, k.origem, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.hora_destino, (a.data_destino::date || ' ' || a.hora_destino::time)::timestamp - (a.dat_cad::date || ' ' || a.hora_cad::time)::timestamp as permanencia from atendimentos a 
+						left join pessoas c on a.paciente_id = c.pessoa_id
+						left join pessoas d on a.med_atendimento = d.username
+						left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo  ";
+
+        if ($where != "") {
+            $stmt = $stmt . " where " . $where;
+        } else {
+            $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
+        }
+
+        $stmt = $stmt . " order by a.hora_cad desc ";
+        $sth = pg_query($stmt) or die($stmt);
+        while ($row = pg_fetch_object($sth)) {
+
+            $html .= '<tr>';
+            $html .= '<td>' . $row->transacao . '</td>';
+            $html .= '<td>' . $row->nome . '</td>';
+            $html .= '<td>' . $row->contato . '</td>';
+            $html .= '<td>' . $row->origem . '</td>';
+            $html .= '<td>' . $row->hora_cad . '</td>';
+            $html .= '<td>' . $row->hora_triagem . '</td>';
+            $html .= '<td>' . $row->hora_atendimento . '</td>';
+            $html .= '<td>' . $row->hora_destino . '</td>';
+            $html .= '<td>' . $row->permanencia . '</td>';
+            $html .= '</tr>';
+        }
+        $html .= '</table>';
+
+        // Configurações header para forçar o download
+        header("Expires: Mon, 26 Jul 2017 05:00:00 GMT");
+        header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
+        header("Cache-Control: no-cache, must-revalidate");
+        header("Pragma: no-cache");
+        header("Content-type: application/x-msexcel");
+        header("Content-Disposition: attachment; filename=\"{$arquivo}\"");
+        header("Content-Description: PHP Generated Data");
+        // Envia o conteúdo do arquivo
+        echo $html;
+        exit;
+    }
     if (isset($_POST["excel"])) {
 
         $arquivo = 'Relatorio Atendimento.xls';
@@ -39,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $html = '';
         $html .= '<table style="font-size:8px" border="1">';
         $html .= '<tr>';
-        $html .= '<td colspan="5" align=\'center\'>UPA PARQUE DO MIRANTE - RELACAO ATENDIMENTOS</td>';
+        $html .= '<td colspan="7" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - RELACAO ATENDIMENTOS</td>';
         $html .= '</tr>';
         $html .= '<tr>';
         $html .= '<tr align=\'center\'>';
@@ -233,6 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <button type="submit" name="excel" class="btn btn-success" value="excel">Gerar Excel </button>
+                                                <button type="submit" name="permanencia" class="btn btn-info">Tempo de Permanência</button>
                                             </div>
                                         </div>
                                         <div class="row mt-3">

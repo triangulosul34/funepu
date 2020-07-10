@@ -318,7 +318,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($rowt->paciente_id == '') {
                     $stmt = "insert into atendimentos ( transacao, cad_user, dat_cad, paciente_id, tipo,  status,  box, hora_cad, local,   nec_especiais, idade, observacao, 
 				oque_faz, tempo_faz, com_oqfaz, como_faz,acompanhante, coronavirus)
-				values ($transacao, '$usuario_transacao', '$dt_transacao', $prontuario, '$origem', 'Atendimento Finalizado',  '1',  '$horacad', '01',";
+				values ($transacao, '$usuario_transacao', '$dt_transacao', $prontuario, '$origem', 'Atendimento Finalizado',  '1',  '$hora_transacao', '01',";
                     $stmt = $stmt . "  '$deficiencia', '$idade', '$observacao', '$oque_faz', '$tempo_faz', '$com_oqfaz', '$como_faz','$nome_acompanhante', $coronavirus);";
                     $sth = pg_query($stmt);
                 }
@@ -361,8 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $dt_transacao = inverteData($data_transacao);
                 $dt_transacao = inverteData($data_transacao);
                 $dt_solicitacao = inverteData($dt_nsolicitacao);
-                $horacad = date('H:i');
-                $stmt = "update atendimentos set  transacao=$transacao, cad_user='$usuario_transacao',  paciente_id=$prontuario, tipo='$origem',  observacao='$observacao', box='1', hora_cad='$horacad', local='01',
+                $stmt = "update atendimentos set  transacao=$transacao, cad_user='$usuario_transacao',  paciente_id=$prontuario, tipo='$origem',  observacao='$observacao', box='1', dat_cad='$dt_transacao',hora_cad='$hora_transacao', local='01',
 				peso='0', nec_especiais='$deficiencia', oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', acompanhante = '$nome_acompanhante', com_oqfaz='$com_oqfaz', coronavirus = $coronavirus where transacao=$transacao ";
                 $sth = pg_query($stmt) or die($stmt);
 
