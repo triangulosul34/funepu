@@ -23,7 +23,7 @@ $obs            = $rowa->obs_med;
 
 if ($optradio == '5') {
 ?>
-    <link rel="stylesheet" href="../assets/vendor/chosen/chosen.css">
+    <link rel="stylesheet" href="assets/vendor/chosen/chosen.css">
     <div id="solucoes">
         <div class="col-12  mt-2">
             <div class="form-group">
@@ -171,7 +171,7 @@ if ($optradio == '5') {
     </div>
     <!-- CUIDADOS -->
 <?php } else if ($optradio == '10') { ?>
-    <link rel="stylesheet" href="../assets/vendor/chosen/chosen.css">
+    <link rel="stylesheet" href="assets/vendor/chosen/chosen.css">
     <div id="solucoes">
         <div class="col-12  mt-2">
             <div class="form-group">
@@ -260,7 +260,7 @@ if ($optradio == '5') {
 
     <!-- DIETA -->
 <?php } else if ($optradio == '1') { ?>
-    <link rel="stylesheet" href="../assets/vendor/chosen/chosen.css">
+    <link rel="stylesheet" href="assets/vendor/chosen/chosen.css">
     <div id="solucoes">
         <div class="col-12  mt-2">
             <div class="form-group">
@@ -617,7 +617,7 @@ if ($optradio == '5') {
         </div>
     </div>
 <?php } ?>
-<script src="../assets/vendor/chosen/chosen.jquery.js"></script>
+<script src="assets/vendor/chosen/chosen.jquery.js"></script>
 <script>
     //$("#escolha").chosen({width: "100%"})
     //$("#via").chosen({width: "100%"})

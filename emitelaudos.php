@@ -393,39 +393,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<meta name="description" content="bootstrap admin template">
 	<meta name="author" content="">
 
-	<title>Diagnostic Center | Emiss�o de Laudos</title>
+	<title>Funepu | Emiss�o de Laudos</title>
 
-	<link rel="apple-touch-icon" href="../assets/images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png">
 
 	<!-- Stylesheets -->
-	<link rel="stylesheet" href="../assets/css/bootstrap.css">
-	<link rel="stylesheet" href="../assets/css/bootstrap-extend.min.css">
-	<link rel="stylesheet" href="../assets/css/site.min.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.css">
+	<link rel="stylesheet" href="assets/css/bootstrap-extend.min.css">
+	<link rel="stylesheet" href="assets/css/site.min.css">
 
 	<!-- Plugins -->
-	<link rel="stylesheet" href="../assets/vendor/animsition/animsition.css">
-	<link rel="stylesheet" href="../assets/vendor/asscrollable/asScrollable.css">
-	<link rel="stylesheet" href="../assets/vendor/switchery/switchery.css">
-	<link rel="stylesheet" href="../assets/vendor/intro-js/introjs.css">
-	<link rel="stylesheet" href="../assets/vendor/slidepanel/slidePanel.css">
-	<link rel="stylesheet" href="../assets/vendor/flag-icon-css/flag-icon.css">
-	<link rel="stylesheet" href="../assets/examples/css/widgets/social.css">
+	<link rel="stylesheet" href="assets/vendor/animsition/animsition.css">
+	<link rel="stylesheet" href="assets/vendor/asscrollable/asScrollable.css">
+	<link rel="stylesheet" href="assets/vendor/switchery/switchery.css">
+	<link rel="stylesheet" href="assets/vendor/intro-js/introjs.css">
+	<link rel="stylesheet" href="assets/vendor/slidepanel/slidePanel.css">
+	<link rel="stylesheet" href="assets/vendor/flag-icon-css/flag-icon.css">
+	<link rel="stylesheet" href="assets/examples/css/widgets/social.css">
 	<!-- Plugins For This Page -->
 	<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
-	<link rel="stylesheet" href="../assets/vendor/asscrollable/asScrollable.css">
-	<link rel="stylesheet" href="../../assets/vendor/webui-popover/webui-popover.css">
-	<link rel="stylesheet" href="../assets/examples/css/uikit/tooltip-popover.css">
-	<link rel="stylesheet" href="../assets/vendor/datatables-bootstrap/dataTables.bootstrap.css">
-	<link rel="stylesheet" href="../assets/vendor/datatables-fixedheader/dataTables.fixedHeader.css">
-	<link rel="stylesheet" href="../assets/vendor/datatables-responsive/dataTables.responsive.css">
-	<link rel="stylesheet" href="../assets/vendor/sweetalert/dist/sweetalert.css">
+	<link rel="stylesheet" href="assets/vendor/asscrollable/asScrollable.css">
+	<link rel="stylesheet" href="../assets/vendor/webui-popover/webui-popover.css">
+	<link rel="stylesheet" href="assets/examples/css/uikit/tooltip-popover.css">
+	<link rel="stylesheet" href="assets/vendor/datatables-bootstrap/dataTables.bootstrap.css">
+	<link rel="stylesheet" href="assets/vendor/datatables-fixedheader/dataTables.fixedHeader.css">
+	<link rel="stylesheet" href="assets/vendor/datatables-responsive/dataTables.responsive.css">
+	<link rel="stylesheet" href="assets/vendor/sweetalert/dist/sweetalert.css">
 
 	<!-- Fonts -->
-	<link rel="stylesheet" href="../assets/fonts/web-icons/web-icons.min.css">
-	<link rel="stylesheet" href="../assets/fonts/brand-icons/brand-icons.min.css">
+	<link rel="stylesheet" href="assets/fonts/web-icons/web-icons.min.css">
+	<link rel="stylesheet" href="assets/fonts/brand-icons/brand-icons.min.css">
 	<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,300italic'>
-	<link rel="stylesheet" href="../assets/examples/css/tables/datatable.css">
-	<script src="../assets/vendor/sweetalert/dist/sweetalert.min.js"></script>
+	<link rel="stylesheet" href="assets/examples/css/tables/datatable.css">
+	<script src="assets/vendor/sweetalert/dist/sweetalert.min.js"></script>
 	<script type="text/javascript">
 
 	</script>
@@ -454,18 +454,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	</style>
 
 	<!--[if lt IE 9]>
-    <script src="../assets/vendor/html5shiv/html5shiv.min.js"></script>
+    <script src="assets/vendor/html5shiv/html5shiv.min.js"></script>
     <![endif]-->
 
 	<!--[if lt IE 10]>
-    <script src="../assets/vendor/media-match/media.match.min.js"></script>
-    <script src="../assets/vendor/respond/respond.min.js"></script>
+    <script src="assets/vendor/media-match/media.match.min.js"></script>
+    <script src="assets/vendor/respond/respond.min.js"></script>
     <![endif]-->
 
 	<!-- Scripts -->
-	<script src="../assets/vendor/modernizr/modernizr.js"></script>
-	<script src="../assets/vendor/breakpoints/breakpoints.js"></script>
-	<script src="../assets/vendor/tinymce/js/tinymce/tinymce.min.js"></script>
+	<script src="assets/vendor/modernizr/modernizr.js"></script>
+	<script src="assets/vendor/breakpoints/breakpoints.js"></script>
+	<script src="assets/vendor/tinymce/js/tinymce/tinymce.min.js"></script>
 	<script>
 		Breakpoints();
 	</script>
@@ -983,60 +983,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<?php include('footer.php'); ?>
 
 	<!-- Core  -->
-	<script src="../assets/vendor/jquery/jquery.js"></script>
-	<script src="../assets/vendor/bootstrap/bootstrap.js"></script>
-	<script src="../assets/vendor/animsition/jquery.animsition.js"></script>
-	<script src="../assets/vendor/asscroll/jquery-asScroll.js"></script>
-	<script src="../assets/vendor/mousewheel/jquery.mousewheel.js"></script>
-	<script src="../assets/vendor/asscrollable/jquery.asScrollable.all.js"></script>
-	<script src="../assets/vendor/ashoverscroll/jquery-asHoverScroll.js"></script>
+	<script src="assets/vendor/jquery/jquery.js"></script>
+	<script src="assets/vendor/bootstrap/bootstrap.js"></script>
+	<script src="assets/vendor/animsition/jquery.animsition.js"></script>
+	<script src="assets/vendor/asscroll/jquery-asScroll.js"></script>
+	<script src="assets/vendor/mousewheel/jquery.mousewheel.js"></script>
+	<script src="assets/vendor/asscrollable/jquery.asScrollable.all.js"></script>
+	<script src="assets/vendor/ashoverscroll/jquery-asHoverScroll.js"></script>
 
 	<!-- Plugins -->
-	<script src="../assets/vendor/switchery/switchery.min.js"></script>
-	<script src="../assets/vendor/intro-js/intro.js"></script>
-	<script src="../assets/vendor/screenfull/screenfull.js"></script>
-	<script src="../assets/vendor/slidepanel/jquery-slidePanel.js"></script>
+	<script src="assets/vendor/switchery/switchery.min.js"></script>
+	<script src="assets/vendor/intro-js/intro.js"></script>
+	<script src="assets/vendor/screenfull/screenfull.js"></script>
+	<script src="assets/vendor/slidepanel/jquery-slidePanel.js"></script>
 
 
 
 	<!-- Plugins For This Page -->
 
-	<script src="../assets/vendor/asprogress/jquery-asProgress.js"></script>
-	<script src="../assets/vendor/draggabilly/draggabilly.pkgd.js"></script>
-	<script src="../assets/vendor/datatables/jquery.dataTables.js"></script>
-	<script src="../assets/vendor/datatables-fixedheader/dataTables.fixedHeader.js"></script>
-	<script src="../assets/vendor/datatables-bootstrap/dataTables.bootstrap.js"></script>
-	<script src="../assets/vendor/datatables-responsive/dataTables.responsive.js"></script>
+	<script src="assets/vendor/asprogress/jquery-asProgress.js"></script>
+	<script src="assets/vendor/draggabilly/draggabilly.pkgd.js"></script>
+	<script src="assets/vendor/datatables/jquery.dataTables.js"></script>
+	<script src="assets/vendor/datatables-fixedheader/dataTables.fixedHeader.js"></script>
+	<script src="assets/vendor/datatables-bootstrap/dataTables.bootstrap.js"></script>
+	<script src="assets/vendor/datatables-responsive/dataTables.responsive.js"></script>
 
 	<!-- Scripts -->
-	<script src="../assets/js/core.js"></script>
-	<script src="../assets/js/site.js"></script>
+	<script src="assets/js/core.js"></script>
+	<script src="assets/js/site.js"></script>
 
-	<script src="../assets/js/sections/menu.js"></script>
-	<script src="../assets/js/sections/menubar.js"></script>
-	<script src="../assets/js/sections/gridmenu.js"></script>
-	<script src="../assets/js/sections/sidebar.js"></script>
+	<script src="assets/js/sections/menu.js"></script>
+	<script src="assets/js/sections/menubar.js"></script>
+	<script src="assets/js/sections/gridmenu.js"></script>
+	<script src="assets/js/sections/sidebar.js"></script>
 
-	<script src="../assets/js/configs/config-colors.js"></script>
-	<script src="../assets/js/configs/config-tour.js"></script>
+	<script src="assets/js/configs/config-colors.js"></script>
+	<script src="assets/js/configs/config-tour.js"></script>
 
-	<script src="../assets/js/components/asscrollable.js"></script>
-	<script src="../assets/js/components/animsition.js"></script>
-	<script src="../assets/js/components/slidepanel.js"></script>
-	<script src="../assets/js/components/switchery.js"></script>
+	<script src="assets/js/components/asscrollable.js"></script>
+	<script src="assets/js/components/animsition.js"></script>
+	<script src="assets/js/components/slidepanel.js"></script>
+	<script src="assets/js/components/switchery.js"></script>
 
 	<!-- Scripts For This Page -->
 	<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
-	<script src="../assets/js/plugins/responsive-tabs.js"></script>
-	<script src="../assets/js/components/tabs.js"></script>
-	<script src="../assets/js/components/asprogress.js"></script>
-	<script src="../assets/js/components/panel.js"></script>
-	<script src="../assets/js/components/asscrollable.js"></script>
-	<script src="../assets/js/components/webui-popover.js"></script>
-	<script src="../assets/examples/js/uikit/tooltip-popover.js"></script>
-	<script src="../assets/examples/js/uikit/panel-structure.js"></script>
-	<script src="../assets/vendor/bootstrap-table/bootstrap-table.min.js"></script>
-	<script src="../assets/vendor/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js"></script>
+	<script src="assets/js/plugins/responsive-tabs.js"></script>
+	<script src="assets/js/components/tabs.js"></script>
+	<script src="assets/js/components/asprogress.js"></script>
+	<script src="assets/js/components/panel.js"></script>
+	<script src="assets/js/components/asscrollable.js"></script>
+	<script src="assets/js/components/webui-popover.js"></script>
+	<script src="assets/examples/js/uikit/tooltip-popover.js"></script>
+	<script src="assets/examples/js/uikit/panel-structure.js"></script>
+	<script src="assets/vendor/bootstrap-table/bootstrap-table.min.js"></script>
+	<script src="assets/vendor/bootstrap-table/extensions/mobile/bootstrap-table-mobile.js"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {

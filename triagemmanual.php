@@ -1,5 +1,5 @@
-<link rel="stylesheet" href="../assets/vendor/sweetalert/dist/sweetalert.css">
-<script src="../assets/vendor/sweetalert/dist/sweetalert.min.js"></script>
+<link rel="stylesheet" href="assets/vendor/sweetalert/dist/sweetalert.css">
+<script src="assets/vendor/sweetalert/dist/sweetalert.min.js"></script>
 <script>
     $('#dor').on('keyup', function(event) {
         var valorMaximo = 10;
