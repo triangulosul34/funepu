@@ -15,7 +15,7 @@ $nome         = '';
 $dtnasc     = '';
 $telefone    = '';
 $mae         = '';
-// include('verifica.php');
+include('verifica.php');
 // if ($perfil == '03') {
 //     header("location:loginbox.php");
 // }
@@ -646,7 +646,7 @@ if (isset($_POST["excel"])) {
                                                         CASE prioridade WHEN 'VERMELHO' THEN '0' WHEN 'LARANJA' THEN '1' WHEN 'AMARELO' THEN '2' WHEN 'VERDE' THEN '3'  WHEN 'AZUL' THEN '4' ELSE '5'
                                                         END as ORDEM, a.coronavirus from atendimentos a 
                                                         left join pessoas c on a.paciente_id=c.pessoa_id
-                                                        left join pessoas d on a.med_atendimento=d.username
+                                                        left join pessoas d on a.med_atendimento=d.username 
                                                         left join tipo_origem k on cast(k.tipo_id as varchar)=a.tipo ";
                                                         if ($where != "") {
                                                             $stmt = $stmt . " where " . $where;

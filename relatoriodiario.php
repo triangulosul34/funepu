@@ -45,14 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $html .= '<td><b>Paciente</b></td>';
         $html .= '<td><b>Contato</b></td>';
         $html .= '<td><b>Origem</b></td>';
+        $html .= '<td><b>Prioridade</b></td>';
         $html .= '<td><b>Hora Entrada</b></td>';
         $html .= '<td><b>Hora Triagem</b></td>';
         $html .= '<td><b>Hora Atendimento</b></td>';
         $html .= '<td><b>Hora Alta</b></td>';
+        $html .= '<td><b>Medico</b></td>';
         $html .= '<td><b>Tempo Permanencia</b></td>';
         $html .= '</tr>';
         include('conexao.php');
-        $stmt = "select a.transacao, c.nome, case when c.celular is null then case when c.celular2 is null then case when c.telefone is null then c.telefone2 else c.telefone end else c.celular2 end  else c.celular end as contato, k.origem, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.hora_destino, (a.data_destino::date || ' ' || a.hora_destino::time)::timestamp - (a.dat_cad::date || ' ' || a.hora_cad::time)::timestamp as permanencia from atendimentos a 
+        $stmt = "select a.transacao, c.nome, case when c.celular is null then case when c.celular2 is null then case when c.telefone is null then c.telefone2 else c.telefone end else c.celular2 end  else c.celular end as contato, k.origem, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.hora_destino, ,d.nome as nomemed, (a.data_destino::date || ' ' || a.hora_destino::time)::timestamp - (a.dat_cad::date || ' ' || a.hora_cad::time)::timestamp as permanencia from atendimentos a 
 						left join pessoas c on a.paciente_id = c.pessoa_id
 						left join pessoas d on a.med_atendimento = d.username
 						left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo  ";
@@ -72,10 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $html .= '<td>' . $row->nome . '</td>';
             $html .= '<td>' . $row->contato . '</td>';
             $html .= '<td>' . $row->origem . '</td>';
+            $html .= '<td>' . $row->prioridade . '</td>';
             $html .= '<td>' . $row->hora_cad . '</td>';
             $html .= '<td>' . $row->hora_triagem . '</td>';
             $html .= '<td>' . $row->hora_atendimento . '</td>';
             $html .= '<td>' . $row->hora_destino . '</td>';
+            $html .= '<td>' . $row->nomemed . '</td>';
             $html .= '<td>' . $row->permanencia . '</td>';
             $html .= '</tr>';
         }
@@ -294,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <button type="submit" name="excel" class="btn btn-success" value="excel">Gerar Excel </button>
-                                                <button type="submit" name="permanencia" class="btn btn-info">Tempo de Permanência</button>
+                                                <button type="submit" name="permanencia" class="btn btn-info">Tempo de Permanência em Excel</button>
                                             </div>
                                         </div>
                                         <div class="row mt-3">
