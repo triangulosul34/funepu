@@ -1,5 +1,6 @@
 <?php
 require('fpdf/fpdf.php');
+require("../vendor/autoload.php");
 function inverteData($data)
 {
     if (count(explode("/", $data)) > 1) {

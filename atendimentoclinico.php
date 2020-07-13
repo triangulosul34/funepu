@@ -1226,7 +1226,7 @@ if ($destino != '') {
                                                                 $result = pg_query($sql) or die($sql);
                                                                 while ($rows = pg_fetch_object($result)) {
                                                                     echo "<tr>";
-                                                                    if ($rows->situacao == '') {
+                                                                    if ($rows->situacao == '' or $rows->situacao == 'Coletado') {
                                                                         echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $rows->pedido_item_id . "\"><label></label></div></td>";
                                                                     } else {
                                                                         echo "<td></td>";
