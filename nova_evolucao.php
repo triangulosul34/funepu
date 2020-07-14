@@ -357,7 +357,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="row">
                                         <div class="col-12">
                                             <label>Evolução</label>
-                                            <textarea name="evolucao" class="form-control square"></textarea> </br>
+                                            <textarea name="evolucao" class="form-control square" rows="50" cols="10" style="resize: none"></textarea> </br>
                                         </div>
                                     </div>
                                     <div class="row">
