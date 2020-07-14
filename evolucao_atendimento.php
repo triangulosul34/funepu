@@ -286,6 +286,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
+    <div class="modal fade text-left" id="modalFimEvolucao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary white">
+                    <h4 class="modal-title" id="myModalLabel8">Evolução</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="#">
+                        <div class="col-md-12" style="padding: 0;">
+
+                            <div class="col-sm-12">
+                                <label class="control-label  margin-top-10">Destino dado ao Paciente</label>
+                                <select class="form-control" name="destino" id="destino" onchange="seleciona_setor(this)">
+                                    <option value=""></option>;
+                                    <option value="01" <?php if ($rowFim->destino_encaminhamento == 1) echo "selected"; ?>>ALTA</option>
+                                    <option value="02" <?php if ($rowFim->destino_encaminhamento == 2) echo "selected"; ?>>ALTA / ENCAM. AMBUL.</option>
+                                    <option value="11" <?php if ($rowFim->destino_encaminhamento == 11) echo "selected"; ?>>ALTA EVASÃO</option>
+                                    <option value="12" <?php if ($rowFim->destino_encaminhamento == 12) echo "selected"; ?>>ALTA PEDIDO</option>
+                                    <option value="15" <?php if ($rowFim->destino_encaminhamento == 15) echo "selected"; ?>>ALTA / PENITENCIÁRIA</option>
+                                    <option value="14" <?php if ($rowFim->destino_encaminhamento == 14) echo "selected"; ?>>ALTA / PM</option>
+                                    <option value="04" <?php if ($rowFim->destino_encaminhamento == 4) echo "selected"; ?>>TRANSF. OUTRA UPA</option>
+                                    <option value="05" <?php if ($rowFim->destino_encaminhamento == 5) echo "selected"; ?>>TRANSFERENCIA HOSPITALAR</option>
+                                    <option value="13" <?php if ($rowFim->destino_encaminhamento == 13) echo "selected"; ?>>TRANSFERENCIA INTERNA</option>
+                                    <option value="03" <?php if ($rowFim->destino_encaminhamento == 3) echo "selected"; ?>>PERMANÊCIA.</option>
+                                    <option value="06" <?php if ($rowFim->destino_encaminhamento == 6) echo "selected"; ?>>ÓBITO</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12" id="setor_transferencia_destino">
+
+                            </div>
+
+                            <div class="col-sm-12 margin-top-20">
+                                <label class="control-label">Motivo do destino</label>
+                                <textarea name="motivoalta" rows="5" class="form-control" onkeyup="maiuscula(this)"><?php echo $rowFim->motivo; ?></textarea>
+                                <input type="hidden" name="atendimento" value="<?php echo $transacao; ?>">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 margin-top-10 padding-0">
+
+                            <div class="col-md-6">
+                                <input type='submit' name='finaliza_atendimento' id="finaliza_atendimento" class="btn btn-success width-full" value='Salvar'>
+                            </div>
+                            <div class="col-md-6">
+                                <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal" class="btn btn-danger width-full" value='Cancelar'>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- <div class="pace pace-inactive">
         <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
             <div class="pace-progress-inner"></div>
@@ -389,9 +448,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="row">
                                         <div class="col-12">
                                             <label>Exame Físico</label>
-                                            <textarea name="exame_fisico" class="form-control square" rows="30" <?php if ($status == 'Atendimento Finalizado') {
-                                                                                                                    echo 'readonly';
-                                                                                                                } ?>><?php echo $exame_fisico; ?></textarea> </br>
+                                            <textarea name="exame_fisico" class="form-control square" rows="50" cols="10" style="resize: none" <?php if ($status == 'Atendimento Finalizado') {
+                                                                                                                                                    echo 'readonly';
+                                                                                                                                                } ?>><?php echo $exame_fisico; ?></textarea> </br>
                                         </div>
                                     </div>
                                     <div class="row">
