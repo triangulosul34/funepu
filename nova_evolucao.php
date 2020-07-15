@@ -321,7 +321,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <?php if ($perfil == '08' or $perfil == '06') { ?>
                                                 <div class="col-3">
                                                     <label>Temperatura</label>
                                                     <input type="text" class="form-control square" name="temp">
@@ -353,11 +352,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <input type="text" class="form-control square" name="diurese">
                                             </div>
                                         </div>
-                                    <?php } ?>
                                     <div class="row">
-                                        <div class="col-12">
+                                        <div class="col-sm-12">
                                             <label>Evolução</label>
-                                            <textarea name="evolucao" class="form-control square" rows="50" cols="10" style="resize: none"></textarea> </br>
+                                            <textarea name="evolucao" class="form-control square" rows="50" cols="50" style="resize: none"></textarea> </br>
                                         </div>
                                     </div>
                                     <div class="row">
