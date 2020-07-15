@@ -16,9 +16,6 @@ $dtnasc     = '';
 $telefone    = '';
 $mae         = '';
 include('verifica.php');
-// if ($perfil == '03') {
-//     header("location:loginbox.php");
-// }
 $RX             = '';
 $US              = '';
 $CT             = '';
@@ -54,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cb_meus          = $_POST['cb_meus'];
     $cb_conf          = $_POST['cb_CONFERENCIA'];
     $prontuario        = $_POST['prontuario'];
+    $trs        = $_POST['trs'];
     $palavras = explode(" ", $nome);
 
     // if ((count($palavras) < 2) and $nome != '') {
@@ -96,6 +94,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $where = $where . " and a.exame_id = $procedimentox";
         } else {
             $where = $where . " a.exame_id = $procedimentox";
+        }
+    }
+
+    if ($trs != "") {
+        if ($where != "") {
+            $where = $where . " and a.transacao = $trs";
+        } else {
+            $where = $where . " a.transacao = $trs";
         }
     }
 
@@ -532,6 +538,10 @@ if (isset($_POST["excel"])) {
 
                                                 <div class="row">
 
+                                                    <div class="col-md-2">
+                                                        <label class="control-label" for="inputBasicFirstName">Atendimento</label>
+                                                        <input type="text" class="form-control" id="trs" name="trs" value="<?php echo $trs; ?>" />
+                                                    </div>
                                                     <div class="col col-lg-3">
                                                         <label class="control-label" for="inputBasicFirstName">Data Ínicial</label>
                                                         <input type="date" class="form-control text-center" name="start" id="start" value="<?php echo $start; ?>" />
@@ -575,7 +585,7 @@ if (isset($_POST["excel"])) {
                                                         </select>
                                                     </div>
 
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-2">
 
                                                         <label class="control-label">Especialidades:</label>
 
