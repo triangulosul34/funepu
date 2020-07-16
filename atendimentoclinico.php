@@ -249,6 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $procedimento = stripslashes(pg_escape_string($_POST['procedimento']));
     $transfere = $_POST['cb_exame'];
     $obs_modal = stripslashes(pg_escape_string($_POST['obs_modal']));
+    $coronavirus = $_POST['obs_modal'];
 
     if ($erro == "") {
         $xdum = "";
@@ -263,8 +264,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				diagnostico_principal='$diag_pri', cid_principal='$CID',";
         if (str_replace(' ', '', $destino) != '') {
             $stmt = $stmt . " destino_paciente='$destino',";
-            if ($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') {
-                $stmt = $stmt . " coronavirus=5,";
+            if (($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') && $coronavirus == '1') {
+                $stmt = $stmt . " coronavirus=10,";
             }
         }
         if ($alta != '') {
@@ -772,6 +773,7 @@ if ($destino != '') {
                         <!-- CORPO DA PAGINA -->
                         <form method="post" id="pedido" name='pedido' autocomplete="off">
                             <input type="hidden" value="<?php echo $prioridade; ?>" id="prioridade">
+                            <input type="hidden" value="<?php echo $coronavirus; ?>" id="coronavirus">
                             <input type="hidden" name="transacao" id="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly>
                             <div class="col-12">
                                 <div style="display: flex; width: 100%;max-height: 280px">
