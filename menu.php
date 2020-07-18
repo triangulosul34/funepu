@@ -218,7 +218,7 @@
     </div>
     <div class="row" style="position: absolute;bottom: 5%;left: 18%;z-index: inherit;">
         <div class="col-7">
-            <a href="login.html"><img src="app-assets/img/gallery/logotsul.png" width="150px" height="130px"></a>
+            <a href="logout.php"><img src="app-assets/img/gallery/logotsul.png" width="150px" height="130px"></a>
         </div>
     </div>
     <div class="sidebar-background"></div>
