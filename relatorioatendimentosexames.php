@@ -11,6 +11,7 @@ function inverteData($data)
 }
 
 include('verifica.php');
+include('Config.php');
 $qtde_atendimentos = '';
 $dias = '';
 $start          = '';
@@ -32,20 +33,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			inner join pedido_guia b on a.pedido_id = b.pedido_id
 			inner join pedido_item c on b.pedido_guia_id = c.pedido_guia_id
 			inner join procedimentos d on c.exame_id = d.procedimentos_id
-			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '".ORIGEM_CONFIG."' group by 1";
+			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '" . ORIGEM_CONFIG . "' and c.situacao = 'Liberado' group by 1";
             $sthRel = pg_query($sql) or die($sql);
 
             $sql2 = "select count(*) as qtde from pedidos a
 			inner join pedido_guia b on a.pedido_id = b.pedido_id
 			inner join pedido_item c on b.pedido_guia_id = c.pedido_guia_id
-			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '".ORIGEM_CONFIG."'";
+			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '" . ORIGEM_CONFIG . "' and c.situacao = 'Liberado'";
             $result = pg_query($sql2) or die($sql2);
             $rowCount = pg_fetch_object($result);
             $qtde_atendimentos = $rowCount->qtde;
             $dias = date('d');
         } else {
             if ($modalidade != '') {
-                $where = ' and modalidade_id = ' . $modalidade;
+                if ($modalidade == '3' or $modalidade == '4') {
+                    $where = ' and modalidade_id = ' . $modalidade;
+                } else {
+                    $where = " and (a.situacao = 'Realizado' or a.situacao = 'Finalizado') and modalidade_id = " . $modalidade;
+                }
+            } else {
+                $where = " and case when modalidade_id = 1 or modalidade_id = 2 then (a.situacao = 'Realizado' or a.situacao = 'Finalizado') else a.situacao is not null end";
             }
 
             include('conexao.php');
@@ -53,12 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 																	from itenspedidos a
 																	left join atendimentos b on a.atendimento_id = b.transacao
 																	left join procedimentos p on p.procedimento_id = a.exame_id
-																	where b.dat_cad between '" . inverteData($start) . "' and '" . inverteData($end) . "' 
+																	where b.dat_cad between '" . inverteData($start) . "' and '" . inverteData($end) . "'
 									$where
 																	group by 1,3 order by 1
 																	";
 
-            $sthRel = pg_query($stmtRel);
+            $sthRel = pg_query($stmtRel) or die($stmtRel);
 
             include('conexao.php');
             $stmtRelCont = "select count(*) as qtde
