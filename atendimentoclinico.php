@@ -773,7 +773,7 @@ if ($destino != '') {
                         <!-- CORPO DA PAGINA -->
                         <form method="post" id="pedido" name='pedido' autocomplete="off">
                             <input type="hidden" value="<?php echo $prioridade; ?>" id="prioridade">
-                            <input type="hidden" value="<?php echo $coronavirus; ?>" id="coronavirus">
+                            <input type="hidden" value="<?php echo $coronavirus; ?>" id="coronavirus" name="coronavirus">
                             <input type="hidden" name="transacao" id="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly>
                             <div class="col-12">
                                 <div style="display: flex; width: 100%;max-height: 280px">
