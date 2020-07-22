@@ -1,4 +1,6 @@
 <?php
+
+error_reporting(0);
 function inverteData($data)
 {
     if (count(explode("/", $data)) > 1) {
@@ -10,14 +12,20 @@ function inverteData($data)
 
 include('verifica.php');
 include('Config.php');
+$qtde_atendimentos = '';
+$dias = '';
+$start          = '';
+$end          = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['gerarexcel'])) {
+
+    if (isset($_POST['gerarrelatorio'])) {
         $start          = $_POST['start'];
         $end          = $_POST['end'];
         $modalidade     = $_POST['modalidade'];
 
         $where = '';
+
         if ($start == '') {
             $start = date("d/m/Y");
         }
@@ -25,30 +33,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $end = date("d/m/Y");
         }
 
-        $arquivo = 'Relatorio de Exames.xls';
-        $html = '';
-        $html .= '<table style="font-size:12px" border="1">';
-        $html .= '<tr>';
-        $html .= '<td colspan="3" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - RELATORIO DE EXAMES -- ' . $start . ' a ' . $end . '</td>';
-        $html .= '</tr>';
-        $html .= '<tr>';
-        $html .= '<tr align=\'center\'>';
-        $html .= '<td><b>Data</b></td>';
-        $html .= '<td><b>Nome</b></td>';
-        $html .= '<td><b>Descricao</b></td>';
-        $html .= '</tr>';
         if ($modalidade == 5) {
             include('conexao_laboratorio.php');
-            $sql = "select TO_CHAR(a.data, 'DD/MM/YYYY') as data, e.nome, d.descricao from pedidos a inner join pedido_guia b on a.pedido_id = b.pedido_id inner join pedido_item c on b.pedido_guia_id = c.pedido_guia_id inner join procedimentos d on c.exame_id = d.procedimentos_id inner join pessoas e on a.pessoa_id = e.pessoa_id
-			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '" . ORIGEM_CONFIG . "' and c.situacao = 'Liberado' order by 3,2,1";
+
+            $sql = "select d.descricao, count(*) as qtde from pedidos a
+			inner join pedido_guia b on a.pedido_id = b.pedido_id
+			inner join pedido_item c on b.pedido_guia_id = c.pedido_guia_id
+			inner join procedimentos d on c.exame_id = d.procedimentos_id
+			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '" . ORIGEM_CONFIG . "' and c.situacao = 'Liberado' group by 1";
             $sthRel = pg_query($sql) or die($sql);
-            while ($row = pg_fetch_object($sthRel)) {
-                $html .= '<tr>';
-                $html .= '<td>' . $row->data . '</td>';
-                $html .= '<td>' . $row->nome . '</td>';
-                $html .= '<td>' . $row->descricao . '</td>';
-                $html .= '</tr>';
-            }
+
+            $sql2 = "select count(*) as qtde from pedidos a
+			inner join pedido_guia b on a.pedido_id = b.pedido_id
+			inner join pedido_item c on b.pedido_guia_id = c.pedido_guia_id
+			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '" . ORIGEM_CONFIG . "' and c.situacao = 'Liberado'";
+            $result = pg_query($sql2) or die($sql2);
+            $rowCount = pg_fetch_object($result);
+            $qtde_atendimentos = $rowCount->qtde;
+            $dias = date('d');
         } else {
             if ($modalidade != '') {
                 if ($modalidade == '3' or $modalidade == '4') {
@@ -61,30 +63,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             include('conexao.php');
-            $stmtRel = "select TO_DATE(b.dat_cad::text, 'YYYY-MM-DD HH24:MI:SS') as data, d.nome, c.descricao  from itenspedidos a left join pedidos b on a.transacao=b.transacao
-            left join pessoas d on b.paciente_id = d.pessoa_id	left join procedimentos c on a.exame_id=c.procedimento_id where b.dat_cad between '" . inverteData($start) . "' and '" . inverteData($end) . "' and c.exames_laboratoriais is null and d.nome <> 'LUCILTON VIEIRA FARIA' $where order by 3,2,1";
-            $sthRel = pg_query($stmtRel) or die($stmtRel);
-            while ($row = pg_fetch_object($sthRel)) {
-                $html .= '<tr>';
-                $html .= '<td>' . $row->data . '</td>';
-                $html .= '<td>' . $row->nome . '</td>';
-                $html .= '<td>' . $row->descricao . '</td>';
-                $html .= '</tr>';
-            }
-        }
-        $html .= '</table>';
+            $stmtRel = "select descricao, count(*) as qtde, modalidade_id
+																	from itenspedidos a
+																	left join atendimentos b on a.atendimento_id = b.transacao
+																	left join procedimentos p on p.procedimento_id = a.exame_id
+																	where b.dat_cad between '" . inverteData($start) . "' and '" . inverteData($end) . "'
+									$where
+																	group by 1,3 order by 1
+																	";
 
-        // Configurações header para forçar o download
-        header("Expires: Mon, 26 Jul 2017 05:00:00 GMT");
-        header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
-        header("Cache-Control: no-cache, must-revalidate");
-        header("Pragma: no-cache");
-        header("Content-type: application/x-msexcel");
-        header("Content-Disposition: attachment; filename=\"{$arquivo}\"");
-        header("Content-Description: PHP Generated Data");
-        // Envia o conteúdo do arquivo
-        echo $html;
-        exit;
+            $sthRel = pg_query($stmtRel) or die($stmtRel);
+
+            include('conexao.php');
+            $stmtRelCont = "select count(*) as qtde
+																	from itenspedidos a
+																	left join atendimentos b on a.atendimento_id = b.transacao
+																	left join procedimentos p on p.procedimento_id = a.exame_id
+																	where b.dat_cad between '" . inverteData($start) . "' and '" . inverteData($end) . "'
+									$where";
+            $sthRelCont = pg_query($stmtRelCont);
+            $rowCount = pg_fetch_object($sthRelCont);
+            $qtde_atendimentos = $rowCount->qtde;
+            $dias = date('d');
+        }
     }
 }
 ?>
@@ -117,7 +118,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" type="text/css" href="app-assets/css/app.css">
     <link rel="stylesheet" type="text/css" href="app-assets/css/tsul.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/pickadate/pickadate.css">
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <!--load all styles -->
 
@@ -163,20 +163,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-12">
                                                 <h4 class="card-title">
                                                     <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
-                                                        » </p>Relatorio Exames Paciente
+                                                        » </p>relatorio exames
                                                 </h4>
                                             </div>
                                             <div class="col-12">
                                                 <hr>
                                             </div>
                                         </div>
-
                                     </div>
                                     <div class="col-6">
                                         <div class="float-right">
                                             <ol class="breadcrumb">
                                                 <li><a href="../index.html">Home</a></li>
-                                                <li><a href="active">Relatorio Exames</a></li>
+                                                <li class="active">Relatorio Exames</li>
                                             </ol>
                                         </div>
                                     </div>
@@ -225,10 +224,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                             <div class="col-3">
                                                 <label class="control-label">Ação</label><br>
-                                                <button type="submit" name="gerarexcel" class="btn btn-success" style="width:100%">Gerar Excel</button>
+                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary" style="width:100%">Gerar Relatório</button>
                                             </div>
                                         </div>
                                     </form>
+                                    <?php if (isset($_POST['gerarrelatorio']) and $qtde_atendimentos > 0) { ?>
+                                        <div class="row mt-3">
+                                            <div class="col-6">
+                                                <h4>Atendimentos de</h4>
+                                                <p class="font-size-20 blue-grey-700"><?php echo inverteData($start); ?> até <?php echo inverteData($end); ?></p>
+                                            </div>
+                                            <div class="col-6">
+                                                <h4>Atendimentos</h4>
+                                                <p><?php echo $qtde_atendimentos; ?> Atendimentos</p>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-3">
+                                            <table class="table">
+                                                <thead align="left">
+                                                    <tr>
+                                                        <th>Prioridade</th>
+                                                        <th>Quantidade</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    include('conexao.php');
+                                                    while ($rowRel = pg_fetch_object($sthRel)) { ?>
+                                                        <tr>
+                                                            <td><?php echo $rowRel->descricao; ?></td>
+                                                            <td><?php echo str_pad($rowRel->qtde, 5, '0', STR_PAD_LEFT); ?></td>
+                                                        </tr>
+                                                    <?php } ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12" align="center"><button id="imprimirelatorio" class="btn btn-raised btn-success square">Imprimir</button></div>
+                                        </div>
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
@@ -257,9 +291,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
     <script src="app-assets/js/scripts.js" type="text/javascript"></script>
     <script src="app-assets/js/popover.js" type="text/javascript"></script>
-    <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        $("#imprimirelatorio").click(function(event) {
+            var especialidade = $("#especialidade").val();
+            var start = $("#start").val();
+            var end = $("#end").val();
+            var modalidade = $('#modalidade').val();
+
+            var url = 'relAtendimento.php?start=' + start + '&end=' + end + '&tipo_relatorio=exames&modalidade=' + modalidade;
+            window.open(url);
+        });
+    </script>
 </body>
 
 </html>

@@ -95,6 +95,9 @@
                                 <a href="relatorioatendimentoclassificacao.php" class="menu-item">REL. DE CLASS</a>
                             </li>
                             <li class="is-shown">
+                                <a href="relatorioatendimentosmod.php" class="menu-item">REL. DE EX. MODALIDADE</a>
+                            </li>
+                            <li class="is-shown">
                                 <a href="relatorioatendimentosexames.php" class="menu-item">REL. DE EXAMES</a>
                             </li>
                             <li class="is-shown">
