@@ -1017,7 +1017,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="col-sm-4">
                                                     <label class="control-label">
                                                         <font color='red'>Nome da Mae</font>
-                                                    </label> <input type="text" name="nomeMae" class="form-control" value="<?php echo $nomeMae; ?>" onkeyup="maiuscula(this)">
+                                                    </label> <input type="text" name="nomeMae" id="nome_mae" class="form-control" value="<?php echo $nomeMae; ?>" onkeyup="maiuscula(this)">
                                                 </div>
 
 

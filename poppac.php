@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         //função javascript que retornará o codigo 
-        function retorna(id, nome, sexo, dtnasc, idade, endereco, numero, complemento, bairro, cidade, estado, telefone, celular, cep, ocorrencia, cpf, imagem, email, carteirinha) //passando um parametro 
+        function retorna(id, nome, sexo, dtnasc, idade, endereco, numero, complemento, bairro, cidade, estado, telefone, celular, cep, ocorrencia, cpf, imagem, nome_mae, carteirinha) //passando um parametro 
         {
             window.opener.document.pedido.prontuario.value = id; //a janela mãe recebe o id, você precisa passar o nome do formulario e do textfield que receberá o valor passado por parametro. 
             window.opener.document.pedido.nome.value = nome;
@@ -88,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             window.opener.document.pedido.celular.value = celular;
             window.opener.document.pedido.cpf.value = cpf;
             window.opener.document.pedido.cns.value = carteirinha;
+            window.opener.document.pedido.nome_mae.value = nome_mae;
 
             if (cep.length == 9) {
                 window.opener.document.pedido.end_cep.value = cep;
@@ -290,7 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<td>" . $row->nome . "</td>";
                                                                 echo "<td>" . $row->qtde . "</td>";
                                                                 echo "<td>" . inverteData($row->dt_nasc) . "</td>";
-                                                                echo "<td>" . $row->mae . "</td>";
+                                                                echo "<td>" . $row->nome_mae . "</td>";
                                                                 echo "<td>" . $row->cpf . "</td>";
                                                                 echo "</tr>";
                                                             }

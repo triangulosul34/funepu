@@ -28,7 +28,7 @@
                         <?php
                         if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                             <li class="is-shown">
-                                <a href="atendimento_retroativo.php" class="menu-item">ATENDIMENTO RETROATIVO</a>
+                                <a href="atendimento_retroativo.php" class="menu-item">ATEND. RETROATIVO</a>
                             </li>
                         <?php
                         }
@@ -45,6 +45,11 @@
                         if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                             <li class="is-shown">
                                 <a href="evolucoes.php" class="menu-item">EVOLUCAO DIARIA</a>
+                            </li>
+                        <?php }
+                        if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
+                            <li class="is-shown">
+                                <a href="internacoes.php" class="menu-item">SOLIC. INTERNACAO</a>
                             </li>
                         <?php } ?>
                     </ul>
