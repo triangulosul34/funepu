@@ -62,7 +62,7 @@ class PDF extends FPDF
         $this->SetFont('Arial', '', 9);
 
 
-        $this->Cell(120, 5, 'UNIDADE DE PRONTO ATENDIMENTO '. utf8_decode(UNIDADE_CONFIG) , 0, 0, 'L');
+        $this->Cell(120, 5, 'UNIDADE DE PRONTO ATENDIMENTO ' . utf8_decode(UNIDADE_CONFIG), 0, 0, 'L');
         $this->SetFont('Arial', '', 9);
         $this->Cell(15, 5, ' CNES:', 0, 'L');
         $this->Cell(40, 5, '2164817', 0, 0, 'L');
@@ -444,11 +444,13 @@ if ($tipo_relatorio == 'EXAMES') {
 
     $where = '';
     if ($modalidade != '') {
-        if ($modalidade == 5) {
-            $where = ' and modalidade_id > ' . $modalidade;
-        } else {
+        if ($modalidade == '3' or $modalidade == '4') {
             $where = ' and modalidade_id = ' . $modalidade;
+        } else {
+            $where = " and (a.situacao = 'Realizado' or a.situacao = 'Finalizado') and modalidade_id = " . $modalidade;
         }
+    } else {
+        $where = " and case when modalidade_id = 1 or modalidade_id = 2 then (a.situacao = 'Realizado' or a.situacao = 'Finalizado') else a.situacao is not null end";
     }
 
     include('conexao.php');

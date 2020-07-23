@@ -384,14 +384,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <?php
                                                     $i = 0;
                                                     include('conexao.php');
-                                                    $stmt = "select a.transacao, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
+                                                    $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 65 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
                                                             a.dat_cad, c.nome, k.origem, a.tipo, a.coronavirus
                                                             from atendimentos a 
                                                             left join pessoas c on a.paciente_id=c.pessoa_id 
                                                             left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
                                                             WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
                                                             cast(tipo as integer) != '6' and tipo_at is null 
-                                                            ORDER by dat_cad desc, hora_cad asc";
+                                                            ORDER by 3, 1";
                                                     $sth = pg_query($stmt) or die($stmt);
                                                     while ($row = pg_fetch_object($sth)) {
 

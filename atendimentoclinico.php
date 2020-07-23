@@ -585,7 +585,7 @@ if ($destino != '') {
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">CID</label>
-                                    <input type="text" name="cidAtestado" id="cidAtestado" class="form-control" value="<?php echo $CID; ?>" onkeyup="maiuscula(this)" readonly>
+                                    <input type="text" name="cidAtestado" id="cidAtestado" class="form-control" value="<?php echo $CID; ?>" onkeyup="maiuscula(this)">
                                 </div>
                             </div>
 

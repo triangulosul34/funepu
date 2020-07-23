@@ -94,15 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 window.opener.document.pedido.end_cep.value = cep.substr(0, 5) + "-" + cep.substr(5, 3);
             }
-            window.opener.document.pedido.nomeMae.value = email;
+            // window.opener.document.pedido.nomeMae.value = email;
 
 
 
             if (imagem != "") {
-                window.opener.document.pedido.blah.src = 'imagens/clientes/' + imagem;
+                // window.opener.document.pedido.blah.src = 'imagens/clientes/' + imagem;
 
             } else {
-                window.opener.document.pedido.blah.src = 'app-assets/img/gallery/user-transp.png';
+                // window.opener.document.pedido.blah.src = 'app-assets/img/gallery/user-transp.png';
             }
 
 
@@ -252,7 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 <th width='15%'>Telefone</th>
                                                                 <th width='15%'>Nascimento</th>
                                                                 <th width='20%'>Mãe</th>
-                                                                <th width='25%'>Último Atendimento</th>
+                                                                <th width='25%'>cpf</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -267,9 +267,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             } else {
                                                                 $pos = strpos($pesquisa, '/');
                                                                 if ($pos === false) {
-                                                                    $stmt = $stmt . " a.nome like '%$pesquisa%' order by a.nome ";
+                                                                    $stmt = $stmt . " a.nome like '%$pesquisa%' order by a.nome, a.cpf desc ";
                                                                 } else {
-                                                                    $stmt = $stmt . " a.dt_nasc = '" . inverteData($pesquisa) . "' order by a.nome ";
+                                                                    $stmt = $stmt . " a.dt_nasc = '" . inverteData($pesquisa) . "' order by a.nome, a.cpf desc";
                                                                 }
                                                             }
 
@@ -291,11 +291,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<td>" . $row->qtde . "</td>";
                                                                 echo "<td>" . inverteData($row->dt_nasc) . "</td>";
                                                                 echo "<td>" . $row->mae . "</td>";
-                                                                if (isset($rowAT->dat_cad)) {
-                                                                    echo "<td>" . date('d/m/Y', strtotime($rowAT->dat_cad)) . "</td>";
-                                                                } else {
-                                                                    echo "<td align=\"center\">-</td>";
-                                                                }
+                                                                echo "<td>" . $row->cpf . "</td>";
                                                                 echo "</tr>";
                                                             }
                                                             ?>

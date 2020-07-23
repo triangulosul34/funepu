@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['proximo'])) {
         include('conexao.php');
-        $stmt = "select a.transacao, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
+        $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 65 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
 			k.origem, f.descricao as clinica,c.nome_social
 			from atendimentos a 
 			left join pessoas c on a.paciente_id=c.pessoa_id  
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
 			cast(tipo as integer) != '6' and cast(tipo as integer) != '11'
-			order by 1 asc limit 1
+			order by 3, 1 asc limit 1
 			";
         $sth         = pg_query($stmt) or die($stmt);
         $row         = pg_fetch_object($sth);
