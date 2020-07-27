@@ -1038,27 +1038,27 @@ if ($destino != '') {
                                         <div class="col-3 col">
                                             <div class="col-sm-12"><br>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="tosse_secracao" name="tosse_secracao" <?php if ($tosse_secracao == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="tosse_secracao" name="tosse_secracao" <?php if ($tosse_secracao == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="tosse_secracao">Tosse/Secreção Catarral</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="dificuldade_respirar" name="dificuldade_respirar" <?php if ($dificuldade_respirar == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dificuldade_respirar" name="dificuldade_respirar" <?php if ($dificuldade_respirar == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="dificuldade_respirar">Dificuldade de Respirar</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="fadiga" name="fadiga" <?php if ($fadiga == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="fadiga" name="fadiga" <?php if ($fadiga == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="fadiga">Fadiga</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="febre_alta" name="febre_alta" <?php if ($febre_alta == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="febre_alta" name="febre_alta" <?php if ($febre_alta == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="febre_alta">Febre Alta</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="congestao_nasal" name="congestao_nasal" <?php if ($congestao_nasal == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="congestao_nasal" name="congestao_nasal" <?php if ($congestao_nasal == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="congestao_nasal">Congestão Nasal</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="cefaleia" name="cefaleia" <?php if ($cefaleia == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="cefaleia" name="cefaleia" <?php if ($cefaleia == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="cefaleia">Cefaléia</label>
                                                 </div>
                                             </div>
@@ -1067,30 +1067,30 @@ if ($destino != '') {
                                         <div id="covid2" class="col-3">
                                             <div class="col-12"><br>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="dor_garganta" name="dor_garganta" <?php if ($dor_garganta == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dor_garganta" name="dor_garganta" <?php if ($dor_garganta == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="dor_garganta">Dor de Garganta</label>
                                                 </div>
 
 
 
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="diarreia" name="diarreia" <?php if ($diarreia == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="diarreia" name="diarreia" <?php if ($diarreia == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="diarreia">Diarréia</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="nausea_vomito" name="nausea_vomito" <?php if ($nausea_vomito == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="nausea_vomito" name="nausea_vomito" <?php if ($nausea_vomito == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="nausea_vomito">Nausea/Vomitos</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="mialgia_artralgia" name="mialgia_artralgia" <?php if ($mialgia_artralgia == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="mialgia_artralgia" name="mialgia_artralgia" <?php if ($mialgia_artralgia == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="mialgia_artralgia">Mialgia ou Artralgia</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="calafrios" name="calafrios" <?php if ($calafrios == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="calafrios" name="calafrios" <?php if ($calafrios == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="calafrios">Calafrios</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="anosmia_hiposmia" name="anosmia_hiposmia" <?php if ($anosmia_hiposmia == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="anosmia_hiposmia" name="anosmia_hiposmia" <?php if ($anosmia_hiposmia == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="anosmia_hiposmia">Anosmia/Hiposmia/Digeusia</label>
                                                 </div>
                                             </div>
@@ -1099,35 +1099,35 @@ if ($destino != '') {
                                         <div id="covid2" class="col-3">
                                             <div class="col-12"><br>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="diabetes" name="diabetes" <?php if ($diabetes == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="diabetes" name="diabetes" <?php if ($diabetes == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="diabetes">Diabetes</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="has" name="has" <?php if ($has == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="has" name="has" <?php if ($has == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="has">HAS</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="obesidade" name="obesidade" <?php if ($obesidade == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="obesidade" name="obesidade" <?php if ($obesidade == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="obesidade">Obesidade</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="doenca_coronariana" name="doenca_coronariana" <?php if ($doenca_coronariana == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="doenca_coronariana" name="doenca_coronariana" <?php if ($doenca_coronariana == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="doenca_coronariana">Doenca Coronariana</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="dpoc_asma" name="dpoc_asma" <?php if ($dpoc_asma == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dpoc_asma" name="dpoc_asma" <?php if ($dpoc_asma == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="dpoc_asma">DPOC ou Asma</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="cancer" name="cancer" <?php if ($cancer == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="cancer" name="cancer" <?php if ($cancer == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="cancer">Cancer</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="drc" name="drc" <?php if ($drc == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="drc" name="drc" <?php if ($drc == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="drc">DRC</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="imunodeficiencia" name="imunodeficiencia" <?php if ($imunodeficiencia == '1') echo "checked"; ?>>
+                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="imunodeficiencia" name="imunodeficiencia" <?php if ($imunodeficiencia == '1') echo "checked"; ?>>
                                                     <label class="custom-control-label" for="imunodeficiencia">Imunodeficiência</label>
                                                 </div>
                                             </div>
