@@ -36,27 +36,26 @@
                             <li class="is-shown">
                                 <a href="resultado_exames.php" class="menu-item">RESULTADO DE EXAMES</a>
                             </li>
-						<?php }
+                        <?php }
                         if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                             <li class="is-shown">
                                 <a href="evolucoes.php" class="menu-item">EVOLUCAO DIARIA</a>
-                            </li>	
-                        <?php }
-                        if ($perfil == '06' or $perfil == '03') { ?>
-                            <li class="is-shown">
-                                <a href="evolucoesmp.php" class="menu-item">ASSISTENCIA SOCIAL</a>
                             </li>
-                        <?php }
+                        <?php } ?>
+                        <li class="is-shown">
+                            <a href="evolucoesmp.php" class="menu-item">ASSISTENCIA SOCIAL</a>
+                        </li>
+                        <?php
                         if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                             <li class="is-shown">
                                 <a href="internacoes.php" class="menu-item">SOLIC. INTERNACAO</a>
                             </li>
-						<?php }		
-						if ($perfil == '06' or $perfil == '03') { ?>
+                        <?php }
+                        if ($perfil == '06' or $perfil == '03') { ?>
                             <li class="is-shown">
                                 <a href="selformapac.php" class="menu-item">SOLICITAÇÃO APAC</a>
                             </li>
-                        
+
                         <?php } ?>
                     </ul>
                 </li>
@@ -232,7 +231,7 @@
     </div>
     <div class="row" style="position: absolute;bottom: 5%;left: 18%;z-index: inherit;">
         <div class="col-7">
-            <a href="logout.php"><img src="app-assets/img/gallery/logotsul.png" width="150px" height="130px"></a>
+            <img src="app-assets/img/gallery/logotsul.png" width="150px" height="130px">
         </div>
     </div>
     <div class="sidebar-background"></div>

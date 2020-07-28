@@ -13,7 +13,7 @@ function inverteData($data)
 $transacao = $_GET['id'];
 include('verifica.php');
 include('conexao.php');
-$stmt = "SELECT a.assistente_social_id,a.atendimento_id,a.data,a.hora,b.nome,a.relatorio, d.nome as paciente
+$stmt = "SELECT a.assistente_social_id,a.atendimento_id,a.data,a.hora,b.nome,a.relatorio, d.nome as paciente, d.pessoa_id
 			FROM assistente_social a
 				left join pessoas b ON b.username = a.usuario
 				left join atendimentos c on c.transacao = a.atendimento_id
@@ -33,12 +33,20 @@ class PDF extends FPDF
 $pdf = new PDF();
 $pdf->AliasNbPages();
 $pdf->AddPage();
-$pdf->SetFont('Arial', '', 12);
-$pdf->Cell(190, 10, utf8_decode('RELATÓRIO SERVIÇO SOCIAL'), 0, 0, 'C');
+$pdf->SetFont('Arial', 'B', 16);
+$pdf->Cell(190, 10, utf8_decode('EVOLUÇÃO DIÁRIA MULTIPROFISSIONAL'), 0, 0, 'C');
 $pdf->Ln(15);
-$pdf->Multicell(190, 10, utf8_decode($row->relatorio), 0, 'J');
+$pdf->SetFont('Arial', '', 12);
+$pdf->Cell(190, 10, utf8_decode('Paciente: ' . $row->paciente), 0, 0, 'L');
+$pdf->Ln(7);
+$pdf->Cell(190, 10, utf8_decode('Registro: ' . $row->pessoa_id), 0, 0, 'L');
+$pdf->Ln(7);
+$pdf->Cell(100, 10, utf8_decode('Unidade: ' . UNIDADE_CONFIG), 0, 0, 'L');
+$pdf->Cell(190, 10, utf8_decode('Leito: ________________________________'), 0, 0, 'L');
 $pdf->Ln(15);
 $pdf->Cell(190, 10, inverteData($row->data), 0, 0, 'L');
+$pdf->Ln(15);
+$pdf->Multicell(190, 10, utf8_decode($row->relatorio), 0, 'J');
 $pdf->Ln(15);
 $pdf->Cell(190, 10, utf8_decode('_____________________________________'), 0, 0, 'C');
 $pdf->Ln(5);

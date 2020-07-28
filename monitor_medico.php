@@ -39,29 +39,6 @@ if (rtrim($tipo_atendimento) == 'ADULTO') {
     $consultorio = 'Ortopedia';
 }
 
-$qtdAtendiemento = "";
-include('conexao.php');
-$stmtCount = "SELECT count(*) as qtd from atendimentos   ";
-if (rtrim($tipo_atendimento) == 'ADULTO') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and cast(tipo as integer) != 9";
-} elseif (rtrim($tipo_atendimento) == 'ORTOPEDIA') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Pediátrico' ";
-} elseif (rtrim($tipo_atendimento) == 'EXAME') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Triagem') AND tipo = '6' ";
-} elseif (rtrim($tipo_atendimento) == 'PORTA') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
-}
-
-
-//$stmtCount=$stmtCount."and cast(tipo as integer) != 9";
-
-$sthCount = pg_query($stmtCount) or die($stmtCount);
-$rowCount = pg_fetch_object($sthCount);
-$qtdAtendiemento = $rowCount->qtd;
-
-
-
-
 include('conexao.php');
 $qtdatmed = 0;
 $stmtqtdmd = "SELECT count(*) as qtd from atendimentos where med_atendimento = '$usuario' and dat_cad = '" . date('Y-m-d') . "' ";
@@ -136,7 +113,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
     }
 }
+$qtdAtendiemento = "";
+include('conexao.php');
+$stmtCount = "SELECT count(*) as qtd from homologacao_upa.public.atendimentos   ";
+if (rtrim($tipo_atendimento) == 'ADULTO') {
+    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and case when destino_paciente = '0' then status is not null else (status = 'Aguardando Atendimento') end AND especialidade = 'Consultorio Adulto' and cast(tipo as integer) != 9";
+} elseif (rtrim($tipo_atendimento) == 'ORTOPEDIA') {
+    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Pediátrico' ";
+} elseif (rtrim($tipo_atendimento) == 'EXAME') {
+    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Triagem') AND tipo = '6' ";
+} elseif (rtrim($tipo_atendimento) == 'PORTA') {
+    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
+}
 
+
+//$stmtCount=$stmtCount."and cast(tipo as integer) != 9";
+
+$sthCount = pg_query($stmtCount) or die($stmtCount);
+$rowCount = pg_fetch_object($sthCount);
+$qtdAtendiemento = $rowCount->qtd;
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" class="loading">
@@ -286,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-sm-12" align="center">
                                                 <?php
                                                 if ($nome != '') {
-                                                    echo '<button type="submit" name="nrchamada" id="nrchamada" value="nrchamada" class="btn btn-primary">Não Respondeu Chamada</button>';
+                                                    echo '<button type="button" name="nrchamada" onclick="chamada()" id="nrchamada" value="nrchamada" class="btn btn-primary">Não Respondeu Chamada</button>';
                                                 } else {
                                                     echo '<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>';
                                                 }
@@ -383,6 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
         <script defer src="/your-path-to-fontawesome/js/all.js"></script>
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
         <script>
             function atende(id) {
                 var url = 'retorno_validacao_atendimento.php?atendimento=' + id;
@@ -401,6 +397,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             setInterval("atualizar()", 5000);
+
+            function chamada() {
+                Swal.fire({
+                    title: 'CUIDADO!!!',
+                    text: "Tem certeza de que deseja finalizar esse paciente como não respondeu chamado?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.value) {
+                        Swal.fire(
+                            'FINALIZADO',
+                            'Paciente não respondeu chamado!',
+                            'success'
+                        );
+                        $('<input />').attr('type', 'hidden')
+                            .attr('name', 'nrchamada')
+                            .attr('value', 'nrchamada')
+                            .appendTo('form');
+                        $("form").submit().setTimeout(function() {}, 1000);
+                    }
+                })
+            }
         </script>
 </body>
 

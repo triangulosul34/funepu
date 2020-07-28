@@ -100,7 +100,7 @@ if ($usuario == 'hsm') {
                 <p> <?php echo $nome_med; ?></p>
                 <div class="fonticon-container">
                     <div class="fonticon-wrap" style=" margin-left: 0px;">
-                        <a href="login.html"><i class="icon-user-following" style="font-size: 18pt"></i></a>
+                        <a href="logout.php"><i class="icon-user-following" style="font-size: 18pt"></i></a>
                     </div>
                 </div>
             </div>

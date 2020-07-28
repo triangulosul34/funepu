@@ -351,31 +351,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <table id="data_table" class="table">
                                                     <thead>
                                                         <tr>
-                                                            <th style="font-size: 6.5pt;">
+                                                            <th width='3%' style="font-size: 8.5pt;">
                                                                 <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
                                                             </th>
-                                                            <th style="font-size: 6.5pt;">Solicitação</th>
-                                                            <th style="font-size: 6.5pt;">Paciente</th>
-                                                            <th style="font-size: 6.5pt;">Origem</th>
-                                                            <th style="font-size: 6.5pt;">Chegada</th>
-                                                            <th style="font-size: 6.5pt;">Triagem</th>
-                                                            <th style="font-size: 6.5pt;">Atendimento</th>
-                                                            <th style="font-size: 6.5pt;">Encaminhamento</th>
-                                                            <th style="font-size: 6.5pt;">Ação</th>
+                                                            <th width='8%' style="font-size: 8.5pt;">Solicitação</th>
+                                                            <th width='25%' style="font-size: 8.5pt;">Paciente</th>
+                                                            <th width='18%' style="font-size: 8.5pt;">Origem</th>
+                                                            <th width='5%' style="font-size: 8.5pt;">Atendim.</th>
+                                                            <th width='15%' style="font-size: 8.5pt;">Encaminhamento</th>
+                                                            <th width='26%' style="font-size: 8.5pt;">Ação</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
-                                                            <th style="font-size: 6.5pt;">#</th>
-                                                            <th style="font-size: 6.5pt;">Solicitação</th>
-                                                            <th style="font-size: 6.5pt;">Paciente</th>
-                                                            <th style="font-size: 6.5pt;">Origem</th>
-                                                            <th style="font-size: 6.5pt;">Chegada</th>
-                                                            <th style="font-size: 6.5pt;">Triagem</th>
-                                                            <th style="font-size: 6.5pt;">Atendimento</th>
-                                                            <th style="font-size: 6.5pt;">Encaminhamento</th>
-                                                            <th style="font-size: 6.5pt;">Ação</th>
-
+                                                            <th width='3%' style="font-size: 8.5pt;">
+                                                                <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
+                                                            </th>
+                                                            <th width='8%' style="font-size: 8.5pt;">Solicitação</th>
+                                                            <th width='25%' style="font-size: 8.5pt;">Paciente</th>
+                                                            <th width='18%' style="font-size: 8.5pt;">Origem</th>
+                                                            <th width='5%' style="font-size: 8.5pt;">Atendim.</th>
+                                                            <th width='15%' style="font-size: 8.5pt;">Encaminhamento</th>
+                                                            <th width='26%' style="font-size: 8.5pt;">Ação</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody>
@@ -454,8 +451,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<td class='blink'>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
                                                                 echo "<td class='blink'>" . $row->nome . "</td>";
                                                                 echo "<td class='blink'>" . $row->origem . "</td>";
-                                                                echo "<td class='blink'>" . $row->hora_cad . "</td>";
-                                                                echo "<td class='blink'>" . $row->hora_triagem . "</td>";
+                                                                //echo "<td class='blink'>" . $row->hora_cad . "</td>";
+                                                                //echo "<td class='blink'>" . $row->hora_triagem . "</td>";
                                                                 echo "<td class='blink'>" . $row->hora_destino . "</td>";
 
 
@@ -466,8 +463,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<td>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
                                                                 echo "<td>" . $row->nome . "</td>";
                                                                 echo "<td>" . $row->origem . "</td>";
-                                                                echo "<td>" . $row->hora_cad . "</td>";
-                                                                echo "<td>" . $row->hora_triagem . "</td>";
+                                                                // echo "<td>" . $row->hora_cad . "</td>";
+                                                                // echo "<td>" . $row->hora_triagem . "</td>";
                                                                 echo "<td>" . $row->hora_destino . "</td>";
 
 
@@ -479,15 +476,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             echo "<td>";
 
                                                             if ($perfil == '03' or $perfil == '06') {
-                                                                echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-raised btn-light square btn-min-width mr-1 mb-1\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\"><i class=\"fas fa-eye\"></i></a>";
+                                                                echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\"><i class=\"fas fa-eye\"></i></a>";
                                                             }
-                                                            echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-raised btn-light square btn-min-width mr-1 mb-1\" data-toggle=\"tooltip\" data-original-title=\"FAA\"><i class=\"fas fa-print\"></i></a>";
+                                                            echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\"><i class=\"fas fa-print\"></i></a>";
 
                                                             if ($perfil == '03' or $perfil == '06' or $perfil == '08' or $perfil == '13') {
-                                                                echo "<a href=\"evolucao_atendimento.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-raised btn-light square btn-min-width mr-1 mb-1\" data-toggle=\"tooltip\" data-original-title=\"Evolução\"><i class=\"fas fa-file-medical\"></i></a>";
+                                                                echo "<a href=\"evolucao_atendimento.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" data-original-title=\"Evolução\"><i class=\"fas fa-file-medical\"></i></a>";
                                                             }
                                                             if ($perfil == '03' or $perfil == '06' or $perfil == '13') {
-                                                                echo "<a href=\"prescricao_enfermagemx.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-raised btn-light square btn-min-width mr-1 mb-1\" data-toggle=\"tooltip\" data-original-title=\"Prescrição\"><i class=\"fas fa-pills\"></i></a>";
+                                                                echo "<a href=\"prescricao_enfermagemx.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" data-original-title=\"Prescrição\"><i class=\"fas fa-pills\"></i></a>";
                                                             }
                                                             echo "</tr>";
                                                         }

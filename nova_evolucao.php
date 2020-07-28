@@ -48,7 +48,6 @@ function validaCPF($cpf = null)
     }
 }
 error_reporting(0);
-include('verifica.php');
 date_default_timezone_set('America/Sao_Paulo');
 $menu_grupo = '1';
 $data_transacao = inverteData(date('Y-m-d'));
@@ -155,6 +154,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sat = stripslashes(pg_escape_string($_POST['sat']));
     $glicemia = stripslashes(pg_escape_string($_POST['glicemia']));
     $diurese = stripslashes(pg_escape_string($_POST['diurese']));
+    $usuario = stripslashes(pg_escape_string($_POST['user']));
+    $perfil = stripslashes(pg_escape_string($_POST['perfil']));
 
     if ($evolucao == "") {
         $erro = "Evolução deve ser Informado";
@@ -173,6 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("location: evolucao_atendimento.php?id=" . $transacao);
     }
 }
+include('verifica.php');
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" class="loading">
@@ -279,6 +281,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="card-content">
                                 <div class="card-body">
                                     <form method="post" id="pedido" name='pedido'>
+                                        <input type="text" name="user" value="<?= $usuario; ?>">
+                                        <input type="text" name="perfil" value="<?= $perfil; ?>">
                                         <div class="row mb-2">
                                             <div class="col-sm-12">
                                                 <h3 align="center">Identificação do Paciente</h3>
@@ -321,22 +325,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                         </div>
                                         <div class="row">
-                                                <div class="col-3">
-                                                    <label>Temperatura</label>
-                                                    <input type="text" class="form-control square" name="temp">
-                                                </div>
-                                                <div class="col-3">
-                                                    <label>Pressão Arterial</label>
-                                                    <input type="text" class="form-control square" name="pa">
-                                                </div>
-                                                <div class="col-3">
-                                                    <label>Frequência Cardíaca</label>
-                                                    <input type="text" name="fc" class="form-control square">
-                                                </div>
-                                                <div class="col-3">
-                                                    <label>Frequência Respiratória</label>
-                                                    <input type="text" name="fr" class="form-control square">
-                                                </div>
+                                            <div class="col-3">
+                                                <label>Temperatura</label>
+                                                <input type="text" class="form-control square" name="temp">
+                                            </div>
+                                            <div class="col-3">
+                                                <label>Pressão Arterial</label>
+                                                <input type="text" class="form-control square" name="pa">
+                                            </div>
+                                            <div class="col-3">
+                                                <label>Frequência Cardíaca</label>
+                                                <input type="text" name="fc" class="form-control square">
+                                            </div>
+                                            <div class="col-3">
+                                                <label>Frequência Respiratória</label>
+                                                <input type="text" name="fr" class="form-control square">
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-4">
@@ -352,20 +356,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <input type="text" class="form-control square" name="diurese">
                                             </div>
                                         </div>
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <label>Evolução</label>
-                                            <textarea name="evolucao" class="form-control square" rows="50" cols="50" style="resize: none"></textarea> </br>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <label>Evolução</label>
+                                                <textarea name="evolucao" class="form-control square" rows="50" cols="50" style="resize: none"></textarea> </br>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-12" align="center">
-                                            <?php if ($perfil == '06' or $perfil == '03' or $perfil == '08') { ?>
-                                                <input type='submit' name='gravar' class="btn btn-primary" value='Gravar' onclick="return valida()">
-                                            <?php } ?>
-                                            <a href="evolucao_atendimento.php?id=<?php echo $_GET['id'] ?>" class="btn btn-danger">Cancelar</a>
+                                        <div class="row">
+                                            <div class="col-12" align="center">
+                                                <?php if ($perfil == '06' or $perfil == '03' or $perfil == '08') { ?>
+                                                    <input type='submit' name='gravar' class="btn btn-primary" value='Gravar' onclick="return valida()">
+                                                <?php } ?>
+                                                <a href="evolucao_atendimento.php?id=<?php echo $_GET['id'] ?>" class="btn btn-danger">Cancelar</a>
+                                            </div>
                                         </div>
-                                    </div>
                                     </form>
                                 </div>
                             </div>
