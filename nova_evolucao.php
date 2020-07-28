@@ -281,8 +281,8 @@ include('verifica.php');
                             <div class="card-content">
                                 <div class="card-body">
                                     <form method="post" id="pedido" name='pedido'>
-                                        <input type="text" name="user" value="<?= $usuario; ?>">
-                                        <input type="text" name="perfil" value="<?= $perfil; ?>">
+                                        <input type="hidden" name="user" value="<?= $usuario; ?>">
+                                        <input type="hidden" name="perfil" value="<?= $perfil; ?>">
                                         <div class="row mb-2">
                                             <div class="col-sm-12">
                                                 <h3 align="center">Identificação do Paciente</h3>
