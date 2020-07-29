@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 $qtdAtendiemento = "";
 include('conexao.php');
-$stmtCount = "SELECT count(*) as qtd from homologacao_upa.public.atendimentos   ";
+$stmtCount = "SELECT count(*) as qtd from atendimentos   ";
 if (rtrim($tipo_atendimento) == 'ADULTO') {
     $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and case when destino_paciente = '0' then status is not null else (status = 'Aguardando Atendimento') end AND especialidade = 'Consultorio Adulto' and cast(tipo as integer) != 9";
 } elseif (rtrim($tipo_atendimento) == 'ORTOPEDIA') {
