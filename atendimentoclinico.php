@@ -274,7 +274,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $procedimento = stripslashes(pg_escape_string($_POST['procedimento']));
     $transfere = $_POST['cb_exame'];
     $obs_modal = stripslashes(pg_escape_string($_POST['obs_modal']));
-    $coronavirus = $_POST['obs_modal'];
+    $coronavirus = $_POST['coronavirus'];
 
     if ($coronavirus == 1 or $coronavirus == 10) {
         if ($_POST['febre_alta']) {
@@ -1149,6 +1149,9 @@ if ($destino != '') {
                                         <li class="nav-item">
                                             <a class="nav-link" id="linkOpt-tab" data-toggle="tab" href="#linkOpt" aria-controls="linkOpt">Estadias/Receituário</a>
                                         </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" id="linkOpt-tab" data-toggle="tab" href="#linkAtestados" aria-controls="linkOpt">Historico Atestados</a>
+                                        </li>
                                     </ul>
                                     <input type="hidden" name="atendimento" id="atendimento" value="<?= $_GET['id'] ?>">
                                     <input type="hidden" name="profissional" id="profissional" value="<?php echo $usuario ?>">
@@ -1715,6 +1718,44 @@ if ($destino != '') {
                                                 <input id="senha-autorizado" name="senha-autorizado" type="hidden" />
                                             </div>
                                         </div>
+                                        <div class="tab-pane" id="linkAtestados" role="tabpanel" aria-labelledby="linkOpt-tab" aria-expanded="false">
+                                            <div class="col-12 d-flex">
+                                                <div class="col-6 col"><br>
+                                                    <div class="col-12 text-center"><br>
+                                                        <h4 class="form-section-center"><i class="fas fa-hospital-alt"></i>Historico de Atestados</h4>
+                                                        <hr style="margin: auto;width: 260px">
+                                                    </div>
+
+                                                    <div class="col-sm-12 scroll"><br>
+
+                                                        <table class="table table-hover table-striped width-full">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Data</th>
+                                                                    <th>Hora</th>
+                                                                </tr>
+                                                            </thead>
+
+                                                            <tbody>
+                                                                <?php
+                                                                include('conexao.php');
+                                                                $stmt = "select distinct partir_dia, max(hora_atendimento) hora from atestados where pessoa_id =" . $prontuario . " group by 1 order by 1 desc";
+                                                                $sth = pg_query($stmt) or die($stmt);
+                                                                //echo $stmt;
+                                                                while ($row = pg_fetch_object($sth)) {
+                                                                    echo "<tr>";
+                                                                    echo "<td>" . inverteData(substr($row->partir_dia, 0, 10)) . "</td>";
+                                                                    echo "<td>$row->hora</td>";
+                                                                    echo "</tr>";
+                                                                }
+                                                                ?>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1815,25 +1856,32 @@ if ($destino != '') {
                     </div>
                 </div>
                 <div class="col-md-12" align="center"><br><br>
-                    <div class="form-group">
-                        <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
-                        <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
+                    <form method="post" enctype="multipart/form-data" action="relComparecimento.php" target="_blank">
+                        <div class="form-group">
+                            <?php if ($destino != '') { ?>
+                                <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary">Evoluir</a>
+                            <?php } else { ?>
+                                <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
+                            <?php } ?>
+                            <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
 
 
 
-                        <button type="button" id="receituario" class="btn btn-success" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
-                            Solicitação de Internação
-                        </button>
+                            <button type="button" id="receituario" class="btn btn-success" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
+                                Solicitação de Internação
+                            </button>
 
+                            <input type="hidden" value="<?= $_GET['id'] ?>">
+                            <input type='submit' id="declaracao_comparecimento" value='Declaração de Comparecimento' class="btn btn-warning">
 
-                        <a href="relComparecimento.php" target="_blank" name="faa" class="btn btn-primary">Declaração de Comparecimento</a>
-                        <a href="relFAA.php?id=<?= $_GET['id'] ?>" target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
-                        <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>" target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
-                        <input type='hidden' readOnly class="form-control" name="origem" id="origem" value='<?php echo $origem; ?>'>
-                        <!--<input type='submit' name='imprimir'  class="btn btn-primary" value='Imprimir'>-->
-                        <!--<input type='submit' name='xcancelar' class="btn btn-danger"  value='Cancelar'>-->
+                            <a href="relFAA.php?id=<?= $_GET['id'] ?>" target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
+                            <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>" target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
+                            <input type='hidden' readOnly class="form-control" name="origem" id="origem" value='<?php echo $origem; ?>'>
+                            <!--<input type='submit' name='imprimir'  class="btn btn-primary" value='Imprimir'>-->
+                            <!--<input type='submit' name='xcancelar' class="btn btn-danger"  value='Cancelar'>-->
 
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div> <!-- FINALIZANDO TABS -->
 

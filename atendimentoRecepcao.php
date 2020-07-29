@@ -571,28 +571,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <tbody>
                                                     <?php
                                                     include('conexao.php');
-                                                    $sql = "select a.transacao from pedidos a inner join pessoas b on a.paciente_id = b.pessoa_id inner join atendimentos c on a.atendimento_id = c.transacao where c.destino_paciente = '19' and c.dat_cad > '2019-08-11'";
-                                                    //$result = pg_query($sql) or die($sql);
+                                                    $sql = "select a.transacao, c.transacao as atendimento_id from pedidos a inner join pessoas b on a.paciente_id = b.pessoa_id inner join atendimentos c on a.atendimento_id = c.transacao where c.destino_paciente = '10' and dt_solicitacao >= CURRENT_DATE -1 ";
+                                                    $result = pg_query($sql) or die($sql);
                                                     while ($row = pg_fetch_object($result)) {
                                                         include('conexao_laboratorio.php');
                                                         $sql2 = "select distinct a.data, b.nome, a.medico_solicitante, array_to_string(array_agg(DISTINCT d.situacao), ',') as situacao from pedidos a
 								inner join pessoas b on a.pessoa_id = b.pessoa_id
 								inner join pedido_guia c on a.pedido_id = c.pedido_id 
-								inner join pedido_item d on c.pedido_guia_id = d.pedido_guia_id where cod_pedidos::varchar like '%" . $row->transacao . "' and c.origem = '".ORIGEM_CONFIG."' group by 1,2,3";
-                                                        //$result2 = pg_query($sql2) or die($sql2);
+								inner join pedido_item d on c.pedido_guia_id = d.pedido_guia_id where cod_pedidos::varchar like '%" . $row->transacao . "' and c.origem = '" . ORIGEM_CONFIG . "' group by 1,2,3";
+                                                        $result2 = pg_query($sql2) or die($sql2);
                                                         $row2 = pg_fetch_object($result2);
+                                                        if ($row2) {
                                                     ?>
-                                                        <tr <?php if ($row2->situacao == '') { ?>bgcolor="#FF0000" style="color: #fff;" <?php } else if ($row2->situacao == 'Liberado') { ?>bgcolor="#0B610B" style="color: #fff;" <?php } else { ?>bgcolor="#F7FE2E" style="color: #000000;" <?php } ?>>
-                                                            <td><?php echo inverteData($row2->data); ?></td>
-                                                            <td><?php echo $row2->nome; ?></td>
-                                                            <td><?php echo $row2->medico_solicitante; ?></td>
-                                                            <td>
-                                                                <?php if ($row2->situacao == 'Liberado') {
-                                                                    //echo "<a href='atendimentoclinico.php?id=199314' target='_blank' class=\"btn btn-pure btn-danger icon wb-search\"></a>";
-                                                                } ?>
-                                                            </td>
-                                                        </tr>
+                                                            <tr <?php if ($row2->situacao == '') { ?>bgcolor="#FF0000" style="color: #fff;" <?php } else if ($row2->situacao == 'Liberado') { ?>bgcolor="#0B610B" style="color: #fff;" <?php } else { ?>bgcolor="#F7FE2E" style="color: #000000;" <?php } ?>>
+                                                                <td><?php echo inverteData($row2->data); ?></td>
+                                                                <td><?php echo $row2->nome; ?></td>
+                                                                <td><?php echo $row2->medico_solicitante; ?></td>
+                                                                <td>
+                                                                    <?php if ($row2->situacao == 'Liberado') {
+                                                                        echo "<a href='atendimentoclinico.php?id=$row->atendimento_id' target='_blank' class=\"btn btn-pure btn-danger\"><i class=\"far fa-eye\"></i></a>";
+                                                                    } ?>
+                                                                </td>
+                                                            </tr>
                                                     <?php }
+                                                    }
                                                     ?>
                                                 </tbody>
                                                 <tfoot>

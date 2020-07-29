@@ -431,10 +431,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             echo "<td>" . $row->status . "</td>";
                                                         }
                                                         echo "<td>";
-                                                        if (($perfil == '06' or $perfil == '04' or $perfil == '08' or $perfil == '15') and isset($_SESSION['box'])) {
-                                                            echo "<a id=\"triagemmanual\" data-id=\"$row->transacao\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn triagemmanual\" data-target=\"#modalConteudo\" data-toggle=\"modal\" data-original-title=\"Triagem Manual\" onClick=\"valorTriagem(this);\">
+                                                        //if (($perfil == '06' or $perfil == '04' or $perfil == '08' or $perfil == '15') and isset($_SESSION['box'])) {
+                                                        echo "<a id=\"triagemmanual\" data-id=\"$row->transacao\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn triagemmanual\" data-target=\"#modalConteudo\" data-toggle=\"modal\" data-original-title=\"Triagem Manual\" onClick=\"valorTriagem(this);\">
                                                             <i class=\"fas fa-hand-holding-medical\"></i></a>";
-                                                        }
+                                                        //}
                                                         echo "</td>";
                                                         echo "</tr>";
                                                     }
