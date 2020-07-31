@@ -1486,7 +1486,7 @@ if ($destino != '') {
                                                                     }
                                                                     echo "<td>" . inverteData($rows->data) . "</td>";
                                                                     echo "<td>$rows->descricao</td>";
-                                                                    if ($rows->liberado == 0 or $rows->situacao == 'Liberado') {
+                                                                    if ($rows->situacao == 'Liberado') {
                                                                         echo "<td><a href='http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"fas fa-search\"></a></td>";
                                                                     } else if ($rows->situacao != 'Liberado') {
                                                                         echo "<td>" . $rows->situacao . "</td>";
