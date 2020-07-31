@@ -68,8 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		c.nome,c.nome_social, k.origem, f.descricao as clinica, CASE
             WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
             WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
-            WHEN a.destino_paciente = '19' THEN '2' 
-            WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '3' 
+            WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '2' 
+            WHEN a.destino_paciente = '10' THEN '3'
             WHEN a.prioridade = 'VERDE' and a.destino_paciente is null THEN '4' 
             WHEN a.prioridade = 'AZUL' and a.destino_paciente is null THEN '5' 
         ELSE '6' END
@@ -117,7 +117,7 @@ $qtdAtendiemento = "";
 include('conexao.php');
 $stmtCount = "SELECT count(*) as qtd from atendimentos   ";
 if (rtrim($tipo_atendimento) == 'ADULTO') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and case when destino_paciente = '0' then status is not null else (status = 'Aguardando Atendimento') end AND especialidade = 'Consultorio Adulto' and cast(tipo as integer) != 9";
+    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and cast(tipo as integer) != 9";
 } elseif (rtrim($tipo_atendimento) == 'ORTOPEDIA') {
     $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Pediátrico' ";
 } elseif (rtrim($tipo_atendimento) == 'EXAME') {
