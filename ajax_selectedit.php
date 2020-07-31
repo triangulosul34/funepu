@@ -484,7 +484,7 @@ if ($optradio == '5') {
                 <div class="col-3">
                     <div class="form-group">
                         <label>Diluente</label>
-                        <select class="form-control square selectnew" data-size="4" data-live-search="true" name="diluente" id="diluente">
+                        <select class="form-control" name="diluente" id="diluente">
                             <option value=""></option>
                             <option value="9999">EM BOLUS</option>
                             <?php

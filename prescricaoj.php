@@ -673,6 +673,28 @@ if (isset($_POST["cancelar"])) {
                 } else {
                     document.getElementById("teste").style.display = "none";
                 }
+
+                if (esc == 105342) {
+                    $("#diluente option[value='9999']").remove();
+                    $("#diluente option[value='8888']").remove();
+                    $("#diluente option[value='105472']").remove();
+                    $("#diluente option[value='105340']").remove();
+                    $("#diluente option[value='105336']").remove();
+                    $("#diluente option[value='105335']").remove();
+                    $("#diluente option[value='105204']").remove();
+                    $("#diluente option[value='104942']").remove();
+                } else {
+                    if ($("#diluente option[value='9999']").length < 1) {
+                        $("#diluente").append('<option value="9999">EM BOLUS</option>');
+                        $("#diluente").append('<option value="8888">PURO</option>');
+                        $("#diluente").append('<option value="105472">AGUA DESTILADA 10 ML</option>');
+                        $("#diluente").append('<option value="105340">CLORETO DE SODIO 0, 9 % -AMPOLA DE 10 ML</option>');
+                        $("#diluente").append('<option value="105336">CLORETO SODIO 0, 9 % 100 ML</option>');
+                        $("#diluente").append('<option value="105335">CLORETO SODIO 0,9% 250ML</option>');
+                        $("#diluente").append('<option value="105204">GLICOSE 5% 250ML</option>');
+                        $("#diluente").append('<option value="104942">SOLUÇAO DE RINGER COM LACTATO FRASCO DE</option>');
+                    }
+                }
             }
 
             function radio() {
