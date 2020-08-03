@@ -270,6 +270,122 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
+    <div class="modal fade" id="exampleTabs" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalTabs">Atestado</h4>
+                </div>
+
+
+
+                <form method="post" enctype="multipart/form-data" action="relAtestado.php" target="_blank">
+                    <div class="modal-body" id='modalbody'>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Data do atendimento</label>
+                                    <input type="text" name="data_atendimento" id="data_atendimento" class="form-control" value="<?php echo inverteData($data_transacao); ?>" onKeyPress="formata(this,'##/##/####')" maxlength="10">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Hora do atendimento</label>
+                                    <input type="text" name="hora_atendimento" id="hora_atendimento" class="form-control" value="<?php echo $hora_transacao; ?>" onKeyPress="formata(this,'##:##')" maxlength="5">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Dias de atestado</label>
+                                    <input type="text" name="dias_atestado" id="dias_atestado" class="form-control" value="">
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">CID</label>
+                                    <input type="text" name="cidAtestado" id="cidAtestado" class="form-control" value="<?php echo $CID; ?>" onkeyup="maiuscula(this)">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" name="atendimento" id="atendimento" value="<?= $_GET['id'] ?>">
+                        <input type="hidden" name="profissional" id="profissional" value="<?php echo $usuario ?>">
+                        <input type="hidden" name="paciente" id="paciente" value="<?php echo $prontuario ?>">
+
+                        <button type="submit" name="enviar" class="btn btn-default">Imprimir</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalSolicitaReceituario" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalTabs">Receituário</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" id='modalbody'>
+                    <div id="bloco_receituario">
+                        <div class="row">
+
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label>Item/Medicamento</label>
+                                    <input id="medicamento-1" maxlength="100" name="medicamento-1" class="form-control" value="" onkeyup="maiuscula(this)">
+                                </div>
+                            </div>
+
+                            <div class="col-2">
+                                <div class="form-group">
+                                    <label>Quantidade</label>
+                                    <input id="quantidade-1" maxlength="50" name="quantidade-1" class="form-control" value="" onkeyup="maiuscula(this)">
+                                </div>
+                            </div>
+
+                            <div class="col-5">
+                                <div class="form-group">
+                                    <label>Modo de usar</label>
+                                    <input id="usar-1" name="usar-1" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="botao">
+                        <div class="col-12" style="text-aling: center">
+                            <input type='button' style="margin: 0 auto;" id="novo_receituario" class="btn btn-success" value="Adicionar Item">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="salvar_receituario" value="" class="btn btn-default" onclick="salvar_prescricao(this)">Salvar</button>
+                    <button type="button" id="closemodal" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
     <div class="modal fade text-left" id="modalEv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -458,6 +574,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <a href="nova_evolucao.php?id=<?php echo $transacao; ?>" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Nova Evolução</a>
                                             <a class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" target="_blank" href="relSUSFacil.php?id=<?php echo $_GET['id']; ?>">Solicitação de Internação</a>
                                             <button data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Finalizar Atendimento</button>
+                                            <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
+                                            <?php echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-success mr-2" data-toggle="modal">';?>
                                         </div>
                                     </div>
                                     <div class="row mt-4">
@@ -1012,6 +1130,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $('#conteudoModal').html(dataReturn);
             });
 
+        }
+
+        function salvar_prescricao(campo) {
+            var i = 1;
+            var x = 1;
+            var total = campo.value;
+            var transacao = $("#transacao").val();
+            total++;
+
+            if ($("#medicamento-1").val() == '') {
+                swal("Informe o medicamento/cuidado", "", "warning")
+            } else {
+                while (i <= total) {
+                    var medicamento = $("#medicamento-" + i).val();
+                    var quantidade = $("#quantidade-" + i).val();
+                    var usar = $("#usar-" + i).val();
+                    if (medicamento != undefined && (medicamento != '')) {
+                        $.post('salvar_receituario.php', {
+                            medicamento: medicamento,
+                            quantidade: quantidade,
+                            usar: usar,
+                            transacao: transacao
+                        }, function(data, status) {
+                            $('#receit').html(data);
+                        })
+                    }
+                    i++;
+                }
+
+                while (x <= total) {
+                    var medicamento = $("#medicamento-" + x).val('');
+                    var quantidade = $("#quantidade-" + x).val('');
+                    var usar = $("#usar-" + x).val('');
+                    x++;
+                }
+                $("#modalSolicitaReceituario").modal('hide');
+                window.open("relReceituario.php?transacao=" + transacao, '_blank');
+
+            }
+
+        }
+        var contador = 2;
+        $("#novo_receituario").click(function(event) {
+            $('#bloco_receituario').prepend('<div id="item-' + contador +
+                '"><div class="row"><div class="col-4"><div class="form-group"><label class="control-label">Medicamento</label><input id="medicamento-' +
+                contador +
+                '" class="form-control" value="" maxlength="100" onkeyup="maiuscula(this)"></div></div><div class="col-2"><div class="form-group"><label class="control-label">Quantidade</label><input id="quantidade-' +
+                contador +
+                '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-5"><div class="form-group"><label class="control-label">Modo de usar</label><input id="usar-' +
+                contador +
+                '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-1"><div class="form-group"><button onclick="apagar_item_receituario(this)" value="' +
+                contador + '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>');
+            $("#salvar_receituario").attr("value", contador);
+            contador++;
+        });
+
+        function apagar_item_receituario(indice) {
+            $("#item-" + indice.value).remove();
         }
     </script>
 </body>

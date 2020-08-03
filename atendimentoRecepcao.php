@@ -571,14 +571,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <tbody>
                                                     <?php
                                                     include('conexao.php');
-                                                    $sql = "select a.transacao, c.transacao as atendimento_id from pedidos a inner join pessoas b on a.paciente_id = b.pessoa_id inner join atendimentos c on a.atendimento_id = c.transacao where c.destino_paciente = '10' and dt_solicitacao >= CURRENT_DATE -1 ";
+                                                    $sql = "select a.transacao, c.transacao as atendimento_id from pedidos a inner join pessoas b on a.paciente_id = b.pessoa_id inner join atendimentos c on a.atendimento_id = c.transacao where c.destino_paciente = '10' and dt_solicitacao >= CURRENT_DATE -1 and c.status = 'Aguardando Atendimento'";
                                                     $result = pg_query($sql) or die($sql);
                                                     while ($row = pg_fetch_object($result)) {
                                                         include('conexao_laboratorio.php');
                                                         $sql2 = "select distinct a.data, b.nome, a.medico_solicitante, array_to_string(array_agg(DISTINCT d.situacao), ',') as situacao from pedidos a
 								inner join pessoas b on a.pessoa_id = b.pessoa_id
 								inner join pedido_guia c on a.pedido_id = c.pedido_id 
-								inner join pedido_item d on c.pedido_guia_id = d.pedido_guia_id where cod_pedidos::varchar like '%" . $row->transacao . "' and c.origem = '" . ORIGEM_CONFIG . "' group by 1,2,3";
+								inner join pedido_item d on c.pedido_guia_id = d.pedido_guia_id where cod_pedidos::varchar like '%" . $row->transacao . "' and c.origem = '" . ORIGEM_CONFIG . "' and a.data >= CURRENT_DATE -1 group by 1,2,3";
                                                         $result2 = pg_query($sql2) or die($sql2);
                                                         $row2 = pg_fetch_object($result2);
                                                         if ($row2) {
