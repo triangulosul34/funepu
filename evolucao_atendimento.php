@@ -201,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sth = pg_query($stmt) or die($stmt);
 
         $stmt = "update atendimentos set coronavirus=5 where transacao=$atendimento";
-        $sth = pg_query($stmt) or die($stmt);
+        //$sth = pg_query($stmt) or die($stmt);
 
         echo "
 		<script>
@@ -575,7 +575,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <a class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" target="_blank" href="relSUSFacil.php?id=<?php echo $_GET['id']; ?>">Solicitação de Internação</a>
                                             <button data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Finalizar Atendimento</button>
                                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
-                                            <?php echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-success mr-2" data-toggle="modal">';?>
+                                            <?php echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-success mr-2" data-toggle="modal">'; ?>
                                         </div>
                                     </div>
                                     <div class="row mt-4">
