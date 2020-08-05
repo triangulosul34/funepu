@@ -244,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         echo "<td>" . $row->nome . "</td>";
                                                         echo "<td>" . $row->modalidade . "</td>";
                                                         echo "<td>" . $row->situacao . "</td>";
-                                                        echo "<td><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><img src=\"edita.png\"  title=\"Marcar como realizado\"></a>";
+                                                        echo "<td><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
                                                         echo "</tr>";
                                                     }
                                                     ?>

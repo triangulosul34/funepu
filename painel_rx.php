@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         echo "<td><font size='2'>" . $row->solicitante . "</font></td>";
                                                         echo "<td><font size='2'>" . $row->desc_exames . "</font></td>";
                                                         echo "<td><font size='2'>" . $row->situacao . "</font></td>";
-                                                        echo "<td><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><img src=\"edita.png\"  title=\"Marcar como realizado\"></a>";
+                                                        echo "<td><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
                                                         echo "</tr>";
                                                     }
                                                     ?>
