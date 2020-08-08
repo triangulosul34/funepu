@@ -17,7 +17,7 @@
                                 <a href="monitor_triagem.php" class="menu-item">TRIAGEM</a>
                             </li>
                         <?php }
-                        if ($perfil == '06' or $perfil == '03') { ?>
+                        if ($perfil == '06' or $perfil == '03' or $perfil == '08') { ?>
                             <li class="is-shown">
                                 <a href="monitor_medico.php" class="menu-item">ATENDIMENTO MEDICO</a>
                             </li>
@@ -28,7 +28,7 @@
                         <?php
                         if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                             <li class="is-shown">
-                                <a href="atendimento_retroativo.php" class="menu-item">ATEND. RETROATIVO</a>
+                                <a href="atendimentoretroativo.php" class="menu-item">ATEND. RETROATIVO</a>
                             </li>
                         <?php
                         }
@@ -92,6 +92,9 @@
                     <li class="has-sub nav-item">
                         <a href="#"><i class="fas fa-tasks"></i><span class="menu-title">GESTÃO</span></a>
                         <ul class="menu-content">
+                            <li class="is-shown">
+                                <a href="contpermanencia.php" class="menu-item">CONTROLE DE PERMANÊNCIA</a>
+                            </li>
                             <li class="is-shown">
                                 <a href="relatoriodiario.php" class="menu-item">REL. DIARIO</a>
                             </li>
@@ -216,20 +219,20 @@
                         <a href="pedidos.php"><i class="fas fa-file-prescription"></i><span class="menu-title">LAUDOS</span></a>
                     </li>
                 <?php }
-                if ($perfil != '08' and $perfil = !'03') { ?>
+                if ($perfil != '08' && $perfil != '03') { ?>
                     <li class="nav-item">
                         <a href="farmacia.php"><i class="fas fa-pills"></i><span class="menu-title">FARMACIA</span></a>
                     </li>
                 <?php }
                 if ($perfil == '14' or $perfil == '06') { ?>
                     <li class="nav-item">
-                        <a href="novopedido.php"><i class="fas fa-pills"></i><span class="menu-title">SOLICITAR EXAMES</span></a>
+                        <a href="novopedido.php"><i class="fas fa-clinic-medical"></i><span class="menu-title">SOLICITAR EXAMES</span></a>
                     </li>
-                <?php } ?> ?>
+                <?php } ?>
             </ul>
         </div>
     </div>
-    <div class="row" style="position: absolute;bottom: 5%;left: 18%;z-index: inherit;">
+    <div class="row" style="position: absolute;bottom: 5%;left: 18%;z-index: 2;">
         <div class="col-7">
             <img src="app-assets/img/gallery/logotsul.png" width="150px" height="130px">
         </div>

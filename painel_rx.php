@@ -223,21 +223,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     mt;
                                                     $sth = pg_query($stmt) or die($stmt);
                                                     while ($row = pg_fetch_object($sth)) {
-                                                        if ($row->modalidade   == 'RX') {
-                                                            $classe = "class='bg-info'";
-                                                        }
-                                                        if ($row->modalidade   == 'TC') {
-                                                            $classe = "class='bg-danger'";
-                                                        }
-                                                        if ($row->modalidade   == 'RM') {
-                                                            $classe = "class='bg-success'";
-                                                        }
-                                                        if ($row->modalidade   == 'US') {
-                                                            $classe = "class='bg-primary'";
-                                                        }
-                                                        if ($row->modalidade   == 'MM') {
-                                                            $classe = "class='bg-warning'";
-                                                        }
+                                                        if ($row->situacao   == 'Realizado') {
+                $classe = "class='bg-info'";
+            } else {
+                $classe = "class='bg-danger'";
+            }
                                                         echo "<tr " . $classe . ">";
                                                         echo "<td><font size='2'>" . inverteData(substr($row->cadastro, 0, 10)) . "</font></td>";
                                                         echo "<td><font size='2'>" . $row->exame_nro . "</font></td>";

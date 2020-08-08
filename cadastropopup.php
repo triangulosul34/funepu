@@ -418,7 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <div class="col-md-2">
                                                         <div class="form-group">
                                                             <label class="control-label">Expedição</label>
-                                                            <input type="text" class="form-control square" id="org_exped" name="org_exped" value="<?php echo $org_exped; ?>" onkeyup="maiuscula(this)">
+                                                            <input type="text" class="form-control square" id="org_exped" OnKeyPress="formatar('##/##/####', this)" name="org_exped" value="<?php echo $org_exped; ?>" onkeyup="maiuscula(this)">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">

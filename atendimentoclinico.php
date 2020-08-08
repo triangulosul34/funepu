@@ -1876,6 +1876,9 @@ if ($destino != '') {
 
                             <a href="relFAA.php?id=<?= $_GET['id'] ?>" target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
                             <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>" target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
+                            <?php if ($destino != '') { ?>
+                                <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
+                            <?php } ?>
                             <input type='hidden' readOnly class="form-control" name="origem" id="origem" value='<?php echo $origem; ?>'>
                             <!--<input type='submit' name='imprimir'  class="btn btn-primary" value='Imprimir'>-->
                             <!--<input type='submit' name='xcancelar' class="btn btn-danger"  value='Cancelar'>-->

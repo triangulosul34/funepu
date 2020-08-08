@@ -889,7 +889,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="col-6">
                                         <div class="float-right">
                                             <ol class="breadcrumb">
-                                                <li><a href="../index.html">Home</a></li>
+                                                <li><a href="index.php">Home</a></li>
                                                 <li><a href="atendimentos.php">Atendimentos</a></li>
                                                 <li class="active">Novo Atendimento</li>
                                             </ol>
@@ -1000,7 +1000,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <label class="control-label">RG</label> <input type="text" name="rg" id="rg" class="form-control" value="<?php echo $identidade; ?>">
                                                         </div>
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">Expedição</label> <input type="text" name="org_expeditor" id="org_expeditor" class="form-control" value="<?php echo $org_expeditor; ?>"><br>
+                                                            <label class="control-label">Expedição</label> <input type="text" name="org_expeditor" id="org_expeditor" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?php echo $org_expeditor; ?>"><br>
                                                         </div>
                                                     </div>
                                                 </div>
