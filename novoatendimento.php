@@ -363,7 +363,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $dt_transacao = inverteData($data_transacao);
                 $dt_solicitacao = inverteData($dt_nsolicitacao);
                 $horacad = date('H:i');
-                $stmt = "update atendimentos set  transacao=$transacao, cad_user='$usuario_transacao',  paciente_id=$prontuario, tipo='$origem',  observacao='$observacao', box='1', hora_cad='$horacad', local='01',
+                $stmt = "update atendimentos set  transacao=$transacao, cad_user='$usuario_transacao',  paciente_id=$prontuario, tipo='$origem',  observacao='$observacao', box='1', local='01',
 				peso='0', nec_especiais='$deficiencia', oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', acompanhante = '$nome_acompanhante', com_oqfaz='$com_oqfaz', coronavirus = $coronavirus where transacao=$transacao ";
                 $sth = pg_query($stmt) or die($stmt);
 
