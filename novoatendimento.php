@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "select a.transacao, a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.acompanhante,
+        $stmt = "select a.transacao, a.paciente_id, a.status, nec_especiais, a.tipo, a.dat_cad as cadastro, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.acompanhante,
 		a.oque_faz, a.com_oqfaz, a.tempo_faz, a.como_faz, c.nome_mae, c.numero, c.complemento, c.bairro, c.cep, c.num_carteira_convenio as cns, c.cidade, c.estado, a.observacao, k.origem,
 		c.identidade, c.org_expeditor,c.cpf, a.coronavirus
 		from atendimentos a
@@ -1046,11 +1046,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="row mt-3 mb-3 align-items-center">
                                                 <div class="col-6">
                                                     <label class="control-label">Necessidades Especiais</label> <select name="deficiencia" class="form-control">
-                                                        <option value="Nenhuma">Nenhuma</option>
-                                                        <option value="Visual">Visual</option>
-                                                        <option value="Motora">Motora</option>
-                                                        <option value="Mental">Mental</option>
-                                                        <option value="Auditiva">Auditiva</option>
+                                                        <option value="Nenhuma" <?php if($deficiencia == "nenhuma"){echo "selected";}?>>Nenhuma</option>
+                                                        <option value="Visual" <?php if($deficiencia == "Visual"){echo "selected";}?>>Visual</option>
+                                                        <option value="Motora" <?php if($deficiencia == "Motora"){echo "selected";}?>>Motora</option>
+                                                        <option value="Mental" <?php if($deficiencia == "Mental"){echo "selected";}?>>Mental</option>
+                                                        <option value="Auditiva" <?php if($deficiencia == "Auditiva"){echo "selected";}?>>Auditiva</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-6">

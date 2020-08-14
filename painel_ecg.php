@@ -108,6 +108,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         margin-left: 0px;
         border-top-width: 0px;
     }
+
+    .blink {
+        animation-duration: 0.85s;
+        animation-name: blink;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        animation-timing-function: ease-in-out;
+    }
+
+    @keyframes blink {
+        from {
+            color: white;
+        }
+
+        to {
+            color: darkred;
+        }
+    }
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
@@ -211,9 +229,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <?php
                                                     include('conexao.php');
                                                     $stmt = "select a.transacao, a.exame_nro, a.exame_id, a.situacao, a.contraste, b.transacao, a.med_analise, b.dat_cad as cadastro, b.dt_solicitacao, b.dt_realizacao, b.convenio_id, a.pedido,
-						c.nome, d.sigla as convenio, a.exame_id, e.descricao as desc_exames, f.sigla as modalidade from itenspedidos a left join pedidos b on 
+						c.nome, d.sigla as convenio, a.exame_id, e.descricao as desc_exames, f.sigla as modalidade, z.coronavirus from itenspedidos a left join pedidos b on 
 						b.transacao=a.transacao left join pessoas c on b.paciente_id=c.pessoa_id  left join convenios d on b.convenio_id=d.convenio_id
-						left join procedimentos e on a.exame_id=e.procedimento_id left join modalidades f on e.modalidade_id=f.modalidade_id 
+                        left join procedimentos e on a.exame_id=e.procedimento_id left join modalidades f on e.modalidade_id=f.modalidade_id 
+                        left join atendimentos z on a.atendimento_id=z.transacao
 						WHERE f.modalidade_id = 4 AND b.dat_cad = '$data' AND a.situacao = 'Cadastrando'
 						order by a.transacao DESC";
 
@@ -225,15 +244,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $classe = "class='bg-danger'";
             }
                                                         echo "<tr " . $classe . ">";
-                                                        echo "<td><a href='emitelaudos.php?id=" . $row->exame_nro . "' target='_blank'>";
-                                                        echo str_pad($row->transacao, 5, "0", STR_PAD_LEFT);
-                                                        echo "</a></td>";
-                                                        echo "<td>" . inverteData(substr($row->cadastro, 0, 10)) . "</td>";
-                                                        echo "<td>" . $row->convenio . "</td>";
-                                                        echo "<td>" . $row->nome . "</td>";
-                                                        echo "<td>" . $row->modalidade . "</td>";
-                                                        echo "<td>" . $row->situacao . "</td>";
-                                                        echo "<td><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
+                                                        if ($row->coronavirus == 1) {
+                                                            echo "<td class='blink'><font size='2'>" . inverteData(substr($row->cadastro, 0, 10)) . "</font></td>";
+                                                            echo "<td class='blink'><font size='2'>" . $row->exame_nro . "</font></td>";
+                                                            echo "<td class='blink'><font size='2'>" . $row->pessoa_id . "</font></td>";
+                                                            echo "<td class='blink'><font size='2'>" . $row->nome . "</font></td>";
+                                                            echo "<td class='blink'><font size='2'>" . date('d/m/Y', strtotime($row->dt_nasc)) . "</font></td>";
+                                                            echo "<td class='blink'><font size='2'>" . $row->solicitante . "</font></td>";
+                                                            echo "<td class='blink'><font size='2'>" . $row->desc_exames . "</font></td>";
+                                                            echo "<td class='blink'><font size='2'>" . $row->situacao . "</font></td>";
+                                                            echo "<td class='blink'><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
+                                                        } else {
+                                                            echo "<td><font size='2'>" . inverteData(substr($row->cadastro, 0, 10)) . "</font></td>";
+                                                            echo "<td><font size='2'>" . $row->exame_nro . "</font></td>";
+                                                            echo "<td><font size='2'>" . $row->pessoa_id . "</font></td>";
+                                                            echo "<td><font size='2'>" . $row->nome . "</font></td>";
+                                                            echo "<td><font size='2'>" . date('d/m/Y', strtotime($row->dt_nasc)) . "</font></td>";
+                                                            echo "<td><font size='2'>" . $row->solicitante . "</font></td>";
+                                                            echo "<td><font size='2'>" . $row->desc_exames . "</font></td>";
+                                                            echo "<td><font size='2'>" . $row->situacao . "</font></td>";
+                                                            echo "<td><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
+                                                        }
                                                         echo "</tr>";
                                                     }
                                                     ?>
