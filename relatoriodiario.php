@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
         }
 
-        $stmt = $stmt . " and (p.destino_encaminhamento <> 6 or p.destino_encaminhamento is null)  order by a.hora_cad desc ";
+        $stmt = $stmt . " and (p.destino_encaminhamento <> 6 or p.destino_encaminhamento is null)  order by c.nome desc ";
         $sth = pg_query($stmt) or die($stmt);
         while ($row = pg_fetch_object($sth)) {
 
