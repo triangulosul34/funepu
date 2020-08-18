@@ -138,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
         }
 
-        $stmt = $stmt . " order by a.dat_cad desc,a.nome desc ";
+        $stmt = $stmt . " order by a.dat_cad desc,c.nome desc ";
         $sth = pg_query($stmt) or die($stmt);
         //echo $stmt;
         $qtde = 0;
