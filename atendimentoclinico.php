@@ -1504,9 +1504,18 @@ if ($destino != '') {
                                                     </div>
                                                     <?php if ($perfil == '06' or $perfil == '03') { ?>
                                                         <div class="col-md-12 text-center">
-
-                                                            <input type='button' id="solicita_laboratorio" href="#" data-target="#modalLaboratorio" value='Solicitar Laboratorio' class="btn btn-success" data-toggle="modal">
-                                                            <input type='submit' name='req_exame_lab' id="req_exame_lab" class="btn btn-warning" value='Imprimir Solicitados'>
+                                                            <div class="row">
+                                                                <div class="col-md-12 text-center">
+                                                                    <input type='button' id="solicita_laboratorio" href="#" data-target="#modalLaboratorio" value='Solicitar Laboratorio' class="btn btn-success" data-toggle="modal">
+                                                                    <input type='submit' name='req_exame_lab' id="req_exame_lab" class="btn btn-warning" value='Imprimir Solicitados'>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-12 text-center">
+                                                                    <input type="date" name="data" id="data">
+                                                                    <input type='button' name='imprimir_exames' id="imprimir_exames" class="btn btn-primary" value='Imprimir Exames' onclick="laboratorio()">
+                                                                </div>
+                                                            </div>
 
                                                         </div>
                                                     <?php } ?>
@@ -2645,6 +2654,15 @@ if ($destino != '') {
                 return false;
             }
         };
+
+        function laboratorio() {
+            var data = document.getElementById("data").value;
+            if (data) {
+                window.open("<?= "http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" + data + "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>");
+            } else {
+                alert("Informe da data!!!");
+            }
+        }
     </script>
 
 </body>

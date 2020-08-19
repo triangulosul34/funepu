@@ -391,7 +391,7 @@ $rowcns = pg_fetch_object($sthCns);
                                                             <th></th>
                                                             <th width='25%'>Data / Situação</th>
                                                             <th width='65%'>Descrição</th>
-                                                            <th width='10%'>Laudo</th>
+                                                            <th width='10%'>Situação</th>
                                                             <!--<th width='10%'>Ação</th>-->
                                                         </tr>
                                                     </thead>
@@ -407,25 +407,24 @@ $rowcns = pg_fetch_object($sthCns);
                                                         while ($row = pg_fetch_object($sth)) {
                                                             if ($row->exames_laboratoriais == 1 and substr($row->dat_cad, 0, 10) >= '2019-01-08') {
                                                                 include('conexao_laboratorio.php');
-                                                                $sql = "SELECT distinct d.exame_id, a.pedido_id, b.nome, a.data, a.horario, d.coletado, d.recoleta, d.pendente, b.celular, d.liberado, e.descricao 
-                                                            	FROM pedidos a
-                                                            	INNER JOIN pessoas b ON a.pessoa_id = b.pessoa_id
-                                                            	INNER JOIN pedido_guia c ON a.pedido_id = c.pedido_id
-                                                            	INNER JOIN pedido_item d ON d.pedido_guia_id = c.pedido_guia_id
-                                                            	LEFT JOIN procedimentos e ON e.procedimentos_id = d.exame_id
-                                                            	LEFT JOIN modalidades f ON f.modalidade_id = e.setor where a.data = '" . substr($row->dat_cad, 0, 10) . "' AND c.origem = '" . ORIGEM_CONFIG . "' AND b.origem = '" . PORIGEM_CONFIG . "' AND pessoa_id_origem = $prontuario order by a.data, a.horario";
+                                                                $sql = "SELECT distinct d.exame_id, a.pedido_id, b.nome, a.data, a.horario, d.coletado, d.recoleta, d.pendente, b.celular, d.liberado, d.situacao, e.descricao, d.pedido_item_id 
+                                                                FROM pedidos a
+                                                                INNER JOIN pessoas b ON a.pessoa_id = b.pessoa_id
+                                                                INNER JOIN pedido_guia c ON a.pedido_id = c.pedido_id
+                                                                INNER JOIN pedido_item d ON d.pedido_guia_id = c.pedido_guia_id
+                                                                LEFT JOIN procedimentos e ON e.procedimentos_id = d.exame_id
+                                                                LEFT JOIN modalidades f ON f.modalidade_id = e.setor where a.data = '" . substr($row->dat_cad, 0, 10) . "' AND c.origem = '" . ORIGEM_CONFIG . "' AND b.origem = '" . PORIGEM_CONFIG . "' AND pessoa_id_origem = $prontuario order by a.data, a.horario";
                                                                 $result = pg_query($sql) or die($sql);
                                                                 while ($rows = pg_fetch_object($result)) {
-                                                                    if ($rows->exame_id == $row->procedimento_id) {
-                                                                        echo "<tr>";
-                                                                        echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                        echo "<td>" . inverteData($rows->data) . "</td>";
-                                                                        echo "<td>$row->descricao</td>";
-                                                                        if ($rows->liberado == 1) {
-                                                                            echo "<td><a href='http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"btn btn-pure btn-danger icon \"><i class=\"fas fa-search\"></i></a></td>";
-                                                                        }
-                                                                        echo "</tr>";
-                                                                    }
+                                                                    echo "<tr>";
+                                                                    echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $row->exame_nro . "\"><label></label></div></td>";
+                                                                    echo "<td>" . inverteData($rows->data) . "</td>";
+                                                                    echo "<td>$row->descricao</td>";
+                                                                    // if ($rows->liberado == 1) {
+                                                                    //     echo "<td><a href='http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"btn btn-pure btn-danger icon \"><i class=\"fas fa-search\"></i></a></td>";
+                                                                    // }
+                                                                    echo "<td>" . $rows->situacao . "</td>";
+                                                                    echo "</tr>";
                                                                 }
                                                                 $x = $x + 1;
                                                             } else {
@@ -479,6 +478,12 @@ $rowcns = pg_fetch_object($sthCns);
                                                     </body>
                                                 </table>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <input type="date" name="data" id="data">
+                                                    <input type='button' name='imprimir_exames' id="imprimir_exames" class="btn btn-primary" value='Imprimir Exames' onclick="laboratorio()">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -510,6 +515,16 @@ $rowcns = pg_fetch_object($sthCns);
         <script src="app-assets/js/popover.js" type="text/javascript"></script>
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
         <script defer src="/your-path-to-fontawesome/js/all.js"></script>
+        <script>
+            function laboratorio() {
+                var data = document.getElementById("data").value;
+                if (data) {
+                    window.open("<?= "http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" + data + "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>");
+                } else {
+                    alert("Informe da data!!!");
+                }
+            }
+        </script>
 </body>
 
 </html>
