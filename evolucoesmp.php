@@ -400,9 +400,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             // }
                                                             echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn \" data-toggle=\"tooltip\" title=\"FAA\"><i class=\"fas fa-print\"></i></a>";
 
-                                                            if ($perfil == '03' or $perfil == '06' or $perfil == '08' or $perfil == '13') {
-                                                                echo "<a href=\"evolucao_atendimentomp.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" title=\"Evolução\"><i class=\"fas fa-file-medical\"></i></a>";
-                                                            }
+                                                            //if ($perfil == '03' or $perfil == '06' or $perfil == '08' or $perfil == '13') {
+                                                            echo "<a href=\"evolucao_atendimentomp.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" title=\"Evolução\"><i class=\"fas fa-file-medical\"></i></a>";
+                                                            //}
 
                                                             echo "</tr>";
                                                         }
