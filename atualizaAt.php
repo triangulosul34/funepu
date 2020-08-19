@@ -12,37 +12,48 @@ function inverteData($data)
 <br><br>
 <div class="row">
     <div class="col-6">
-        <h2 class="page-title" style="text-align: center; margin-bottom: 20px;">Atendimento Ortopedia</h2>
+        <h2 style="text-align: center; margin-bottom: 20px;">Atendimento Ortopedia</h2>
         <table id="dados" class="table">
             <thead>
                 <tr>
+
                     <th width="10%">Solicitação</th>
                     <th width="70%">Paciente</th>
                     <th width="70%">Triagem</th>
                     <th width="20%">Situação</th>
                 </tr>
             </thead>
+            <tfoot>
+                <tr>
+
+                    <th width="10%">Solicitação</th>
+                    <th width="70%">Paciente</th>
+                    <th width="70%">Triagem</th>
+                    <th width="20%">Situação</th>
+
+
+                </tr>
+            </tfoot>
             <tbody id="atualizaAtPediatrico">
                 <?php
                 include('conexao.php');
-                $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
-			a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
-			CASE prioridade 
-				WHEN 'VERMELHO' THEN '0' 
-				WHEN 'LARANJA' THEN '1' 
-				WHEN 'AMARELO' THEN '2' 
-				WHEN 'VERDE' THEN '3' 
-				WHEN 'AZUL' THEN '4' 
-			ELSE '5' 
-			END as ORDEM 
-			from atendimentos a 
-			left join pessoas c on a.paciente_id=c.pessoa_id 
-			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer)
-			WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('d/m/Y', strtotime("-1 days")) . "' and '" . date('d/m/Y') . "' and a.especialidade = 'Ortopedia' and tipo != '6' and tipo != '9' 
-			ORDER by ORDEM ASC, case when cast(extract(year from age(c.dt_nasc)) as integer) >= 65 then 0 else 1 end, dat_cad, hora_cad asc";
+                $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.prioridade, a.hora_cad,a.hora_triagem,
+							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
+							CASE prioridade 
+								WHEN 'VERMELHO' THEN '0' 
+								WHEN 'LARANJA' THEN '1' 
+								WHEN 'AMARELO' THEN '2' 
+								WHEN 'VERDE' THEN '3' 
+								WHEN 'AZUL' THEN '4' 
+							ELSE '5' 
+							END as ORDEM 
+							from atendimentos a 
+							left join pessoas c on a.paciente_id=c.pessoa_id 
+							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer)
+							WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('d/m/Y', strtotime("-1 days")) . "' and '" . date('d/m/Y') . "' and a.especialidade = 'Ortopedia' and tipo != '6' and tipo != '9' 
+							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                 $sth = pg_query($stmt) or die($stmt);
                 //echo $stmt; 
-                $i = 0;
                 while ($row = pg_fetch_object($sth)) {
 
                     if ($row->prioridade   == 'AMARELO') {
@@ -77,15 +88,7 @@ function inverteData($data)
 
 
                     echo "</tr>";
-                    $i++;
                 }
-                echo "
-							<tr align=\"center\">
-								<td colspan=\"5\">
-									<h3>Pacientes aguardando atendimento: $i</h3>
-								</td>
-							</tr>
-							";
                 ?>
             </tbody>
         </table>
@@ -102,111 +105,37 @@ function inverteData($data)
                     <th width="20%">Situação</th>
                 </tr>
             </thead>
-
-            <tbody id="atualizaAtAdulto">
-                <?php
-                include('conexao.php');
-                $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
-	a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
-	CASE
-		WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
-		WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
-		WHEN a.destino_paciente = '19' THEN '2' 
-		WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '3' 
-		WHEN a.prioridade = 'VERDE' and a.destino_paciente is null THEN '4' 
-		WHEN a.prioridade = 'AZUL' and a.destino_paciente is null THEN '5' 
-	ELSE '6' 
-	END as ORDEM 
-	from atendimentos a 
-	left join pessoas c on a.paciente_id=c.pessoa_id 
-	left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
-	WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and a.especialidade = 'Consultorio Adulto' and tipo != '6' and tipo != '9' and dat_cad > '2019-08-11'
-	ORDER by ORDEM ASC, case when cast(extract(year from age(c.dt_nasc)) as integer) >= 65 then 0 else 1 end, dat_cad, hora_cad asc";
-                $sth = pg_query($stmt) or die($stmt);
-                //echo $stmt;
-                $i = 0;
-                while ($row = pg_fetch_object($sth)) {
-
-                    if ($row->prioridade   == 'AMARELO') {
-                        $classe = "style=\"background-color:gold\"";
-                    }
-                    if ($row->prioridade   == 'VERMELHO') {
-                        $classe = "class='bg-danger'";
-                    }
-                    if ($row->prioridade   == 'VERDE') {
-                        $classe = "class='bg-success'";
-                    }
-                    if ($row->prioridade   == 'AZUL') {
-                        $classe = "class='bg-primary'";
-                    }
-                    if ($row->prioridade   == 'LARANJA') {
-                        $classe = "class='bg-warning'";
-                    }
-                    if ($row->prioridade   == '') {
-                        $classe = "style=\"background-color:Gainsboro\"";
-                    }
-
-
-                    $ip = getenv("REMOTE_ADDR");
-                    echo "<tr " . $classe . ">";
-                    echo "<td>" . date('d/m/Y',  strtotime($row->dat_cad)) . "<br>" . $row->hora_cad . "</td>";
-                    echo "<td>" . $row->nome . "</td>";
-                    echo "<td>" . $row->hora_triagem . "</td>";
-                    echo "<td>" . $row->status . "</td>";
-                    echo "<td>";
-
-
-
-                    echo "</tr>";
-                    $i++;
-                }
-                echo "
-<tr align=\"center\">
-	<td colspan=\"5\">
-		<h3>Pacientes aguardando atendimento: $i</h3>
-	</td>
-</tr>
-";
-                ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="row">
-    <div class="col-6">
-        <h2 class="page-title" style="text-align: center; margin-bottom: 20px;">Atendimento Odontologico</h2>
-        <table id="dados" class="table">
-            <thead>
+            <tfoot>
                 <tr>
 
                     <th width="10%">Solicitação</th>
                     <th width="70%">Paciente</th>
                     <th width="70%">Triagem</th>
                     <th width="20%">Situação</th>
-                </tr>
-            </thead>
 
+
+                </tr>
+            </tfoot>
             <tbody id="atualizaAtAdulto">
                 <?php
                 include('conexao.php');
-                $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
-	a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
-	CASE prioridade
-		WHEN 'VERMELHO' THEN '0' 
-		WHEN 'LARANJA' THEN '1' 
-		WHEN 'AMARELO' THEN '2' 
-		WHEN 'VERDE' THEN '3' 
-		WHEN 'AZUL' THEN '4' 
-	ELSE '5' 
-	END as ORDEM 
-	from atendimentos a 
-	left join pessoas c on a.paciente_id=c.pessoa_id 
-	left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
-	WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and tipo = '9' 
-	ORDER by ORDEM ASC, case when cast(extract(year from age(c.dt_nasc)) as integer) >= 65 then 0 else 1 end, dat_cad, hora_cad asc";
+                $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
+							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
+							CASE
+                                WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
+                                WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
+                                WHEN a.destino_paciente = '19' THEN '2' 
+                                WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '3' 
+                                WHEN a.prioridade = 'VERDE' and a.destino_paciente is null THEN '4' 
+                                WHEN a.prioridade = 'AZUL' and a.destino_paciente is null THEN '5' 
+                            ELSE '6'  
+							END as ORDEM 
+							from atendimentos a 
+							left join pessoas c on a.paciente_id=c.pessoa_id 
+							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
+							WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and a.especialidade = 'Consultorio Adulto' and tipo != '6' and tipo != '9' and dat_cad > '2019-08-11' 
+							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                 $sth = pg_query($stmt) or die($stmt);
-                //echo $stmt;
-                $i = 0;
                 while ($row = pg_fetch_object($sth)) {
 
                     if ($row->prioridade   == 'AMARELO') {
@@ -231,8 +160,9 @@ function inverteData($data)
 
                     $ip = getenv("REMOTE_ADDR");
                     echo "<tr " . $classe . ">";
-                    echo "<td>" . date('d/m/Y',  strtotime($row->dat_cad)) . "<br>" . $row->hora_cad . "</td>";
+                    echo "<td>" . date('d/m/Y', strtotime($row->dat_cad)) . "<br>" . $row->hora_cad . "</td>";
                     echo "<td>" . $row->nome . "</td>";
+
                     echo "<td>" . $row->hora_triagem . "</td>";
                     echo "<td>" . $row->status . "</td>";
                     echo "<td>";
@@ -240,15 +170,86 @@ function inverteData($data)
 
 
                     echo "</tr>";
-                    $i++;
                 }
-                echo "
-<tr align=\"center\">
-	<td colspan=\"5\">
-		<h3>Pacientes aguardando atendimento: $i</h3>
-	</td>
-</tr>
-";
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row mt-5">
+    <div class="col-6">
+        <h2 class="page-title" style="text-align: center; margin-bottom: 20px;">Atendimento Odontologico</h2>
+        <table id="dados" class="table">
+            <thead>
+                <tr>
+                    <th width="10%">Solicitação</th>
+                    <th width="70%">Paciente</th>
+                    <th width="70%">Triagem</th>
+                    <th width="20%">Situação</th>
+                </tr>
+            </thead>
+            <tfoot>
+                <tr>
+                    <th width="10%">Solicitação</th>
+                    <th width="70%">Paciente</th>
+                    <th width="70%">Triagem</th>
+                    <th width="20%">Situação</th>
+                </tr>
+            </tfoot>
+            <tbody id="atualizaAtAdulto">
+                <?php
+                include('conexao.php');
+                $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
+							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
+							CASE prioridade 
+								WHEN 'VERMELHO' THEN '0' 
+								WHEN 'LARANJA' THEN '1' 
+								WHEN 'AMARELO' THEN '2' 
+								WHEN 'VERDE' THEN '3' 
+								WHEN 'AZUL' THEN '4' 
+							ELSE '5' 
+							END as ORDEM 
+							from atendimentos a 
+							left join pessoas c on a.paciente_id=c.pessoa_id 
+							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
+							WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and tipo = '9'  
+							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
+                $sth = pg_query($stmt) or die($stmt);
+                while ($row = pg_fetch_object($sth)) {
+
+                    if ($row->prioridade   == 'AMARELO') {
+                        $classe = "style=\"background-color:gold\"";
+                    }
+                    if ($row->prioridade   == 'VERMELHO') {
+                        $classe = "class='bg-danger'";
+                    }
+                    if ($row->prioridade   == 'VERDE') {
+                        $classe = "class='bg-success'";
+                    }
+                    if ($row->prioridade   == 'AZUL') {
+                        $classe = "class='bg-primary'";
+                    }
+                    if ($row->prioridade   == 'LARANJA') {
+                        $classe = "class='bg-warning'";
+                    }
+                    if ($row->prioridade   == '') {
+                        $classe = "style=\"background-color:Gainsboro\"";
+                    }
+
+
+                    $ip = getenv("REMOTE_ADDR");
+                    echo "<tr " . $classe . ">";
+                    echo "<td>" . date('d/m/Y', strtotime($row->dat_cad)) . "<br>" . $row->hora_cad . "</td>";
+                    echo "<td>" . $row->nome . "</td>";
+
+                    echo "<td>" . $row->hora_triagem . "</td>";
+                    echo "<td>" . $row->status . "</td>";
+                    echo "<td>";
+
+
+
+                    echo "</tr>";
+                }
                 ?>
             </tbody>
         </table>

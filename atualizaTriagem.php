@@ -2,7 +2,7 @@
 include('verifica.php');
 include('conexao.php');
 
-$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 65 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
+$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
 	a.dat_cad, c.nome, k.origem, a.tipo, a.coronavirus 
 	from atendimentos a 
 	left join pessoas c on a.paciente_id=c.pessoa_id 

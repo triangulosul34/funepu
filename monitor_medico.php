@@ -64,15 +64,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['proximo']) and $pesquisa_paciente == "") {
         include('conexao.php');
-        $stmt   = "select a.transacao, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,
+        $stmt   = "select a.destino_paciente, a.transacao, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.dat_cad as cadastro,
 		c.nome,c.nome_social, k.origem, f.descricao as clinica, CASE
             WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
             WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
             WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '2' 
-            WHEN a.destino_paciente = '10' THEN '3'
+            WHEN a.destino_paciente = '10'  THEN '3'
             WHEN a.prioridade = 'VERDE' and a.destino_paciente is null THEN '4' 
             WHEN a.prioridade = 'AZUL' and a.destino_paciente is null THEN '5' 
-        ELSE '6' END
+        ELSE '6' END as prioridade_cor
 		from atendimentos a left join pessoas c on a.paciente_id=c.pessoa_id  left join especialidade f on a.especialidade = f.descricao left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 		 ";
 
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
         }
 
-        $stmt = $stmt . " and cast(a.tipo as integer) != 9 and dat_cad > '2019-08-11' order by 13,case when cast(extract(year from age(c.dt_nasc)) as integer) >= 65 then 0 else 1 end, dat_cad, 1,5 limit 1";
+        $stmt = $stmt . " and cast(a.tipo as integer) != 9 and dat_cad > '2019-08-11' order by prioridade_cor,pidade, a.hora_cad limit 1";
         $sth         = pg_query($stmt) or die($stmt);
         $row         = pg_fetch_object($sth);
 
@@ -95,14 +95,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $nome         = $row->nome;
         }
-
+        $destino_paciente = $row->destino_paciente;
         $transacao     =  $row->transacao;
     }
 
     if (isset($_POST['nrchamada'])) {
 
         include('conexao.php');
-        $stmtnrc = "update atendimentos set status='Não Respondeu Chamado',destino_paciente='09',data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = '$transacao' ";
+        $stmtnrc = "update atendimentos set status='Não Respondeu Chamado',destino_paciente= (case when destino_paciente is null then '09' else destino_paciente end),data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = '$transacao' ";
         $sthnrc     = pg_query($stmtnrc) or die($stmtnrc);
 
         $data = date('Y-m-d');
@@ -110,6 +110,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         include('conexao.php');
         $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 				values ('$usuario','FINALIZOU SEM ATENDER - NÃO RESPONDEU CHAMADO','$transacao','$data','$hora')";
+        $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+    }
+    if (isset($_POST['nrchamadalab'])) {
+
+        include('conexao.php');
+        $stmtnrc = "update atendimentos set status='Não respondeu retorno para resultado de exames',data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = '$transacao' ";
+        $sthnrc     = pg_query($stmtnrc) or die($stmtnrc);
+
+        $data = date('Y-m-d');
+        $hora = date('H:i');
+        include('conexao.php');
+        $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','FINALIZOU SEM ATENDER - NÃO RESPONDEU RETORNO PARA RESULTADO DE EXAMES','$transacao','$data','$hora')";
         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
     }
 }
@@ -280,8 +293,10 @@ $qtdAtendiemento = $rowCount->qtd;
                                         <div class="row mt-3">
                                             <div class="col-sm-12" align="center">
                                                 <?php
-                                                if ($nome != '') {
+                                                if ($nome != '' and ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03')) {
                                                     echo '<button type="button" name="nrchamada" onclick="chamada()" id="nrchamada" value="nrchamada" class="btn btn-primary">Não Respondeu Chamada</button>';
+                                                } else if ($destino_paciente) {
+                                                    echo '<button type="button" name="nrchamadalab" onclick="chamadalab()" id="nrchamadalab" value="nrchamadalab" class="btn btn-primary">Não Respondeu Retorno Resultado de Exames</button>';
                                                 } else {
                                                     echo '<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>';
                                                 }
@@ -417,6 +432,31 @@ $qtdAtendiemento = $rowCount->qtd;
                         $('<input />').attr('type', 'hidden')
                             .attr('name', 'nrchamada')
                             .attr('value', 'nrchamada')
+                            .appendTo('form');
+                        $("form").submit().setTimeout(function() {}, 1000);
+                    }
+                })
+            }
+
+            function chamadalab() {
+                Swal.fire({
+                    title: 'CUIDADO!!!',
+                    text: "Tem certeza de que deseja finalizar esse paciente como não respondeu retorno resultado de exames?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ok'
+                }).then((result) => {
+                    if (result.value) {
+                        Swal.fire(
+                            'FINALIZADO',
+                            'Paciente não respondeu retorno!',
+                            'success'
+                        );
+                        $('<input />').attr('type', 'hidden')
+                            .attr('name', 'nrchamadalab')
+                            .attr('value', 'nrchamadalab')
                             .appendTo('form');
                         $("form").submit().setTimeout(function() {}, 1000);
                     }

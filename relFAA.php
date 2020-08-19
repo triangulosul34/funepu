@@ -16,11 +16,12 @@ $stmt = "select a.transacao, a.cid_principal,a,hora_cad,l.nome as nomecad, a.des
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome,c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.nome_mae, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem as origem_chegada,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica,x.oxigenio,x.dor, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade,x.glicose as glicemia,
-		a.data_destino,a.hora_destino,a.destino_paciente, z.nome as medico_atendimento, a.acompanhante, w.nome as usuario_triagem, w.num_conselho_reg as coren, w.perfil
+		a.data_destino,a.hora_destino,a.destino_paciente, z.nome as medico_atendimento, f.nome as medico_finalizador, a.acompanhante, w.nome as usuario_triagem, w.num_conselho_reg as coren, w.perfil
 		from atendimentos a 
 		left join pessoas c on a.paciente_id=c.pessoa_id
 		left join pessoas l on l.username = a.cad_user
 		left join pessoas z on z.username = a.med_atendimento
+		left join pessoas f on f.username = a.med_finalizador
 		left join tipo_origem k on cast(k.tipo_id as varchar)=a.tipo 
 		left join classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao'
 		left join pessoas w ON w.username =  x.usuario
@@ -90,7 +91,11 @@ $prioridade = $row->prioridade;
 $atendprioridade = $row->atendprioridade;
 $diagnostico_principal = $row->diagnostico_principal;
 $glicemia = $row->glicemia;
-$medico_atendimento = $row->medico_atendimento;
+if ($row->medico_finalizador) {
+    $medico_atendimento = $row->medico_finalizador;
+} else {
+    $medico_atendimento = $row->medico_atendimento;
+}
 $acompanhante = $row->acompanhante;
 $usuario_triagem = $row->usuario_triagem;
 $coren = $row->coren;
@@ -465,6 +470,8 @@ class PDF extends FPDF
             $destino = 'TRANSF. INTERN. HOSPITALAR';
         } else if ($destino_paciente == '06') {
             $destino = 'ÓBITO';
+        } else if ($destino_paciente == '08') {
+            $destino = 'NAO RESPONDEU CHAMADO';
         } else if ($destino_paciente == '09') {
             $destino = 'NAO RESPONDEU CHAMADO';
         } else if ($destino_paciente == '11') {

@@ -407,8 +407,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				diagnostico_principal='$diag_pri', cid_principal='$CID',";
         if (str_replace(' ', '', $destino) != '') {
             $stmt = $stmt . " destino_paciente='$destino',";
-            if (($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') && $coronavirus == '1') {
-                $stmt = $stmt . " coronavirus=10,";
+            // if (($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') && $coronavirus == '1') {
+            //     $stmt = $stmt . " coronavirus=10,";
+            // }
+            if ($destino != '09') {
+                $stmt = $stmt . " med_finalizador = (case when med_finalizador is null then '$usuario' else med_finalizador end),";
             }
         }
         if ($alta != '') {
@@ -1859,7 +1862,7 @@ if ($destino != '') {
                     <form method="post" enctype="multipart/form-data" action="relComparecimento.php" target="_blank">
                         <div class="form-group">
                             <?php if ($destino != '') { ?>
-                                <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary">Evoluir</a>
+                                <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
                             <?php } else { ?>
                                 <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
                             <?php } ?>
@@ -1876,9 +1879,6 @@ if ($destino != '') {
 
                             <a href="relFAA.php?id=<?= $_GET['id'] ?>" target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
                             <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>" target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
-                            <?php if ($destino != '') { ?>
-                                <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
-                            <?php } ?>
                             <input type='hidden' readOnly class="form-control" name="origem" id="origem" value='<?php echo $origem; ?>'>
                             <!--<input type='submit' name='imprimir'  class="btn btn-primary" value='Imprimir'>-->
                             <!--<input type='submit' name='xcancelar' class="btn btn-danger"  value='Cancelar'>-->
@@ -2037,6 +2037,10 @@ if ($destino != '') {
                 }
             });
 
+        }
+
+        function evoluir() {
+            $("#pedido").submit();
         }
 
 

@@ -340,7 +340,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <tbody id="atualizaAtPediatrico">
                                                     <?php
                                                     include('conexao.php');
-                                                    $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
+                                                    $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.prioridade, a.hora_cad,a.hora_triagem,
 							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
 							CASE prioridade 
 								WHEN 'VERMELHO' THEN '0' 
@@ -354,7 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							left join pessoas c on a.paciente_id=c.pessoa_id 
 							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer)
 							WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('d/m/Y', strtotime("-1 days")) . "' and '" . date('d/m/Y') . "' and a.especialidade = 'Ortopedia' and tipo != '6' and tipo != '9' 
-							ORDER by ORDEM ASC, case when cast(extract(year from age(c.dt_nasc)) as integer) >= 65 then 0 else 1 end, dat_cad, hora_cad asc";
+							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                                                     $sth = pg_query($stmt) or die($stmt);
                                                     //echo $stmt; 
                                                     while ($row = pg_fetch_object($sth)) {
@@ -422,7 +422,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <tbody id="atualizaAtAdulto">
                                                     <?php
                                                     include('conexao.php');
-                                                    $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
+                                                    $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
 							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
 							CASE
                                 WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
@@ -437,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							left join pessoas c on a.paciente_id=c.pessoa_id 
 							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 							WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and a.especialidade = 'Consultorio Adulto' and tipo != '6' and tipo != '9' and dat_cad > '2019-08-11' 
-							ORDER by ORDEM ASC, case when cast(extract(year from age(c.dt_nasc)) as integer) >= 65 then 0 else 1 end, dat_cad, hora_cad asc";
+							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                                                     $sth = pg_query($stmt) or die($stmt);
                                                     while ($row = pg_fetch_object($sth)) {
 
@@ -502,7 +502,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <tbody id="atualizaAtAdulto">
                                                     <?php
                                                     include('conexao.php');
-                                                    $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
+                                                    $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
 							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
 							CASE prioridade 
 								WHEN 'VERMELHO' THEN '0' 
@@ -516,7 +516,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							left join pessoas c on a.paciente_id=c.pessoa_id 
 							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 							WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and tipo = '9'  
-							ORDER by ORDEM ASC, case when cast(extract(year from age(c.dt_nasc)) as integer) >= 65 then 0 else 1 end, dat_cad, hora_cad asc";
+							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                                                     $sth = pg_query($stmt) or die($stmt);
                                                     while ($row = pg_fetch_object($sth)) {
 
