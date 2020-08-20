@@ -240,7 +240,7 @@ if ($rowcns->descricao != '') {
 <div class="row">
     <div class="col-md-12">
         <label class="control-label">Queixa</label>
-        <textarea class="form-control" name="queixa" id="queixa" rows="5" onkeypress="return limitarTextArea(this)"><?php echo $rowRetorno->queixa ?></textarea>
+        <textarea class="form-control" name="queixa" id="queixa" rows="5"><?php echo $rowRetorno->queixa ?></textarea>
     </div>
 </div>
 <?php

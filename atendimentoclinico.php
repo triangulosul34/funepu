@@ -1178,7 +1178,7 @@ if ($destino != '') {
                                             <br>
                                             <div class="col-sm-12 margin-top-10">
                                                 <label class="control-label">Exame Físico</label>
-                                                <textarea name="exame_fisico" class="form-control" rows="15" onkeypress="return limitarTextArea(this)" <?php echo $rdonly ?>><?php echo $exame_fisico; ?></textarea> </br>
+                                                <textarea name="exame_fisico" class="form-control" rows="15" <?php echo $rdonly ?>><?php echo $exame_fisico; ?></textarea> </br>
                                             </div>
 
                                             <input id="usuario-autorizado" name="usuario-autorizado" type="hidden" />
