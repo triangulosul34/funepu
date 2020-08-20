@@ -319,9 +319,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </div>
                                         <div class="row">
                                             <div class="col-12" align="center">
-                                                <?php if ($perfil == '06' or $perfil == '03' or $perfil == '08') { ?>
-                                                    <input type='submit' name='gravar' class="btn btn-primary" value='Gravar' onclick="return valida()">
-                                                <?php } ?>
+                                                <input type='submit' name='gravar' class="btn btn-primary" value='Gravar' onclick="return valida()">
+
                                                 <a href="evolucao_atendimentomp.php?id=<?php echo $_GET['id'] ?>" class="btn btn-danger">Cancelar</a>
                                             </div>
                                         </div>
