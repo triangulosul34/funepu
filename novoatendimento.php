@@ -1046,11 +1046,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="row mt-3 mb-3 align-items-center">
                                                 <div class="col-6">
                                                     <label class="control-label">Necessidades Especiais</label> <select name="deficiencia" class="form-control">
-                                                        <option value="Nenhuma" <?php if($deficiencia == "nenhuma"){echo "selected";}?>>Nenhuma</option>
-                                                        <option value="Visual" <?php if($deficiencia == "Visual"){echo "selected";}?>>Visual</option>
-                                                        <option value="Motora" <?php if($deficiencia == "Motora"){echo "selected";}?>>Motora</option>
-                                                        <option value="Mental" <?php if($deficiencia == "Mental"){echo "selected";}?>>Mental</option>
-                                                        <option value="Auditiva" <?php if($deficiencia == "Auditiva"){echo "selected";}?>>Auditiva</option>
+                                                        <option value="Nenhuma" <?php if ($deficiencia == "nenhuma") {
+                                                                                    echo "selected";
+                                                                                } ?>>Nenhuma</option>
+                                                        <option value="Visual" <?php if ($deficiencia == "Visual") {
+                                                                                    echo "selected";
+                                                                                } ?>>Visual</option>
+                                                        <option value="Motora" <?php if ($deficiencia == "Motora") {
+                                                                                    echo "selected";
+                                                                                } ?>>Motora</option>
+                                                        <option value="Mental" <?php if ($deficiencia == "Mental") {
+                                                                                    echo "selected";
+                                                                                } ?>>Mental</option>
+                                                        <option value="Auditiva" <?php if ($deficiencia == "Auditiva") {
+                                                                                        echo "selected";
+                                                                                    } ?>>Auditiva</option>
                                                     </select>
                                                 </div>
                                                 <div class="col-6">

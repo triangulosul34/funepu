@@ -208,7 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $stmt . " '$endereco', '$numero', '$complemento', '$bairro', '$cep', '$cidade', '$uf', '$telefone', '$telefone2', '$celular', '$celular2', '$imagem', '$facebook', '$twitter',
 				'$email', '$whatsup', '$conselho', '$num_conselho', '$especialidade', '$convenio', '$num_carteira_convenio', '$perfil', '$lotacao', '$grupo_user', '$sgrupo_user', '$usuario', '$datacad', '$p_username', md5('$p_password'), '0','$nome_social')";
         $sth = pg_query($stmt) or die($stmt);
-
         if ($imagem != "") {
             $target_dir = "C:/inetpub/wwwroot/dcenter/html/imagens/clientes";
             $target_file = $target_dir . '/' . basename($_FILES["fileToUpload"]["name"]);
@@ -233,8 +232,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //         header("location: colaboradores.php");
         //     }
         // } else {
-        header("location: poppac.php");
+        //header("location: poppac.php");
         // }
+
+        $sql = "select * from pessoas where pessoa_id = (select max(pessoa_id) from pessoas where data_cad is not null)";
+        $result = pg_query($sql) or die($sql);
+        $row = pg_fetch_object($result);
+        $dt_nasc = $row->dt_nasc;
+        $date = new DateTime($dt_nasc); // data de nascimento
+        $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
+
+        $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
+?>
+        <script>
+            window.opener.document.pedido.prontuario.value = '<?= $row->pessoa_id; ?>';
+            window.opener.document.pedido.nome.value = '<?= $row->nome; ?>';
+            window.opener.document.pedido.sexo.value = '<?= $row->sexo; ?>';
+            window.opener.document.pedido.dt_nascimento.value = '<?= inverteData($row->dt_nasc); ?>';
+            window.opener.document.pedido.idade.value = '<?= $idade; ?>';
+            window.opener.document.pedido.endereco.value = '<?= $row->endereco; ?>';
+            window.opener.document.pedido.end_num.value = ' <?= $row->numero; ?>';
+            window.opener.document.pedido.end_comp.value = '<?= $row->complemento; ?>';
+            window.opener.document.pedido.end_bairro.value = '<?= $row->bairro; ?>';
+            window.opener.document.pedido.end_cidade.value = '<?= $row->cidade; ?>';
+            window.opener.document.pedido.end_uf.value = '<?= $row->estado; ?>';
+            window.opener.document.pedido.telefone.value = '<?= $row->telefone; ?>';
+            window.opener.document.pedido.celular.value = '<?= $row->celular; ?>';
+            window.opener.document.pedido.cpf.value = '<?= $row->cpf; ?>';
+            window.opener.document.pedido.cns.value = '<?= $row->num_carteira_convenio; ?>';
+            window.opener.document.pedido.nome_mae.value = '<?= $row->nome_mae; ?>';
+            window.opener.document.pedido.rg.value = '<?= $row->identidade; ?>';
+            window.opener.document.pedido.org_expeditor.value = '<?= inverteData($row->org_expeditor); ?>';
+            var cep = '<?= $row->cep; ?>';
+            if (cep.length == 9) {
+                window.opener.document.pedido.end_cep.value = '<?= $row->cep; ?>';
+            } else {
+                window.opener.document.pedido.end_cep.value = cep.substr(0, 5) + "-" + cep.substr(5, 3);
+            }
+            // window.opener.document.pedido.nomeMae.value = teste;
+            window.close();
+        </script>
+<?php
     }
 }
 
@@ -305,7 +343,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="col-12">
                                                     <h4 class="card-title">
                                                         <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
-                                                            » </p><?php if ($tipo == 'C') { ?>Alterar Paciente <?php } else if ($tipo == 'M') { ?>Alterar Medico<?php } else if ($tipo == 'A') { ?>Alterar Colaborador<?php } ?>
+                                                            » </p><?php if ($tipo == 'C') { ?>Alterar Paciente
+                                                        <?php } else if ($tipo == 'M') { ?>Alterar
+                                                        Medico<?php } else if ($tipo == 'A') { ?>Alterar
+                                                        Colaborador<?php } ?>
                                                     </h4>
                                                 </div>
                                                 <div class="col-12">
@@ -402,8 +443,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <label class="control-label">Sexo</label>
                                                             <select name="sexo" id="sexo" class="form-control square">
                                                                 <option></option>
-                                                                <option value="M" <?php if ($sexo == "M")   echo "selected"; ?>>Masculino</option>
-                                                                <option value="F" <?php if ($sexo == "F")    echo "selected"; ?>>Feminino</option>
+                                                                <option value="M" <?php if ($sexo == "M")   echo "selected"; ?>>
+                                                                    Masculino</option>
+                                                                <option value="F" <?php if ($sexo == "F")    echo "selected"; ?>>
+                                                                    Feminino</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -426,16 +469,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <label class="control-label">Raca/Cor</label>
                                                             <select name="raca_cor" id="raca_cor" class="form-control  square">
                                                                 <option></option>
-                                                                <option value="Branca" <?php if ($raca_cor == "Branca")   echo "selected"; ?>>Branca</option>
-                                                                <option value="Preta" <?php if ($raca_cor == "Preta")    echo "selected"; ?>>Preta</option>
-                                                                <option value="Parda" <?php if ($raca_cor == "Parda")    echo "selected"; ?>>Parda</option>
-                                                                <option value="Amarela" <?php if ($raca_cor == "Amarela")  echo "selected"; ?>>Amarela</option>
-                                                                <option value="Indigena" <?php if ($raca_cor == "Indigena") echo "selected"; ?>>Indigena</option>
+                                                                <option value="Branca" <?php if ($raca_cor == "Branca")   echo "selected"; ?>>
+                                                                    Branca</option>
+                                                                <option value="Preta" <?php if ($raca_cor == "Preta")    echo "selected"; ?>>
+                                                                    Preta</option>
+                                                                <option value="Parda" <?php if ($raca_cor == "Parda")    echo "selected"; ?>>
+                                                                    Parda</option>
+                                                                <option value="Amarela" <?php if ($raca_cor == "Amarela")  echo "selected"; ?>>
+                                                                    Amarela</option>
+                                                                <option value="Indigena" <?php if ($raca_cor == "Indigena") echo "selected"; ?>>
+                                                                    Indigena</option>
                                                             </select>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <h4 class="form-section"><i class="fas fa-phone-volume"></i> Contato</h4>
+                                                <h4 class="form-section"><i class="fas fa-phone-volume"></i> Contato
+                                                </h4>
                                                 <div class="row">
                                                     <div class="col-6">
                                                         <div class="form-group row">
@@ -464,7 +513,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <h4 class="form-section"><i class="fas fa-location-arrow"></i> Endereço</h4>
+                                                <h4 class="form-section"><i class="fas fa-location-arrow"></i> Endereço
+                                                </h4>
                                                 <div class="row">
                                                     <div class="col-md-2">
                                                         <div class="form-group">
@@ -512,7 +562,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </div>
                                                 </div>
                                                 <?php if ($tipo == 'M') { ?>
-                                                    <h4 class="form-section"><i class="fas fa-id-card-alt"></i> Dados Medicos</h4>
+                                                    <h4 class="form-section"><i class="fas fa-id-card-alt"></i> Dados
+                                                        Medicos</h4>
                                                     <div class="row">
                                                         <div class="col-md-4">
                                                             <div class='form-group'>
@@ -556,7 +607,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </div>
                                                 <?php }
                                                 if ($tipo != 'C') { ?>
-                                                    <h4 class="form-section"><i class="fas fa-sign-in-alt"></i> Controle de Usuario</h4>
+                                                    <h4 class="form-section"><i class="fas fa-sign-in-alt"></i> Controle de
+                                                        Usuario</h4>
                                                     <div class="row">
                                                         <div class="col-md-6">
                                                             <div class='form-group'>

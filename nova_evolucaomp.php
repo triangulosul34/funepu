@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <label>Relatorio</label>
-                                                <textarea name="evolucao" class="form-control square" rows="50" cols="50" style="resize: none"></textarea> </br>
+                                                <textarea name="evolucao" class="form-control square" rows="10" cols="50" style="resize: none"></textarea> </br>
                                             </div>
                                         </div>
                                         <div class="row">

@@ -1178,7 +1178,7 @@ if ($destino != '') {
                                             <br>
                                             <div class="col-sm-12 margin-top-10">
                                                 <label class="control-label">Exame Físico</label>
-                                                <textarea name="exame_fisico" class="form-control" rows="15" <?php echo $rdonly ?>><?php echo $exame_fisico; ?></textarea> </br>
+                                                <textarea name="exame_fisico" class="form-control" rows="15" onkeypress="return limitarTextArea(this)" <?php echo $rdonly ?>><?php echo $exame_fisico; ?></textarea> </br>
                                             </div>
 
                                             <input id="usuario-autorizado" name="usuario-autorizado" type="hidden" />
@@ -1790,16 +1790,6 @@ if ($destino != '') {
                         <option value=""></option>;
                         <option value="01" <?php if ($destino == '01') echo "selected"; ?>>ALTA
                         </option>;
-                        <option value="02" <?php if ($destino == '02') echo "selected"; ?>>ALTA /
-                            ENCAM. AMBUL.</option>;
-                        <option value="11" <?php if ($destino == '11') echo "selected"; ?>>ALTA EVASÃO
-                        </option>;
-                        <option value="12" <?php if ($destino == '12') echo "selected"; ?>>ALTA PEDIDO
-                        </option>;
-                        <option value="14" <?php if ($destino == '14') echo "selected"; ?>>ALTA / PM
-                        </option>;
-                        <option value="15" <?php if ($destino == '15') echo "selected"; ?>>ALTA /
-                            PENITENCIÁRIA</option>;
                         <option value="07" <?php if ($destino == '07') echo "selected"; ?>>EM
                             OBSERVAÇÃO / MEDICAÇÃO</option>;
                         <!-- <option value="19" <?php if ($destino == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
@@ -1807,10 +1797,6 @@ if ($destino != '') {
                             REAVALIACAO</option>;
                         <option value="03" <?php if ($destino == '03') echo "selected"; ?>>PERMANÊNCIA.
                         </option>;
-                        <option value="04" <?php if ($destino == '04') echo "selected"; ?>>TRANSF.
-                            OUTRA UPA</option>;
-                        <option value="09" <?php if ($destino == '09') echo "selected"; ?>>NAO
-                            RESPONDEU CHAMADO</option>;
                     </select>
                 </div>
 
@@ -2662,6 +2648,30 @@ if ($destino != '') {
             } else {
                 alert("Informe da data!!!");
             }
+        }
+
+        function limitarTextArea(campo) {
+            var string = campo.value;
+            var novastring = "";
+            var linhas = new Array();
+            var trocarLinha = false;
+            linhas = string.split("\n");
+            var contador = linhas.length;
+
+            for (x in linhas) {
+                if (linhas[x].length > campo.cols - 2) {
+                    linhas[x] = linhas[x].substring(0, campo.cols);
+                    trocarLinha = true;
+                }
+                if (x < 25) {
+                    novastring += linhas[x] + "\n";
+                }
+            }
+
+            if (contador > 25 || trocarLinha) {
+                campo.value = novastring.substring(0, novastring.length - 1);
+            }
+            return contador <= 25;
         }
     </script>
 

@@ -413,9 +413,9 @@ class PDF extends FPDF
 
 
         //$this->SetFont('Arial','B',9);
-        $this->SetXY(10, 183);
-        $this->Cell(185, 5, utf8_decode(' PRESCRIÇÃO MEDICA '), 1, 0, 'C');
-        $this->Ln(5.5);
+        // $this->SetXY(10, 183);
+        // $this->Cell(185, 5, utf8_decode(' PRESCRIÇÃO MEDICA '), 1, 0, 'C');
+        // $this->Ln(5.5);
 
 
         include('conexao.php');

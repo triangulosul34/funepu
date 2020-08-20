@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['proximo']) and $pesquisa_paciente == "") {
         include('conexao.php');
-        $stmt   = "select a.destino_paciente, a.transacao, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.dat_cad as cadastro,
+        $stmt   = "select a.destino_paciente, a.transacao, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.dat_cad as cadastro,
 		c.nome,c.nome_social, k.origem, f.descricao as clinica, CASE
             WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
             WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
@@ -94,6 +94,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nome         = $row->nome_social . '(' . $row->nome . ')';
         } else {
             $nome         = $row->nome;
+        }
+        if ($row->nec_especiais != 'Nenhuma') {
+            $deficiência = $row->nec_especiais;
         }
         $destino_paciente = $row->destino_paciente;
         $transacao     =  $row->transacao;
@@ -195,7 +198,7 @@ $qtdAtendiemento = $rowCount->qtd;
     }
 </style>
 
-<body class="pace-done" cz-shortcut-listen="true">
+<body class="pace-done" cz-shortcut-listen="true" <?php if ($deficiência) { ?> onload="necessidades_especiais()" <?php } ?>>
     <!-- <div class="pace pace-inactive">
         <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
             <div class="pace-progress-inner"></div>
@@ -435,6 +438,17 @@ $qtdAtendiemento = $rowCount->qtd;
                             .appendTo('form');
                         $("form").submit().setTimeout(function() {}, 1000);
                     }
+                })
+            }
+
+            function necessidades_especiais() {
+                Swal.fire({
+                    title: 'NECESSIDADES ESPECIAIS',
+                    text: "Paciente com deficiência <?= $deficiência; ?>",
+                    icon: 'question',
+                    iconHtml: '<i class="fas fa-wheelchair"></i>',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
                 })
             }
 

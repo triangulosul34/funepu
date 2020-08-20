@@ -2,7 +2,7 @@
 include('verifica.php');
 include('conexao.php');
 
-$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
+$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
 	a.dat_cad, c.nome, k.origem, a.tipo, a.coronavirus 
 	from atendimentos a 
 	left join pessoas c on a.paciente_id=c.pessoa_id 
@@ -38,13 +38,21 @@ while ($row = pg_fetch_object($sth)) {
     if ($row->coronavirus == 1) {
         echo "<td class='blink'>" . $row->transacao . "</td>";
         echo "<td class='blink'>" . date('d/m/Y',  strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
-        echo "<td class='blink'>" . $row->nome . "</td>";
+        echo "<td class='blink'>" . $row->nome;
+        if ($row->nec_especiais != 'Nenhuma') {
+            echo "<br>Paciente com deficiencia $row->nec_especiais";
+        }
+        echo "</td>";
         echo "<td class='blink'>" . $row->origem . "</td>";
         echo "<td class='blink'>" . $row->status . "</td>";
     } else {
         echo "<td>" . $row->transacao . "</td>";
         echo "<td>" . date('d/m/Y',  strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
-        echo "<td>" . $row->nome . "</td>";
+        echo "<td>" . $row->nome;
+        if ($row->nec_especiais != 'Nenhuma') {
+            echo "<br>Paciente com deficiencia $row->nec_especiais";
+        }
+        echo "</td>";
         echo "<td>" . $row->origem . "</td>";
         echo "<td>" . $row->status . "</td>";
     }

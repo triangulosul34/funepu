@@ -652,7 +652,7 @@ if (isset($_POST["excel"])) {
                                                     <tbody>
                                                         <?php
                                                         include('conexao.php');
-                                                        $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
+                                                        $stmt = "select a.transacao,d.nome as nomemed, a.destino_paciente, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
                                                         CASE prioridade WHEN 'VERMELHO' THEN '0' WHEN 'LARANJA' THEN '1' WHEN 'AMARELO' THEN '2' WHEN 'VERDE' THEN '3'  WHEN 'AZUL' THEN '4' ELSE '5'
                                                         END as ORDEM, a.coronavirus from atendimentos a 
                                                         left join pessoas c on a.paciente_id=c.pessoa_id
@@ -693,6 +693,11 @@ if (isset($_POST["excel"])) {
                                                                 $color = "black";
                                                             } else {
                                                                 $color = "black";
+                                                            }
+
+                                                            if ($row->destino_paciente == '03') {
+                                                                $classe = "style=\"background-color:#4B0082\"";
+                                                                $color = "white";
                                                             }
 
                                                             $ip = getenv("REMOTE_ADDR");

@@ -17,7 +17,7 @@ $rowRetorno = pg_fetch_object($sthRetorno);
 
 $hoje = date('Y-m-d');
 include('conexao.php');
-$stmtNome = "select nome,idade,dt_nasc,extract(year from age(dt_nasc)) as idadenormal,num_carteira_convenio,p.nome_social, paciente_id
+$stmtNome = "select nome,idade,dt_nasc,extract(year from age(dt_nasc)) as idadenormal,num_carteira_convenio,p.nome_social, paciente_id, a.nec_especiais
 	from atendimentos a
 					left join pessoas p on p.pessoa_id=a.paciente_id
 					where transacao = '$transacao'";
@@ -94,6 +94,10 @@ if ($rowcns->descricao != '') {
                         <?php echo $rowNome->nome; ?>
                     <?php } else { ?>
                         <?php echo $rowNome->nome_social; ?> (<?php echo $rowNome->nome; ?>)
+                    <?php } ?>
+                    <?php if ($rowNome->nec_especiais != 'Nenhuma') {
+                    ?>
+                        <br>Paciente com deficiência <?= $rowNome->nec_especiais; ?>
                     <?php } ?>
                 </span>
             </h4>
@@ -236,7 +240,7 @@ if ($rowcns->descricao != '') {
 <div class="row">
     <div class="col-md-12">
         <label class="control-label">Queixa</label>
-        <textarea class="form-control" name="queixa" id="queixa" rows="5"><?php echo $rowRetorno->queixa ?></textarea>
+        <textarea class="form-control" name="queixa" id="queixa" rows="5" onkeypress="return limitarTextArea(this)"><?php echo $rowRetorno->queixa ?></textarea>
     </div>
 </div>
 <?php
@@ -318,5 +322,29 @@ $prioridades = array(
 
     slider.oninput = function() {
         output.innerHTML = this.value;
+    }
+
+    function limitarTextArea(campo) {
+        var string = campo.value;
+        var novastring = "";
+        var linhas = new Array();
+        var trocarLinha = false;
+        linhas = string.split("\n");
+        var contador = linhas.length;
+
+        for (x in linhas) {
+            if (linhas[x].length > campo.cols - 2) {
+                linhas[x] = linhas[x].substring(0, campo.cols);
+                trocarLinha = true;
+            }
+            if (x < campo.rows) {
+                novastring += linhas[x] + "\n";
+            }
+        }
+
+        if (contador > campo.rows || trocarLinha) {
+            campo.value = novastring.substring(0, novastring.length - 1);
+        }
+        return contador <= campo.rows;
     }
 </script>

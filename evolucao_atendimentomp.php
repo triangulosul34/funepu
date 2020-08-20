@@ -454,6 +454,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
+                                                                <th>#</th>
                                                                 <th width="10%">Nº do Relatorio</th>
                                                                 <th width="12%">Nº do Atendimento</th>
                                                                 <th width="10%">Data</th>
@@ -473,6 +474,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                             while ($row = pg_fetch_object($sth)) {
                                                                 echo "<tr>";
+                                                                echo "<td><button type=button data-target=\"#modalEv\" data-toggle=\"modal\" class=\"btn btn-sm btn-warning\" onclick='editar($row->assistente_social_id)'><i class='fas fa-pencil-alt'></i></input></td>";
                                                                 echo "<td>" . str_pad($row->assistente_social_id, 7, "0", STR_PAD_LEFT) . "</td>";
                                                                 echo "<td>" . str_pad($row->atendimento_id, 7, "0", STR_PAD_LEFT) . "</td>";
                                                                 echo "<td>" . date('d/m/Y', strtotime($row->data)) . "</td>";
@@ -522,6 +524,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
+    <div id="edit"></div>
     <?php include('footer.php'); ?>
     <!-- </div> -->
 
@@ -546,6 +549,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
+        function editar(a) {
+            $.get('retornoeditaevolucaomp.php?evolucao=' + a, function(dataReturn) {
+                $('#conteudoModal').html(dataReturn);
+            });
+        }
+
         function limpa_formulário_cep() {
             //Limpa valores do formulário de cep.
             document.getElementById('endereco').value = ("");
@@ -988,7 +997,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $.get('retornoevolucaomp.php?evolucao=' + vl, function(dataReturn) {
                 $('#conteudoModal').html(dataReturn);
             });
-
         }
     </script>
 </body>
