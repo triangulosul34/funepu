@@ -1080,11 +1080,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="col-sm-2">
                                                     <label class="control-label">CEP</label> <input type="text" name="end_cep" id="end_cep" class="form-control" maxlength="9" value="<?php echo $cep; ?>" OnKeyPress="formatar('#####-###', this)" onblur="pesquisacep(this.value);">
                                                 </div>
-                                                <div class="col-sm-5">
+                                                <div class="col-sm-4">
                                                     <label class="control-label">Endereço</label> <input type="text" name="endereco" id="endereco" class="form-control" value="<?php echo $enderecox; ?>">
                                                 </div>
 
-                                                <div class="col-sm-1">
+                                                <div class="col-sm-2">
                                                     <label class="control-label">Numero</label> <input type="text" name="end_num" id="end_num" class="form-control" value="<?php echo $end_numero; ?>">
                                                 </div>
 

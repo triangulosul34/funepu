@@ -250,12 +250,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <table class="table table-hover table-condensed table-striped width-full">
                                                         <thead>
                                                             <tr>
-                                                                <th width="5%">Ação
-                                                                <th width='35%'>Nome</th>
-                                                                <th width='15%'>Telefone</th>
-                                                                <th width='15%'>Nascimento</th>
-                                                                <th width='20%'>Mãe</th>
-                                                                <th width='25%'>cpf</th>
+                                                                <th>Ação
+                                                                <th>Nome</th>
+                                                                <th>Telefone</th>
+                                                                <th>Nascimento</th>
+                                                                <th>Mãe</th>
+                                                                <th>cpf</th>
+								<th>DT. Ultimo Atendimento</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -295,6 +296,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<td>" . inverteData($row->dt_nasc) . "</td>";
                                                                 echo "<td>" . $row->nome_mae . "</td>";
                                                                 echo "<td>" . $row->cpf . "</td>";
+								echo "<td>" . inverteData(substr($rowAT->dat_cad,"0","10")) . "</td>";
                                                                 echo "</tr>";
                                                             }
                                                             ?>
