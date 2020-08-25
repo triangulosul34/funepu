@@ -49,9 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     }
 
     include('conexao.php');
-    $stmt = "SELECT a.*, b.sigtap, c.descricao as desc_cid, b.descricao  from apacs_solicitadas a 
+    $stmt = "SELECT d.cpf, a.*, b.sigtap, c.descricao as desc_cid, b.descricao  from apacs_solicitadas a 
     left join procedimentos b on a.procedimento_id = b.procedimento_id
     left join cid10 c on a.cid10 = c.cid
+    left join pessoas d on d.num_conselho_reg = a.crm
     where apac_id=$apac_id";
     $sth = pg_query($stmt) or die($stmt);
     $row = pg_fetch_object($sth);
@@ -67,14 +68,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $sigtap         = $row->sigtap;
     $descricao      = $row->descricao;
     $raca_cor       = $row->raca_cor;
-
-    include('conexao.php');
-    $stmt = "SELECT nome, cpf  from pessoas 
-    where tipo_pessoa='Medico Laudador'";
-    $sth = pg_query($stmt) or die($stmt);
-    $row = pg_fetch_object($sth);
-
     $cpf_medico      = $row->cpf;
+
+    // include('conexao.php');
+    // $stmt = "SELECT nome, cpf  from pessoas 
+    // where tipo_pessoa='Medico Laudador'";
+    // $sth = pg_query($stmt) or die($stmt);
+    // $row = pg_fetch_object($sth);
+
+
 }
 
 require_once('fpdf/fpdf.php');
@@ -219,6 +221,6 @@ $pdf->MultiCell(170, 4, utf8_decode($justificativa), 0);
 $pdf->Text(18, 219, utf8_decode($solicitante));
 $pdf->Text(110, 219, utf8_decode($data));
 $pdf->Text(32, 227, utf8_decode("CPF"));
-$pdf->Text(84, 227, utf8_decode($cpf));
+$pdf->Text(84, 227, utf8_decode($cpf_medico));
 
 $pdf->Output();
