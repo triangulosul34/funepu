@@ -359,6 +359,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <th width='18%' style="font-size: 8.5pt;">Origem</th>
                                                             <th width='5%' style="font-size: 8.5pt;">Atendim.</th>
                                                             <th width='15%' style="font-size: 8.5pt;">Encaminhamento</th>
+                                                            <th width='15%' style="font-size: 8.5pt;">Destino</th>
                                                             <th width='26%' style="font-size: 8.5pt;">Ação</th>
                                                         </tr>
                                                     </thead>
@@ -372,6 +373,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <th width='18%' style="font-size: 8.5pt;">Origem</th>
                                                             <th width='5%' style="font-size: 8.5pt;">Atendim.</th>
                                                             <th width='15%' style="font-size: 8.5pt;">Encaminhamento</th>
+                                                            <th width='15%' style="font-size: 8.5pt;">Destino</th>
                                                             <th width='26%' style="font-size: 8.5pt;">Ação</th>
                                                         </tr>
                                                     </tfoot>
@@ -419,7 +421,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             $stmt = $stmt . " where a.dat_cad='" . date('Y-m-d') . "'";
                                                         }
 
-                                                        $stmt = $stmt . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') order by a.dat_cad desc,a.hora_cad desc ";
+                                                        $stmt = $stmt . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') and (p.destino_encaminhamento is null or p.destino_encaminhamento = '03') order by a.dat_cad desc,a.hora_cad desc ";
                                                         $sth = pg_query($stmt) or die($stmt);
                                                         //echo $stmt; 
                                                         while ($row = pg_fetch_object($sth)) {
@@ -469,6 +471,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                                                                 echo "<td class=\"small\">" . $row->destino . "</td>";
+                                                                echo "<td class=\"small\">" . $row->destinoalta . "</td>";
                                                             }
 
 

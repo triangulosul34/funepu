@@ -274,7 +274,7 @@ class PDF extends FPDF
         $this->Cell(185, 5, utf8_decode('EVOLUÇÃO'), 1, 0, 'C');
         $this->Ln(7);
         $this->SetFont('Arial', '', 8);
-        $this->MultiCell(185, 3, utf8_decode($evolucaoev), '', 'J', 0);
+        $this->MultiCell(185, 3, utf8_decode(strtoupper($evolucaoev)), '', 'J', 0);
         $this->Ln(215);
 
         if ($tipo_medico == 8 or $tipo_medico == 6) {

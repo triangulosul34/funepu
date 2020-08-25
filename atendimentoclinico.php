@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+        $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento is null then a.destino_paciente::integer else z.destino_encaminhamento end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad AS cadastro, a.obs_modal, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.usuario, x.fimclassificacao, x.pressaosistolica, x.queixa AS relato, x.pulso, x.temperatura, x.discriminador, x.prioridade AS atendprioridade, x.glicose, x.dor, x.oxigenio, a.coronavirus
@@ -114,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		LEFT JOIN pessoas c ON a.paciente_id=c.pessoa_id 
 		LEFT JOIN tipo_origem k ON CAST(k.tipo_id AS VARCHAR)=a.tipo 
 		LEFT JOIN classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao' 
+        LEFT JOIN destino_paciente z on a.transacao = z.atendimento_id
 		WHERE a.transacao=$transacao";
         $sth = pg_query($stmt) or die($stmt);
         $row = pg_fetch_object($sth);
@@ -229,323 +230,339 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $imunodeficiencia = $rowc->imunodeficiencia;
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $transacao =        stripslashes(pg_escape_string($_POST['transacao']));
-    $senha =            stripslashes(pg_escape_string($_POST['senha']));
-    $data_transacao =   stripslashes(pg_escape_string($_POST['data_transacao']));
-    $hora_transacao =   stripslashes(pg_escape_string($_POST['hora_transacao']));
-    $usuario_transacao = stripslashes(pg_escape_string($_POST['usuario_transacao']));
-    $acao =             stripslashes(pg_escape_string($_POST['acao']));
-    $idade =            stripslashes(pg_escape_string($_POST['idade']));
-    $prontuario = stripslashes(pg_escape_string($_POST['prontuario']));
-    $nome = stripslashes(pg_escape_string($_POST['nome']));
-    $dt_nascimento = stripslashes(pg_escape_string($_POST['dt_nascimento']));
-    $enderecox = stripslashes(pg_escape_string($_POST['endereco']));
-    $end_numero = stripslashes(pg_escape_string($_POST['end_num']));
-    $complemento = stripslashes(pg_escape_string($_POST['end_comp']));
-    $bairro = stripslashes(pg_escape_string($_POST['end_bairro']));
-    $cidade = stripslashes(pg_escape_string($_POST['end_cidade']));
-    $estado = stripslashes(pg_escape_string($_POST['end_uf']));
-    $cep = stripslashes(pg_escape_string($_POST['end_cep']));
-    $cpf = stripslashes(pg_escape_string($_POST['cpf']));
-    $cns = stripslashes(pg_escape_string($_POST['cns']));
-    $telefone = stripslashes(pg_escape_string($_POST['telefone']));
-    $celular = stripslashes(pg_escape_string($_POST['celular']));
-    $deficiencia = stripslashes(pg_escape_string($_POST['deficiencia']));
-    $observacao = stripslashes(pg_escape_string($_POST['observacao']));
-    $origem = $_POST['origem'];
-    $evolucao = stripslashes(pg_escape_string($_POST['evolucao']));
-
-    $enfermaria = stripslashes(pg_escape_string($_POST['enfermaria']));
-    $leito = stripslashes(pg_escape_string($_POST['leito']));
-    $oque_faz = stripslashes(pg_escape_string($_POST['oque_faz']));
-    $com_oqfaz = stripslashes(pg_escape_string($_POST['com_oqfaz']));
-    $tempo_faz = stripslashes(pg_escape_string($_POST['tempo_faz']));
-    $como_faz = stripslashes(pg_escape_string($_POST['como_faz']));
-    $destino = stripslashes(pg_escape_string($_POST['destino']));
-    $destinox = stripslashes(pg_escape_string($_POST['destinox']));
-
-    $alta = date('Y-m-d');
-    $hora_destino = date('H:i');
-    $CID = stripslashes(pg_escape_string($_POST['CID']));
-    $diag_pri = stripslashes(pg_escape_string($_POST['diag_pri']));
-    $situacao = stripslashes(pg_escape_string($_POST['situacao']));
-    $queixa = stripslashes(pg_escape_string($_POST['queixa']));
-    $exame_fisico = stripslashes(pg_escape_string($_POST['exame_fisico']));
-    $procedimento = stripslashes(pg_escape_string($_POST['procedimento']));
-    $transfere = $_POST['cb_exame'];
-    $obs_modal = stripslashes(pg_escape_string($_POST['obs_modal']));
-    $coronavirus = $_POST['coronavirus'];
-
-    if ($coronavirus == 1 or $coronavirus == 10) {
-        if ($_POST['febre_alta']) {
-            $febre_alta = 1;
-        } else {
-            $febre_alta = 0;
-        }
-        if ($_POST['fadiga']) {
-            $fadiga = 1;
-        } else {
-            $fadiga = 0;
-        }
-        if ($_POST['dificuldade_respirar']) {
-            $dificuldade_respirar = 1;
-        } else {
-            $dificuldade_respirar = 0;
-        }
-        if ($_POST['tosse_secracao']) {
-            $tosse_secracao = 1;
-        } else {
-            $tosse_secracao = 0;
-        }
-        if ($_POST['congestao_nasal']) {
-            $congestao_nasal = 1;
-        } else {
-            $congestao_nasal = 0;
-        }
-        if ($_POST['cefaleia']) {
-            $cefaleia = 1;
-        } else {
-            $cefaleia = 0;
-        }
-        if ($_POST['dor_garganta']) {
-            $dor_garganta = 1;
-        } else {
-            $dor_garganta = 0;
-        }
-        if ($_POST['diarreia']) {
-            $diarreia = 1;
-        } else {
-            $diarreia = 0;
-        }
-        if ($_POST['nausea_vomito']) {
-            $nausea_vomito = 1;
-        } else {
-            $nausea_vomito = 0;
-        }
-        if ($_POST['mialgia_artralgia']) {
-            $mialgia_artralgia = 1;
-        } else {
-            $mialgia_artralgia = 0;
-        }
-        if ($_POST['calafrios']) {
-            $calafrios = 1;
-        } else {
-            $calafrios = 0;
-        }
-        if ($_POST['anosmia_hiposmia']) {
-            $anosmia_hiposmia = 1;
-        } else {
-            $anosmia_hiposmia = 0;
-        }
-        if ($_POST['diabetes']) {
-            $diabetes = 1;
-        } else {
-            $diabetes = 0;
-        }
-        if ($_POST['has']) {
-            $has = 1;
-        } else {
-            $has = 0;
-        }
-        if ($_POST['obesidade']) {
-            $obesidade = 1;
-        } else {
-            $obesidade = 0;
-        }
-        if ($_POST['doenca_coronariana']) {
-            $doenca_coronariana = 1;
-        } else {
-            $doenca_coronariana = 0;
-        }
-        if ($_POST['dpoc_asma']) {
-            $dpoc_asma = 1;
-        } else {
-            $dpoc_asma = 0;
-        }
-        if ($_POST['cancer']) {
-            $cancer = 1;
-        } else {
-            $cancer = 0;
-        }
-        if ($_POST['drc']) {
-            $drc = 1;
-        } else {
-            $drc = 0;
-        }
-        if ($_POST['imunodeficiencia']) {
-            $imunodeficiencia = 1;
-        } else {
-            $imunodeficiencia = 0;
-        }
+    if (isset($_POST['extornar_alta'])) {
+        $destino = $_POST['destino'];
+        $motivo_extorno = $_POST['motivo_extorno'];
+        $atendimento = $_POST['atendimento'];
+        $data = date('Y-m-d');
+        $hora = date('H:i');
 
         include('conexao.php');
-        $sql = "select * from presintomas_covid where atendimento_id = $transacao";
-        $result = pg_query($sql) or die($sql);
-        $row = pg_fetch_object($result);
+        $stmtLogs = "INSERT INTO logs (usuario, tipo_acao,atendimento_id, data, hora) 
+					 VALUES ('$usuario','Extornou a Alta do atendimento para o destino $destino pelo motivo $motivo_extorno','$atendimento','$data','$hora')";
+        $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
-        if ($row) {
-            include('conexao.php');
-            $sql = "update presintomas_covid set febre_alta=$febre_alta,fadiga=$fadiga,dificuldade_respirar=$dificuldade_respirar,tosse_secracao=$tosse_secracao,congestao_nasal=$congestao_nasal,cefaleia=$cefaleia,dor_garganta=$dor_garganta,diarreia=$diarreia,nausea_vomito=$nausea_vomito,mialgia_artralgia=$mialgia_artralgia,calafrios=$calafrios,anosmia_hiposmia=$anosmia_hiposmia,diabetes=$diabetes,has=$has,obesidade=$obesidade,doenca_coronariana=$doenca_coronariana,dpoc_asma=$dpoc_asma,cancer=$cancer,drc=$drc,imunodeficiencia=$imunodeficiencia where atendimento_id = $transacao";
-            $result = pg_query($sql) or die($sql);
-        } else {
-            include('conexao.php');
-            $sql = "insert into presintomas_covid(atendimento_id, febre_alta,fadiga,dificuldade_respirar,tosse_secracao,congestao_nasal,cefaleia,dor_garganta,diarreia,nausea_vomito,mialgia_artralgia,calafrios,anosmia_hiposmia,diabetes,has,obesidade,doenca_coronariana,dpoc_asma,cancer,drc,imunodeficiencia) values($transacao,$febre_alta,$fadiga,$dificuldade_respirar,$tosse_secracao,$congestao_nasal,$cefaleia,$dor_garganta,$diarreia,$nausea_vomito,$mialgia_artralgia,$calafrios,$anosmia_hiposmia,$diabetes,$has,$obesidade,$doenca_coronariana,$dpoc_asma,$cancer,$drc,$imunodeficiencia)";
-            $result = pg_query($sql) or die($sql);
-        }
-    }
-
-    if ($erro == "") {
-        $xdum = "";
 
         include('conexao.php');
-        $dt_transacao = inverteData($data_transacao);
-        $alta = inverteData($alta);
-        $dt_solicitacao = inverteData($dt_nsolicitacao);
-        $horacad = date('H:i');
-        $stmt = "UPDATE atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
-				oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', com_oqfaz='$com_oqfaz', queixa='$queixa', exame_fisico='$exame_fisico', 
-				diagnostico_principal='$diag_pri', cid_principal='$CID',";
-        if (str_replace(' ', '', $destino) != '') {
-            $stmt = $stmt . " destino_paciente='$destino',";
-            // if (($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') && $coronavirus == '1') {
-            //     $stmt = $stmt . " coronavirus=10,";
-            // }
-            if ($destino != '09') {
-                $stmt = $stmt . " med_finalizador = (case when med_finalizador is null then '$usuario' else med_finalizador end),";
+        $sql = "UPDATE atendimentos SET destino_paciente = '$destino', status='Atendimento Finalizado' WHERE transacao = $atendimento";
+        $result = pg_query($sql);
+
+        header('Location: atendimentoclinico.php?id='.$atendimento);
+    } else {
+        $transacao =        stripslashes(pg_escape_string($_POST['transacao']));
+        $senha =            stripslashes(pg_escape_string($_POST['senha']));
+        $data_transacao =   stripslashes(pg_escape_string($_POST['data_transacao']));
+        $hora_transacao =   stripslashes(pg_escape_string($_POST['hora_transacao']));
+        $usuario_transacao = stripslashes(pg_escape_string($_POST['usuario_transacao']));
+        $acao =             stripslashes(pg_escape_string($_POST['acao']));
+        $idade =            stripslashes(pg_escape_string($_POST['idade']));
+        $prontuario = stripslashes(pg_escape_string($_POST['prontuario']));
+        $nome = stripslashes(pg_escape_string($_POST['nome']));
+        $dt_nascimento = stripslashes(pg_escape_string($_POST['dt_nascimento']));
+        $enderecox = stripslashes(pg_escape_string($_POST['endereco']));
+        $end_numero = stripslashes(pg_escape_string($_POST['end_num']));
+        $complemento = stripslashes(pg_escape_string($_POST['end_comp']));
+        $bairro = stripslashes(pg_escape_string($_POST['end_bairro']));
+        $cidade = stripslashes(pg_escape_string($_POST['end_cidade']));
+        $estado = stripslashes(pg_escape_string($_POST['end_uf']));
+        $cep = stripslashes(pg_escape_string($_POST['end_cep']));
+        $cpf = stripslashes(pg_escape_string($_POST['cpf']));
+        $cns = stripslashes(pg_escape_string($_POST['cns']));
+        $telefone = stripslashes(pg_escape_string($_POST['telefone']));
+        $celular = stripslashes(pg_escape_string($_POST['celular']));
+        $deficiencia = stripslashes(pg_escape_string($_POST['deficiencia']));
+        $observacao = stripslashes(pg_escape_string($_POST['observacao']));
+        $origem = $_POST['origem'];
+        $evolucao = stripslashes(pg_escape_string($_POST['evolucao']));
+
+        $enfermaria = stripslashes(pg_escape_string($_POST['enfermaria']));
+        $leito = stripslashes(pg_escape_string($_POST['leito']));
+        $oque_faz = stripslashes(pg_escape_string($_POST['oque_faz']));
+        $com_oqfaz = stripslashes(pg_escape_string($_POST['com_oqfaz']));
+        $tempo_faz = stripslashes(pg_escape_string($_POST['tempo_faz']));
+        $como_faz = stripslashes(pg_escape_string($_POST['como_faz']));
+        $destino = stripslashes(pg_escape_string($_POST['destino']));
+        $destinox = stripslashes(pg_escape_string($_POST['destinox']));
+
+        $alta = date('Y-m-d');
+        $hora_destino = date('H:i');
+        $CID = stripslashes(pg_escape_string($_POST['CID']));
+        $diag_pri = stripslashes(pg_escape_string($_POST['diag_pri']));
+        $situacao = stripslashes(pg_escape_string($_POST['situacao']));
+        $queixa = stripslashes(pg_escape_string($_POST['queixa']));
+        $exame_fisico = stripslashes(pg_escape_string($_POST['exame_fisico']));
+        $procedimento = stripslashes(pg_escape_string($_POST['procedimento']));
+        $transfere = $_POST['cb_exame'];
+        $obs_modal = stripslashes(pg_escape_string($_POST['obs_modal']));
+        $coronavirus = $_POST['coronavirus'];
+
+        if ($coronavirus == 1 or $coronavirus == 10) {
+            if ($_POST['febre_alta']) {
+                $febre_alta = 1;
+            } else {
+                $febre_alta = 0;
             }
-        }
-        if ($alta != '') {
-            $stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
-        } else {
-            $stmt = $stmt . " data_destino=null, hora_destino=null, status='Em Atendimento' ";
-        }
+            if ($_POST['fadiga']) {
+                $fadiga = 1;
+            } else {
+                $fadiga = 0;
+            }
+            if ($_POST['dificuldade_respirar']) {
+                $dificuldade_respirar = 1;
+            } else {
+                $dificuldade_respirar = 0;
+            }
+            if ($_POST['tosse_secracao']) {
+                $tosse_secracao = 1;
+            } else {
+                $tosse_secracao = 0;
+            }
+            if ($_POST['congestao_nasal']) {
+                $congestao_nasal = 1;
+            } else {
+                $congestao_nasal = 0;
+            }
+            if ($_POST['cefaleia']) {
+                $cefaleia = 1;
+            } else {
+                $cefaleia = 0;
+            }
+            if ($_POST['dor_garganta']) {
+                $dor_garganta = 1;
+            } else {
+                $dor_garganta = 0;
+            }
+            if ($_POST['diarreia']) {
+                $diarreia = 1;
+            } else {
+                $diarreia = 0;
+            }
+            if ($_POST['nausea_vomito']) {
+                $nausea_vomito = 1;
+            } else {
+                $nausea_vomito = 0;
+            }
+            if ($_POST['mialgia_artralgia']) {
+                $mialgia_artralgia = 1;
+            } else {
+                $mialgia_artralgia = 0;
+            }
+            if ($_POST['calafrios']) {
+                $calafrios = 1;
+            } else {
+                $calafrios = 0;
+            }
+            if ($_POST['anosmia_hiposmia']) {
+                $anosmia_hiposmia = 1;
+            } else {
+                $anosmia_hiposmia = 0;
+            }
+            if ($_POST['diabetes']) {
+                $diabetes = 1;
+            } else {
+                $diabetes = 0;
+            }
+            if ($_POST['has']) {
+                $has = 1;
+            } else {
+                $has = 0;
+            }
+            if ($_POST['obesidade']) {
+                $obesidade = 1;
+            } else {
+                $obesidade = 0;
+            }
+            if ($_POST['doenca_coronariana']) {
+                $doenca_coronariana = 1;
+            } else {
+                $doenca_coronariana = 0;
+            }
+            if ($_POST['dpoc_asma']) {
+                $dpoc_asma = 1;
+            } else {
+                $dpoc_asma = 0;
+            }
+            if ($_POST['cancer']) {
+                $cancer = 1;
+            } else {
+                $cancer = 0;
+            }
+            if ($_POST['drc']) {
+                $drc = 1;
+            } else {
+                $drc = 0;
+            }
+            if ($_POST['imunodeficiencia']) {
+                $imunodeficiencia = 1;
+            } else {
+                $imunodeficiencia = 0;
+            }
 
-        $stmt = $stmt . " where transacao=$transacao ";
-        $sth = pg_query($stmt) or die($stmt);
-
-        if ($evolucao != '') {
-            $sql = "select nextval('evolucoes_evolucao_id_seq'::regclass)";
+            include('conexao.php');
+            $sql = "select * from presintomas_covid where atendimento_id = $transacao";
             $result = pg_query($sql) or die($sql);
             $row = pg_fetch_object($result);
 
+            if ($row) {
+                include('conexao.php');
+                $sql = "update presintomas_covid set febre_alta=$febre_alta,fadiga=$fadiga,dificuldade_respirar=$dificuldade_respirar,tosse_secracao=$tosse_secracao,congestao_nasal=$congestao_nasal,cefaleia=$cefaleia,dor_garganta=$dor_garganta,diarreia=$diarreia,nausea_vomito=$nausea_vomito,mialgia_artralgia=$mialgia_artralgia,calafrios=$calafrios,anosmia_hiposmia=$anosmia_hiposmia,diabetes=$diabetes,has=$has,obesidade=$obesidade,doenca_coronariana=$doenca_coronariana,dpoc_asma=$dpoc_asma,cancer=$cancer,drc=$drc,imunodeficiencia=$imunodeficiencia where atendimento_id = $transacao";
+                $result = pg_query($sql) or die($sql);
+            } else {
+                include('conexao.php');
+                $sql = "insert into presintomas_covid(atendimento_id, febre_alta,fadiga,dificuldade_respirar,tosse_secracao,congestao_nasal,cefaleia,dor_garganta,diarreia,nausea_vomito,mialgia_artralgia,calafrios,anosmia_hiposmia,diabetes,has,obesidade,doenca_coronariana,dpoc_asma,cancer,drc,imunodeficiencia) values($transacao,$febre_alta,$fadiga,$dificuldade_respirar,$tosse_secracao,$congestao_nasal,$cefaleia,$dor_garganta,$diarreia,$nausea_vomito,$mialgia_artralgia,$calafrios,$anosmia_hiposmia,$diabetes,$has,$obesidade,$doenca_coronariana,$dpoc_asma,$cancer,$drc,$imunodeficiencia)";
+                $result = pg_query($sql) or die($sql);
+            }
+        }
+
+        if ($erro == "") {
+            $xdum = "";
+
+            include('conexao.php');
+            $dt_transacao = inverteData($data_transacao);
+            $alta = inverteData($alta);
+            $dt_solicitacao = inverteData($dt_nsolicitacao);
             $horacad = date('H:i');
-            $datacad = date('Y-m-d');
+            $stmt = "UPDATE atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
+				oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', com_oqfaz='$com_oqfaz', queixa='$queixa', exame_fisico='$exame_fisico', 
+				diagnostico_principal='$diag_pri', cid_principal='$CID',";
+            if (str_replace(' ', '', $destino) != '') {
+                $stmt = $stmt . " destino_paciente='$destino',";
+                // if (($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') && $coronavirus == '1') {
+                //     $stmt = $stmt . " coronavirus=10,";
+                // }
+                if ($destino != '09') {
+                    $stmt = $stmt . " med_finalizador = (case when med_finalizador is null then '$usuario' else med_finalizador end),";
+                }
+            }
+            if ($alta != '') {
+                $stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
+            } else {
+                $stmt = $stmt . " data_destino=null, hora_destino=null, status='Em Atendimento' ";
+            }
 
-            $stmt = "INSERT INTO evolucoes (evolucao_id, atendimento_id, tipo, data, hora, usuario,evolucao)
-						VALUES ($row->nextval, $transacao,'$perfil','$datacad','$horacad','$usuario','$evolucao')";
+            $stmt = $stmt . " where transacao=$transacao ";
             $sth = pg_query($stmt) or die($stmt);
-            header("location: relevolucao.php?id=" . $row->nextval);
-        }
 
-        $df = '';
-        if ($destino == '01') {
-            $df = 'ALTA';
-        } else if ($destino == '02') {
-            $df = 'ALTA / ENCAM. AMBUL.';
-        } else if ($destino == '07') {
-            $df = 'EM OBSERVAÇÃO / MEDICAÇÃO';
-        } else if ($destino == '10') {
-            $df = 'EXAMES / REAVALIACAO';
-        } else if ($destino == '03') {
-            $df = 'PERMANÊCIA.';
-        } else if ($destino == '04') {
-            $df = 'TRANSF. OUTRA UPA';
-        } else if ($destino == '05') {
-            $df = 'TRANSF. INTERN. HOSPITALAR';
-        } else if ($destino == '06') {
-            $df = 'ÓBITO';
-        } else if ($destino == '09') {
-            $df = 'NAO RESPONDEU CHAMADO';
-        } else if ($destino == '11') {
-            $df = 'ALTA EVASÃO';
-        } else if ($destino == '12') {
-            $df = 'ALTA PEDIDO';
-        } else if ($destino == '14') {
-            $df = 'ALTA / POLICIA';
-        } else if ($destino == '15') {
-            $df = 'ALTA / PENITENCIÁRIA';
-        } else if ($destino == '16') {
-            $df = 'ALTA / PÓS MEDICAMENTO';
-        }
+            if ($evolucao != '') {
+                $sql = "select nextval('evolucoes_evolucao_id_seq'::regclass)";
+                $result = pg_query($sql) or die($sql);
+                $row = pg_fetch_object($result);
 
-        $data = date('Y-m-d');
-        $hora = date('H:i');
-        include('conexao.php');
-        $stmtLogs = "INSERT INTO logs (usuario, tipo_acao,atendimento_id, data, hora) 
+                $horacad = date('H:i');
+                $datacad = date('Y-m-d');
+
+                $stmt = "INSERT INTO evolucoes (evolucao_id, atendimento_id, tipo, data, hora, usuario,evolucao)
+						VALUES ($row->nextval, $transacao,'$perfil','$datacad','$horacad','$usuario','$evolucao')";
+                $sth = pg_query($stmt) or die($stmt);
+                header("location: relevolucao.php?id=" . $row->nextval);
+            }
+
+            $df = '';
+            if ($destino == '01') {
+                $df = 'ALTA';
+            } elseif ($destino == '02') {
+                $df = 'ALTA / ENCAM. AMBUL.';
+            } elseif ($destino == '07') {
+                $df = 'EM OBSERVAÇÃO / MEDICAÇÃO';
+            } elseif ($destino == '10') {
+                $df = 'EXAMES / REAVALIACAO';
+            } elseif ($destino == '03') {
+                $df = 'PERMANÊCIA.';
+            } elseif ($destino == '04') {
+                $df = 'TRANSF. OUTRA UPA';
+            } elseif ($destino == '05') {
+                $df = 'TRANSF. INTERN. HOSPITALAR';
+            } elseif ($destino == '06') {
+                $df = 'ÓBITO';
+            } elseif ($destino == '09') {
+                $df = 'NAO RESPONDEU CHAMADO';
+            } elseif ($destino == '11') {
+                $df = 'ALTA EVASÃO';
+            } elseif ($destino == '12') {
+                $df = 'ALTA PEDIDO';
+            } elseif ($destino == '14') {
+                $df = 'ALTA / POLICIA';
+            } elseif ($destino == '15') {
+                $df = 'ALTA / PENITENCIÁRIA';
+            } elseif ($destino == '16') {
+                $df = 'ALTA / PÓS MEDICAMENTO';
+            }
+
+            $data = date('Y-m-d');
+            $hora = date('H:i');
+            include('conexao.php');
+            $stmtLogs = "INSERT INTO logs (usuario, tipo_acao,atendimento_id, data, hora) 
 					 VALUES ('$usuario','FINALIZOU O ATENDIMENTO - DESTINO $df','$transacao','$data','$hora')";
-        $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-    }
-
-    if (isset($_POST['encerrar']) != '') {
-
-        include('conexao.php');
-        $dt_transacao = inverteData(substr($data_transacao, 0, 10));
-        $dt_solicitacao = inverteData($dt_nsolicitacao);
-        $horacad = date('H:i');
-        $stmt = "UPDATE pedidos SET STATUS='Cadastrado' WHERE transacao=$transacao ";
-        $sth = pg_query($stmt) or die($stmt);
-
-        include('conexao.php');
-        $dt_transacao = inverteData(substr($data_transacao, 0, 10));
-        $dt_solicitacao = inverteData($dt_nsolicitacao);
-        $horacad = date('H:i');
-        $stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
-        $sth = pg_query($stmt) or die($stmt);
-
-
-        header("location: atendimentos.php");
-    }
-
-    if (isset($_POST['novo_exame']) != '') {
-
-        include('conexao.php');
-        $dataTransacao = date('Y-m-d');
-        $horacad = date('H:i');
-        $stmt = "INSERT INTO pedidos ";
-        $sth = pg_query($stmt) or die($stmt);
-
-        include('conexao.php');
-        $dt_transacao = inverteData(substr($data_transacao, 0, 10));
-        $dt_solicitacao = inverteData($dt_nsolicitacao);
-        $horacad = date('H:i');
-        $stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
-        $sth = pg_query($stmt) or die($stmt);
-
-
-        header("location: atendimentos.php");
-    }
-
-    if (isset($_POST["req_exame"])) {
-
-        $exames = '';
-        foreach ($transfere as $item) {
-            $exames = $exames . $item . ',';
+            $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
         }
-        $exames =  rtrim($exames, ',');
 
-        if ($exames != '') {
-            echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexame.php?id=$exames');</script>";
+        if (isset($_POST['encerrar']) != '') {
+            include('conexao.php');
+            $dt_transacao = inverteData(substr($data_transacao, 0, 10));
+            $dt_solicitacao = inverteData($dt_nsolicitacao);
+            $horacad = date('H:i');
+            $stmt = "UPDATE pedidos SET STATUS='Cadastrado' WHERE transacao=$transacao ";
+            $sth = pg_query($stmt) or die($stmt);
+
+            include('conexao.php');
+            $dt_transacao = inverteData(substr($data_transacao, 0, 10));
+            $dt_solicitacao = inverteData($dt_nsolicitacao);
+            $horacad = date('H:i');
+            $stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
+            $sth = pg_query($stmt) or die($stmt);
+
+
+            header("location: atendimentos.php");
         }
-    }
 
-    if (isset($_POST["req_exame_lab"])) {
+        if (isset($_POST['novo_exame']) != '') {
+            include('conexao.php');
+            $dataTransacao = date('Y-m-d');
+            $horacad = date('H:i');
+            $stmt = "INSERT INTO pedidos ";
+            $sth = pg_query($stmt) or die($stmt);
 
-        $exames = '';
-        foreach ($transfere as $item) {
-            $exames = $exames . $item . ',';
+            include('conexao.php');
+            $dt_transacao = inverteData(substr($data_transacao, 0, 10));
+            $dt_solicitacao = inverteData($dt_nsolicitacao);
+            $horacad = date('H:i');
+            $stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
+            $sth = pg_query($stmt) or die($stmt);
+
+
+            header("location: atendimentos.php");
         }
-        $exames =  rtrim($exames, ',');
 
-        if ($exames != '') {
-            echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexamelab.php?id=$exames');</script>";
+        if (isset($_POST["req_exame"])) {
+            $exames = '';
+            foreach ($transfere as $item) {
+                $exames = $exames . $item . ',';
+            }
+            $exames =  rtrim($exames, ',');
+
+            if ($exames != '') {
+                echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexame.php?id=$exames');</script>";
+            }
         }
-    }
 
-    if (isset($_POST['imprimir']) != '') {
-        echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('relFAA.php?id=$transacao');</script>";
-    }
+        if (isset($_POST["req_exame_lab"])) {
+            $exames = '';
+            foreach ($transfere as $item) {
+                $exames = $exames . $item . ',';
+            }
+            $exames =  rtrim($exames, ',');
 
-    echo "<script type=\"text/javascript\" language=\"Javascript\">location.href = 'atendimentoclinico.php?id=$transacao';</script>";
+            if ($exames != '') {
+                echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexamelab.php?id=$exames');</script>";
+            }
+        }
+
+        if (isset($_POST['imprimir']) != '') {
+            echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('relFAA.php?id=$transacao');</script>";
+        }
+
+        echo "<script type=\"text/javascript\" language=\"Javascript\">location.href = 'atendimentoclinico.php?id=$transacao';</script>";
+    }
 }
 
 
@@ -689,6 +706,61 @@ if ($destino != '') {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
+    <div class="modal fade text-left" id="modalFimEvolucao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary white">
+                    <h4 class="modal-title" id="myModalLabel8">Evolução</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="#">
+                        <div class="col-md-12" style="padding: 0;">
+
+                            <div class="col-sm-12">
+                                <label class="control-label  margin-top-10">Destino dado ao Paciente</label>
+                                <select class="form-control" name="destino" id="destino" onchange="seleciona_setor(this)">
+                                    <option value="01">ALTA
+                                    </option>;
+                                    <option value="07">EM
+                                        OBSERVAÇÃO / MEDICAÇÃO</option>;
+                                    <option value="10">EXAMES /
+                                        REAVALIACAO</option>;
+                                    <option value="03">PERMANÊNCIA.
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12" id="setor_transferencia_destino">
+
+                            </div>
+
+                            <div class="col-sm-12 margin-top-20">
+                                <label class="control-label">Motivo do Extorno</label>
+                                <textarea name="motivo_extorno" rows="5" class="form-control" onkeyup="maiuscula(this)" required></textarea>
+                                <input type="hidden" name="atendimento" value="<?php echo $transacao; ?>">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 margin-top-10 padding-0">
+
+                            <div class="col-md-6">
+                                <input type='submit' name='extornar_alta' id="extornar_alta" class="btn btn-success width-full" value='Salvar'>
+                            </div>
+                            <div class="col-md-6">
+                                <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal" class="btn btn-danger width-full" value='Cancelar'>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="exampleTabs" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -1781,23 +1853,32 @@ if ($destino != '') {
                         <h4 class="form-section-center"><i class="fas fa-share"></i> Destino/Diagnóstico</h4>
                         <hr style="margin: auto;width: 260px">
                     </div>
-                    <label class="control-label">Destino dado ao Paciente</label>
-                    <?php if ($destino == '19' and $med == 1) { ?>
-                        <label class="control-label">guardando os resultados de exames</label>
-                        <textarea name="evolucao" class="form-control" style="height: 404px" id="evolucao"></textarea> </br>
-                    <?php } ?>
-                    <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) echo $disable ?>>
-                        <option value=""></option>;
-                        <option value="01" <?php if ($destino == '01') echo "selected"; ?>>ALTA
-                        </option>;
-                        <option value="07" <?php if ($destino == '07') echo "selected"; ?>>EM
-                            OBSERVAÇÃO / MEDICAÇÃO</option>;
-                        <!-- <option value="19" <?php if ($destino == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
-                        <option value="10" <?php if ($destino == '10') echo "selected"; ?>>EXAMES /
-                            REAVALIACAO</option>;
-                        <option value="03" <?php if ($destino == '03') echo "selected"; ?>>PERMANÊNCIA.
-                        </option>;
-                    </select>
+                    <div class="row">
+                        <div class="col-md-10">
+                            <label class="control-label">Destino dado ao Paciente</label>
+                            <?php if ($destino == '19' and $med == 1) { ?>
+                                <label class="control-label">guardando os resultados de exames</label>
+                                <textarea name="evolucao" class="form-control" style="height: 404px" id="evolucao"></textarea> </br>
+                            <?php } ?>
+                            <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) echo $disable ?> required>
+                                <option value=""></option>;
+                                <option value="01" <?php if ($destino == '01') echo "selected"; ?>>ALTA
+                                </option>;
+                                <option value="07" <?php if ($destino == '07') echo "selected"; ?>>EM
+                                    OBSERVAÇÃO / MEDICAÇÃO</option>;
+                                <!-- <option value="19" <?php if ($destino == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
+                                <option value="10" <?php if ($destino == '10') echo "selected"; ?>>EXAMES /
+                                    REAVALIACAO</option>;
+                                <option value="03" <?php if ($destino == '03') echo "selected"; ?>>PERMANÊNCIA.
+                                </option>;
+                            </select>
+                        </div>
+                        <?php if ($destino == '01') { ?>
+                        <div class="col-md-2">
+                            <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
+                        </div>
+                        <?php } ?>
+                    </div>
                 </div>
 
 
@@ -1856,9 +1937,9 @@ if ($destino != '') {
                 <div class="col-md-12" align="center"><br><br>
                     <form method="post" enctype="multipart/form-data" action="relComparecimento.php" target="_blank">
                         <div class="form-group">
-                            <?php if ($destino != '') { ?>
+                            <?php if ($destino != '' && $status != 'Aguardando Atendimento' && $destino != '01') { ?>
                                 <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
-                            <?php } else { ?>
+                            <?php } else if ($destino != '01') { ?>
                                 <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
                             <?php } ?>
                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
@@ -2003,34 +2084,39 @@ if ($destino != '') {
         }
 
         function g() {
+            var destino = document.getElementById("destino").value;
+            if (destino) {
 
-            swal({
-                title: "Solicite a assinatura do paciente na Ficha de Atendimento",
-                text: "",
-                type: "warning",
-                showCancelButton: false,
-                confirmButtonColor: '#428bca',
-                confirmButtonText: 'OK',
-                closeOnConfirm: false,
-                closeOnCancel: false
-            }).then((isConfirm) => {
+                swal({
+                    title: "Solicite a assinatura do paciente na Ficha de Atendimento",
+                    text: "",
+                    type: "warning",
+                    showCancelButton: false,
+                    confirmButtonColor: '#428bca',
+                    confirmButtonText: 'OK',
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }).then((isConfirm) => {
 
-                if (isConfirm) {
+                    if (isConfirm) {
 
 
-                    if (document.getElementById('evolucao')) {
-                        if (document.getElementById('evolucao').value == '') {
-                            document.getElementById('evolucao').focus();
-                            alert("Dados incompletos!", "Informe a evolucao", "error");
+                        if (document.getElementById('evolucao')) {
+                            if (document.getElementById('evolucao').value == '') {
+                                document.getElementById('evolucao').focus();
+                                alert("Dados incompletos!", "Informe a evolucao", "error");
+                            } else {
+                                $("#pedido").submit();
+                            }
                         } else {
                             $("#pedido").submit();
                         }
-                    } else {
-                        $("#pedido").submit();
-                    }
 
-                }
-            });
+                    }
+                });
+            } else {
+                alert("Destino deve ser informado!!!");
+            }
 
         }
 

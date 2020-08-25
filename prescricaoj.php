@@ -1012,6 +1012,7 @@ if (isset($_POST["cancelar"])) {
             }
 
             function salvar() {
+                document.getElementById("sal").disabled = true;
                 var prescricao = document.getElementById("prescricao").value;
                 var medico = document.getElementById("medico").value;
                 var nome = document.getElementById("nome").value;

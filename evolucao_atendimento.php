@@ -185,6 +185,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora) 
 					values ($atendimento, $destino, '$motivoalta', '$data', '$hora')";
             }
+            $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+			values ('$usuario','DEU DESTINO AO PACIENTE NA EVOLUÇÃO','$atendimento','$data','$hora')";
+            $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
         } else {
             if ($destino == '05') {
                 $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', hospital = '$hospital', clinica = '$clinica', setor = null
@@ -196,6 +199,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null
 				where atendimento_id = '$atendimento'";
             }
+            $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+			values ('$usuario','ALTEROU O DESTINO DO PACIENTE EM EVOLUÇÃO','$atendimento','$data','$hora')";
+            $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
         }
 
         $sth = pg_query($stmt) or die($stmt);
@@ -420,14 +426,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <select class="form-control" name="destino" id="destino" onchange="seleciona_setor(this)">
                                     <option value=""></option>;
                                     <option value="01" <?php if ($rowFim->destino_encaminhamento == 1) echo "selected"; ?>>ALTA</option>
-                                    <option value="02" <?php if ($rowFim->destino_encaminhamento == 2) echo "selected"; ?>>ALTA / ENCAM. AMBUL.</option>
-                                    <option value="11" <?php if ($rowFim->destino_encaminhamento == 11) echo "selected"; ?>>ALTA EVASÃO</option>
-                                    <option value="12" <?php if ($rowFim->destino_encaminhamento == 12) echo "selected"; ?>>ALTA PEDIDO</option>
-                                    <option value="15" <?php if ($rowFim->destino_encaminhamento == 15) echo "selected"; ?>>ALTA / PENITENCIÁRIA</option>
-                                    <option value="14" <?php if ($rowFim->destino_encaminhamento == 14) echo "selected"; ?>>ALTA / PM</option>
                                     <option value="04" <?php if ($rowFim->destino_encaminhamento == 4) echo "selected"; ?>>TRANSF. OUTRA UPA</option>
                                     <option value="05" <?php if ($rowFim->destino_encaminhamento == 5) echo "selected"; ?>>TRANSFERENCIA HOSPITALAR</option>
-                                    <option value="13" <?php if ($rowFim->destino_encaminhamento == 13) echo "selected"; ?>>TRANSFERENCIA INTERNA</option>
                                     <option value="03" <?php if ($rowFim->destino_encaminhamento == 3) echo "selected"; ?>>PERMANÊCIA.</option>
                                     <option value="06" <?php if ($rowFim->destino_encaminhamento == 6) echo "selected"; ?>>ÓBITO</option>
                                 </select>
@@ -573,9 +573,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="col-12 text-center mt-2">
                                             <a href="nova_evolucao.php?id=<?php echo $transacao; ?>" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Nova Evolução</a>
                                             <a class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" target="_blank" href="relSUSFacil.php?id=<?php echo $_GET['id']; ?>">Solicitação de Internação</a>
-                                            <button data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Finalizar Atendimento</button>
-                                            <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
-                                            <?php echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-success mr-2" data-toggle="modal">'; ?>
+                                            <button data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Destino Paciente</button>
+                                            <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" data-toggle="modal">
+                                            <?php echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1" data-toggle="modal">'; ?>
                                         </div>
                                     </div>
                                     <div class="row mt-4">

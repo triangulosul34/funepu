@@ -652,12 +652,13 @@ if (isset($_POST["excel"])) {
                                                     <tbody>
                                                         <?php
                                                         include('conexao.php');
-                                                        $stmt = "select a.transacao,d.nome as nomemed, a.destino_paciente, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
+                                                        $stmt = "select a.transacao,d.nome as nomemed, case when z.destino_encaminhamento is null then a.destino_paciente::integer else z.destino_encaminhamento end as destino_paciente, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
                                                         CASE prioridade WHEN 'VERMELHO' THEN '0' WHEN 'LARANJA' THEN '1' WHEN 'AMARELO' THEN '2' WHEN 'VERDE' THEN '3'  WHEN 'AZUL' THEN '4' ELSE '5'
                                                         END as ORDEM, a.coronavirus from atendimentos a 
                                                         left join pessoas c on a.paciente_id=c.pessoa_id
                                                         left join pessoas d on a.med_atendimento=d.username 
-                                                        left join tipo_origem k on cast(k.tipo_id as varchar)=a.tipo ";
+                                                        left join tipo_origem k on cast(k.tipo_id as varchar)=a.tipo 
+                                                        left join destino_paciente z on a.transacao = z.atendimento_id";
                                                         if ($where != "") {
                                                             $stmt = $stmt . " where " . $where;
                                                         } else {
@@ -704,31 +705,31 @@ if (isset($_POST["excel"])) {
                                                             echo "<tr " . $classe . " >";
                                                             if ($row->coronavirus == 1) {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td class='blink'>" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . "</td>";
+                                                                echo "<td class='blink' style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . "</td>";
                                                                 echo "<td class='blink'><a data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank'>" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
                                                                 //echo "<td>".utf8_encode($row->convenio)."</td>";							
-                                                                echo "<td class='blink'>" . $row->hora_triagem . "</td>";
-                                                                echo "<td class='blink'>" . $row->hora_destino . "</td>";
+                                                                echo "<td class='blink' style=\"color:$color\">" . $row->hora_triagem . "</td>";
+                                                                echo "<td class='blink' style=\"color:$color\">" . $row->hora_destino . "</td>";
 
                                                                 if ($row->status == 'Atendimento Finalizado') {
-                                                                    echo "<td class='blink'>" . $row->status . "<br>";
+                                                                    echo "<td class='blink' style=\"color:$color\">" . $row->status . "<br>";
                                                                     echo "<small>" . substr($row->nomemed, 0, 21) . "</small></td>";
                                                                 } else {
-                                                                    echo "<td class='blink'>" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
+                                                                    echo "<td class='blink' style=\"color:$color\">" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
                                                                 }
                                                             } else {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td>" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad .  '<br>' . $row->paciente_id . "</td>";
+                                                                echo "<td style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad .  '<br>' . $row->paciente_id . "</td>";
                                                                 echo "<td ><a data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank' style=\"color:$color\">" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
                                                                 //echo "<td>".utf8_encode($row->convenio)."</td>";							
-                                                                echo "<td>" . $row->hora_triagem . "</td>";
-                                                                echo "<td>" . $row->hora_destino . "</td>";
+                                                                echo "<td style=\"color:$color\">" . $row->hora_triagem . "</td>";
+                                                                echo "<td style=\"color:$color\">" . $row->hora_destino . "</td>";
 
                                                                 if ($row->status == 'Atendimento Finalizado') {
-                                                                    echo "<td>" . $row->status . "<br>";
+                                                                    echo "<td style=\"color:$color\">" . $row->status . "<br>";
                                                                     echo "<small>" . substr($row->nomemed, 0, 21) . "</small></td>";
                                                                 } else {
-                                                                    echo "<td>" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
+                                                                    echo "<td style=\"color:$color\">" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
                                                                 }
                                                             }
 

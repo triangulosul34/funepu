@@ -408,7 +408,7 @@ class PDF extends FPDF
         $this->Cell(185, 5, utf8_decode(' INFORMAÇÕES DOS ATENDIMENTOS REALIZADOS '), 1, 0, 'C');
         $this->Ln(7);
         $this->SetFont('Arial', '', 8);
-        $this->MultiCell(185, 3, utf8_decode($queixa . " - " . $exame_fisico), '', 'J', 0);
+        $this->MultiCell(185, 3, utf8_decode(strtoupper($queixa) . " - " . strtoupper($exame_fisico)), '', 'J', 0);
         $this->Ln(27);
 
 

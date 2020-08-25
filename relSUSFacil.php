@@ -206,7 +206,7 @@ class PDF extends FPDF
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(20, 5, ' UNIDADE.:', 0, 0, 'R');
         $this->SetFont('Arial', '', 9);
-        $this->Cell(126, 5, 'UNIDADE DE PRONTO ATENDIMENTO UPA '. utf8_decode(UNIDADE_CONFIG) , 0, 0, 'L');
+        $this->Cell(126, 5, 'UNIDADE DE PRONTO ATENDIMENTO UPA ' . utf8_decode(UNIDADE_CONFIG), 0, 0, 'L');
         $this->SetFont('Arial', '', 9);
         $this->Cell(15, 5, ' CNES:', 0, 'L');
         $this->SetFont('Arial', '', 9);
@@ -345,7 +345,7 @@ class PDF extends FPDF
         $this->Cell(146, 5, utf8_decode(' Assinatura do Responsável:'), 0, 0, 'L');
         $this->Cell(25, 5, utf8_decode(' Data:_____/_____/_____'), 0, 0, 'L');
         $this->Ln(4);
-        $this->Cell(146, 5, utf8_decode(' por inserir SUS-Fácil:'), 0, 0, 'L');
+        $this->Cell(146, 5, utf8_decode(' por inserir SISREG:'), 0, 0, 'L');
         $this->Cell(25, 5, utf8_decode(' Hora: ______:______'), 0, 0, 'L');
     }
 
