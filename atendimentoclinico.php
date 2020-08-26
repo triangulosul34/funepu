@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento is null then a.destino_paciente::integer else z.destino_encaminhamento end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+        $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::boolean then a.destino_paciente::integer else z.destino_encaminhamento end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad AS cadastro, a.obs_modal, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.usuario, x.fimclassificacao, x.pressaosistolica, x.queixa AS relato, x.pulso, x.temperatura, x.discriminador, x.prioridade AS atendprioridade, x.glicose, x.dor, x.oxigenio, a.coronavirus
