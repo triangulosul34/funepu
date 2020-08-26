@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "UPDATE atendimentos SET destino_paciente = '$destino', status='Atendimento Finalizado' WHERE transacao = $atendimento";
         $result = pg_query($sql);
 
-        header('Location: atendimentoclinico.php?id='.$atendimento);
+        header('Location: atendimentoclinico.php?id=' . $atendimento);
     } else {
         $transacao =        stripslashes(pg_escape_string($_POST['transacao']));
         $senha =            stripslashes(pg_escape_string($_POST['senha']));
@@ -721,7 +721,7 @@ if ($destino != '') {
 
                             <div class="col-sm-12">
                                 <label class="control-label  margin-top-10">Destino dado ao Paciente</label>
-                                <select class="form-control" name="destino" id="destino" onchange="seleciona_setor(this)">
+                                <select class="form-control" name="destino" id="destino2" onchange="seleciona_setor(this)">
                                     <option value="01">ALTA
                                     </option>;
                                     <option value="07">EM
@@ -1579,7 +1579,7 @@ if ($destino != '') {
                                                             <div class="row">
                                                                 <div class="col-md-12 text-center">
                                                                     <input type='button' id="solicita_laboratorio" href="#" data-target="#modalLaboratorio" value='Solicitar Laboratorio' class="btn btn-success" data-toggle="modal">
-                                                                    <input type='submit' name='req_exame_lab' id="req_exame_lab" class="btn btn-warning" value='Imprimir Solicitados'>
+                                                                    <input type='submit' name='req_exame_lab' id="req_exame_lab" class="btn btn-warning" value='Imprimir Solicitados' onclick="document.getElementById('destino').removeAttribute('required');">
                                                                 </div>
                                                             </div>
                                                             <div class="row">
@@ -1874,9 +1874,9 @@ if ($destino != '') {
                             </select>
                         </div>
                         <?php if ($destino == '01') { ?>
-                        <div class="col-md-2">
-                            <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
-                        </div>
+                            <div class="col-md-2">
+                                <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
+                            </div>
                         <?php } ?>
                     </div>
                 </div>

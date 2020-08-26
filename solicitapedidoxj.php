@@ -674,21 +674,25 @@ echo $aux;
         <?php
         include('conexao_laboratorio.php');
         $sql = "SELECT distinct d.exame_id, a.pedido_id, b.nome, a.data, a.horario, d.coletado, d.recoleta, d.pendente, b.celular, d.liberado, d.situacao, e.descricao, d.pedido_item_id 
-													FROM pedidos a
-													INNER JOIN pessoas b ON a.pessoa_id = b.pessoa_id
-													INNER JOIN pedido_guia c ON a.pedido_id = c.pedido_id
-													INNER JOIN pedido_item d ON d.pedido_guia_id = c.pedido_guia_id
-													LEFT JOIN procedimentos e ON e.procedimentos_id = d.exame_id
-													LEFT JOIN modalidades f ON f.modalidade_id = e.setor where c.origem = '" . ORIGEM_CONFIG . "' and b.origem = " . PORIGEM_CONFIG . " and pessoa_id_origem = $prontuario order by a.data desc, a.horario";
+                                                                FROM pedidos a
+                                                                INNER JOIN pessoas b ON a.pessoa_id = b.pessoa_id
+                                                                INNER JOIN pedido_guia c ON a.pedido_id = c.pedido_id
+                                                                INNER JOIN pedido_item d ON d.pedido_guia_id = c.pedido_guia_id
+                                                                LEFT JOIN procedimentos e ON e.procedimentos_id = d.exame_id
+                                                                LEFT JOIN modalidades f ON f.modalidade_id = e.setor where c.origem = '" . ORIGEM_CONFIG . "' and b.origem = '" . PORIGEM_CONFIG . "' and pessoa_id_origem = $prontuario order by a.data desc, a.horario";
         $result = pg_query($sql) or die($sql);
         while ($rows = pg_fetch_object($result)) {
             echo "<tr>";
-            echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $rows->pedido_item_id . "\"><label></label></div></td>";
+            if ($rows->situacao == '' or $rows->situacao == 'Coletado') {
+                echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $rows->pedido_item_id . "\"><label></label></div></td>";
+            } else {
+                echo "<td></td>";
+            }
             echo "<td>" . inverteData($rows->data) . "</td>";
             echo "<td>$rows->descricao</td>";
-            if ($rows->liberado == 1) {
-                echo "<td><a href='http://200.170.151.138/mr/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"btn btn-pure btn-danger icon wb-search\"></a></td>";
-            } else {
+            if ($rows->situacao == 'Liberado') {
+                echo "<td><a href='http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"fas fa-search\"></a></td>";
+            } else if ($rows->situacao != 'Liberado') {
                 echo "<td>" . $rows->situacao . "</td>";
             }
             echo "</tr>";
