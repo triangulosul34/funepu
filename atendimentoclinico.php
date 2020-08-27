@@ -1513,7 +1513,7 @@ if ($destino != '') {
 
                                                                     </td>
                                                                     <td><input type='button' name='novo_exame' id="novo_exame" class="btn btn-primary" value='Solicitar'>
-                                                                        <input type='submit' name='req_exame' id="req_exame" class="btn btn-success" value='Imprimir'>
+                                                                        <input type='submit' name='req_exame' id="req_exame" class="btn btn-success" value='Imprimir' onclick="document.getElementById('destino').removeAttribute('required');">
                                                                     </td>
                                                                 </tr>
                                                             </table>
