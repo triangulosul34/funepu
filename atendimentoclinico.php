@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::boolean then a.destino_paciente::integer else z.destino_encaminhamento end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+        $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad AS cadastro, a.obs_modal, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.usuario, x.fimclassificacao, x.pressaosistolica, x.queixa AS relato, x.pulso, x.temperatura, x.discriminador, x.prioridade AS atendprioridade, x.glicose, x.dor, x.oxigenio, a.coronavirus
@@ -1862,18 +1862,18 @@ if ($destino != '') {
                             <?php } ?>
                             <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) echo $disable ?> required>
                                 <option value=""></option>;
-                                <option value="01" <?php if ($destino == '01') echo "selected"; ?>>ALTA
+                                <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') echo "selected"; ?>>ALTA
                                 </option>;
-                                <option value="07" <?php if ($destino == '07') echo "selected"; ?>>EM
+                                <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') echo "selected"; ?>>EM
                                     OBSERVAÇÃO / MEDICAÇÃO</option>;
-                                <!-- <option value="19" <?php if ($destino == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
-                                <option value="10" <?php if ($destino == '10') echo "selected"; ?>>EXAMES /
+                                <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
+                                <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') echo "selected"; ?>>EXAMES /
                                     REAVALIACAO</option>;
-                                <option value="03" <?php if ($destino == '03') echo "selected"; ?>>PERMANÊNCIA.
+                                <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') echo "selected"; ?>>PERMANÊNCIA.
                                 </option>;
                             </select>
                         </div>
-                        <?php if ($destino == '01') { ?>
+                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') { ?>
                             <div class="col-md-2">
                                 <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
                             </div>
