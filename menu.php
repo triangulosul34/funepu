@@ -120,6 +120,9 @@
                                 <a href="relatorioproducaomed.php" class="menu-item">PRODUÇÃO MEDICA</a>
                             </li>
                             <li class="is-shown">
+                                <a href="presencamedica.php" class="menu-item">PRESENÇA MEDICA</a>
+                            </li>
+                            <li class="is-shown">
                                 <a href="acoes_usuario.php" class="menu-item">LOGS</a>
                             </li>
                             <li class="has-sub nav-item">
@@ -132,7 +135,8 @@
                                         <a href="../sb/formularios/formularioacidentetrabalho.pdf" class="menu-item">ACIDENTE TRABALHO</a>
                                     </li>
                                     <li class="is-shown">
-                                        <a href="../sb/formularios/termoconsentimento.pdf" class="menu-item">TER. CONSENTIMENTO</a>
+                                        <a href="../sb/formularios/termoconsentimento.pdf" class="menu-item">TER.
+                                            CONSENTIMENTO</a>
                                     </li>
                                 </ul>
                             </li>
@@ -213,8 +217,16 @@
                                 </li>
                         </ul>
                     </li>
-                <?php }
-                if ($perfil == '07' or $perfil == '06') { ?>
+                <?php } ?>
+                <li class="has-sub nav-item">
+                    <a href="#"><i class="fas fa-file-alt"></i><span class="menu-title">FICHAS DE FORM.</span></a>
+                    <ul class="menu-content">
+                        <li class="is-shown">
+                            <a href="sindrome_gripal.php" class="menu-item">FICHA SÍNDROME GRIPAL</a>
+                        </li>
+                    </ul>
+                </li>
+                <?php if ($perfil == '07' or $perfil == '06') { ?>
                     <li class="nav-item">
                         <a href="pedidos.php"><i class="fas fa-file-prescription"></i><span class="menu-title">LAUDOS</span></a>
                     </li>
@@ -226,7 +238,8 @@
                 <?php }
                 if ($perfil == '14' or $perfil == '06') { ?>
                     <li class="nav-item">
-                        <a href="novopedido.php"><i class="fas fa-clinic-medical"></i><span class="menu-title">SOLICITAR EXAMES</span></a>
+                        <a href="novopedido.php"><i class="fas fa-clinic-medical"></i><span class="menu-title">SOLICITAR
+                                EXAMES</span></a>
                     </li>
                 <?php } ?>
             </ul>
