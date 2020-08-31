@@ -292,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Data de Nascimento</label>
-                                                    <input type="text" name="data_nascimento" id="dt_nasc" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                    <input type="text" name="data_nascimento" id="dt_nasc" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -420,7 +420,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data de Notificação</label>
-                                                    <input type="text" name="data_notificacao" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>">
+                                                    <input type="text" name="data_notificacao" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -456,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data do inicio dos sintomas</label>
-                                                    <input type="text" name="data_inicio_sintomas" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                    <input type="text" name="data_inicio_sintomas" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
                                                 </div>
                                             </div>
                                         </div>
@@ -524,7 +524,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="">Data da Coleta do Teste</label>
-                                                    <input type="text" name="data_coleta_teste" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                    <input type="text" name="data_coleta_teste" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -642,7 +642,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data de Encerramento</label>
-                                                    <input type="text" name="data_encerramento" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                    <input type="text" name="data_encerramento" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
                                                 </div>
                                             </div>
                                         </div>
