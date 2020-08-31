@@ -19,38 +19,39 @@ $data_controle = date('Y-m-d');
 $hora = date('H:i');
 $clinica = $_GET['clinica'];
 
-if ($destino == 'ALTA') {
-    $destino = '01';
-} else if ($destino == 'ALTA / ENCAM. AMBUL.') {
-    $destino = '02';
-} else if ($destino == 'EM OBSERVACAO / MEDICACAO') {
-    $destino = '07';
-} else if ($destino == 'EXAMES / REAVALIACAO') {
-    $destino = '10';
-} else if ($destino == 'PERMANECIA') {
-    $destino = '03';
-} else if ($destino == 'TRANSF. OUTRA UPA') {
-    $destino = '04';
-} else if ($destino == 'TRANSF. INTERN. HOSPITALAR') {
-    $destino = '05';
-} else if ($destino == 'OBITO') {
-    $destino = '06';
-} else if ($destino == 'NAO RESPONDEU CHAMADO') {
-    $destino = '09';
-} else if ($destino == 'ALTA EVASAO') {
-    $destino = '11';
-} else if ($destino == 'ALTA PEDIDO') {
-    $destino = '12';
-} else if ($destino == 'ALTA / POLICIA') {
-    $destino = '14';
-} else if ($destino == 'ALTA / PENITENCIARIA') {
-    $destino = '15';
-} else if ($destino == 'ALTA / POS MEDICAMENTO') {
-    $destino = '16';
-}
+// if ($destino == 'alta') {
+//     $destino = '01';
+// } else if ($destino == 'alta / encam. ambul.') {
+//     $destino = '02';
+// } else if ($destino == 'em observacao / medicacao') {
+//     $destino = '07';
+// } else if ($destino == 'exames / reavaliacao') {
+//     $destino = '10';
+// } else if ($destino == 'permanecia') {
+//     $destino = '03';
+// } else if ($destino == 'transf. outra upa') {
+//     $destino = '04';
+// } else if ($destino == 'transf. intern. hospitalar') {
+//     $destino = '05';
+// } else if ($destino == 'obito') {
+//     $destino = '06';
+// } else if ($destino == 'nao respondeu chamado') {
+//     $destino = '09';
+// } else if ($destino == 'alta evasao') {
+//     $destino = '11';
+// } else if ($destino == 'alta pedido') {
+//     $destino = '12';
+// } else if ($destino == 'alta / policia') {
+//     $destino = '14';
+// } else if ($destino == 'alta / penitenciaria') {
+//     $destino = '15';
+// } else if ($destino == 'alta / pos medicamento') {
+//     $destino = '16';
+// }
+
 
 include('conexao.php');
-$stmt = "select count(*) as qtd from destino_paciente where atendimento_id = $atendimento";
+$stmt = "select count(*) as qtd, destino_encaminhamento from destino_paciente where atendimento_id = $atendimento group by 2";
 $sth = pg_query($stmt) or die($stmt);
 $row = pg_fetch_object($sth);
 
@@ -67,8 +68,35 @@ if ($row->qtd == 0) {
 					values ($atendimento, $destino, '$motivoalta', '$data', '$hora','$data_controle')";
     }
     $sth = pg_query($stmt) or die($stmt);
+} else if ($row->destino_encaminhamento == 3) {
+    if ($destino == '05') {
+        $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', hospital = '$hospital', clinica = '$clinica', setor = null, data_controle = '$data_controle'
+    where atendimento_id = '$atendimento'";
+    } elseif ($destino == '13') {
+        $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = '$setor', hospital = null, clinica = null, data_controle = '$data_controle'
+    where atendimento_id = '$atendimento'";
+    } else {
+        $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, data_controle = '$data_controle'
+    where atendimento_id = '$atendimento'";
+    }
+    $sth = pg_query($stmt) or die($stmt);
 } else {
     echo "<script>Swal.fire('Paciente já finalizado pelo médico!!!')</script>";
+}
+
+include('conexao.php');
+$stmt = "select count(*) as qtd from controle_permanencia where atendimento_id = $atendimento";
+$sth = pg_query($stmt) or die($stmt);
+$row = pg_fetch_object($sth);
+
+if ($row->qtd == 0) {
+    include('conexao.php');
+    $stmt = "insert into controle_permanencia(atendimento_id, data, hora) values($atendimento, '$data', '$hora')";
+    $sth = pg_query($stmt) or die($stmt);
+} else {
+    include('conexao.php');
+    $stmt = "update controle_permanencia set data = '$data', hora = '$hora' where atendimento_id = $atendimento";
+    $sth = pg_query($stmt) or die($stmt);
 }
 ?>
 <table id="data_table" class="table">
@@ -94,7 +122,7 @@ if ($row->qtd == 0) {
                 <td><?= $row->paciente_id; ?></td>
                 <td><?= $row->nome; ?></td>
                 <td><?= inverteData(substr($row->data_entrada, 0, 10)); ?></td>
-                <td><?= inverteData($row->data_saida); ?></td>
+                <td><input type="text" id="data_saida" value="<?= inverteData($row->data_saida); ?>" OnKeyPress="formatar('##/##/####', this)" onblur="altera_data(this.value,<?= $row->destino_id; ?>)"></td>
                 <?php
                 if ($row->destino == '01') {
                     echo '<td>ALTA</td>';
@@ -124,9 +152,16 @@ if ($row->qtd == 0) {
                     echo '<td>ALTA / PENITENCIÁRIA</td>';
                 } else if ($row->destino == '16') {
                     echo '<td>ALTA / PÓS MEDICAMENTO</td>';
+                } else if ($row->destino == '20') {
+                    echo '<td>ALTA VIA SISTEMA</td>';
                 }
+                $d1 = strtotime($row->data_saida);
+                $d2 = strtotime(substr($row->data_entrada, 0, 10));
+                $dataFinal = ($d2 - $d1) / 86400;
+                if ($dataFinal < 0)
+                    $dataFinal *= -1;
                 ?>
-                <td><?= date('d', (strtotime($row->data_saida) - strtotime(substr($row->data_entrada, 0, 10)))); ?></td>
+                <td><?= $dataFinal; ?></td>
                 <td><button class="btn btn-raised btn-danger btn-min-width mr-1 mb-1" onclick="cancelar_permanencia(<?= $row->destino_id; ?>)">Cancelar</button></td>
             </tr>
         <?php } ?>

@@ -247,4 +247,7 @@ if ($row->evolucao_caso == "cancelado") {
 $pdf->Text(200, 733, $row->data_encerramento[8] . $row->data_encerramento[9]);
 $pdf->Text(225, 733, $row->data_encerramento[5] . $row->data_encerramento[6]);
 $pdf->Text(245, 733, $row->data_encerramento[0] . $row->data_encerramento[1] . $row->data_encerramento[2] . $row->data_encerramento[3]);
+$pdf->Text(245, 733, $row->data_encerramento[0] . $row->data_encerramento[1] . $row->data_encerramento[2] . $row->data_encerramento[3]);
+$pdf->SetXY(78, 755);
+$pdf->MultiCell(460, 10, utf8_decode($row->observacao), 0, 'L');
 $pdf->Output();

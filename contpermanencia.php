@@ -29,7 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $html .= '<td><b>' . utf8_decode("Dias de Permanência") . '</b></td>';
     $html .= '</tr>';
     include('conexao.php');
-    $stmt = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad AS data_entrada, CASE WHEN a.data IS NULL THEN b.dat_cad ELSE a.data END AS data_saida, CASE WHEN a.destino_id IS NULL THEN b.destino_paciente::integer ELSE a.destino_encaminhamento END AS destino FROM atendimentos b LEFT JOIN destino_paciente a ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id WHERE ((EXTRACT(month FROM b.dat_cad) = '{$data[1]}' AND EXTRACT(year FROM b.dat_cad) = '{$data[0]}') OR (EXTRACT(month FROM a.data) = '{$data[1]}' AND EXTRACT(year FROM a.data) = '{$data[0]}')) AND b.destino_paciente = '03' ORDER BY b.dat_cad ASC";
+    $stmt = "SELECT b.paciente_id, c.nome, b.dat_cad AS data_entrada, d.data AS data_saida, d.destino_encaminhamento FROM atendimentos b 
+		INNER JOIN controle_permanencia a ON a.atendimento_id = b.transacao 
+		INNER JOIN destino_paciente d ON d.atendimento_id = b.transacao 
+		LEFT JOIN evolucoes h ON b.transacao = h.atendimento_id 
+		INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id
+		WHERE (EXTRACT(month FROM d.data) = '{$data[1]}' AND EXTRACT(year FROM d.data) = '{$data[0]}')
+		ORDER BY b.dat_cad ASC";
     $sth = pg_query($stmt) or die($stmt);
     while ($row = pg_fetch_object($sth)) {
 
@@ -38,40 +44,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $html .= '<td>' . $row->nome . '</td>';
         $html .= '<td>' . inverteData(substr($row->data_entrada, 0, 10)) . '</td>';
         $html .= '<td>' . inverteData(substr($row->data_saida, 0, 10)) . '</td>';
-        if ($row->destino == '01') {
+        if ($row->destino_encaminhamento == '01') {
             $html .= '<td>ALTA</td>';
-        } else if ($row->destino == '02') {
+        } else if ($row->destino_encaminhamento == '02') {
             $html .= '<td>ALTA / ENCAM. AMBUL.</td>';
-        } else if ($row->destino == '07') {
+        } else if ($row->destino_encaminhamento == '07') {
             $html .= '<td>' . utf8_decode("EM OBSERVAÇÃO / MEDICAÇÃO") . '</td>';
-        } else if ($row->destino == '10') {
+        } else if ($row->destino_encaminhamento == '10') {
             $html .= '<td>EXAMES / REAVALIACAO</td>';
-        } else if ($row->destino == '03') {
+        } else if ($row->destino_encaminhamento == '03') {
             $html .= '<td>' . utf8_decode("PERMANÊCIA") . '</td>';
-        } else if ($row->destino == '04') {
+        } else if ($row->destino_encaminhamento == '04') {
             $html .= '<td>TRANSF. OUTRA UPA</td>';
-        } else if ($row->destino == '05') {
+        } else if ($row->destino_encaminhamento == '05') {
             $html .= '<td>TRANSF. INTERN. HOSPITALAR</td>';
-        } else if ($row->destino == '06') {
+        } else if ($row->destino_encaminhamento == '06') {
             $html .= '<td>' . utf8_decode("ÓBITO") . '</td>';
-        } else if ($row->destino == '09') {
+        } else if ($row->destino_encaminhamento == '09') {
             $html .= '<td>NAO RESPONDEU CHAMADO</td>';
-        } else if ($row->destino == '11') {
+        } else if ($row->destino_encaminhamento == '11') {
             $html .= '<td>' . utf8_decode("ALTA EVASÃO") . '</td>';
-        } else if ($row->destino == '12') {
+        } else if ($row->destino_encaminhamento == '12') {
             $html .= '<td>ALTA PEDIDO</td>';
-        } else if ($row->destino == '14') {
+        } else if ($row->destino_encaminhamento == '14') {
             $html .= '<td>ALTA / POLICIA</td>';
-        } else if ($row->destino == '15') {
+        } else if ($row->destino_encaminhamento == '15') {
             $html .= '<td>' . utf8_decode("ALTA / PENITENCIÁRIA") . '</td>';
-        } else if ($row->destino == '16') {
+        } else if ($row->destino_encaminhamento == '16') {
             $html .= '<td>' . utf8_decode("ALTA / PÓS MEDICAMENTO") . '</td>';
+        } else if ($row->destino_encaminhamento == '20') {
+            $html .= '<td>' . utf8_decode("ALTA VIA SISTEMA") . '</td>';
         }
-        if (strtotime($row->data_saida) == strtotime(substr($row->data_entrada, 0, 10))) {
-            $html .= '<td>1</td>';
-        } else {
-            $html .= '<td>' . date('d', (strtotime($row->data_saida) - strtotime(substr($row->data_entrada, 0, 10)))) . '</td>';
+        $d1 = strtotime($row->data_saida);
+        $d2 = strtotime(substr($row->data_entrada, 0, 10));
+        $dataFinal = ($d2 - $d1) / 86400;
+        if ($dataFinal < 0) {
+            $dataFinal *= -1;
         }
+        $html .= '<td>' . $dataFinal . '</td>';
         $html .= '</tr>';
     }
     $html .= '</table>';
@@ -193,13 +203,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                             <div class="col-3">
                                                 <label for="destino">Destino</label>
-                                                <input type="text" class="form-control" name="destino" id="destino" onblur="des()">
+                                                <select name="destino" id="destino" class="form-control" onchange="des()">
+                                                    <option value=""></option>
+                                                    <option value="01">ALTA</option>
+                                                    <option value="04">TRANSF. OUTRA UPA</option>
+                                                    <option value="05">TRANSF. INTERNA HOSPITALAR</option>
+                                                    <option value="06">OBITO</option>
+                                                </select>
                                             </div>
                                             <div class="col-3">
                                                 <label for="data">Data</label>
                                                 <input type="month" name="data" id="data" class="form-control">
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-3 mt-3">
                                                 <input type="submit" name="gerar_relatorio" class="btn btn-raised btn-success" value="Gerar Relatorio">
                                             </div>
                                         </div>
@@ -244,12 +260,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             var atendimento = document.getElementById("atendimento").value;
             var destino = document.getElementById("destino").value;
 
-            if (atendimento && destino) {
+            if (atendimento) {
                 $.get("baixar_destino.php", {
                     atendimento: atendimento.replace(/^0+/, ''),
                     destino: destino
                 }, function(dataReturn) {
                     $('#tabela').html(dataReturn);
+                })
+            }
+        }
+
+        function altera_data(a, b) {
+            if (/^(\d{2})[-\/](\d{2})[-\/](\d{4})$/.exec(a)) {
+                $.get("atualizar_data_destino.php", {
+                    id: b,
+                    data: a
+                }, function(dataReturn) {
+                    Swal.fire('Data atualizada com sucesso');
                 })
             }
         }
@@ -267,6 +294,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 return false;
             }
         });
+
+        function formatar(mascara, documento) {
+            var i = documento.value.length;
+            var saida = mascara.substring(0, 1);
+            var texto = mascara.substring(i)
+
+            if (texto.substring(0, 1) != saida) {
+                documento.value += texto.substring(0, 1);
+            }
+        }
     </script>
 </body>
 

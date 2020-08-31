@@ -61,11 +61,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $resultado = $_POST['resultado'];
     $classificacao_final = $_POST['classificacao_final'];
     $evolucao_caso = $_POST['evolucao_caso'];
+    $observacao = $_POST['observacao'];
     $data_encerramento = inverteData($_POST['data_encerramento']);
 
     if (!$pessoa_id) $pessoa_id = 0;
 
-    $sql = "INSERT INTO sindrome_gripal(uf,municipio_notificacao,pcpf,pestrangeiro,psaude,pseguranca,cbo,cpf,cns,nome,nome_mae,data_nascimento,pais_origem,psexo,praca,passaporte,cep,estado,cidade,logradouro,numero,bairro,complemento,celular,telefone,data_notificacao,sfebre,sdor_garganta,stosse,sdispneia,soutros,stoutros,data_inicio_sintomas,cdoencas_respiratorias,cdoencas_renais,cdoencas_cromossomicas,cdiabetes,cimunossupressão,cdoencas_cardiacas,cgestante,eteste,data_coleta_teste,tipo_teste,resultado,classificacao_final,evolucao_caso,data_encerramento, pessoa_id, usuario, data_form, hora_form) VALUES('$uf','$municipio_notificacao','$pcpf','$pestrangeiro','$psaude','$pseguranca','$cbo','$cpf','$cns','$nome','$nome_mae','$data_nascimento','$pais_origem','$psexo','$praca','$passaporte','$cep','$estado','$cidade','$logradouro','$numero','$bairro','$complemento','$celular','$telefone','$data_notificacao','$sfebre','$sdor_garganta','$stosse','$sdispneia','$soutros', '$stoutros','$data_inicio_sintomas','$cdoencas_respiratorias','$cdoencas_renais','$cdoencas_cromossomicas','$cdiabetes','$cimunossupressão','$cdoencas_cardiacas','$cgestante','$eteste','$data_coleta_teste','$tipo_teste','$resultado','$classificacao_final','$evolucao_caso','$data_encerramento', $pessoa_id, '$usuario', '" . date('Y-m-d') . "','" . date('H:i') . "')";
+    $sql = "INSERT INTO sindrome_gripal(uf,municipio_notificacao,pcpf,pestrangeiro,psaude,pseguranca,cbo,cpf,cns,nome,nome_mae,data_nascimento,pais_origem,psexo,praca,passaporte,cep,estado,cidade,logradouro,numero,bairro,complemento,celular,telefone,";
+    if ($data_notificacao) $sql = $sql . "data_notificacao,";
+    $sql = $sql . "sfebre,sdor_garganta,stosse,sdispneia,soutros,stoutros,";
+    if ($data_inicio_sintomas) $sql = $sql . "data_inicio_sintomas,";
+    $sql = $sql . "cdoencas_respiratorias,cdoencas_renais,cdoencas_cromossomicas,cdiabetes,cimunossupressão,cdoencas_cardiacas,cgestante,eteste,";
+    if ($data_coleta_teste) $sql = $sql . "data_coleta_teste,";
+    $sql = $sql . "tipo_teste,resultado,classificacao_final,evolucao_caso,";
+    if ($data_encerramento) $sql = $sql . "data_encerramento,";
+    $sql = $sql . "pessoa_id, usuario, data_form, hora_form, observacao) VALUES('$uf','$municipio_notificacao','$pcpf','$pestrangeiro','$psaude','$pseguranca','$cbo','$cpf','$cns','$nome','$nome_mae','$data_nascimento','$pais_origem','$psexo','$praca','$passaporte','$cep','$estado','$cidade','$logradouro','$numero','$bairro','$complemento','$celular','$telefone',";
+    if ($data_notificacao) $sql = $sql . "'$data_notificacao',";
+    $sql = $sql . "'$sfebre','$sdor_garganta','$stosse','$sdispneia','$soutros', '$stoutros',";
+    if ($data_inicio_sintomas) $sql = $sql . "'$data_inicio_sintomas',";
+    $sql = $sql . "'$cdoencas_respiratorias','$cdoencas_renais','$cdoencas_cromossomicas','$cdiabetes','$cimunossupressão','$cdoencas_cardiacas','$cgestante','$eteste',";
+    if ($data_coleta_teste) $sql = $sql . "'$data_coleta_teste',";
+    $sql = $sql . "'$tipo_teste','$resultado','$classificacao_final','$evolucao_caso',";
+    if ($data_encerramento) $sql = $sql . "'$data_encerramento',";
+    $sql = $sql . " $pessoa_id, '$usuario', '" . date('Y-m-d') . "','" . date('H:i') . "', '$observacao')";
     $result = pg_query($sql) or die($sql);
 
     $sql = "SELECT max(sindrome_gripal_id) as id FROM sindrome_gripal";
@@ -420,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data de Notificação</label>
-                                                    <input type="text" name="data_notificacao" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>" required>
+                                                    <input type="text" name="data_notificacao" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -456,7 +473,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data do inicio dos sintomas</label>
-                                                    <input type="text" name="data_inicio_sintomas" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
+                                                    <input type="text" name="data_inicio_sintomas" class="form-control" OnKeyPress="formatar('##/##/####', this)">
                                                 </div>
                                             </div>
                                         </div>
@@ -524,7 +541,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="">Data da Coleta do Teste</label>
-                                                    <input type="text" name="data_coleta_teste" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
+                                                    <input type="text" name="data_coleta_teste" class="form-control" OnKeyPress="formatar('##/##/####', this)">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -642,7 +659,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data de Encerramento</label>
-                                                    <input type="text" name="data_encerramento" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
+                                                    <input type="text" name="data_encerramento" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="">Observação</label>
+                                                    <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="180" name="observacao" class="form-control"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -798,6 +823,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 else {
                     //cep sem valor, limpa formulário.
                     limpa_formulário_cep();
+                }
+            });
+        });
+
+        function limitLines(obj, limit) {
+            var values = obj.value.replace(/\r\n/g, "\n").split("\n")
+            if (values.length > limit) {
+                obj.value = values.slice(0, limit).join("\n")
+            }
+        }
+
+        $(document).ready(function() {
+            $('textarea').keypress(function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
                 }
             });
         });
