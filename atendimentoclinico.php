@@ -486,6 +486,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $df = 'ALTA / PENITENCIÁRIA';
             } elseif ($destino == '16') {
                 $df = 'ALTA / PÓS MEDICAMENTO';
+            } elseif ($destino == '20') {
+                $df = 'ALTA VIA SISTEMA';
             }
 
             $data = date('Y-m-d');
@@ -1661,7 +1663,7 @@ if ($destino != '') {
 																left join atendimentos b on a.atendimento_id = b.transacao
 																left join pessoas c on b.paciente_id = c.pessoa_id
 																left join pessoas d on d.pessoa_id = a.profissional_id
-																where a.atendimento_id = $transacao order by a.hora desc";
+																where a.atendimento_id = $transacao order by a.prescricao_id desc";
                                                                 $sth = pg_query($stmt) or die($stmt);
 
                                                                 while ($row = pg_fetch_object($sth)) {
@@ -1871,6 +1873,10 @@ if ($destino != '') {
                                     REAVALIACAO</option>;
                                 <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') echo "selected"; ?>>PERMANÊNCIA.
                                 </option>;
+                                <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '20') { ?>
+                                    <option value="20" selected>ALTA VIA SISTEMA
+                                    </option>;
+                                <?php } ?>
                             </select>
                         </div>
                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') { ?>

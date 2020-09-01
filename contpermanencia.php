@@ -206,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <select name="destino" id="destino" class="form-control" onchange="des()">
                                                     <option value=""></option>
                                                     <option value="01">ALTA</option>
+                                                    <option value="11">EVASAO</option>
                                                     <option value="04">TRANSF. OUTRA UPA</option>
                                                     <option value="05">TRANSF. INTERNA HOSPITALAR</option>
                                                     <option value="06">OBITO</option>
