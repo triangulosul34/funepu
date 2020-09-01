@@ -32,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt = "SELECT b.paciente_id, c.nome, b.dat_cad AS data_entrada, d.data AS data_saida, d.destino_encaminhamento FROM atendimentos b 
 		INNER JOIN controle_permanencia a ON a.atendimento_id = b.transacao 
 		INNER JOIN destino_paciente d ON d.atendimento_id = b.transacao 
-		LEFT JOIN evolucoes h ON b.transacao = h.atendimento_id 
 		INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id
 		WHERE (EXTRACT(month FROM d.data) = '{$data[1]}' AND EXTRACT(year FROM d.data) = '{$data[0]}')
 		ORDER BY b.dat_cad ASC";
