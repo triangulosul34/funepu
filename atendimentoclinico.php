@@ -1428,18 +1428,19 @@ if ($destino != '') {
 
                                                     <?php if ($perfil == '06' or $perfil == '03') { ?>
                                                         <div class="col-12">
-                                                            <table class="table table-hover table-striped condensed width-full">
-                                                                <tr>
-                                                                    <td class="text-center" colspan="2"><label class="control-label">
-                                                                            <font color='#12A1A6'>Adicionar Exames/Procedimentos</font>
-                                                                        </label></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <select name="procedimento" id="procedimento" title="Selecione o Procedimento">
-                                                                            <?php
-                                                                            include('conexao.php');
-                                                                            $sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
+                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
+                                                                <table class="table table-hover table-striped condensed width-full">
+                                                                    <tr>
+                                                                        <td class="text-center" colspan="2"><label class="control-label">
+                                                                                <font color='#12A1A6'>Adicionar Exames/Procedimentos</font>
+                                                                            </label></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            <select name="procedimento" id="procedimento" title="Selecione o Procedimento">
+                                                                                <?php
+                                                                                include('conexao.php');
+                                                                                $sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
                                                                         WHERE descricao <> '%EXCLUIDO%' AND procedimento_id NOT IN (729,730,822,821,779) AND descricao NOT IN ('DOSAGEM DE FOLATO',
                                                                         'DOSAGEM DE PROTEINAS TOTAIS',
                                                                         'TROPONINA T',
@@ -1504,21 +1505,22 @@ if ($destino != '') {
                                                                         'SOROLOGIA ANTI-HIV I/II',
                                                                         'CLORO',
                                                                         'ROTINA ACIDENTE DE TRABALHO, [FUNEPU]') order by descricao";
-                                                                            $sth = pg_query($sql) or die($sql);
+                                                                                $sth = pg_query($sql) or die($sql);
 
-                                                                            while ($row = pg_fetch_object($sth)) {
-                                                                                echo "<option value=\"" . $row->procedimento_id . "\"";
-                                                                                echo ">" . $row->descricao . "</option>";
-                                                                            }
-                                                                            ?>
-                                                                        </select>
+                                                                                while ($row = pg_fetch_object($sth)) {
+                                                                                    echo "<option value=\"" . $row->procedimento_id . "\"";
+                                                                                    echo ">" . $row->descricao . "</option>";
+                                                                                }
+                                                                                ?>
+                                                                            </select>
 
-                                                                    </td>
-                                                                    <td><input type='button' name='novo_exame' id="novo_exame" class="btn btn-primary" value='Solicitar'>
-                                                                        <input type='submit' name='req_exame' id="req_exame" class="btn btn-success" value='Imprimir' onclick="document.getElementById('destino').removeAttribute('required');">
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
+                                                                        </td>
+                                                                        <td><input type='button' name='novo_exame' id="novo_exame" class="btn btn-primary" value='Solicitar'>
+                                                                            <input type='submit' name='req_exame' id="req_exame" class="btn btn-success" value='Imprimir' onclick="document.getElementById('destino').removeAttribute('required');">
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            <?php } ?>
                                                         </div>
                                                     <?php } ?>
                                                 </div>
@@ -1577,13 +1579,15 @@ if ($destino != '') {
                                                         <!-- </div> -->
                                                     </div>
                                                     <?php if ($perfil == '06' or $perfil == '03') { ?>
-                                                        <div class="col-md-12 text-center">
-                                                            <div class="row">
-                                                                <div class="col-md-12 text-center">
-                                                                    <input type='button' id="solicita_laboratorio" href="#" data-target="#modalLaboratorio" value='Solicitar Laboratorio' class="btn btn-success" data-toggle="modal">
-                                                                    <input type='submit' name='req_exame_lab' id="req_exame_lab" class="btn btn-warning" value='Imprimir Solicitados' onclick="document.getElementById('destino').removeAttribute('required');">
+                                                        <div class="col-md-12 text-center mt-5">
+                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
+                                                                <div class="row">
+                                                                    <div class="col-md-12 text-center">
+                                                                        <input type='button' id="solicita_laboratorio" href="#" data-target="#modalLaboratorio" value='Solicitar Laboratorio' class="btn btn-success" data-toggle="modal">
+                                                                        <input type='submit' name='req_exame_lab' id="req_exame_lab" class="btn btn-warning" value='Imprimir Solicitados' onclick="document.getElementById('destino').removeAttribute('required');">
+                                                                    </div>
                                                                 </div>
-                                                            </div>
+                                                            <?php } ?>
                                                             <div class="row">
                                                                 <div class="col-md-12 text-center">
                                                                     <input type="date" name="data" id="data">
@@ -1879,7 +1883,7 @@ if ($destino != '') {
                                 <?php } ?>
                             </select>
                         </div>
-                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') { ?>
+                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03') { ?>
                             <div class="col-md-2">
                                 <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
                             </div>
@@ -1943,9 +1947,9 @@ if ($destino != '') {
                 <div class="col-md-12" align="center"><br><br>
                     <form method="post" enctype="multipart/form-data" action="relComparecimento.php" target="_blank">
                         <div class="form-group">
-                            <?php if ($destino != '' && $status != 'Aguardando Atendimento' && $destino != '01') { ?>
+                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') { ?>
                                 <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
-                            <?php } else if ($destino != '01') { ?>
+                            <?php } else if ($destino == '') { ?>
                                 <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
                             <?php } ?>
                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
