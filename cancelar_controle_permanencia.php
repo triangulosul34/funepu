@@ -58,6 +58,8 @@ $result = pg_query($sql) or die($sql);
                     echo '<td>ALTA / PENITENCIÁRIA</td>';
                 } else if ($row->destino == '16') {
                     echo '<td>ALTA / PÓS MEDICAMENTO</td>';
+                }else if ($row->destino == '21') {
+                    echo '<td>TRANSFERENCIA</td>';
                 }
                 ?>
                 <td><?= date('d', (strtotime($row->data_saida) - strtotime(substr($row->data_entrada, 0, 10)))); ?></td>

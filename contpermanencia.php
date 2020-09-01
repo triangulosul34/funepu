@@ -74,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $html .= '<td>' . utf8_decode("ALTA / PÓS MEDICAMENTO") . '</td>';
         } else if ($row->destino_encaminhamento == '20') {
             $html .= '<td>' . utf8_decode("ALTA VIA SISTEMA") . '</td>';
+        } else if ($row->destino_encaminhamento == '21') {
+            $html .= '<td>' . utf8_decode("TRANSFERENCIA") . '</td>';
         }
         $d1 = strtotime($row->data_saida);
         $d2 = strtotime(substr($row->data_entrada, 0, 10));
@@ -208,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <option value="01">ALTA</option>
                                                     <option value="11">EVASAO</option>
                                                     <option value="04">TRANSF. OUTRA UPA</option>
-                                                    <option value="05">TRANSF. INTERNA HOSPITALAR</option>
+                                                    <option value="21">TRANSFERENCIA</option>
                                                     <option value="06">OBITO</option>
                                                 </select>
                                             </div>
@@ -282,11 +284,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
+        function altera_hora(a, b) {
+            $.get("atualizar_hora_destino.php", {
+                id: b,
+                hora: a
+            }, function(dataReturn) {
+                Swal.fire('Hora atualizada com sucesso');
+            })
+        }
+
         function cancelar_permanencia(a) {
             $.get("cancelar_controle_permanencia.php", {
                 id: a
             }, function(dataReturn) {
-                $('#tabela').html(dataReturn);
+                Swal.fire('Cancelado com sucesso');
             })
         }
 

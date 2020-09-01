@@ -10,8 +10,8 @@ function inverteData($data)
 }
 
 $id = $_GET['id'];
-$data = $_GET['data'];
+$hora = $_GET['hora'];
 
 include("conexao.php");
-$sql = "UPDATE destino_paciente SET data = '" . inverteData($data) . "' WHERE destino_id=$id";
+$sql = "UPDATE destino_paciente SET hora = '$hora' WHERE destino_id=$id";
 $result = pg_query($sql) or die($sql);
