@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                             <div class="col-3">
                                                 <label for="destino">Destino</label>
-                                                <select name="destino" id="destino" class="form-control" onchange="des()">
+                                                <select name="destino" id="destino" class="form-control" onchange="des();select()">
                                                     <option value=""></option>
                                                     <option value="01">ALTA</option>
                                                     <option value="11">EVASAO</option>
@@ -304,6 +304,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (texto.substring(0, 1) != saida) {
                 documento.value += texto.substring(0, 1);
             }
+        }
+
+        function select() {
+            $("select option").prop("selected", false);
         }
     </script>
 </body>
