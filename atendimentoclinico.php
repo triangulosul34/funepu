@@ -242,12 +242,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					 VALUES ('$usuario','Extornou a Alta do atendimento para o destino $destino pelo motivo $motivo_extorno','$atendimento','$data','$hora')";
         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
-
         include('conexao.php');
-        $sql = "UPDATE atendimentos SET destino_paciente = '$destino', status='Atendimento Finalizado' WHERE transacao = $atendimento";
-        $result = pg_query($sql);
+        $sqlv = "SELECT * FROM destino_paciente WHERE atendimento_id = $atendimento";
+        $resultv = pg_query($sqlv) or die($sqlv);
+        $rowv = pg_fetch_object($resultv);
+        if ($rowv) {
+            include('conexao.php');
+            $sql = "UPDATE destino_paciente SET destino_encaminhamento = $destino WHERE atendimento_id = $atendimento";
+            $result = pg_query($sql) or die($sql);
+        } else {
+            include('conexao.php');
+            $sql = "UPDATE atendimentos SET destino_paciente = '$destino', status='Atendimento Finalizado' WHERE transacao = $atendimento";
+            $result = pg_query($sql) or die($sql);
+        }
 
-        header('Location: atendimentoclinico.php?id=' . $atendimento);
+        //header('Location: atendimentoclinico.php?id=' . $atendimento);
     } else {
         $transacao =        stripslashes(pg_escape_string($_POST['transacao']));
         $senha =            stripslashes(pg_escape_string($_POST['senha']));
@@ -488,6 +497,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $df = 'ALTA / PÓS MEDICAMENTO';
             } elseif ($destino == '20') {
                 $df = 'ALTA VIA SISTEMA';
+            } elseif ($destino == '21') {
+                $df = 'TRANSFERENCIA';
             }
 
             $data = date('Y-m-d');
@@ -1883,7 +1894,7 @@ if ($destino != '') {
                                 <?php } ?>
                             </select>
                         </div>
-                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03') { ?>
+                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03') { ?>
                             <div class="col-md-2">
                                 <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
                             </div>

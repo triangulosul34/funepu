@@ -13,6 +13,7 @@ $result = pg_query($sql) or die($sql);
             <th>DT. Entrada</th>
             <th>DT. Saída</th>
             <th>Destino</th>
+            <th>Hora</th>
             <th>Dias de Permanência</th>
             <th>Ação</th>
         </tr>
@@ -20,7 +21,7 @@ $result = pg_query($sql) or die($sql);
     <tbody>
         <?php
         include('conexao.php');
-        $sql = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad as data_entrada, a.data as data_saida, a.destino_encaminhamento as destino  FROM destino_paciente a INNER JOIN atendimentos b ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id WHERE motivo = 'Finalizado pelo controle de Permanencia' AND data_controle = '" . date('Y-m-d') . "'";
+        $sql = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad as data_entrada, a.data as data_saida, a.hora, a.destino_encaminhamento as destino  FROM destino_paciente a INNER JOIN atendimentos b ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id INNER JOIN controle_permanencia d ON d.atendimento_id = a.atendimento_id WHERE motivo = 'Finalizado pelo controle de Permanencia' AND data_controle = '" . date('Y-m-d') . "' ORDER BY d.controle_permanecia_id";
         $result = pg_query($sql) or die($sql);
         while ($row = pg_fetch_object($result)) {
         ?>
@@ -28,7 +29,8 @@ $result = pg_query($sql) or die($sql);
                 <td><?= $row->paciente_id; ?></td>
                 <td><?= $row->nome; ?></td>
                 <td><?= inverteData(substr($row->data_entrada, 0, 10)); ?></td>
-                <td><?= inverteData($row->data_saida); ?></td>
+                <td><input type="text" id="data_saida" value="<?= inverteData($row->data_saida); ?>" OnKeyPress="formatar('##/##/####', this)" onblur="altera_data(this.value,<?= $row->destino_id; ?>)"></td>
+                <td><input type="text" id="data_saida" value="<?= $row->hora; ?>" OnKeyPress="formatar('##:##', this)" onblur="altera_hora(this.value,<?= $row->destino_id; ?>)"></td>
                 <?php
                 if ($row->destino == '01') {
                     echo '<td>ALTA</td>';
@@ -58,11 +60,18 @@ $result = pg_query($sql) or die($sql);
                     echo '<td>ALTA / PENITENCIÁRIA</td>';
                 } else if ($row->destino == '16') {
                     echo '<td>ALTA / PÓS MEDICAMENTO</td>';
-                }else if ($row->destino == '21') {
+                } else if ($row->destino == '20') {
+                    echo '<td>ALTA VIA SISTEMA</td>';
+                } else if ($row->destino == '21') {
                     echo '<td>TRANSFERENCIA</td>';
                 }
+                $d1 = strtotime($row->data_saida);
+                $d2 = strtotime(substr($row->data_entrada, 0, 10));
+                $dataFinal = ($d2 - $d1) / 86400;
+                if ($dataFinal < 0)
+                    $dataFinal *= -1;
                 ?>
-                <td><?= date('d', (strtotime($row->data_saida) - strtotime(substr($row->data_entrada, 0, 10)))); ?></td>
+                <td><?= $dataFinal; ?></td>
                 <td><button class="btn btn-raised btn-danger btn-min-width mr-1 mb-1" onclick="cancelar_permanencia(<?= $row->destino_id; ?>)">Cancelar</button></td>
             </tr>
         <?php } ?>

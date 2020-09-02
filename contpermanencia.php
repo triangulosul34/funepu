@@ -297,6 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 id: a
             }, function(dataReturn) {
                 Swal.fire('Cancelado com sucesso');
+                $('#tabela').html(dataReturn);
             })
         }
 

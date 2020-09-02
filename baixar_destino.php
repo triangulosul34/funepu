@@ -57,28 +57,12 @@ $row = pg_fetch_object($sth);
 
 if ($row->qtd == 0) {
     include('conexao.php');
-    if ($destino == '05') {
-        $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, hospital, clinica, data_controle) 
-					values ($atendimento, $destino, '$motivoalta', '$data', '$hora', '$hospital', '$clinica','$data_controle')";
-    } elseif ($destino == '13') {
-        $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, setor, data_controle) 
-					values ($atendimento, $destino, '$motivoalta', '$data', '$hora', '$setor','$data_controle')";
-    } else {
-        $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, data_controle) 
+    $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, data_controle) 
 					values ($atendimento, $destino, '$motivoalta', '$data', '$hora','$data_controle')";
-    }
     $sth = pg_query($stmt) or die($stmt);
 } else if ($row->destino_encaminhamento == 3) {
-    if ($destino == '05') {
-        $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', hospital = '$hospital', clinica = '$clinica', setor = null, data_controle = '$data_controle'
+    $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, data_controle = '$data_controle'
     where atendimento_id = '$atendimento'";
-    } elseif ($destino == '13') {
-        $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = '$setor', hospital = null, clinica = null, data_controle = '$data_controle'
-    where atendimento_id = '$atendimento'";
-    } else {
-        $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, data_controle = '$data_controle'
-    where atendimento_id = '$atendimento'";
-    }
     $sth = pg_query($stmt) or die($stmt);
 } else {
     echo "<script>Swal.fire('Paciente já finalizado pelo médico!!!')</script>";
@@ -107,6 +91,7 @@ if ($row->qtd == 0) {
             <th>DT. Entrada</th>
             <th>DT. Saída</th>
             <th>Destino</th>
+            <th>Hora</th>
             <th>Dias de Permanência</th>
             <th>Ação</th>
         </tr>
@@ -114,7 +99,7 @@ if ($row->qtd == 0) {
     <tbody>
         <?php
         include('conexao.php');
-        $sql = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad as data_entrada, a.data as data_saida, a.destino_encaminhamento as destino  FROM destino_paciente a INNER JOIN atendimentos b ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id INNER JOIN controle_permanencia d ON d.atendimento_id = a.atendimento_id WHERE motivo = 'Finalizado pelo controle de Permanencia' AND data_controle = '" . date('Y-m-d') . "' ORDER BY d.controle_permanecia_id";
+        $sql = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad as data_entrada, a.data as data_saida, a.hora, a.destino_encaminhamento as destino  FROM destino_paciente a INNER JOIN atendimentos b ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id INNER JOIN controle_permanencia d ON d.atendimento_id = a.atendimento_id WHERE motivo = 'Finalizado pelo controle de Permanencia' AND data_controle = '" . date('Y-m-d') . "' ORDER BY d.controle_permanecia_id";
         $result = pg_query($sql) or die($sql);
         while ($row = pg_fetch_object($result)) {
         ?>
@@ -123,6 +108,7 @@ if ($row->qtd == 0) {
                 <td><?= $row->nome; ?></td>
                 <td><?= inverteData(substr($row->data_entrada, 0, 10)); ?></td>
                 <td><input type="text" id="data_saida" value="<?= inverteData($row->data_saida); ?>" OnKeyPress="formatar('##/##/####', this)" onblur="altera_data(this.value,<?= $row->destino_id; ?>)"></td>
+                <td><input type="text" id="data_saida" value="<?= $row->hora; ?>" OnKeyPress="formatar('##:##', this)" onblur="altera_hora(this.value,<?= $row->destino_id; ?>)"></td>
                 <?php
                 if ($row->destino == '01') {
                     echo '<td>ALTA</td>';
