@@ -90,8 +90,8 @@ if ($row->qtd == 0) {
             <th>Paciente</th>
             <th>DT. Entrada</th>
             <th>DT. Saída</th>
-            <th>Destino</th>
             <th>Hora</th>
+            <th>Destino</th>
             <th>Dias de Permanência</th>
             <th>Ação</th>
         </tr>
