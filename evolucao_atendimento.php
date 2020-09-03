@@ -68,14 +68,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade
 		from atendimentos a 
 		left join pessoas c on a.paciente_id=c.pessoa_id 
 		left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
-		left join classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao' 
+        left join classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao' 
+        LEFT JOIN destino_paciente z on a.transacao = z.atendimento_id
 		where a.transacao=$transacao";
         $sth = pg_query($stmt) or die($stmt);
         $row = pg_fetch_object($sth);
@@ -571,7 +572,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </div>
                                     <div class="row">
                                         <div class="col-12 text-center mt-2">
-                                            <a href="nova_evolucao.php?id=<?php echo $transacao; ?>" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Nova Evolução</a>
+                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') { ?>
+                                                <a href="nova_evolucao.php?id=<?php echo $transacao; ?>" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Nova Evolução</a>
+                                            <?php } ?>
                                             <a class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" target="_blank" href="relSUSFacil.php?id=<?php echo $_GET['id']; ?>">Solicitação de Internação</a>
                                             <button data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Destino Paciente</button>
                                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" data-toggle="modal">
