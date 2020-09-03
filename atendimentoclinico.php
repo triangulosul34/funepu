@@ -256,7 +256,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $result = pg_query($sql) or die($sql);
         }
 
-        //header('Location: atendimentoclinico.php?id=' . $atendimento);
+        header('Location: atendimentoclinico.php?id=' . $atendimento);
     } else {
         $transacao =        stripslashes(pg_escape_string($_POST['transacao']));
         $senha =            stripslashes(pg_escape_string($_POST['senha']));
@@ -1439,7 +1439,7 @@ if ($destino != '') {
 
                                                     <?php if ($perfil == '06' or $perfil == '03') { ?>
                                                         <div class="col-12">
-                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
+                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') { ?>
                                                                 <table class="table table-hover table-striped condensed width-full">
                                                                     <tr>
                                                                         <td class="text-center" colspan="2"><label class="control-label">
@@ -1589,9 +1589,9 @@ if ($destino != '') {
 
                                                         <!-- </div> -->
                                                     </div>
-                                                    <?php if ($perfil == '06' or $perfil == '03') { ?>
+                                                    <?php if ($perfil == '06' or $perfil == '03' or $perfil == '04' or $perfil == '08') { ?>
                                                         <div class="col-md-12 text-center mt-5">
-                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
+                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') { ?>
                                                                 <div class="row">
                                                                     <div class="col-md-12 text-center">
                                                                         <input type='button' id="solicita_laboratorio" href="#" data-target="#modalLaboratorio" value='Solicitar Laboratorio' class="btn btn-success" data-toggle="modal">
@@ -1689,7 +1689,8 @@ if ($destino != '') {
                                                                     echo "<td class='small'>" . $row->hora . "</td>";
                                                                     echo "<td class='small'>" . $row->nome . "</td>";
                                                                     echo "<td class='small'>" . $row->medico . "</td>";
-                                                                    echo "<td class='small'>
+                                                                    if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') {
+                                                                        echo "<td class='small'>
 															<a href=\"prescricaoenfermagemy.php?id=$row->prescricao_id&p=$transacao\" target=\"_blank\" 
 															class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" 
 															data-original-title=\"Prescrição\">
@@ -1698,7 +1699,8 @@ if ($destino != '') {
 															<input type='button' onClick=\"window.open('popprescricao.php?prioridade=$prioridade&pr=$row->prescricao_id&id=$transacao&nome=$nome&cns=$cns&idade=$idade&prontuario=$prontuario', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=980, height=550'); return false;\" target='_blank'
 															class='btn btn-secondary btn-sm' data-toggle=\"tooltip\" data-original-title=\"Duplicar Prescrição\" value='+'>
 															
-														</td>";
+                                                        </td>";
+                                                                    }
 
                                                                     echo "<tr>";
                                                                 }
@@ -1714,7 +1716,7 @@ if ($destino != '') {
 
                                                     </div>
                                                     <div class="col-sm-12 text-center">
-                                                        <?php if ($perfil == '06' or $perfil == '03') { ?>
+                                                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') { ?>
                                                             <!--<input type='button' value="Solicitar Prescrição" id="prescricaoSolicitaModal" onclick="solicitacaoprescricao('<?php echo $_GET['id'] ?>')" class="btn btn-success margin-10" data-toggle="modal" >-->
                                                             <!--<input type='button' value="Solicitar Prescrição" id="prescricaoSolicitaModal" onclick="solicitacaoprescricao('<?php echo $_GET['id'] ?>')" class="btn btn-success margin-10" data-toggle="modal" >-->
                                                             <input type='button' id="pres" value='Solicitar Prescricão' class="btn btn-success" onClick="window.open('popprescricao.php?prioridade=<?php echo $prioridade; ?>&id=<?php echo $transacao; ?>&nome=<?php echo $nome; ?>&cns=<?php echo $cns; ?>&idade=<?php echo $idade; ?>&prontuario=<?php echo $prontuario; ?>', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1030, height=550'); return false;">
