@@ -73,6 +73,7 @@ $pdf->Text(257, 330, $row->cns[10]);
 $pdf->Text(271, 330, $row->cns[11]);
 $pdf->Text(285, 330, $row->cns[12]);
 $pdf->Text(300, 330, $row->cns[13]);
+$pdf->Text(315, 330, $row->cns[14]);
 $pdf->Text(170, 345, $row->nome);
 $pdf->Text(200, 360, $row->nome_mae);
 $pdf->Text(190, 374, $row->data_nascimento[8] . $row->data_nascimento[9]);

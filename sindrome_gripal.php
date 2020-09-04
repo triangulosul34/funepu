@@ -147,7 +147,10 @@
                                                         <tr>
                                                             <td><?= $row->nome; ?></td>
                                                             <td><?= inverteData($row->data_nascimento); ?></td>
-                                                            <td><a href="form_sindrome_gripal_pdf.php?id=<?= $row->sindrome_gripal_id; ?>"><i class="fas fa-print"></i></a></td>
+                                                            <td>
+                                                                <a href="form_sindrome_gripal_pdf.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1"><i class="fas fa-print"></i></a>
+                                                                <a href="form_sindrome_gripal.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1 danger"><i class="fas fa-pencil-alt"></i></a>
+                                                            </td>
                                                         </tr>
                                                     <?php } ?>
                                                 </tbody>

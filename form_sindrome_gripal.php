@@ -1,6 +1,7 @@
 <?php
 
 include "verifica.php";
+include('conexao.php');
 
 function inverteData($data)
 {
@@ -11,9 +12,16 @@ function inverteData($data)
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    include('conexao.php');
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    $sindrome_id = $_GET['id'];
 
+    $sql = "SELECT * FROM sindrome_gripal WHERE sindrome_gripal_id = $sindrome_id";
+    $result = pg_query($sql) or die($sql);
+    $rowget = pg_fetch_object($result);
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $sindrome_id = $_POST['id'];
     $uf = strtoupper($_POST['uf']);
     $municipio_notificacao = strtoupper($_POST['municipio_notificacao']);
     $pcpf = $_POST['pcpf'];
@@ -46,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stosse = $_POST['stosse'];
     $sdispneia = $_POST['sdispneia'];
     $soutros = $_POST['soutros'];
-    $stoutros = $_POST['sToutros'];
+    $stoutros = $_POST['stoutros'];
     $data_inicio_sintomas = inverteData($_POST['data_inicio_sintomas']);
     $cdoencas_respiratorias = $_POST['cdoencas_respiratorias'];
     $cdoencas_renais = $_POST['cdoencas_renais'];
@@ -66,30 +74,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (!$pessoa_id) $pessoa_id = 0;
 
-    $sql = "INSERT INTO sindrome_gripal(uf,municipio_notificacao,pcpf,pestrangeiro,psaude,pseguranca,cbo,cpf,cns,nome,nome_mae,data_nascimento,pais_origem,psexo,praca,passaporte,cep,estado,cidade,logradouro,numero,bairro,complemento,celular,telefone,";
-    if ($data_notificacao) $sql = $sql . "data_notificacao,";
-    $sql = $sql . "sfebre,sdor_garganta,stosse,sdispneia,soutros,stoutros,";
-    if ($data_inicio_sintomas) $sql = $sql . "data_inicio_sintomas,";
-    $sql = $sql . "cdoencas_respiratorias,cdoencas_renais,cdoencas_cromossomicas,cdiabetes,cimunossupressão,cdoencas_cardiacas,cgestante,eteste,";
-    if ($data_coleta_teste) $sql = $sql . "data_coleta_teste,";
-    $sql = $sql . "tipo_teste,resultado,classificacao_final,evolucao_caso,";
-    if ($data_encerramento) $sql = $sql . "data_encerramento,";
-    $sql = $sql . "pessoa_id, usuario, data_form, hora_form, observacao) VALUES('$uf','$municipio_notificacao','$pcpf','$pestrangeiro','$psaude','$pseguranca','$cbo','$cpf','$cns','$nome','$nome_mae','$data_nascimento','$pais_origem','$psexo','$praca','$passaporte','$cep','$estado','$cidade','$logradouro','$numero','$bairro','$complemento','$celular','$telefone',";
-    if ($data_notificacao) $sql = $sql . "'$data_notificacao',";
-    $sql = $sql . "'$sfebre','$sdor_garganta','$stosse','$sdispneia','$soutros', '$stoutros',";
-    if ($data_inicio_sintomas) $sql = $sql . "'$data_inicio_sintomas',";
-    $sql = $sql . "'$cdoencas_respiratorias','$cdoencas_renais','$cdoencas_cromossomicas','$cdiabetes','$cimunossupressão','$cdoencas_cardiacas','$cgestante','$eteste',";
-    if ($data_coleta_teste) $sql = $sql . "'$data_coleta_teste',";
-    $sql = $sql . "'$tipo_teste','$resultado','$classificacao_final','$evolucao_caso',";
-    if ($data_encerramento) $sql = $sql . "'$data_encerramento',";
-    $sql = $sql . " $pessoa_id, '$usuario', '" . date('Y-m-d') . "','" . date('H:i') . "', '$observacao')";
-    $result = pg_query($sql) or die($sql);
+    if ($sindrome_id) {
+        $sql = "UPDATE sindrome_gripal SET uf='$uf',municipio_notificacao='$municipio_notificacao',pcpf='$pcpf',pestrangeiro='$pestrangeiro',psaude='$psaude',pseguranca='$pseguranca',cbo='$cbo',cpf='$cpf',cns='$cns',nome='$nome',nome_mae='$nome_mae',data_nascimento='$data_nascimento',pais_origem='$pais_origem',psexo='$psexo',praca='$praca',passaporte='$passaporte',cep='$cep',estado='$estado',cidade='$cidade',logradouro='$logradouro',numero='$numero',bairro='$bairro',complemento='$complemento',celular='$celular',telefone='$telefone',";
+        if ($data_notificacao) $sql = $sql . "data_notificacao='$data_notificacao',";
+        $sql = $sql . "sfebre='$sfebre',sdor_garganta='$sdor_garganta',stosse='$stosse',sdispneia='$sdispneia',soutros='$soutros',stoutros='$stoutros',";
+        if ($data_inicio_sintomas) $sql = $sql . "data_inicio_sintomas='$data_inicio_sintomas',";
+        $sql = $sql . "cdoencas_respiratorias='$cdoencas_respiratorias',cdoencas_renais='$cdoencas_renais',cdoencas_cromossomicas='$cdoencas_cromossomicas',cdiabetes='$cdiabetes',cimunossupressão='$cimunossupressão',cdoencas_cardiacas='$cdoencas_cardiacas',cgestante='$cgestante',eteste='$eteste',";
+        if ($data_coleta_teste) $sql = $sql . "data_coleta_teste='$data_coleta_teste',";
+        $sql = $sql . "tipo_teste='$tipo_teste',resultado='$resultado',classificacao_final='$classificacao_final',evolucao_caso='$evolucao_caso',";
+        if ($data_encerramento) $sql = $sql . "data_encerramento='$data_encerramento',";
+        $sql = $sql . "pessoa_id='$pessoa_id', usuario='$usuario', data_form='" . date('Y-m-d') . "', hora_form='" . date('H:i') . "', observacao='$observacao' WHERE sindrome_gripal_id = $sindrome_id";
+        $result = pg_query($sql) or die($sql);
 
-    $sql = "SELECT max(sindrome_gripal_id) as id FROM sindrome_gripal";
-    $result = pg_query($sql) or die($sql);
-    $row = pg_fetch_object($result);
+        header("location: form_sindrome_gripal_pdf.php?id=" . $sindrome_id);
+    } else {
+        $sql = "INSERT INTO sindrome_gripal(uf,municipio_notificacao,pcpf,pestrangeiro,psaude,pseguranca,cbo,cpf,cns,nome,nome_mae,data_nascimento,pais_origem,psexo,praca,passaporte,cep,estado,cidade,logradouro,numero,bairro,complemento,celular,telefone,";
+        if ($data_notificacao) $sql = $sql . "data_notificacao,";
+        $sql = $sql . "sfebre,sdor_garganta,stosse,sdispneia,soutros,stoutros,";
+        if ($data_inicio_sintomas) $sql = $sql . "data_inicio_sintomas,";
+        $sql = $sql . "cdoencas_respiratorias,cdoencas_renais,cdoencas_cromossomicas,cdiabetes,cimunossupressão,cdoencas_cardiacas,cgestante,eteste,";
+        if ($data_coleta_teste) $sql = $sql . "data_coleta_teste,";
+        $sql = $sql . "tipo_teste,resultado,classificacao_final,evolucao_caso,";
+        if ($data_encerramento) $sql = $sql . "data_encerramento,";
+        $sql = $sql . "pessoa_id, usuario, data_form, hora_form, observacao) VALUES('$uf','$municipio_notificacao','$pcpf','$pestrangeiro','$psaude','$pseguranca','$cbo','$cpf','$cns','$nome','$nome_mae','$data_nascimento','$pais_origem','$psexo','$praca','$passaporte','$cep','$estado','$cidade','$logradouro','$numero','$bairro','$complemento','$celular','$telefone',";
+        if ($data_notificacao) $sql = $sql . "'$data_notificacao',";
+        $sql = $sql . "'$sfebre','$sdor_garganta','$stosse','$sdispneia','$soutros', '$stoutros',";
+        if ($data_inicio_sintomas) $sql = $sql . "'$data_inicio_sintomas',";
+        $sql = $sql . "'$cdoencas_respiratorias','$cdoencas_renais','$cdoencas_cromossomicas','$cdiabetes','$cimunossupressão','$cdoencas_cardiacas','$cgestante','$eteste',";
+        if ($data_coleta_teste) $sql = $sql . "'$data_coleta_teste',";
+        $sql = $sql . "'$tipo_teste','$resultado','$classificacao_final','$evolucao_caso',";
+        if ($data_encerramento) $sql = $sql . "'$data_encerramento',";
+        $sql = $sql . " $pessoa_id, '$usuario', '" . date('Y-m-d') . "','" . date('H:i') . "', '$observacao')";
+        $result = pg_query($sql) or die($sql);
 
-    header("location: form_sindrome_gripal_pdf.php?id=" . $row->id);
+        $sql = "SELECT max(sindrome_gripal_id) as id FROM sindrome_gripal";
+        $result = pg_query($sql) or die($sql);
+        $row = pg_fetch_object($result);
+
+        header("location: form_sindrome_gripal_pdf.php?id=" . $row->id);
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -189,6 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="card-content">
                                 <div class="card-body">
                                     <form action="#" method="post">
+                                        <input type="hidden" name="id" value="<?php echo $sindrome_id; ?>">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
@@ -209,11 +233,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Tem CPF?</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block">
-                                                            <input type="radio" id="pcpf1" name="pcpf" class="custom-control-input" value="sim">
+                                                            <input type="radio" id="pcpf1" name="pcpf" <?php if ($rowget->pcpf == "sim") echo "checked"; ?> class="custom-control-input" value="sim">
                                                             <label class="custom-control-label" for="pcpf1">Sim</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="pcpf2" checked="" name="pcpf" class="custom-control-input" value="nao">
+                                                            <input type="radio" id="pcpf2" name="pcpf" <?php if ($rowget->pcpf == "nao") echo "checked"; ?> class="custom-control-input" value="nao">
                                                             <label class="custom-control-label" for="pcpf2">Nao</label>
                                                         </div>
                                                     </div>
@@ -224,11 +248,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Estrangeiro</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block">
-                                                            <input type="radio" id="pestrangeiro1" name="pestrangeiro" class="custom-control-input" value="sim">
+                                                            <input type="radio" id="pestrangeiro1" name="pestrangeiro" <?php if ($rowget->pestrangeiro == "sim") echo "checked"; ?> class="custom-control-input" value="sim">
                                                             <label class="custom-control-label" for="pestrangeiro1">Sim</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="pestrangeiro2" checked="" name="pestrangeiro" class="custom-control-input" value="nao">
+                                                            <input type="radio" id="pestrangeiro2" name="pestrangeiro" <?php if ($rowget->pestrangeiro == "nao") echo "checked"; ?> class="custom-control-input" value="nao">
                                                             <label class="custom-control-label" for="pestrangeiro2">Nao</label>
                                                         </div>
                                                     </div>
@@ -239,11 +263,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">É profissional de saúde</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block">
-                                                            <input type="radio" id="psaude1" name="psaude" class="custom-control-input" value="sim">
+                                                            <input type="radio" id="psaude1" name="psaude" <?php if ($rowget->psaude == "sim") echo "checked"; ?> class="custom-control-input" value="sim">
                                                             <label class="custom-control-label" for="psaude1">Sim</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="psaude2" checked="" name="psaude" class="custom-control-input" value="nao">
+                                                            <input type="radio" id="psaude2" checked="" name="psaude" <?php if ($rowget->psaude == "nao") echo "checked"; ?> class="custom-control-input" value="nao">
                                                             <label class="custom-control-label" for="psaude2">Nao</label>
                                                         </div>
                                                     </div>
@@ -254,11 +278,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">É profissional de segurança</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block">
-                                                            <input type="radio" id="pseguranca1" name="pseguranca" class="custom-control-input" value="sim">
+                                                            <input type="radio" id="pseguranca1" name="pseguranca" <?php if ($rowget->pseguranca == "sim") echo "checked"; ?> class="custom-control-input" value="sim">
                                                             <label class="custom-control-label" for="pseguranca1">Sim</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="pseguranca2" checked="" name="pseguranca" class="custom-control-input" value="nao">
+                                                            <input type="radio" id="pseguranca2" checked="" name="pseguranca" <?php if ($rowget->pseguranca == "nao") echo "checked"; ?> class="custom-control-input" value="nao">
                                                             <label class="custom-control-label" for="pseguranca2">Nao</label>
                                                         </div>
                                                     </div>
@@ -269,13 +293,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">CBO</label>
-                                                    <input type="text" name="cbo" class="form-control">
+                                                    <input type="text" name="cbo" class="form-control" value="<?= $rowget->cbo; ?>">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">CPF</label>
-                                                    <input type="text" name="cpf" id="cpf" class="form-control" maxlength="11">
+                                                    <input type="text" name="cpf" id="cpf" class="form-control" value="<?= $rowget->cpf; ?>" maxlength="11">
                                                 </div>
                                             </div>
                                         </div>
@@ -283,16 +307,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-8">
                                                 <div class="form-group">
                                                     <label for="">CNS</label>
-                                                    <input type="text" name="cns" class="form-control" maxlength="14">
+                                                    <input type="text" name="cns" class="form-control" value="<?= $rowget->cns; ?>" maxlength="15">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <input type="hidden" name="pessoa_id" id="pessoa_id" readonly />
+                                                    <input type="hidden" name="pessoa_id" id="pessoa_id" value="<?= $rowget->pessoa_id; ?>" />
                                                     <label for="">Nome Completo</label>
-                                                    <input type="text" name="nome" id="nome" onkeyup="autocomplet()" class="form-control">
+                                                    <input type="text" name="nome" id="nome" onkeyup="autocomplet()" class="form-control" value="<?= $rowget->nome; ?>">
                                                     <ul id="lista_nomes"></ul>
                                                 </div>
                                             </div>
@@ -301,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="">Nome Completo da Mae</label>
-                                                    <input type="text" name="nome_mae" id="nome_mae" class="form-control">
+                                                    <input type="text" name="nome_mae" id="nome_mae" class="form-control" value="<?= $rowget->nome_mae; ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -309,7 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Data de Nascimento</label>
-                                                    <input type="text" name="data_nascimento" id="dt_nasc" class="form-control" OnKeyPress="formatar('##/##/####', this)" required>
+                                                    <input type="text" name="data_nascimento" id="dt_nasc" class="form-control" value="<?= inverteData($rowget->data_nascimento); ?>" OnKeyPress="formatar('##/##/####', this)" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -325,11 +349,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Sexo</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block">
-                                                            <input type="radio" id="psexo1" name="psexo" class="custom-control-input" value="masculino">
+                                                            <input type="radio" id="psexo1" name="psexo" <?php if ($rowget->psexo == "masculino") echo "checked"; ?> class="custom-control-input" value="masculino">
                                                             <label class="custom-control-label" for="psexo1">Masculino</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="psexo2" checked="" name="psexo" class="custom-control-input" value="feminino">
+                                                            <input type="radio" id="psexo2" checked="" name="psexo" <?php if ($rowget->psexo == "feminino") echo "checked"; ?> class="custom-control-input" value="feminino">
                                                             <label class="custom-control-label" for="psexo2">Feminino</label>
                                                         </div>
                                                     </div>
@@ -340,23 +364,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Raça/Cor</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block">
-                                                            <input type="radio" id="praca1" name="praca" class="custom-control-input" value="branca">
+                                                            <input type="radio" id="praca1" name="praca" <?php if ($rowget->praca == "branca") echo "checked"; ?> class="custom-control-input" value="branca">
                                                             <label class="custom-control-label" for="praca1">Branca</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="praca2" checked="" name="praca" class="custom-control-input" value="preta">
+                                                            <input type="radio" id="praca2" checked="" name="praca" <?php if ($rowget->praca == "preta") echo "checked"; ?> class="custom-control-input" value="preta">
                                                             <label class="custom-control-label" for="praca2">Preta</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="praca3" checked="" name="praca" class="custom-control-input" value="amarela">
+                                                            <input type="radio" id="praca3" checked="" name="praca" <?php if ($rowget->praca == "amarela") echo "checked"; ?> class="custom-control-input" value="amarela">
                                                             <label class="custom-control-label" for="praca3">Amarela</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="praca4" checked="" name="praca" class="custom-control-input" value="parda">
+                                                            <input type="radio" id="praca4" checked="" name="praca" <?php if ($rowget->praca == "parda") echo "checked"; ?> class="custom-control-input" value="parda">
                                                             <label class="custom-control-label" for="praca4">Parda</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="praca5" checked="" name="praca" class="custom-control-input" value="indigena">
+                                                            <input type="radio" id="praca5" checked="" name="praca" <?php if ($rowget->praca == "indigena") echo "checked"; ?> class="custom-control-input" value="indigena">
                                                             <label class="custom-control-label" for="praca5">Indigena</label>
                                                         </div>
                                                     </div>
@@ -365,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Passaporte</label>
-                                                    <input type="text" name="passaporte" class="form-control" maxlength="8">
+                                                    <input type="text" name="passaporte" class="form-control" value="<?= $rowget->passaporte; ?>" maxlength="8">
                                                 </div>
                                             </div>
                                         </div>
@@ -373,7 +397,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">CEP</label>
-                                                    <input type="text" name="cep" id="cep" class="form-control" OnKeyPress="formatar('#####-###', this)">
+                                                    <input type="text" name="cep" id="cep" class="form-control" value="<?= $rowget->cep; ?>" OnKeyPress="formatar('#####-###', this)">
                                                 </div>
                                             </div>
                                         </div>
@@ -381,13 +405,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="">Estado de residência</label>
-                                                    <input type="text" name="estado" id="uf" class="form-control" maxlength="2">
+                                                    <input type="text" name="estado" id="uf" class="form-control" value="<?= $rowget->estado; ?>" maxlength="2">
                                                 </div>
                                             </div>
                                             <div class="col-md-8">
                                                 <div class="form-group">
                                                     <label for="">Município de residência</label>
-                                                    <input type="text" name="cidade" id="cidade" class="form-control">
+                                                    <input type="text" name="cidade" id="cidade" value="<?= $rowget->cidade; ?>" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -395,19 +419,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Logradouro</label>
-                                                    <input type="text" name="logradouro" id="rua" class="form-control">
+                                                    <input type="text" name="logradouro" value="<?= $rowget->logradouro; ?>" id="rua" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="">Numero</label>
-                                                    <input type="text" name="numero" id="numero" class="form-control">
+                                                    <input type="text" name="numero" id="numero" value="<?= $rowget->numero; ?>" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Bairro</label>
-                                                    <input type="text" name="bairro" id="bairro" class="form-control">
+                                                    <input type="text" name="bairro" id="bairro" value="<?= $rowget->bairro; ?>" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -415,7 +439,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="">Complemento</label>
-                                                    <input type="text" name="complemento" class="form-control">
+                                                    <input type="text" name="complemento" class="form-control" value="<?= $rowget->complemento; ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -423,13 +447,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Telefone celular</label>
-                                                    <input type="text" name="celular" id="celular" class="form-control" OnKeyPress="formatar('##-#########', this)" maxlength="12">
+                                                    <input type="text" name="celular" id="celular" class="form-control" value="<?= $rowget->celular; ?>" OnKeyPress="formatar('##-#########', this)" maxlength="12">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="">Telefone de contato</label>
-                                                    <input type="text" name="telefone" id="telefone" class="form-control" OnKeyPress="formatar('##-#########', this)" maxlength="12">
+                                                    <input type="text" name="telefone" id="telefone" class="form-control" value="<?= $rowget->telefone; ?>" OnKeyPress="formatar('##-#########', this)" maxlength="12">
                                                 </div>
                                             </div>
                                         </div>
@@ -437,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data de Notificação</label>
-                                                    <input type="text" name="data_notificacao" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>">
+                                                    <input type="text" name="data_notificacao" class="form-control" value="<?= inverteData($rowget->data_notificacao); ?>" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -447,25 +471,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Sintomas</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-checkbox d-inline-block">
-                                                            <input type="checkbox" id="sfebre" name="sfebre" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="sfebre" name="sfebre" <?php if ($rowget->sfebre == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="sfebre">Febre</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block ml-2">
-                                                            <input type="checkbox" id="sdor_garganta" name="sdor_garganta" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="sdor_garganta" name="sdor_garganta" <?php if ($rowget->sdor_garganta == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="sdor_garganta">Dor de Garganta</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block ml-2">
-                                                            <input type="checkbox" id="stosse" name="stosse" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="stosse" name="stosse" <?php if ($rowget->stosse == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="stosse">Tosse</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block ml-2">
-                                                            <input type="checkbox" id="sdispneia" name="sdispneia" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="sdispneia" name="sdispneia" <?php if ($rowget->sdispneia == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="sdispneia">Dispneia</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block ml-2">
-                                                            <input type="checkbox" id="soutros" name="soutros" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="soutros" name="soutros" <?php if ($rowget->soutros == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="soutros">Outros</label>
-                                                            <input type="text" name="stoutros">
+                                                            <input type="text" name="stoutros" value="<?= $rowget->stoutros; ?>">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -473,7 +497,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data do inicio dos sintomas</label>
-                                                    <input type="text" name="data_inicio_sintomas" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                    <input type="text" name="data_inicio_sintomas" class="form-control" value="<?= inverteData($rowget->data_inicio_sintomas); ?>" OnKeyPress="formatar('##/##/####', this)">
                                                 </div>
                                             </div>
                                         </div>
@@ -483,31 +507,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Condições</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                                            <input type="checkbox" id="cdoencas_respiratorias" name="cdoencas_respiratorias" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="cdoencas_respiratorias" name="cdoencas_respiratorias" <?php if ($rowget->cdoencas_respiratorias == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="cdoencas_respiratorias">Doenças respiratórias cronicas descompensada</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                                            <input type="checkbox" id="cdoencas_renais" name="cdoencas_renais" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="cdoencas_renais" name="cdoencas_renais" <?php if ($rowget->cdoencas_renais == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="cdoencas_renais">Doenças renais cronicas em estagio avançado(graus 3,4 e 5)</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                                            <input type="checkbox" id="cdoencas_cromossomicas" name="cdoencas_cromossomicas" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="cdoencas_cromossomicas" name="cdoencas_cromossomicas" <?php if ($rowget->cdoencas_cromossomicas == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="cdoencas_cromossomicas">Portador de doenças cromossómicas ou estado de fragilidade imunológica</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                                            <input type="checkbox" id="cdiabetes" name="cdiabetes" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="cdiabetes" name="cdiabetes" <?php if ($rowget->cdiabetes == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="cdiabetes">Diabetes</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                                            <input type="checkbox" id="cimunossupressão" name="cimunossupressão" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="cimunossupressão" name="cimunossupressão" <?php if ($rowget->cimunossupressão == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="cimunossupressão">Imunossupressão</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                                            <input type="checkbox" id="cdoencas_cardiacas" name="cdoencas_cardiacas" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="cdoencas_cardiacas" name="cdoencas_cardiacas" <?php if ($rowget->cdoencas_cardiacas == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="cdoencas_cardiacas">Doenças cardíacas cronicas</label>
                                                         </div>
                                                         <div class="custom-control custom-checkbox d-inline-block mr-2">
-                                                            <input type="checkbox" id="cgestante" name="cgestante" class="custom-control-input" value="1">
+                                                            <input type="checkbox" id="cgestante" name="cgestante" <?php if ($rowget->cgestante == "1") echo "selected"; ?> class="custom-control-input" value="1">
                                                             <label class="custom-control-label" for="cgestante">Gestante</label>
                                                         </div>
                                                     </div>
@@ -520,19 +544,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Estado do teste</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="esolicitado" name="eteste" class="custom-control-input" value="solicitado">
+                                                            <input type="radio" id="esolicitado" name="eteste" <?php if ($rowget->eteste == "solicitado") echo "checked"; ?> class="custom-control-input" value="solicitado">
                                                             <label class="custom-control-label" for="esolicitado">Solicitado</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="ecoleta" name="eteste" class="custom-control-input" value="coletado">
+                                                            <input type="radio" id="ecoleta" name="eteste" <?php if ($rowget->eteste == "coletado") echo "checked"; ?> class="custom-control-input" value="coletado">
                                                             <label class="custom-control-label" for="ecoleta">Coletado</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="econcluido" name="eteste" class="custom-control-input" value="concluido">
+                                                            <input type="radio" id="econcluido" name="eteste" <?php if ($rowget->eteste == "concluido") echo "checked"; ?> class="custom-control-input" value="concluido">
                                                             <label class="custom-control-label" for="econcluido">Concluído</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="enao_solicitado" name="eteste" class="custom-control-input" value="exame nao coletado">
+                                                            <input type="radio" id="enao_solicitado" name="eteste" <?php if ($rowget->eteste == "exame nao coletado") echo "checked"; ?> class="custom-control-input" value="exame nao coletado">
                                                             <label class="custom-control-label" for="enao_solicitado">Exame não Solicitado</label>
                                                         </div>
                                                     </div>
@@ -541,7 +565,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <label for="">Data da Coleta do Teste</label>
-                                                    <input type="text" name="data_coleta_teste" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                    <input type="text" name="data_coleta_teste" class="form-control" value="<?= inverteData($rowget->data_coleta_teste); ?>" OnKeyPress="formatar('##/##/####', this)">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
@@ -549,23 +573,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Tipo de Teste</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="tpcr" name="tipo_teste" class="custom-control-input" value="rt-pcr">
+                                                            <input type="radio" id="tpcr" name="tipo_teste" <?php if ($rowget->tipo_teste == "rt-pcr") echo "checked"; ?> class="custom-control-input" value="rt-pcr">
                                                             <label class="custom-control-label" for="tpcr">RT-PCR</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="tteste_igg" name="tipo_teste" class="custom-control-input" value="teste rapido - anticorpo">
+                                                            <input type="radio" id="tteste_igg" name="tipo_teste" <?php if ($rowget->tipo_teste == "teste rapido - anticorpo") echo "checked"; ?> class="custom-control-input" value="teste rapido - anticorpo">
                                                             <label class="custom-control-label" for="tteste_igg">Teste rápido - anticorpo</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="tteste_igm" name="tipo_teste" class="custom-control-input" value="teste rapido - antigeno">
+                                                            <input type="radio" id="tteste_igm" name="tipo_teste" <?php if ($rowget->tipo_teste == "teste rapido - antigeno") echo "checked"; ?> class="custom-control-input" value="teste rapido - antigeno">
                                                             <label class="custom-control-label" for="tteste_igm">Teste rápido - antigeno</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="tenzima" name="tipo_teste" class="custom-control-input" value="enzimaimunoensaio - elisa">
+                                                            <input type="radio" id="tenzima" name="tipo_teste" <?php if ($rowget->tipo_teste == "enzimaimunoensaio - elisa") echo "checked"; ?> class="custom-control-input" value="enzimaimunoensaio - elisa">
                                                             <label class="custom-control-label" for="tenzima">Enzimaimunoensaio - ELISA</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="teletroquimioluminescencia" name="tipo_teste" class="custom-control-input" value="imunoensaio por eletroquimioluminescencia - eclia">
+                                                            <input type="radio" id="teletroquimioluminescencia" name="tipo_teste" <?php if ($rowget->tipo_teste == "imunoensaio por eletroquimioluminescencia - eclia") echo "checked"; ?> class="custom-control-input" value="imunoensaio por eletroquimioluminescencia - eclia">
                                                             <label class="custom-control-label" for="teletroquimioluminescencia">Imunoensaio por Eletroquimioluminescencia - ECLIA</label>
                                                         </div>
                                                     </div>
@@ -576,11 +600,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Resultado do teste</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block">
-                                                            <input type="radio" id="rnegativo" name="resultado" class="custom-control-input" value="negativo">
+                                                            <input type="radio" id="rnegativo" name="resultado" <?php if ($rowget->resultado == "negativo") echo "checked"; ?> class="custom-control-input" value="negativo">
                                                             <label class="custom-control-label" for="rnegativo">Negativo</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block ml-2">
-                                                            <input type="radio" id="rpositivo" name="resultado" class="custom-control-input" value="positivo">
+                                                            <input type="radio" id="rpositivo" name="resultado" <?php if ($rowget->resultado == "positivo") echo "checked"; ?> class="custom-control-input" value="positivo">
                                                             <label class="custom-control-label" for="rpositivo">Positivo</label>
                                                         </div>
                                                     </div>
@@ -593,27 +617,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Classificação Final</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="cfdescartado" name="classificacao_final" class="custom-control-input" value="descartado">
+                                                            <input type="radio" id="cfdescartado" name="classificacao_final" <?php if ($rowget->classificacao_final == "descartado") echo "checked"; ?> class="custom-control-input" value="descartado">
                                                             <label class="custom-control-label" for="cfdescartado">Descartado</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="cfconfirmadoce" name="classificacao_final" class="custom-control-input" value="confirmado clinico-epidemiologico">
+                                                            <input type="radio" id="cfconfirmadoce" name="classificacao_final" <?php if ($rowget->classificacao_final == "confirmado clinico-epidemiologico") echo "checked"; ?> class="custom-control-input" value="confirmado clinico-epidemiologico">
                                                             <label class="custom-control-label" for="cfconfirmadoce">Confirmado Clinico-Epidemiologico</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="cfconfirmado_laboratorial" name="classificacao_final" class="custom-control-input" value="confirmado laboratorial">
+                                                            <input type="radio" id="cfconfirmado_laboratorial" name="classificacao_final" <?php if ($rowget->classificacao_final == "confirmado laboratorial") echo "checked"; ?> class="custom-control-input" value="confirmado laboratorial">
                                                             <label class="custom-control-label" for="cfconfirmado_laboratorial">Confirmado Laboratorial</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="cfsindromenr" name="classificacao_final" class="custom-control-input" value="sindrome gripal nao especificada">
+                                                            <input type="radio" id="cfsindromenr" name="classificacao_final" <?php if ($rowget->classificacao_final == "sindrome gripal nao especificada") echo "checked"; ?> class="custom-control-input" value="sindrome gripal nao especificada">
                                                             <label class="custom-control-label" for="cfsindromenr">Sindrome Gripal não Especificada</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="cfconfirmadoci" name="classificacao_final" class="custom-control-input" value="confirmado clinico imagem">
+                                                            <input type="radio" id="cfconfirmadoci" name="classificacao_final" <?php if ($rowget->classificacao_final == "confirmado clinico imagem") echo "checked"; ?> class="custom-control-input" value="confirmado clinico imagem">
                                                             <label class="custom-control-label" for="cfconfirmadoci">Confirmado Clinico Imagem</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="cfconfirmadocc" name="classificacao_final" class="custom-control-input" value="confirmado por criterio clinico">
+                                                            <input type="radio" id="cfconfirmadocc" name="classificacao_final" <?php if ($rowget->classificacao_final == "confirmado por criterio clinico") echo "checked"; ?> class="custom-control-input" value="confirmado por criterio clinico">
                                                             <label class="custom-control-label" for="cfconfirmadocc">Confirmado por Criterio Clinico</label>
                                                         </div>
                                                     </div>
@@ -624,31 +648,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label for="">Evolução do Caso</label>
                                                     <div class="input-group">
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="eccancelado" name="evolucao_caso" class="custom-control-input" value="cancelado">
+                                                            <input type="radio" id="eccancelado" name="evolucao_caso" <?php if ($rowget->evolucao_caso == "cancelado") echo "checked"; ?> class="custom-control-input" value="cancelado">
                                                             <label class="custom-control-label" for="eccancelado">Cancelado</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="ecignorado" name="evolucao_caso" class="custom-control-input" value="ignorado">
+                                                            <input type="radio" id="ecignorado" name="evolucao_caso" <?php if ($rowget->evolucao_caso == "ignorado") echo "checked"; ?> class="custom-control-input" value="ignorado">
                                                             <label class="custom-control-label" for="ecignorado">Ignorado</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="ectratamento_domiciliar" name="evolucao_caso" class="custom-control-input" value="em tratamento domiciliar">
+                                                            <input type="radio" id="ectratamento_domiciliar" name="evolucao_caso" <?php if ($rowget->evolucao_caso == "em tratamento domiciliar") echo "checked"; ?> class="custom-control-input" value="em tratamento domiciliar">
                                                             <label class="custom-control-label" for="ectratamento_domiciliar">Em tratamento domiciliar</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="ecinternado_uti" name="evolucao_caso" class="custom-control-input" value="internado em uti">
+                                                            <input type="radio" id="ecinternado_uti" name="evolucao_caso" <?php if ($rowget->evolucao_caso == "internado em uti") echo "checked"; ?> class="custom-control-input" value="internado em uti">
                                                             <label class="custom-control-label" for="ecinternado_uti">Internado em UTI</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="ecinternado" name="evolucao_caso" class="custom-control-input" value="internado">
+                                                            <input type="radio" id="ecinternado" name="evolucao_caso" <?php if ($rowget->evolucao_caso == "internado") echo "checked"; ?> class="custom-control-input" value="internado">
                                                             <label class="custom-control-label" for="ecinternado">Internado</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="ecobito" name="evolucao_caso" class="custom-control-input" value="obito">
+                                                            <input type="radio" id="ecobito" name="evolucao_caso" <?php if ($rowget->evolucao_caso == "obito") echo "checked"; ?> class="custom-control-input" value="obito">
                                                             <label class="custom-control-label" for="ecobito">Obito</label>
                                                         </div>
                                                         <div class="custom-control custom-radio d-inline-block mr-2">
-                                                            <input type="radio" id="eccura" name="evolucao_caso" class="custom-control-input" value="cura">
+                                                            <input type="radio" id="eccura" name="evolucao_caso" <?php if ($rowget->evolucao_caso == "cura") echo "checked"; ?> class="custom-control-input" value="cura">
                                                             <label class="custom-control-label" for="eccura">Cura</label>
                                                         </div>
                                                     </div>
@@ -659,7 +683,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data de Encerramento</label>
-                                                    <input type="text" name="data_encerramento" class="form-control" OnKeyPress="formatar('##/##/####', this)">
+                                                    <input type="text" name="data_encerramento" class="form-control" value="<?= inverteData($rowget->data_encerramento); ?>" OnKeyPress="formatar('##/##/####', this)">
                                                 </div>
                                             </div>
                                         </div>
@@ -667,7 +691,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label for="">Observação</label>
-                                                    <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="180" name="observacao" class="form-control"></textarea>
+                                                    <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="180" name="observacao" class="form-control" value="<?= $rowget->observacao; ?>"></textarea>
                                                 </div>
                                             </div>
                                         </div>

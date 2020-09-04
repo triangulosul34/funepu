@@ -630,23 +630,25 @@ if (isset($_POST["excel"])) {
                                                             <th style="display:none;">
                                                                 <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
                                                             </th>
-                                                            <th width="10%">Data/Hora</th>
-                                                            <th width="25%">Paciente</th>
-                                                            <th width="8%">Triagem</th>
-                                                            <th width="8%">Atend.</th>
-                                                            <th width="14%">Situação</th>
-                                                            <th width="12%">Ação</th>
+                                                            <th>Data/Hora</th>
+                                                            <th>Paciente</th>
+                                                            <th>Triagem</th>
+                                                            <th>Atend.</th>
+                                                            <th>Situação</th>
+                                                            <th>Status Atend.</th>
+                                                            <th>Ação</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
                                                             <th style="display:none;">#</th>
-                                                            <th width="5%">Data/Hora</th>
-                                                            <th width="25%">Paciente</th>
-                                                            <th width="8%">Triagem</th>
-                                                            <th width="8%">Atend.</th>
-                                                            <th width="12%">Situação</th>
-                                                            <th width="12%">Ação</th>
+                                                            <th>Data/Hora</th>
+                                                            <th>Paciente</th>
+                                                            <th>Triagem</th>
+                                                            <th>Atend.</th>
+                                                            <th>Situação</th>
+                                                            <th>Status Atend.</th>
+                                                            <th>Ação</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody>
@@ -732,7 +734,41 @@ if (isset($_POST["excel"])) {
                                                                     echo "<td style=\"color:$color\">" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
                                                                 }
                                                             }
-
+                                                            echo "<td style=\"color:$color\">";
+                                                            if ($row->destino_paciente == '01') {
+                                                                echo 'ALTA';
+                                                            } elseif ($row->destino_paciente == '02') {
+                                                                echo 'ALTA / ENCAM. AMBUL.';
+                                                            } elseif ($row->destino_paciente == '07') {
+                                                                echo 'EM OBSERVAÇÃO / MEDICAÇÃO';
+                                                            } elseif ($row->destino_paciente == '10') {
+                                                                echo 'EXAMES / REAVALIACAO';
+                                                            } elseif ($row->destino_paciente == '03') {
+                                                                echo 'PERMANÊCIA.';
+                                                            } elseif ($row->destino_paciente == '04') {
+                                                                echo 'TRANSF. OUTRA UPA';
+                                                            } elseif ($row->destino_paciente == '05') {
+                                                                echo 'TRANSF. INTERN. HOSPITALAR';
+                                                            } elseif ($row->destino_paciente == '06') {
+                                                                echo 'ÓBITO';
+                                                            } elseif ($row->destino_paciente == '09') {
+                                                                echo 'NAO RESPONDEU CHAMADO';
+                                                            } elseif ($row->destino_paciente == '11') {
+                                                                echo 'ALTA EVASÃO';
+                                                            } elseif ($row->destino_paciente == '12') {
+                                                                echo 'ALTA PEDIDO';
+                                                            } elseif ($row->destino_paciente == '14') {
+                                                                echo 'ALTA / POLICIA';
+                                                            } elseif ($row->destino_paciente == '15') {
+                                                                echo 'ALTA / PENITENCIÁRIA';
+                                                            } elseif ($row->destino_paciente == '16') {
+                                                                echo 'ALTA / PÓS MEDICAMENTO';
+                                                            } elseif ($row->destino_paciente == '20') {
+                                                                echo 'ALTA VIA SISTEMA';
+                                                            } elseif ($row->destino_paciente == '21') {
+                                                                echo 'TRANSFERENCIA';
+                                                            }
+                                                            echo "</td>";
 
                                                             echo "<td>";
                                                             /*if($row->status != 'Aguardando Triagem'){*/
