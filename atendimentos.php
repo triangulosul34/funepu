@@ -708,7 +708,7 @@ if (isset($_POST["excel"])) {
                                                             if ($row->coronavirus == 1) {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
                                                                 echo "<td class='blink' style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . "</td>";
-                                                                echo "<td class='blink'><a data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank'>" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
+                                                                echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank'>" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
                                                                 //echo "<td>".utf8_encode($row->convenio)."</td>";							
                                                                 echo "<td class='blink' style=\"color:$color\">" . $row->hora_triagem . "</td>";
                                                                 echo "<td class='blink' style=\"color:$color\">" . $row->hora_destino . "</td>";
@@ -722,7 +722,7 @@ if (isset($_POST["excel"])) {
                                                             } else {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
                                                                 echo "<td style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad .  '<br>' . $row->paciente_id . "</td>";
-                                                                echo "<td ><a data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank' style=\"color:$color\">" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
+                                                                echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank' style=\"color:$color\">" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
                                                                 //echo "<td>".utf8_encode($row->convenio)."</td>";							
                                                                 echo "<td style=\"color:$color\">" . $row->hora_triagem . "</td>";
                                                                 echo "<td style=\"color:$color\">" . $row->hora_destino . "</td>";
