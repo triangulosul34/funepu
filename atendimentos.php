@@ -636,6 +636,7 @@ if (isset($_POST["excel"])) {
                                                             <th>Atend.</th>
                                                             <th>Situação</th>
                                                             <th>Status Atend.</th>
+                                                            <th>Data Dest.</th>
                                                             <th>Ação</th>
                                                         </tr>
                                                     </thead>
@@ -648,13 +649,14 @@ if (isset($_POST["excel"])) {
                                                             <th>Atend.</th>
                                                             <th>Situação</th>
                                                             <th>Status Atend.</th>
+                                                            <th>Data Dest.</th>
                                                             <th>Ação</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody>
                                                         <?php
                                                         include('conexao.php');
-                                                        $stmt = "select a.transacao,d.nome as nomemed, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
+                                                        $stmt = "select a.transacao,d.nome as nomemed, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, case when z.destino_encaminhamento::varchar is null then a.dat_cad else z.data end as data_paciente, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
                                                         CASE prioridade WHEN 'VERMELHO' THEN '0' WHEN 'LARANJA' THEN '1' WHEN 'AMARELO' THEN '2' WHEN 'VERDE' THEN '3'  WHEN 'AZUL' THEN '4' ELSE '5'
                                                         END as ORDEM, a.coronavirus from atendimentos a 
                                                         left join pessoas c on a.paciente_id=c.pessoa_id
@@ -767,6 +769,11 @@ if (isset($_POST["excel"])) {
                                                                 echo 'ALTA VIA SISTEMA';
                                                             } elseif ($row->destino_paciente == '21') {
                                                                 echo 'TRANSFERENCIA';
+                                                            }
+                                                            echo "</td>";
+                                                            echo "<td style=\"color:$color\">";
+                                                            if ($row->destino_paciente) {
+                                                                echo inverteData(substr($row->data_paciente, 0, 10));
                                                             }
                                                             echo "</td>";
 
