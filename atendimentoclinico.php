@@ -734,7 +734,9 @@ if ($destino != '') {
 
                             <div class="col-sm-12">
                                 <label class="control-label  margin-top-10">Destino dado ao Paciente</label>
-                                <select class="form-control" name="destino" id="destino2" onchange="seleciona_setor(this)">
+                                <select class="form-control" name="destino" id="destino2" onchange="seleciona_setor(this)" required>
+                                    <option value="">Escolha um Destino
+                                    </option>;
                                     <option value="01">ALTA
                                     </option>;
                                     <option value="07">EM
@@ -1263,7 +1265,7 @@ if ($destino != '') {
                                             <br>
                                             <div class="col-sm-12 margin-top-10">
                                                 <label class="control-label">Exame Físico</label>
-                                                <textarea name="exame_fisico" class="form-control" rows="15" <?php echo $rdonly ?>><?php echo $exame_fisico; ?></textarea> </br>
+                                                <textarea name="exame_fisico" class="form-control" rows="15" <?php echo $rdonly ?> required><?php echo $exame_fisico; ?></textarea> </br>
                                             </div>
 
                                             <input id="usuario-autorizado" name="usuario-autorizado" type="hidden" />
@@ -1874,27 +1876,29 @@ if ($destino != '') {
                     </div>
                     <div class="row">
                         <div class="col-md-10">
-                            <label class="control-label">Destino dado ao Paciente</label>
-                            <?php if ($destino == '19' and $med == 1) { ?>
-                                <label class="control-label">guardando os resultados de exames</label>
-                                <textarea name="evolucao" class="form-control" style="height: 404px" id="evolucao"></textarea> </br>
-                            <?php } ?>
-                            <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) echo $disable ?> required>
-                                <option value=""></option>;
-                                <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') echo "selected"; ?>>ALTA
-                                </option>;
-                                <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') echo "selected"; ?>>EM
-                                    OBSERVAÇÃO / MEDICAÇÃO</option>;
-                                <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
-                                <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') echo "selected"; ?>>EXAMES /
-                                    REAVALIACAO</option>;
-                                <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') echo "selected"; ?>>PERMANÊNCIA.
-                                </option>;
-                                <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '20') { ?>
-                                    <option value="20" selected>ALTA VIA SISTEMA
-                                    </option>;
+                            <div class="form-group">
+                                <label class="control-label">Destino dado ao Paciente</label>
+                                <?php if ($destino == '19' and $med == 1) { ?>
+                                    <label class="control-label">guardando os resultados de exames</label>
+                                    <textarea name="evolucao" class="form-control" style="height: 404px" id="evolucao"></textarea> </br>
                                 <?php } ?>
-                            </select>
+                                <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) echo $disable ?>>
+                                    <option value=""></option>;
+                                    <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') echo "selected"; ?>>ALTA
+                                    </option>;
+                                    <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') echo "selected"; ?>>EM
+                                        OBSERVAÇÃO / MEDICAÇÃO</option>;
+                                    <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
+                                    <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') echo "selected"; ?>>EXAMES /
+                                        REAVALIACAO</option>;
+                                    <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') echo "selected"; ?>>PERMANÊNCIA.
+                                    </option>;
+                                    <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '20') { ?>
+                                        <option value="20" selected>ALTA VIA SISTEMA
+                                        </option>;
+                                    <?php } ?>
+                                </select>
+                            </div>
                         </div>
                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03') { ?>
                             <div class="col-md-2">

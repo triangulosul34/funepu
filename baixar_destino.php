@@ -99,7 +99,7 @@ if ($row->qtd == 0) {
     <tbody>
         <?php
         include('conexao.php');
-        $sql = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad as data_entrada, a.data as data_saida, a.hora, a.destino_encaminhamento as destino  FROM destino_paciente a INNER JOIN atendimentos b ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id INNER JOIN controle_permanencia d ON d.atendimento_id = a.atendimento_id WHERE motivo = 'Finalizado pelo controle de Permanencia' AND data_controle = '" . date('Y-m-d') . "' ORDER BY d.controle_permanecia_id asc";
+        $sql = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad as data_entrada, a.data as data_saida, a.hora, a.destino_encaminhamento as destino  FROM destino_paciente a INNER JOIN atendimentos b ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id INNER JOIN controle_permanencia d ON d.atendimento_id = a.atendimento_id WHERE motivo = 'Finalizado pelo controle de Permanencia' AND data_controle = '" . date('Y-m-d') . "' ORDER BY d.controle_permanecia_id desc";
         $result = pg_query($sql) or die($sql);
         while ($row = pg_fetch_object($result)) {
         ?>
