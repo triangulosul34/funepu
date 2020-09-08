@@ -5,6 +5,7 @@ include('verifica.php');
 $transacao = $_POST['transacaoModal'];
 $consultorio = $_POST['consultorioModal'];
 $prioridade = $_POST['prioridadeModal'];
+$observacao = $_POST['observacao'];
 $discriminador = $_POST['discriminador'];
 $fluxograma = $_POST['fluxograma'];
 $pa_sis = $_POST['pa_sis'];
@@ -26,7 +27,7 @@ $sthdiscriminador = pg_query($stmtdiscriminador) or die($stmtdiscriminador);
 $rowdiscriminador = pg_fetch_object($sthdiscriminador);
 
 if ($discriminador == 'Selecione o Discriminador') {
-    $discriminador = $rowdiscriminador->discriminador;
+	$discriminador = $rowdiscriminador->discriminador;
 }
 
 $transacao = stripslashes(pg_escape_string($transacao));
@@ -66,28 +67,28 @@ $qtd = $row->qtd;
 
 include('conexao.php');
 if ($qtd == 0) {
-    $stmt1 = "insert into classificacao 
+	$stmt1 = "insert into classificacao 
 		(atendimento_id,discriminador,dor,encaminhamentos,fimclassificacao,fluxograma,glicose,nome,oxigenio,peso,pressaodiastolica,pressaosistolica,
-		prioridade,temperatura,pulso,usuario,queixa) 
+		prioridade, observacao, temperatura,pulso,usuario,queixa) 
 		values ('$transacao', '$discriminador','$dor','$consultorio','$fimclassificacao', '$fluxograma', '$glicose', '$nome','$oxigenio',
-				'$peso','$pa_dist','$pa_sis','$prioridade','$temperatura','$pulso', '$usuario', '$queixa')";
+				'$peso','$pa_dist','$pa_sis','$prioridade', '$observacao', '$temperatura','$pulso', '$usuario', '$queixa')";
 } else {
-    $stmt1 = "UPDATE classificacao 
+	$stmt1 = "UPDATE classificacao 
 			SET discriminador = '$discriminador',dor = '$dor', encaminhamentos = '$consultorio', fimclassificacao = '$fimclassificacao',
 			fluxograma = '$fluxograma',glicose = '$glicose',nome = '$nome',oxigenio = '$oxigenio',peso = '$peso',
-			pressaodiastolica = '$pa_dist',pressaosistolica = '$pa_sis',prioridade = '$prioridade',temperatura = '$temperatura',
+			pressaodiastolica = '$pa_dist',pressaosistolica = '$pa_sis',prioridade = '$prioridade', observacao = '$observacao',temperatura = '$temperatura',
 			queixa = '$queixa', pulso = '$pulso', usuario='$usuario' WHERE cast(atendimento_id as integer) = $transacao";
 }
 
 
 include('conexao.php');
 if ($prioridade == 'BRANCO') {
-    $stmt2 = "UPDATE atendimentos 
-			SET especialidade = '$consultorio', prioridade = '$prioridade', status = 'Atendimento Finalizado', hora_triagem = '$horatriagem' 
+	$stmt2 = "UPDATE atendimentos 
+			SET especialidade = '$consultorio', prioridade = '$prioridade', observacao_triagem = '$observacao', status = 'Atendimento Finalizado', hora_triagem = '$horatriagem' 
 		WHERE transacao = $transacao";
 } else {
-    $stmt2 = "UPDATE atendimentos 
-			SET especialidade = '$consultorio', prioridade = '$prioridade', status = 'Aguardando Atendimento', hora_triagem = '$horatriagem' 
+	$stmt2 = "UPDATE atendimentos 
+			SET especialidade = '$consultorio', prioridade = '$prioridade', observacao_triagem = '$observacao', status = 'Aguardando Atendimento', hora_triagem = '$horatriagem' 
 		WHERE transacao = $transacao";
 }
 
@@ -103,7 +104,7 @@ $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
 
 if (pg_query($stmt1) or die($stmt1)) {
-    if (pg_query($stmt2) or die($stmt2)) {
-        echo "Triagem realizado com sucesso! ";
-    }
+	if (pg_query($stmt2) or die($stmt2)) {
+		echo "Triagem realizado com sucesso! ";
+	}
 }

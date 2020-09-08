@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['proximo']) and $pesquisa_paciente == "") {
         include('conexao.php');
-        $stmt   = "select a.destino_paciente, a.transacao, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.dat_cad as cadastro,
+        $stmt   = "select a.destino_paciente, a.transacao, a.paciente_id, a.status, a.prioridade, a.observacao_triagem, a.hora_cad,a.hora_triagem,a.hora_atendimento, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.dat_cad as cadastro,
 		c.nome,c.nome_social, k.origem, f.descricao as clinica, CASE
             WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
             WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
@@ -100,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $destino_paciente = $row->destino_paciente;
         $transacao     =  $row->transacao;
+        $observacao_triagem =  $row->observacao_triagem;
     }
 
     if (isset($_POST['nrchamada'])) {
@@ -476,6 +477,16 @@ $qtdAtendiemento = $rowCount->qtd;
                     }
                 })
             }
+
+            <?php if ($observacao_triagem) { ?>
+                Swal.fire({
+                    title: 'ATENÇÃO!!!',
+                    text: "<?= $observacao_triagem ?>",
+                    icon: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                })
+            <?php } ?>
         </script>
 </body>
 

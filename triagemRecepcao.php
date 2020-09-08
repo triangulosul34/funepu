@@ -532,6 +532,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 var transacaoModal = $("#transacaoModal").val();
                 var consultorioModal = $("#consultorioModal").val();
                 var prioridadeModal = $("#prioridadeModal").val();
+                var observacao = $("#observacao").val();
                 var discriminador = $("#discriminador option:selected").text();
                 var fluxograma = $("#fluxograma option:selected").text();
                 var pa_sis = $("#pa_sis").val();
@@ -553,6 +554,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             transacaoModal: transacaoModal,
                             consultorioModal: consultorioModal,
                             prioridadeModal: prioridadeModal,
+                            observacao: observacao,
                             discriminador: discriminador,
                             fluxograma: fluxograma,
                             pa_sis: pa_sis,

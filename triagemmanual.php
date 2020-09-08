@@ -243,6 +243,12 @@ if ($rowcns->descricao != '') {
         <textarea class="form-control" name="queixa" id="queixa" rows="5"><?php echo $rowRetorno->queixa ?></textarea>
     </div>
 </div>
+<div class="row">
+    <div class="col-md-12">
+        <label class="control-label">Observação</label>
+        <input type="text" class="form-control" name="observacao" id="observacao" value="<?= $rowRetorno->observacao ?>">
+    </div>
+</div>
 <?php
 $prioridades = array(
     'VERMELHO' => utf8_decode('EMERGÊNCIA - VERMELHO'),
