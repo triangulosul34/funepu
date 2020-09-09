@@ -386,6 +386,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 						values ('$usuario','ALTEROU INFORMAÇÃO DO CADASTRO DO ATENDIMENTO','$transacao','$data','$hora')";
                 $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+
+                header("location: novoatendimento.php?id=$transacao");
             }
         }
     }
@@ -410,8 +412,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         header("location: atendimentos.php");
     }
-
-    header("location: novoatendimento.php?id=$transacao");
 }
 
 ?>

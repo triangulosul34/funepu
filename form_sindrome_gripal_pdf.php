@@ -93,7 +93,7 @@ if ($row->praca == "branca") {
     $pdf->Text(351, 400, "X");
 } else if ($row->praca == "parda") {
     $pdf->Text(246, 411, "X");
-} else if ($row->praca == "amarela") {
+} else if ($row->praca == "indigena") {
     $pdf->Text(301, 411, "X");
 }
 $pdf->Text(413, 400, $row->passaporte[0]);
@@ -152,13 +152,10 @@ if ($row->sfebre) {
 if ($row->sdor_garganta) {
     $pdf->Text(148, 530, "X");
 }
-if ($row->sdor_garganta) {
+if ($row->stosse) {
     $pdf->Text(106, 540, "X");
 }
-if ($row->stosse) {
-    $pdf->Text(148, 540, "X");
-}
-if ($row->sdipineia) {
+if ($row->sdispneia) {
     $pdf->Text(148, 540, "X");
 }
 if ($row->soutros) {
@@ -214,7 +211,7 @@ if ($row->tipo_teste == "rt-pcr") {
 }
 if ($row->resultado == "negativo") {
     $pdf->Text(451, 630, "X");
-} else {
+} else if ($row->resultado == "positivo") {
     $pdf->Text(451, 641, "X");
 }
 if ($row->classificacao_final == "descartado") {
