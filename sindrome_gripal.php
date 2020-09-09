@@ -104,18 +104,24 @@
                                 <div class="card-body">
                                     <form action="#" method="post">
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-4">
                                                 <div class="form-group">
-                                                    <label for="">Nome</label><input type="text" name="nome" id="nome" class="form-control"></div>
+                                                    <label for="">Nome</label><input type="text" name="nome" id="nome" class="form-control">
+                                                </div>
                                             </div>
                                             <div class="col-md-3">
-                                                <label for="">Data de Nascimento</label><input type="date" name="data_nascimento" id="data_nascimento" class="form-control"></div>
+                                                <label for="">Data de Nascimento</label><input type="date" name="data_nascimento" id="data_nascimento" class="form-control">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label for="">Data de Notificação</label><input type="date" name="data_notificacao" id="data_notificacao" class="form-control">
+                                            </div>
                                             <div class="col-md-2 mt-3"><button type="submit" class="btn btn-primary">Pesquisar</button></div>
                                         </div>
                                     </form>
                                     <div class="row m-1">
                                         <div class="col-md-12" align="center">
-                                            <a href="form_sindrome_gripal.php" type="button" class="btn btn-success">Nova Ficha</a></div>
+                                            <a href="form_sindrome_gripal.php" type="button" class="btn btn-success">Nova Ficha</a>
+                                        </div>
                                     </div>
                                     <div class="row mt-3">
                                         <div class="col-md-12">
@@ -130,15 +136,18 @@
                                                 <tbody>
                                                     <?php
                                                     include "conexao.php";
-                                                    $sql = "SELECT * FROM sindrome_gripal";
+                                                    $sql = "SELECT * FROM sindrome_gripal WHERE ";
                                                     if ($_POST["nome"]) {
-                                                        $where ?  $where =  $where . " AND nome like '{$_POST["nome"]}'" : $where . "nome like '{$_POST["nome"]}'";
+                                                        ($where) ?  $where =  $where . " AND nome like '{$_POST["nome"]}'" : $where = "nome like '{$_POST["nome"]}'";
                                                     }
                                                     if ($_POST["data_nascimento"]) {
-                                                        $where ?  $where =  $where . " AND data_nascimento = '{$_POST["data_nascimento"]}'" : $where . "data_nascimento = '{$_POST["data_nascimento"]}'";
+                                                        ($where) ?  $where =  $where . " AND data_nascimento = '{$_POST["data_nascimento"]}'" : $where = "data_nascimento = '{$_POST["data_nascimento"]}'";
                                                     }
-                                                    if (isset($where)) {
-                                                        $where = "data_form =" . date('Y-m-d');
+                                                    if ($_POST["data_notificacao"]) {
+                                                        ($where) ?  $where =  $where . " AND data_notificacao = '{$_POST["data_notificacao"]}'" : $where = "data_notificacao = '{$_POST["data_notificacao"]}'";
+                                                    }
+                                                    if (!$where) {
+                                                        $where = "data_form ='" . date('Y-m-d') . "'";
                                                     }
                                                     $sql = $sql . " $where";
                                                     $result = pg_query($sql) or die($sql);

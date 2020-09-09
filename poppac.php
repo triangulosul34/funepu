@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         //função javascript que retornará o codigo 
-        function retorna(id, nome, sexo, dtnasc, idade, endereco, numero, complemento, bairro, cidade, estado, telefone, celular, cep, ocorrencia, cpf, imagem, nome_mae, carteirinha, identidade, org_expeditor) //passando um parametro 
+        function retorna(id, nome, sexo, dtnasc, idade, endereco, numero, complemento, bairro, cidade, estado, telefone, celular, cep, ocorrencia, cpf, imagem, nome_mae, carteirinha, identidade, org_expeditor, doc) //passando um parametro 
         {
             window.opener.document.pedido.prontuario.value = id; //a janela mãe recebe o id, você precisa passar o nome do formulario e do textfield que receberá o valor passado por parametro. 
             window.opener.document.pedido.nome.value = nome;
@@ -108,6 +108,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // window.opener.document.pedido.blah.src = 'app-assets/img/gallery/user-transp.png';
             }
 
+            if (doc) {
+                window.opener.document.getElementById('fdoc').innerHTML = '<div class="row mt-3"><div class="col-md-12"><a href="documents/' + doc + '" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc">Visualizar Documentos <i class="far fa-address-card"></i></a></div></div>';
+            }
 
             window.close(); //fecha a janla popup 
         }
@@ -256,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 <th>Nascimento</th>
                                                                 <th>Mãe</th>
                                                                 <th>cpf</th>
-								<th>DT. Ultimo Atendimento</th>
+                                                                <th>DT. Ultimo Atendimento</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -290,13 +293,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                                 $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias																
                                                                 echo "<tr>";
-                                                                echo "<td><a href=\"javascript:retorna('" . $row->pessoa_id . "','" . $row->nome . "','" . $row->sexo . "','" . inverteData($row->dt_nasc) . "','" . $idade . "','" . $row->endereco . "','" . $row->numero . "','" . $row->complemento . "','" . $row->bairro . "','" . $row->cidade . "','" . $row->estado . "','" . $row->telefone . "','" . $row->celular . "','" . $row->cep . "','" . $row->qtde . "','" . $row->cpf . "','" . $row->imagem . "','" . $row->nome_mae . "','" . $row->num_carteira_convenio . "','" . $row->identidade . "','" . $row->org_expeditor . "')\" <i class=\"icon fas fa-check-circle\"></i></a></td>";
+                                                                echo "<td><a href=\"javascript:retorna('" . $row->pessoa_id . "','" . $row->nome . "','" . $row->sexo . "','" . inverteData($row->dt_nasc) . "','" . $idade . "','" . $row->endereco . "','" . $row->numero . "','" . $row->complemento . "','" . $row->bairro . "','" . $row->cidade . "','" . $row->estado . "','" . $row->telefone . "','" . $row->celular . "','" . $row->cep . "','" . $row->qtde . "','" . $row->cpf . "','" . $row->imagem . "','" . $row->nome_mae . "','" . $row->num_carteira_convenio . "','" . $row->identidade . "','" . $row->org_expeditor . "','" . $row->documento . "')\" <i class=\"icon fas fa-check-circle\"></i></a></td>";
                                                                 echo "<td>" . $row->nome . "</td>";
                                                                 echo "<td>" . $row->qtde . "</td>";
                                                                 echo "<td>" . inverteData($row->dt_nasc) . "</td>";
                                                                 echo "<td>" . $row->nome_mae . "</td>";
                                                                 echo "<td>" . $row->cpf . "</td>";
-								echo "<td>" . inverteData(substr($rowAT->dat_cad,"0","10")) . "</td>";
+                                                                echo "<td>" . inverteData(substr($rowAT->dat_cad, "0", "10")) . "</td>";
                                                                 echo "</tr>";
                                                             }
                                                             ?>

@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "select a.transacao, a.paciente_id, a.status, nec_especiais, a.tipo, a.dat_cad as cadastro, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.acompanhante,
+        $stmt = "select a.transacao, a.paciente_id, a.status, nec_especiais, a.tipo, a.dat_cad as cadastro, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, c.documento, a.acompanhante,
 		a.oque_faz, a.com_oqfaz, a.tempo_faz, a.como_faz, c.nome_mae, c.numero, c.complemento, c.bairro, c.cep, c.num_carteira_convenio as cns, c.cidade, c.estado, a.observacao, k.origem,
 		c.identidade, c.org_expeditor,c.cpf, a.coronavirus
 		from atendimentos a
@@ -121,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $org_expeditor = $row->org_expeditor;
         $cpf = $row->cpf;
         $coronavirus = $row->coronavirus;
+        $documento = $row->documento;
     } else {
         $data_transacao = date('Y-m-d');
         $hora_transacao = date('H:i');
@@ -128,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         if ($senha != "") {
             include('conexao.php');
-            $stmt = "select a.senha, b.convenio_id, b.pessoa_id,  b.profissional_id, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco,
+            $stmt = "select a.senha, b.convenio_id, b.pessoa_id, c.documento,  b.profissional_id, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco,
 			c.numero, c.complemento, c.bairro, c.cep, c.cpf, c.cidade, c.estado, b.procedimento_id, d.tipo, (select count(*) from ocorrencias e where
 			b.pessoa_id=e.pessoa_id and situacao='Pendente') as qtde from painel_senhas a left join agendamentos b on a.agendamento_id=b.agendamento_id
 			left join pessoas c on b.pessoa_id=c.pessoa_id left join convenios d on b.convenio_id=d.convenio_id where senha='$senha'";
@@ -166,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
         if ($agendamento != "") {
             include('conexao.php');
-            $stmt = "select a.agendamento_id, a.convenio_id, e.tipo, a.situacao, a.horario, a.data, a.usuario_agendamento, a.sala_id, a.procedimento_id, a.pessoa_id, a.profissional_id, b.nome, b.sexo, b.dt_nasc,
+            $stmt = "select a.agendamento_id, a.convenio_id, e.tipo, b.documento, a.situacao, a.horario, a.data, a.usuario_agendamento, a.sala_id, a.procedimento_id, a.pessoa_id, a.profissional_id, b.nome, b.sexo, b.dt_nasc,
 			b.endereco, b.numero, b.num_carteira_convenio, b.complemento, b.bairro, b.cidade, b.cpf, b.estado, b.cep, b.telefone, b.celular, c.descricao as procedimento, d.nome as profissional 
 			from agendamentos a left join pessoas b on a.pessoa_id=b.pessoa_id left join procedimentos c on a.procedimento_id=c.procedimento_id	
 			left join pessoas d on a.profissional_id=d.pessoa_id left join convenios e on a.convenio_id=e.convenio_id where a.agendamento_id = $agendamento";
@@ -241,6 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $org_expeditor = $_POST['org_expeditor'];
     $cpf = $_POST['cpf'];
     $identidade = $_POST['rg'];
+    $documento = $_FILES['doc']["name"];
     //$validaCPF = validaCPF($cpf);
     // $coronavirus = $_POST['coronavirus'];
 
@@ -282,9 +284,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         if ($erro == "") {
             include('conexao.php');
-            $stmt = "Update pessoas set nome='$nome',cpf='$cpf',identidade='$identidade',org_expeditor='$org_expeditor', sexo='$sexo', dt_nasc='" . inverteData($dt_nascimento) . "', endereco='$enderecox', numero='$end_numero', complemento='$complemento', bairro='$bairro', cidade='$cidade',
+            $stmt = "Update pessoas set nome='$nome',";
+            if ($documento != "") {
+                $stmt = $stmt . "documento='$documento',";
+                $target_dir = __DIR__ . "/documents";
+                $target_file = $target_dir . '/' . basename($_FILES["doc"]["name"]);
+                if (move_uploaded_file($_FILES["doc"]["tmp_name"], $target_file)) {
+                    echo  '<script type="text/javascript">alert("Arquivo Enviado com Sucesso!");</script>';
+                } else {
+                    $erro = "Arquivo nao Enviado! Entre para editar o cadastro e tente enviar novamente";
+                }
+            }
+            $stmt = $stmt . "cpf='$cpf',identidade='$identidade',org_expeditor='$org_expeditor', sexo='$sexo', dt_nasc='" . inverteData($dt_nascimento) . "', endereco='$enderecox', numero='$end_numero', complemento='$complemento', bairro='$bairro', cidade='$cidade',
 			estado='$estado', cep='$cep', telefone='$telefone', celular='$celular', num_carteira_convenio='$cns', nome_mae='$nomeMae', email='$email', imagem='$imagem', nome_social='$nome_social' where pessoa_id=$prontuario";
-            $sth = pg_query($stmt);
+            $sth = pg_query($stmt) or die($stmt);
         }
     }
 
@@ -397,6 +410,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         header("location: atendimentos.php");
     }
+
+    header("location: novoatendimento.php?id=$transacao");
 }
 
 ?>
@@ -907,7 +922,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             } ?>
                             <div class="card-content">
                                 <div class="card-body">
-                                    <form method="post" name='pedido' id='pedido' autocomplete="off" action="#">
+                                    <form method="post" name='pedido' id='pedido' enctype="multipart/form-data" autocomplete="off" action="#">
                                         <div id="dados-paciente-div">
                                             <div class="col-12 text-center">
                                                 <h4 class="form-section-center"><i class="ft-user"></i> Identificação do Paciente</h4>
@@ -1107,6 +1122,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <input type="text" name="end_uf" id="end_uf" class="form-control" value="<?php echo $estado; ?>" maxlength="2" onkeyup="maiuscula(this)">
                                                 </div>
 
+                                            </div>
+                                            <div class="row mt-1">
+                                                <div class="col-md-5">
+                                                    <label for="file">Carregar Documentos</label>
+                                                    <input type="file" name="doc">
+                                                </div>
+                                            </div>
+                                            <div id="fdoc">
+                                                <?php if ($documento) { ?>
+                                                    <div class="row mt-3">
+                                                        <div class="col-md-12">
+                                                            <a href="<?= "documents/{$documento}"; ?>" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc">Visualizar Documentos <i class="far fa-address-card"></i></a>
+                                                        </div>
+                                                    </div>
+                                                <?php } ?>
                                             </div>
 
                                         </div>
