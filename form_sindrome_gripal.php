@@ -15,9 +15,11 @@ function inverteData($data)
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $sindrome_id = $_GET['id'];
 
-    $sql = "SELECT * FROM sindrome_gripal WHERE sindrome_gripal_id = $sindrome_id";
-    $result = pg_query($sql) or die($sql);
-    $rowget = pg_fetch_object($result);
+    if ($sindrome_id) {
+        $sql = "SELECT * FROM sindrome_gripal WHERE sindrome_gripal_id = $sindrome_id";
+        $result = pg_query($sql) or die($sql);
+        $rowget = pg_fetch_object($result);
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
