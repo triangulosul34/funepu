@@ -115,7 +115,7 @@ $pdf->Text(223, 424, $row->cep[8]);
 $pdf->Text(189, 443, $row->estado[0]);
 $pdf->Text(202, 443, $row->estado[1]);
 $pdf->Text(330, 443, $row->cidade);
-$pdf->Text(100, 465, $row->logradouro);
+$pdf->Text(100, 465, utf8_decode($row->logradouro));
 $pdf->Text(370, 465, $row->numero);
 $pdf->Text(420, 465, $row->bairro);
 $pdf->SetFont('Arial', '', 6);
@@ -143,9 +143,9 @@ $pdf->Text(477, 493, $row->telefone[8]);
 $pdf->Text(486, 493, $row->telefone[9]);
 $pdf->Text(495, 493, $row->telefone[10]);
 $pdf->Text(504, 493, $row->telefone[11]);
-$pdf->Text(183, 507, $row->data_nascimento[8] . $row->data_nascimento[9]);
-$pdf->Text(202, 507, $row->data_nascimento[5] . $row->data_nascimento[6]);
-$pdf->Text(217, 507, $row->data_nascimento[0] . $row->data_nascimento[1] . $row->data_nascimento[2] . $row->data_nascimento[3]);
+$pdf->Text(183, 507, $row->data_notificacao[8] . $row->data_notificacao[9]);
+$pdf->Text(202, 507, $row->data_notificacao[5] . $row->data_notificacao[6]);
+$pdf->Text(217, 507, $row->data_notificacao[0] . $row->data_notificacao[1] . $row->data_notificacao[2] . $row->data_notificacao[3]);
 if ($row->sfebre) {
     $pdf->Text(106, 530, "X");
 }

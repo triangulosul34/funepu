@@ -463,7 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <label for="">Data de Notificação</label>
-                                                    <input type="text" name="data_notificacao" class="form-control" value="<?= ($rowget->data_notificacao) ? inverteData($rowget->data_notificacao) : date('d-m-Y'); ?>" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>">
+                                                    <input type="text" name="data_notificacao" class="form-control" value="<?= ($rowget->data_notificacao) ? inverteData($rowget->data_notificacao) : date('d/m/Y'); ?>" OnKeyPress="formatar('##/##/####', this)" value="<?= date('d/m/Y'); ?>">
                                                 </div>
                                             </div>
                                         </div>
