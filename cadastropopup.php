@@ -435,7 +435,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label> CPF</label>
-                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' maxlength="11" class="form-control square" id="cpf" name="cpf">
+                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="11" class="form-control square" id="cpf" name="cpf">
+                                                            <div id="cpf_exists"></div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6">
@@ -892,6 +893,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 limpa_formulário_cep();
             }
         };
+
+        function verifica_cpf(a) {
+            $.get('verifica_cpf.php?cpf=' + a, function(dataReturn) {
+                $("#cpf_exists").html(dataReturn);
+            });
+        }
     </script>
 </body>
 

@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $palavras = explode(" ", $pesquisa);
     $pos      = explode("/", $pesquisa);
 
-    if ((count($palavras) < 2) and  (count($pos) < 3)) {
+    if ((count($palavras) < 2) and  (count($pos) < 3) and !is_numeric($pesquisa)) {
         $pesquisa = 'qwwwqq';
         echo  "<script>alert('Consulta Invalida! Seja Especifico');</script>";
     }
@@ -352,12 +352,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" type="text/javascript"></script>
         <script>
             $("#pesquisa").keydown(function() {
-                // alert($("#pesquisa").val()[0])
-                if ($.isNumeric($("#pesquisa").val()[0])) {
-                    $("#pesquisa").mask("99/99/9999");
-                } else {
+                try {
                     $("#pesquisa").unmask();
+                } catch (e) {}
+
+                var tamanho = $("#pesquisa").val().length;
+
+                if ($.isNumeric($("#pesquisa").val()[0]) && tamanho < 8) {
+                    $("#pesquisa").mask("99/99/9999");
+                } else if ($.isNumeric($("#pesquisa").val()[0])) {
+                    $("#pesquisa").mask("99999999999");
                 }
+
+                // ajustando foco
+                var elem = this;
+                setTimeout(function() {
+                    // mudo a posição do seletor
+                    elem.selectionStart = elem.selectionEnd = 10000;
+                }, 0);
+                // reaplico o valor para mudar o foco
+                var currentValue = $(this).val();
+                $(this).val('');
+                $(this).val(currentValue);
             });
 
             function reset() {

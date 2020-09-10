@@ -268,6 +268,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = "Catao SUS deve ser Informado";
     }
 
+    if ($cpf) {
+        if (!validaCPF($cpf)) {
+            $erro = "CPF Informado invalido";
+        }
+    }
+
     if ($sexo == "") {
         $erro = "Sexo deve ser Informado";
     }
@@ -963,7 +969,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </div>
                                                 </div>
                                                 <div class="col-10">
-                                                    <div class="row"><input type="hidden" name="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly><input type="hidden" name="data_transacao" class="form-control" value="<?php echo inverteData($data_transacao); ?>" readonly><input type="hidden" name="hora_transacao" class="form-control" value="<?php echo $hora_transacao; ?>" readonly><input type="hidden" name="senhac" class="form-control" value="<?php echo senhal; ?>" readonly><input type="hidden" name="usuario_transacao" class="form-control" value="<?php echo $usuario; ?>" readonly><input type="hidden" name="situacao" class="form-control" value="<?php echo $situacao; ?>" readonly>
+                                                    <div class="row"><input type="hidden" name="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly><input type="hidden" name="data_transacao" class="form-control" value="<?php echo inverteData($data_transacao); ?>" readonly><input type="hidden" name="hora_transacao" class="form-control" value="<?php echo $hora_transacao; ?>" readonly><input type="hidden" name="senhac" class="form-control" value="<?php echo $senhal; ?>" readonly><input type="hidden" name="usuario_transacao" class="form-control" value="<?php echo $usuario; ?>" readonly><input type="hidden" name="situacao" class="form-control" value="<?php echo $situacao; ?>" readonly>
                                                         <input type="hidden" class="form-control" name="prontuario" id="prontuario" placeholder="Paciente..." value='<?php echo $prontuario; ?>' readonly>
                                                         <input type="hidden" class="form-control" name="imagem" id="imagem" value="<?php echo $imagem; ?>" value='<?php echo $imagem; ?>' readonly>
 
@@ -1008,7 +1014,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </div>
 
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">CPF</label> <input type="text" name="cpf" maxlength="14" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
+                                                            <label class="control-label">CPF</label> <input type="text" name="cpf" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="11" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
+                                                            <div id="cpf_exists"></div>
                                                         </div>
 
                                                         <div class="col-sm-2">
@@ -1372,6 +1379,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     return true;
                 }
 
+            }
+
+            function verifica_cpf(a) {
+                $.get('verifica_cpf.php?cpf=' + a, function(dataReturn) {
+                    $("#cpf_exists").html(dataReturn);
+                    $('#cpf').val('');
+                });
             }
         </script>
 </body>
