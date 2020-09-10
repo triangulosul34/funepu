@@ -630,14 +630,14 @@ if (isset($_POST["excel"])) {
                                                             <th style="display:none;">
                                                                 <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
                                                             </th>
-                                                            <th>Data/Hora</th>
-                                                            <th>Paciente</th>
-                                                            <th>Triagem</th>
-                                                            <th>Atend.</th>
-                                                            <th>Situação</th>
-                                                            <th>Status Atend.</th>
-                                                            <th>Data Dest.</th>
-                                                            <th>Ação</th>
+                                                            <th width="10%">Data/Hora</th>
+                                                            <th width="20%">Paciente</th>
+                                                            <th width="10%">Triagem</th>
+                                                            <th width="10%">Atend.</th>
+                                                            <th width="10%">Situação</th>
+                                                            <th width="10%">Status Atend.</th>
+                                                            <th width="10%">Data Dest.</th>
+                                                            <th width="20%">Ação</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
