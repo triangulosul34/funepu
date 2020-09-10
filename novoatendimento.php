@@ -268,11 +268,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = "Catao SUS deve ser Informado";
     }
 
-    if ($cpf) {
-        if (!validaCPF($cpf)) {
-            $erro = "CPF Informado invalido";
-        }
-    }
+    // if ($cpf) {
+    //     if (!validaCPF($cpf)) {
+    //         $erro = "CPF Informado invalido";
+    //     }
+    // }
 
     if ($sexo == "") {
         $erro = "Sexo deve ser Informado";
