@@ -969,7 +969,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </div>
                                                 </div>
                                                 <div class="col-10">
-                                                    <div class="row"><input type="hidden" name="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly><input type="hidden" name="data_transacao" class="form-control" value="<?php echo inverteData($data_transacao); ?>" readonly><input type="hidden" name="hora_transacao" class="form-control" value="<?php echo $hora_transacao; ?>" readonly><input type="hidden" name="senhac" class="form-control" value="<?php echo $senhal; ?>" readonly><input type="hidden" name="usuario_transacao" class="form-control" value="<?php echo $usuario; ?>" readonly><input type="hidden" name="situacao" class="form-control" value="<?php echo $situacao; ?>" readonly>
+                                                    <div class="row">
+                                                        <input type="hidden" name="pessoa_id" id="pessoa_id" class="form-control" value="<?php echo $prontuario; ?>" readonly><input type="hidden" name="transacao" id="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly><input type="hidden" name="data_transacao" class="form-control" value="<?php echo inverteData($data_transacao); ?>" readonly><input type="hidden" name="hora_transacao" class="form-control" value="<?php echo $hora_transacao; ?>" readonly><input type="hidden" name="senhac" class="form-control" value="<?php echo $senhal; ?>" readonly><input type="hidden" name="usuario_transacao" class="form-control" value="<?php echo $usuario; ?>" readonly><input type="hidden" name="situacao" class="form-control" value="<?php echo $situacao; ?>" readonly>
                                                         <input type="hidden" class="form-control" name="prontuario" id="prontuario" placeholder="Paciente..." value='<?php echo $prontuario; ?>' readonly>
                                                         <input type="hidden" class="form-control" name="imagem" id="imagem" value="<?php echo $imagem; ?>" value='<?php echo $imagem; ?>' readonly>
 
@@ -1382,7 +1383,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             function verifica_cpf(a) {
-                $.get('verifica_cpf.php?cpf=' + a, function(dataReturn) {
+                pessoa_id = document.getElementById("pessoa_id").value;
+                $.get('verifica_cpf.php?cpf=' + a + '&id=' + pessoa_id, function(dataReturn) {
                     $("#cpf_exists").html(dataReturn);
                 });
             }
