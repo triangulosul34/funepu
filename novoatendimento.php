@@ -1384,7 +1384,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             function verifica_cpf(a) {
                 $.get('verifica_cpf.php?cpf=' + a, function(dataReturn) {
                     $("#cpf_exists").html(dataReturn);
-                    $('#cpf').val('');
                 });
             }
         </script>
