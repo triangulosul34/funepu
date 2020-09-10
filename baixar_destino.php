@@ -60,7 +60,7 @@ if ($row->qtd == 0) {
     $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, data_controle) 
 					values ($atendimento, $destino, '$motivoalta', '$data', '$hora','$data_controle')";
     $sth = pg_query($stmt) or die($stmt);
-} else if ($row->destino_encaminhamento == 3) {
+} else if ($row->destino_encaminhamento == 3 or $row->destino_encaminhamento == 20) {
     $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, data_controle = '$data_controle'
     where atendimento_id = '$atendimento'";
     $sth = pg_query($stmt) or die($stmt);
