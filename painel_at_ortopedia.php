@@ -479,6 +479,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         echo "<td>" . $row->hora_destino . "</td>";
                                                         echo "<td>" . $row->status . "</td>";
                                                         echo "<td>";
+                                                        echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\" style=\"color:$color\"><i class=\"fas fa-file-medical\"></i></a>";
                                                         echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\"><i class=\"fas fa-print\"></i></a>";
                                                         echo "</tr>";
                                                     }
