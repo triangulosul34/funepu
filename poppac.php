@@ -239,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="card-content">
                             <div class="col-12">
                                 <div class="card-content">
-                                    <form method="post" autocomplete="off">
+                                    <form method="post" id="form_pesquisa" autocomplete="off">
                                         <div class="col-sm-12">
                                             <label class="control-label">Paciente</label>
                                             <input type="text" name="pesquisa" id="pesquisa" value='<?php echo $termo; ?>' class="form-control" onkeyup="maiuscula(this)" autofocus>
@@ -352,6 +352,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" type="text/javascript"></script>
         <script>
             $("#pesquisa").keydown(function() {
+                if (window.event.keyCode == 13) {
+                    document.getElementById("form_pesquisa").submit();
+                    return false;
+                }
+
                 try {
                     $("#pesquisa").unmask();
                 } catch (e) {}
