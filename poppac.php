@@ -357,6 +357,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     return false;
                 }
 
+                try {
+                    $("#pesquisa").unmask();
+                } catch (e) {}
+
                 var tamanho = $("#pesquisa").val().length;
 
                 if ($.isNumeric($("#pesquisa").val()[0]) && tamanho < 8) {
@@ -383,6 +387,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     var currentValue = $(this).val();
                     $(this).val('');
                     $(this).val(currentValue);
+                } else {
+                    $("#pesquisa").unmask();
                 }
             });
 
