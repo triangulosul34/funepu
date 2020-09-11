@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $termo            = $_GET['pesquisa'];
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $pesquisa            = $_POST['pesquisa'];
+    $pesquisa            = strtoupper($_POST['pesquisa']);
     if ($pesquisa == '') {
         $pesquisa = 'qwwwqq';
     }
@@ -242,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <form method="post" id="form_pesquisa" autocomplete="off">
                                         <div class="col-sm-12">
                                             <label class="control-label">Paciente</label>
-                                            <input type="text" name="pesquisa" id="pesquisa" value='<?php echo $termo; ?>' class="form-control" onkeyup="maiuscula(this)" autofocus>
+                                            <input type="text" name="pesquisa" id="pesquisa" value='<?php echo $termo; ?>' class="form-control" autofocus>
                                         </div>
 
 
@@ -357,28 +357,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     return false;
                 }
 
-                try {
-                    $("#pesquisa").unmask();
-                } catch (e) {}
-
                 var tamanho = $("#pesquisa").val().length;
 
                 if ($.isNumeric($("#pesquisa").val()[0]) && tamanho < 8) {
                     $("#pesquisa").mask("99/99/9999");
+                    // ajustando foco
+                    var elem = this;
+                    setTimeout(function() {
+                        // mudo a posição do seletor
+                        elem.selectionStart = elem.selectionEnd = 10000;
+                    }, 0);
+                    // reaplico o valor para mudar o foco
+                    var currentValue = $(this).val();
+                    $(this).val('');
+                    $(this).val(currentValue);
                 } else if ($.isNumeric($("#pesquisa").val()[0])) {
                     $("#pesquisa").mask("99999999999");
+                    // ajustando foco
+                    var elem = this;
+                    setTimeout(function() {
+                        // mudo a posição do seletor
+                        elem.selectionStart = elem.selectionEnd = 10000;
+                    }, 0);
+                    // reaplico o valor para mudar o foco
+                    var currentValue = $(this).val();
+                    $(this).val('');
+                    $(this).val(currentValue);
                 }
-
-                // ajustando foco
-                var elem = this;
-                setTimeout(function() {
-                    // mudo a posição do seletor
-                    elem.selectionStart = elem.selectionEnd = 10000;
-                }, 0);
-                // reaplico o valor para mudar o foco
-                var currentValue = $(this).val();
-                $(this).val('');
-                $(this).val(currentValue);
             });
 
             function reset() {
