@@ -188,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label for="inputBasicLastName">Nascimento</label>
-                                                    <input type="text" class="form-control square" id="inputBasicLastName" name="dtnasc" value="<?php echo $dtnasc; ?>" placeholder="dd/mm/aaaa" autocomplete="off" />
+                                                    <input type="text" class="form-control square" id="nascimento" name="dtnasc" value="<?php echo $dtnasc; ?>" placeholder="dd/mm/aaaa" autocomplete="off" />
                                                 </div>
                                             </div>
                                             <div class="row mt-4">
@@ -287,7 +287,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
     <script src="app-assets/js/scripts.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" type="text/javascript"></script>
     <script>
+        $("#nascimento").mask("99/99/9999");
+
         function doConfirm(id) {
 
             var ok = confirm("Confirma a exclusao?" + id)
