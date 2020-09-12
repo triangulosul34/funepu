@@ -5,6 +5,7 @@ fpdi
 html2pdf
 phpqrcode
 conexao.php
+conexao_pacs.php
 Config.php
 assets
 documents

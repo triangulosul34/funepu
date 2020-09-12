@@ -215,6 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <th>Telefone</th>
                                                             <th>Filiação</th>
                                                             <th>Situação</th>
+                                                            <th>Documento</th>
                                                             <th>Ação</th>
                                                         </tr>
                                                     </thead>
@@ -226,6 +227,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <th>Telefone</th>
                                                             <th>Filiação</th>
                                                             <th>Situação</th>
+                                                            <th>Documento</th>
                                                             <th>Ação</th>
                                                         </tr>
                                                     </tfoot>
@@ -251,6 +253,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             echo "<td>" . $row->telefone . "</td>";
                                                             echo "<td>" . $row->nome_mae . "</td>";
                                                             echo "<td>" . $situacao . "</td>";
+                                                            echo "<td>";
+                                                            if ($row->documento) { ?>
+                                                                <a href="<?= "documents/{$row->documento}"; ?>" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc"><i class="far fa-address-card"></i></a>
+                                                        <?php }
+                                                            echo "</td>";
                                                             echo "<td><a href=\"alteracadastro.php?id=" . $row->pessoa_id . "\"><i class=\"fas fa-edit\"></i></a> <a href=\"\"  onclick=\"doConfirm(" . $row->pessoa_id . ");\" data-popup=\"tooltip\" title=\"\" data-original-title=\"Inativar\"><i class=\"fas fa-trash-alt\"></i></a></td>";
 
                                                             echo "</tr>";
