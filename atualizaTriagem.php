@@ -3,7 +3,7 @@ include('verifica.php');
 include('conexao.php');
 
 $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
-	a.dat_cad, c.nome, k.origem, a.tipo, a.coronavirus 
+	a.dat_cad, c.nome, c.nome_social, k.origem, a.tipo, a.coronavirus 
 	from atendimentos a 
 	left join pessoas c on a.paciente_id=c.pessoa_id 
 	left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
@@ -38,7 +38,11 @@ while ($row = pg_fetch_object($sth)) {
     if ($row->coronavirus == 1) {
         echo "<td class='blink'>" . $row->transacao . "</td>";
         echo "<td class='blink'>" . date('d/m/Y',  strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
-        echo "<td class='blink'>" . $row->nome;
+        if ($row->nome_social == '') {
+            echo "<td class='blink'>" . $row->nome;
+        } else {
+            echo "<td class='blink'>" . $row->nome_social . " (" . $row->nome . ")";
+        }
         if ($row->nec_especiais != 'Nenhuma') {
             echo "<br>Paciente com deficiencia $row->nec_especiais";
         }
@@ -48,7 +52,11 @@ while ($row = pg_fetch_object($sth)) {
     } else {
         echo "<td>" . $row->transacao . "</td>";
         echo "<td>" . date('d/m/Y',  strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
-        echo "<td>" . $row->nome;
+        if ($row->nome_social == '') {
+            echo "<td>" . $row->nome;
+        } else {
+            echo "<td>" . $row->nome_social . " (" . $row->nome . ")";
+        }
         if ($row->nec_especiais != 'Nenhuma') {
             echo "<br>Paciente com deficiencia $row->nec_especiais";
         }
