@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	$hora_cad = $row->hora_cad;
 	$exame_id = $row->exame_id;
 	$exame_nro = $row->exame_nro;
+	$exame_nro = $row->exame_nro;
 	$exame_desc = $row->descricao;
 	$nome = $row->nome;
 	$imagem = $row->imagem;
@@ -626,18 +627,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										<div class="col-md-12" align="right">
 											<?php
 
-											$ip = getenv("REMOTE_ADDR");
-
-											$studyid = '';
+											include('conexao_pacs.php');
+											$stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$exame_nro' ";
+											$sthx = pg_query($stmt) or die($stmt);
+											//echo $stmt;
+											$rowst = pg_fetch_object($sthx);
+											$studyid = $rowst->study_iuid;
+											if ($studyid != "") {
+												$hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
+											}
 											if ($studyid != '') {
 												if (substr($ip, 0, 3) == "192") {
-													echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"icon wb-table\" aria-hidden=\"true\" onclick=\"window.open('http://192.168.0.244:8080/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=DCENTER', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
+													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-border-all\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"> Imagens</i></button>";
 												} else {
-													echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"icon wb-table\" aria-hidden=\"true\" onclick=\"window.open('http://dcenter.ddns.net:9595/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=DCENTER', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
+													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-border-all\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"> Imagens</i></button>";
 												}
 											}
 
-											?> <button type="button" id='f4' name='f4' class='btn btn-default'>F4 - Variáveis</button>
+											?>
+											<button type="button" id='f4' name='f4' class='btn btn-default'>F4 - Variáveis</button>
 											<input type='button' name='carregar' class="btn btn-default" value='Carregar Documentos' onclick="window.open('webcam/indexlaudodocs.php?transacao=<?php echo $transacao; ?>', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;">
 
 										</div>

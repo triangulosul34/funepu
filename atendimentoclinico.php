@@ -957,6 +957,31 @@ if ($destino != '') {
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="relatorio_pmmg" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="TituloModalCentralizado">Relatorio PMMG</h5>
+
+                </div>
+
+                <div class="modal-body">
+                    <label for="">Queixa do Paciente</label>
+                    <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="queixa_paciente_pm" class="form-control"></textarea>
+                    <label for="">Diagnostico Medico</label>
+                    <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="180" name="diagnostico_medico_pm" class="form-control"></textarea>
+                    <label for="">Orientação Paciente</label>
+                    <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="diagnostico_medico_pm" class="form-control"></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" data-dismiss="modal" onclick="modal_obs(<?php echo $transacao; ?> );" class="btn btn-primary">Salvar mudanças</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- <div class="pace pace-inactive">
         <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
             <div class="pace-progress-inner"></div>
@@ -1425,6 +1450,22 @@ if ($destino != '') {
 
                                                                         if ($row->situacao == 'Impresso') {
                                                                             echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
+                                                                        }
+                                                                        include('conexao_pacs.php');
+                                                                        $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
+                                                                        $sthx = pg_query($stmt) or die($stmt);
+                                                                        //echo $stmt;
+                                                                        $rowst = pg_fetch_object($sthx);
+                                                                        $studyid = $rowst->study_iuid;
+                                                                        if ($studyid != "") {
+                                                                            $hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
+                                                                        }
+                                                                        if ($studyid != '') {
+                                                                            if (substr($ip, 0, 3) == "192") {
+                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-border-all\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
+                                                                            } else {
+                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-border-all\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
+                                                                            }
                                                                         }
                                                                         echo "</td>";
 
@@ -1968,6 +2009,9 @@ if ($destino != '') {
                                 <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
                             <?php } else if ($destino == '') { ?>
                                 <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
+                            <?php } ?>
+                            <?php if ($origem == 12) { ?>
+                                <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button>
                             <?php } ?>
                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
 
@@ -2785,6 +2829,13 @@ if ($destino != '') {
                 campo.value = novastring.substring(0, novastring.length - 1);
             }
             return contador <= 25;
+        }
+
+        function limitLines(obj, limit) {
+            var values = obj.value.replace(/\r\n/g, "\n").split("\n")
+            if (values.length > limit) {
+                obj.value = values.slice(0, limit).join("\n")
+            }
         }
     </script>
 

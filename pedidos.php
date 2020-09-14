@@ -739,24 +739,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 } else {
                                                     $stmt = $stmt . " where dat_cad = '$data' ";
                                                 } //estou mexendo aqui...
-                                                $stmt = $stmt . " ORDER BY b.dt_solicitacao desc";
+                                                $stmt = $stmt . "  AND f.modalidade_id in (1,2,4) ORDER BY b.dt_solicitacao desc";
                                                 $sth = pg_query($stmt) or die($stmt);
                                                 //echo $stmt;
                                                 while ($row = pg_fetch_object($sth)) {
+                                                    include('conexao_pacs.php');
+                                                    $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
+                                                    $sthx = pg_query($stmt) or die($stmt);
+                                                    //echo $stmt;
+                                                    $rowst = pg_fetch_object($sthx);
+                                                    $studyid = $rowst->study_iuid;
+                                                    if ($studyid != "") {
+                                                        $hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
+                                                    }
 
-
-                                                    /*
-											include('conexaopacs.php');
-											$stmt="select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
-											$sthx = pg_query($stmt) or die($stmt);
-											//echo $stmt;
-											$rowst = pg_fetch_object($sthx);
-											$studyid = $rowst->study_iuid;
-											if ($studyid!="")
-											{	
-												$hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
-											
-											}*/
                                                     $classe = "class='bg-warning'";
                                                     if ($row->situacao == 'Aguardando') {
                                                         $classe = "bgcolor='#FFFFFF'";
@@ -795,7 +791,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     echo "<td align='center'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
                                                     echo "<td>" . inverteData(substr($row->cadastro, 0, 10)) . "</td>";
                                                     echo "<td>" . $row->paciente_id . "</td>";
-                                                    echo "<td><a href='emitelaudos.php?id=" . $row->exame_nro . "' target='_blank'>" . $row->nome . "</a></td>";
+                                                    echo "<td>" . $row->nome . "</td>";
                                                     echo "<td>" . $row->desc_exames . "-" . $row->exame_nro . "</td>";
                                                     //echo "<td>".utf8_encode($row->convenio)."</td>";							
                                                     echo "<td>" . utf8_encode(substr($row->medresp, 0, 8)) . "</td>";
@@ -803,13 +799,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     echo "<td>" . $hora_rea . "</td>";
                                                     echo "<td>" . $row->situacao . "</td>";
                                                     echo "<td><button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Laudar\"><i class=\"fas fa-search\" aria-hidden=\"true\" onclick=\"openInNewTab('emitelaudos.php?id=$row->exame_nro')\"></i></button>";
-                                                    // if ($studyid != '') {
-                                                    //     if (substr($ip, 0, 3) == "192") {
-                                                    //         echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-table\" aria-hidden=\"true\" onclick=\"window.open('http://192.168.0.244:8080/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=DCENTER', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
-                                                    //     } else {
-                                                    //         echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-table\" aria-hidden=\"true\" onclick=\"window.open('http://dcenter.ddns.net:9595/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=DCENTER', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
-                                                    //     }
-                                                    // }
+                                                    if ($studyid != '') {
+                                                        if (substr($ip, 0, 3) == "192") {
+                                                            echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-border-all\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
+                                                        } else {
+                                                            echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-border-all\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
+                                                        }
+                                                    }
                                                     // echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Laudo de Imagens\"><i class=\"fas fa-print\" aria-hidden=\"true\" onclick=\"openInNewTab('emiteimagens.php?id=$row->exame_nro')\"></i></button>";
                                                     echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Protocolo\"><i class=\"fas fa-print\" aria-hidden=\"true\" onclick=\"openInNewTab('relpedido.php?transacao=$row->transacao')\"></i></button></td>";
                                                     echo "</tr>";
