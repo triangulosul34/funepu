@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome_mae    = $_POST['nome_mae'];
     $nome_pai    = $_POST['nome_pai'];
     $sexo        = $_POST['sexo'];
-    $cpf        = $_POST['cpf'];
+    $cpf = str_replace("-", "", str_replace(".", "", $_POST['cpf']));
     $dtnasc        = $_POST['dtnasc'];
     $raca_cor    = $_POST['raca_cor'];
     $endereco    = $_POST['endereco'];
@@ -435,7 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label> CPF</label>
-                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="11" class="form-control square" id="cpf" name="cpf">
+                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="15" class="form-control square" id="cpf" name="cpf">
                                                             <div id="cpf_exists"></div>
                                                         </div>
                                                     </div>

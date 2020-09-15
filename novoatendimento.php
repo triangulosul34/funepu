@@ -240,7 +240,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome_social = $_POST['nome_social'];
     $nome_acompanhante = $_POST['nome_acompanhante'];
     $org_expeditor = $_POST['org_expeditor'];
-    $cpf = $_POST['cpf'];
+    $cpf = str_replace("-", "", str_replace(".", "", $_POST['cpf']));
+    var_dump($cpf);
     $identidade = $_POST['rg'];
     $documento = $_FILES['doc']["name"];
     //$validaCPF = validaCPF($cpf);
@@ -1015,7 +1016,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </div>
 
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">CPF</label> <input type="text" name="cpf" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="11" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
+                                                            <label class="control-label">CPF</label> <input type="text" name="cpf" onblur='verifica_cpf(this.value)' maxlength="15" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
                                                             <div id="cpf_exists"></div>
                                                         </div>
 

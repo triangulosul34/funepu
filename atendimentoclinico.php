@@ -965,20 +965,28 @@ if ($destino != '') {
                     <h5 class="modal-title" id="TituloModalCentralizado">Relatorio PMMG</h5>
 
                 </div>
+                <?php
+                include('conexao.php');
+                $sql = "SELECT * FROM relatorio_pmmg WHERE atendimento_id = $transacao";
+                $result = pg_query($sql) or die($sql);
+                $row = pg_fetch_object($result);
+                ?>
+                <form action="relatorio_pmmg.php" id="form_pmmg" method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="atendimento_id_pmmg" value="<?= $transacao ?>">
+                        <label for="">Queixa do Paciente</label>
+                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="queixa_paciente_pmmg" class="form-control"><?= $row->queixa_paciente; ?></textarea>
+                        <label for="">Diagnostico Medico</label>
+                        <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="180" name="diagnostico_medico_pmmg" class="form-control"><?= $row->diagnostico_medico; ?></textarea>
+                        <label for="">Orientação Paciente</label>
+                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="orientacao_paciente_pmmg" class="form-control"><?= $row->orientacao_paciente; ?></textarea>
+                    </div>
 
-                <div class="modal-body">
-                    <label for="">Queixa do Paciente</label>
-                    <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="queixa_paciente_pm" class="form-control"></textarea>
-                    <label for="">Diagnostico Medico</label>
-                    <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="180" name="diagnostico_medico_pm" class="form-control"></textarea>
-                    <label for="">Orientação Paciente</label>
-                    <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="diagnostico_medico_pm" class="form-control"></textarea>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                    <button type="button" data-dismiss="modal" onclick="modal_obs(<?php echo $transacao; ?> );" class="btn btn-primary">Salvar mudanças</button>
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                        <button type="button" onclick="this.form.submit();" data-dismiss="modal" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1453,7 +1461,7 @@ if ($destino != '') {
                                                                         }
                                                                         include('conexao_pacs.php');
                                                                         $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
-                                                                        $sthx = pg_query($stmt) or die($stmt);
+                                                                        //$sthx = pg_query($stmt) or die($stmt);
                                                                         //echo $stmt;
                                                                         $rowst = pg_fetch_object($sthx);
                                                                         $studyid = $rowst->study_iuid;
