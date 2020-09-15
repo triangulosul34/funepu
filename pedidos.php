@@ -743,9 +743,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 $sth = pg_query($stmt) or die($stmt);
                                                 //echo $stmt;
                                                 while ($row = pg_fetch_object($sth)) {
-                                                    include('conexao_pacs.php');
+                                                    //include('conexao_pacs.php');
                                                     $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
-                                                    $sthx = pg_query($stmt) or die($stmt);
+                                                    //$sthx = pg_query($stmt) or die($stmt);
                                                     //echo $stmt;
                                                     $rowst = pg_fetch_object($sthx);
                                                     $studyid = $rowst->study_iuid;
