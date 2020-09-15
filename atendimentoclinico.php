@@ -968,7 +968,7 @@ if ($destino != '') {
                 <?php
                 include('conexao.php');
                 $sql = "SELECT * FROM relatorio_pmmg WHERE atendimento_id = $transacao";
-                $result = pg_query($sql) or die($sql);
+                //$result = pg_query($sql) or die($sql);
                 $row = pg_fetch_object($result);
                 ?>
                 <form action="relatorio_pmmg.php" id="form_pmmg" method="post">
