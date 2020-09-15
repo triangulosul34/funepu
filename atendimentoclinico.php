@@ -1459,7 +1459,7 @@ if ($destino != '') {
                                                                         if ($row->situacao == 'Impresso') {
                                                                             echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
                                                                         }
-                                                                        include('conexao_pacs.php');
+                                                                        //include('conexao_pacs.php');
                                                                         $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
                                                                         //$sthx = pg_query($stmt) or die($stmt);
                                                                         //echo $stmt;
