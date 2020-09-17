@@ -197,9 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     if ($erro == "") {
         include('conexao.php');
-        $stmt = "insert into pessoas (nome, tipo_pessoa, nome_mae, nome_pai, sexo, cpf, dt_nasc, endereco, numero, complemento, bairro, cep, cidade, estado, telefone, telefone2, celular, celular2, imagem, facebook, twitter,
+        $stmt = "insert into pessoas (nome, tipo_pessoa, nome_mae, nome_pai, sexo, cpf, identidade, dt_nasc, endereco, numero, complemento, bairro, cep, cidade, estado, telefone, telefone2, celular, celular2, imagem, facebook, twitter,
 				email, whatsup, conselho_regional, num_conselho_reg, especialidade_id, convenio_padrao, num_carteira_convenio, perfil, lotacao, grupo_user_id, sgrupo_user_id, usuario_cad, data_cad, username, password, situacao,nome_social) 
-				values ('$nome', '$tipo_pessoa', '$nome_mae', '$nome_pai', '$sexo', '$cpf',";
+				values ('$nome', '$tipo_pessoa', '$nome_mae', '$nome_pai', '$sexo', '$cpf', '$identidade', ";
         if ($dtn == "") {
             $stmt = $stmt . 'null,';
         } else {
@@ -435,7 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <div class="col-md-3">
                                                         <div class="form-group">
                                                             <label> CPF</label>
-                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="15" class="form-control square" id="cpf" name="cpf">
+                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="11" class="form-control square" id="cpf" name="cpf">
                                                             <div id="cpf_exists"></div>
                                                         </div>
                                                     </div>
