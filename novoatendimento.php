@@ -995,15 +995,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </div>
 
                                                     <div class="row">
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-3">
                                                             <label class="control-label">Nascimento</label> <input type="text" name="dt_nascimento" id="dt_nascimento" class="form-control" value="<?php echo $dt_nascimento; ?>" OnKeyPress="formatar('##/##/####', this)" OnBlur="calcularIdade(this.value)">
                                                         </div>
 
-                                                        <div class="col-sm-1">
+                                                        <div class="col-sm-3">
                                                             <label class="control-label">Idade</label> <input type="text" name="idade" id="idade" class="form-control" value="<?php echo $idade; ?>" readonly>
                                                         </div>
 
-                                                        <div class="col-sm-3">
+                                                        <div class="col-sm-2">
                                                             <label class="control-label">Sexo</label> <select name="sexo" id="sexo" class="form-control">
                                                                 <option></option>
                                                                 <option value="F" <?php if ($sexo == 'F') {
@@ -1015,15 +1015,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             </select> <input type="hidden" name="pendencia" id="pendencia" class="form-control" value="<?php echo $pendencia; ?>" readonly> <input type="hidden" name="pendencia" id="pendencia" class="form-control" value="<?php echo $pendencia; ?>" readonly>
                                                         </div>
 
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-4">
                                                             <label class="control-label">CPF</label> <input type="text" name="cpf" onblur='verifica_cpf(this.value)' maxlength="15" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
                                                             <div id="cpf_exists"></div>
                                                         </div>
-
-                                                        <div class="col-sm-2">
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-sm-4">
                                                             <label class="control-label">RG</label> <input type="text" name="rg" id="rg" class="form-control" value="<?php echo $identidade; ?>">
                                                         </div>
-                                                        <div class="col-sm-2">
+                                                        <div class="col-sm-3">
                                                             <label class="control-label">Expedição</label> <input type="text" name="org_expeditor" id="org_expeditor" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?php echo $org_expeditor; ?>"><br>
                                                         </div>
                                                     </div>
