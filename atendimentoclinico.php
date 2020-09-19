@@ -437,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $alta = inverteData($alta);
             $dt_solicitacao = inverteData($dt_nsolicitacao);
             $horacad = date('H:i');
-            $stmt = "UPDATEx atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
+            $stmt = "UPDATE atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
 				oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', com_oqfaz='$com_oqfaz', queixa='$queixa', exame_fisico='$exame_fisico', 
 				diagnostico_principal='$diag_pri', cid_principal='$CID',";
             if (str_replace(' ', '', $destino) != '') {
