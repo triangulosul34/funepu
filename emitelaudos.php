@@ -627,9 +627,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										<div class="col-md-12" align="right">
 											<?php
 
-											//include('conexao_pacs.php');
+											include('conexao_pacs.php');
 											$stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$exame_nro' ";
-											//$sthx = pg_query($stmt) or die($stmt);
+											$sthx = pg_query($stmt) or die($stmt);
 											//echo $stmt;
 											$rowst = pg_fetch_object($sthx);
 											$studyid = $rowst->study_iuid;
@@ -638,9 +638,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 											}
 											if ($studyid != '') {
 												if (substr($ip, 0, 3) == "192") {
-													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"> Imagens</i></button>";
+													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"> Imagens</i></button>";
 												} else {
-													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"> Imagens</i></button>";
+													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"> Imagens</i></button>";
 												}
 											}
 

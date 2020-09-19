@@ -427,11 +427,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $xdum = "";
 
             include('conexao.php');
+            $stmt = "SELECT * FROM atendimentos WHERE transacao=$transacao and (destino_paciente = '09' or destino_paciente is null)";
+            $result = pg_query($stmt) or die($stmt);
+            $row = pg_fetch_object($result);
+            $atendimento = $row->transacao;
+
+            include('conexao.php');
             $dt_transacao = inverteData($data_transacao);
             $alta = inverteData($alta);
             $dt_solicitacao = inverteData($dt_nsolicitacao);
             $horacad = date('H:i');
-            $stmt = "UPDATE atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
+            $stmt = "UPDATEx atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
 				oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', com_oqfaz='$com_oqfaz', queixa='$queixa', exame_fisico='$exame_fisico', 
 				diagnostico_principal='$diag_pri', cid_principal='$CID',";
             if (str_replace(' ', '', $destino) != '') {
@@ -444,7 +450,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
             if ($alta != '') {
-                $stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
+                if (!$atendimento) {
+                    $stmt = $stmt . " status='Atendimento Finalizado' ";
+                } else {
+                    $stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
+                }
             } else {
                 $stmt = $stmt . " data_destino=null, hora_destino=null, status='Em Atendimento' ";
             }
@@ -968,18 +978,18 @@ if ($destino != '') {
                 <?php
                 include('conexao.php');
                 $sql = "SELECT * FROM relatorio_pmmg WHERE atendimento_id = $transacao";
-                //$result = pg_query($sql) or die($sql);
+                $result = pg_query($sql) or die($sql);
                 $row = pg_fetch_object($result);
                 ?>
                 <form action="relatorio_pmmg.php" id="form_pmmg" method="post">
                     <div class="modal-body">
                         <input type="hidden" name="atendimento_id_pmmg" value="<?= $transacao ?>">
                         <label for="">Queixa do Paciente</label>
-                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="queixa_paciente_pmmg" class="form-control"><?= $row->queixa_paciente; ?></textarea>
+                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="300" name="queixa_paciente_pmmg" class="form-control"><?= $row->queixa_paciente; ?></textarea>
                         <label for="">Diagnostico Medico</label>
-                        <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="180" name="diagnostico_medico_pmmg" class="form-control"><?= $row->diagnostico_medico; ?></textarea>
+                        <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="200" name="diagnostico_medico_pmmg" class="form-control"><?= $row->diagnostico_medico; ?></textarea>
                         <label for="">Orientação Paciente</label>
-                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="250" name="orientacao_paciente_pmmg" class="form-control"><?= $row->orientacao_paciente; ?></textarea>
+                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="300" name="orientacao_paciente_pmmg" class="form-control"><?= $row->orientacao_paciente; ?></textarea>
                     </div>
 
                     <div class="modal-footer">
@@ -1459,9 +1469,9 @@ if ($destino != '') {
                                                                         if ($row->situacao == 'Impresso') {
                                                                             echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
                                                                         }
-                                                                        //include('conexao_pacs.php');
+                                                                        include('conexao_pacs.php');
                                                                         $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
-                                                                        //$sthx = pg_query($stmt) or die($stmt);
+                                                                        $sthx = pg_query($stmt) or die($stmt);
                                                                         //echo $stmt;
                                                                         $rowst = pg_fetch_object($sthx);
                                                                         $studyid = $rowst->study_iuid;
@@ -1470,9 +1480,9 @@ if ($destino != '') {
                                                                         }
                                                                         if ($studyid != '') {
                                                                             if (substr($ip, 0, 3) == "192") {
-                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
+                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
                                                                             } else {
-                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://179.104.42.235:8000/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
+                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
                                                                             }
                                                                         }
                                                                         echo "</td>";

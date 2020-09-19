@@ -427,6 +427,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <select class="form-control" name="destino" id="destino" onchange="seleciona_setor(this)">
                                     <option value=""></option>;
                                     <option value="01" <?php if ($rowFim->destino_encaminhamento == 1) echo "selected"; ?>>ALTA</option>
+                                    <option value="01" <?php if ($rowFim->destino_encaminhamento == 25) echo "selected"; ?>>ALTA APOS MEDICAÇÃO</option>
                                     <option value="04" <?php if ($rowFim->destino_encaminhamento == 4) echo "selected"; ?>>TRANSF. OUTRA UPA</option>
                                     <option value="05" <?php if ($rowFim->destino_encaminhamento == 5) echo "selected"; ?>>TRANSFERENCIA HOSPITALAR</option>
                                     <option value="03" <?php if ($rowFim->destino_encaminhamento == 3) echo "selected"; ?>>PERMANÊCIA.</option>

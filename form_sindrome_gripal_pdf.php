@@ -169,13 +169,13 @@ if ($row->cdoencas_respiratorias) {
     $pdf->Text(106, 562, "X");
 }
 if ($row->cdoencas_renais) {
-    $pdf->Text(385, 562, "X");
+    $pdf->Text(106, 573, "X");
 }
 if ($row->cdoencas_cromossomicas) {
     $pdf->Text(483, 562, "X");
 }
 if ($row->cdiabetes) {
-    $pdf->Text(106, 573, "X");
+    $pdf->Text(385, 562, "X");
 }
 if ($row->cimunossupressão) {
     $pdf->Text(385, 573, "X");
