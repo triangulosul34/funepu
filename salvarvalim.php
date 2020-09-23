@@ -64,7 +64,7 @@ while ($row = pg_fetch_object($sth)) {
             }
         }
         if ($row->diluente != 'Em BOLUS' and $row->diluente != 'PURO') {
-            include('conexaovalim.php');
+            include('conexaovalimh.php');
             $sqla = "select * from qtdeprodutoupa WHERE produtodescricao = '$row->diluente'";
             $stha = pg_query($sqla) or die($sqla);
             $rowa = pg_fetch_object($stha);
