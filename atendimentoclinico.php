@@ -427,12 +427,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $xdum = "";
 
             include('conexao.php');
-            $stmt = "SELECT * FROM atendimentos WHERE transacao=$transacao and (destino_paciente = '09' or destino_paciente is null)";
-            $result = pg_query($stmt) or die($stmt);
-            $row = pg_fetch_object($result);
-            $atendimento = $row->transacao;
-
-            include('conexao.php');
             $dt_transacao = inverteData($data_transacao);
             $alta = inverteData($alta);
             $dt_solicitacao = inverteData($dt_nsolicitacao);
@@ -450,11 +444,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
             if ($alta != '') {
-                if (!$atendimento) {
-                    $stmt = $stmt . " status='Atendimento Finalizado' ";
-                } else {
-                    $stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
-                }
+                $stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
             } else {
                 $stmt = $stmt . " data_destino=null, hora_destino=null, status='Em Atendimento' ";
             }
@@ -967,79 +957,6 @@ if ($destino != '') {
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="relatorio_pmmg" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="TituloModalCentralizado">Relatorio PMMG</h5>
-
-                </div>
-                <?php
-                include('conexao.php');
-                $sql = "SELECT * FROM relatorio_pmmg WHERE atendimento_id = $transacao";
-                $result = pg_query($sql) or die($sql);
-                $row = pg_fetch_object($result);
-                ?>
-                <form action="relatorio_pmmg.php" id="form_pmmg" target="_blank" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" name="atendimento_id_pmmg" value="<?= $transacao ?>">
-                        <label for="">Queixa do Paciente</label>
-                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="300" name="queixa_paciente_pmmg" id="queixa_paciente_pmmg" class="form-control"><?= $row->queixa_paciente; ?></textarea>
-                        <label for="">Diagnostico Medico</label>
-                        <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="200" name="diagnostico_medico_pmmg" id="diagnostico_medico_pmmg" class="form-control"><?= $row->diagnostico_medico; ?></textarea>
-                        <label for="">Orientação Paciente</label>
-                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="300" name="orientacao_paciente_pmmg" id="orientacao_paciente_pmmg" class="form-control"><?= $row->orientacao_paciente; ?></textarea>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                        <button type="button" onclick="this.form.submit();" data-dismiss="modal" class="btn btn-primary">Salvar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="referencia_contra" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="TituloModalCentralizado">Referencia e contra referencia</h5>
-
-                </div>
-                <?php
-                include('conexao.php');
-                $sql = "SELECT * FROM contra_referencia WHERE atendimento_id = $transacao";
-                $result = pg_query($sql) or die($sql);
-                $row = pg_fetch_object($result);
-                ?>
-                <form action="referenciaecontra.php" id="form_referencia" target="_blank" method="post">
-                    <div class="modal-body">
-                        <input type="hidden" name="atendimento_id_referencia" value="<?= $transacao ?>">
-                        <label for="">Unidade</label>
-                        <select name="unidade_referencia" id="unidade_referencia">
-                            <option value="UNIDADE BASICA DE SAUDE">UNIDADE BASICA DE SAUDE</option>
-                            <option value="UNIDADE DIA">UNIDADE DIA</option>
-                            <option value="COT">COT</option>
-                        </select>
-                        <br>
-                        <label for="">Justificativa</label>
-                        <textarea rows="15" style="resize:none;overflow: hidden;" maxlength="500" name="justificativa_referencia" id="justificativa_referencia" class="form-control"><?= $row->justificativa; ?></textarea>
-                        <label for="">Diagnostico ou hipótese diagnostica</label>
-                        <textarea rows="2" style="resize:none;overflow: hidden;" maxlength="300" name="diagnostico_referencia" id="diagnostico_referencia" class="form-control"><?= $row->diagnostico; ?></textarea>
-                        <label for="">Resultado Exames Realizados</label>
-                        <textarea rows="5" style="resize:none;overflow: hidden;" maxlength="300" name="resultado_referencia" id="resultado_referencia" class="form-control"><?= $row->resultado; ?></textarea>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                        <button type="button" onclick="this.form.submit();" data-dismiss="modal" class="btn btn-primary">Salvar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <!-- <div class="pace pace-inactive">
         <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
             <div class="pace-progress-inner"></div>
@@ -1190,17 +1107,14 @@ if ($destino != '') {
                                         <div id="teste"></div>
 
                                         <div class="d-flex flex-column justify-content-center align-items-center" style="background-color: #12a1a6; height: 20px">
-                                            <h6 style="color: white;font-weight: bold;margin-bottom: 0px;">Observações
-                                            </h6>
+                                            <h6 style="color: white;font-weight: bold;margin-bottom: 0px;">Observações</h6>
                                         </div>
 
 
                                         <div class="texto text-center">
                                             <textarea disabled name="" id="texto" cols="" rows="4" style="width: 95.9%;height: 115px; border-radius: 0 0 20px 20px; border: 1px; padding: 10px 10px 0 10px;margin: 15px 20px 10px 15px;resize: none"><?php echo $relato; ?></textarea>
                                             <div class="d-flex flex-column justify-content-center align-items-center" style="background-color: #12a1a6; height: 20px;border-radius: 0 0 17px 17px;">
-                                                <h8 style="color: white;margin-bottom: 0px;">
-                                                    <?php echo "Realizado na data: <b>" . inverteData(trim($data_finalizado)) . "</b> no horário: <b>" . $hora_finalizada . "</b>  pelo username: <b>" . $usuario_enf . "</b>" ?>
-                                                </h8>
+                                                <h8 style="color: white;margin-bottom: 0px;"><?php echo "Realizado na data: <b>" . inverteData(trim($data_finalizado)) . "</b> no horário: <b>" . $hora_finalizada . "</b>  pelo username: <b>" . $usuario_enf . "</b>" ?></h8>
                                             </div>
                                         </div>
                                     </div>
@@ -1215,8 +1129,7 @@ if ($destino != '') {
                                             <div class="col-sm-12"><br>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="tosse_secracao" name="tosse_secracao" <?php if ($tosse_secracao == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="tosse_secracao">Tosse/Secreção
-                                                        Catarral</label>
+                                                    <label class="custom-control-label" for="tosse_secracao">Tosse/Secreção Catarral</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dificuldade_respirar" name="dificuldade_respirar" <?php if ($dificuldade_respirar == '1') echo "checked"; ?>>
@@ -1232,8 +1145,7 @@ if ($destino != '') {
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="congestao_nasal" name="congestao_nasal" <?php if ($congestao_nasal == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="congestao_nasal">Congestão
-                                                        Nasal</label>
+                                                    <label class="custom-control-label" for="congestao_nasal">Congestão Nasal</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="cefaleia" name="cefaleia" <?php if ($cefaleia == '1') echo "checked"; ?>>
@@ -1246,8 +1158,7 @@ if ($destino != '') {
                                             <div class="col-12"><br>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dor_garganta" name="dor_garganta" <?php if ($dor_garganta == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="dor_garganta">Dor de
-                                                        Garganta</label>
+                                                    <label class="custom-control-label" for="dor_garganta">Dor de Garganta</label>
                                                 </div>
 
 
@@ -1262,8 +1173,7 @@ if ($destino != '') {
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="mialgia_artralgia" name="mialgia_artralgia" <?php if ($mialgia_artralgia == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="mialgia_artralgia">Mialgia ou
-                                                        Artralgia</label>
+                                                    <label class="custom-control-label" for="mialgia_artralgia">Mialgia ou Artralgia</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="calafrios" name="calafrios" <?php if ($calafrios == '1') echo "checked"; ?>>
@@ -1292,8 +1202,7 @@ if ($destino != '') {
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="doenca_coronariana" name="doenca_coronariana" <?php if ($doenca_coronariana == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="doenca_coronariana">Doenca
-                                                        Coronariana</label>
+                                                    <label class="custom-control-label" for="doenca_coronariana">Doenca Coronariana</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
                                                     <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dpoc_asma" name="dpoc_asma" <?php if ($dpoc_asma == '1') echo "checked"; ?>>
@@ -1319,12 +1228,10 @@ if ($destino != '') {
                                     <!-- iniciando tabs -->
                                     <ul class="nav nav-tabs nav-justified col-12" style="padding-right: 0px;">
                                         <li class="nav-item">
-                                            <a class="nav-link active" id="active-tab" data-toggle="tab" href="#active" aria-controls="active" aria-expanded="true">Informaçoes do
-                                                Atendimento</a>
+                                            <a class="nav-link active" id="active-tab" data-toggle="tab" href="#active" aria-controls="active" aria-expanded="true">Informaçoes do Atendimento</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="link-tab" data-toggle="tab" href="#link" aria-controls="link" aria-expanded="false">Exames de
-                                                Imagem/Laboratoriais</a>
+                                            <a class="nav-link" id="link-tab" data-toggle="tab" href="#link" aria-controls="link" aria-expanded="false">Exames de Imagem/Laboratoriais</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="click-tab" data-toggle="tab" href="#click" aria-controls="click" aria-expanded="false">Prescrições</a>
@@ -1346,8 +1253,7 @@ if ($destino != '') {
                                         <div role="tabpanel" class="tab-pane active show" id="active" aria-labelledby="active-tab" aria-expanded="true">
 
                                             <div class="col-12 text-center mt-4 mb-4">
-                                                <h4 class="form-section-center"><i class="fas fa-info-circle"></i>
-                                                    Informações do Atendimento Realizado</h4>
+                                                <h4 class="form-section-center"><i class="fas fa-info-circle"></i> Informações do Atendimento Realizado</h4>
                                                 <!-- <h3 class="title" align="center">Identificação do Paciente</h3> -->
                                                 <hr style="margin: auto;width: 450px">
                                             </div>
@@ -1424,8 +1330,7 @@ if ($destino != '') {
                                             <div class="d-flex">
                                                 <div class="col-sm-6"><br>
                                                     <div class="col-12 text-center mb-4">
-                                                        <h4 class="form-section-center"><i class="fas fa-radiation"></i>
-                                                            Exames de Imagem</h4>
+                                                        <h4 class="form-section-center"><i class="fas fa-radiation"></i> Exames de Imagem</h4>
 
                                                         <hr style="margin: auto;width: 250px">
                                                     </div>
@@ -1521,22 +1426,6 @@ if ($destino != '') {
                                                                         if ($row->situacao == 'Impresso') {
                                                                             echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
                                                                         }
-                                                                        include('conexao_pacs.php');
-                                                                        $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
-                                                                        $sthx = pg_query($stmt) or die($stmt);
-                                                                        //echo $stmt;
-                                                                        $rowst = pg_fetch_object($sthx);
-                                                                        $studyid = $rowst->study_iuid;
-                                                                        if ($studyid != "") {
-                                                                            $hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
-                                                                        }
-                                                                        if ($studyid != '') {
-                                                                            if (substr($ip, 0, 3) == "192") {
-                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
-                                                                            } else {
-                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
-                                                                            }
-                                                                        }
                                                                         echo "</td>";
 
                                                                         //echo"<td class='small'><a href=\"deletarexames.php?id=$row->transacao&atendimento=$transacao\" data-toggle=\"tooltip\" data-original-title=\"Deletar Pedido de Exame\"><i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i></a></td>";
@@ -1556,8 +1445,7 @@ if ($destino != '') {
                                                                 <table class="table table-hover table-striped condensed width-full">
                                                                     <tr>
                                                                         <td class="text-center" colspan="2"><label class="control-label">
-                                                                                <font color='#12A1A6'>Adicionar
-                                                                                    Exames/Procedimentos</font>
+                                                                                <font color='#12A1A6'>Adicionar Exames/Procedimentos</font>
                                                                             </label></td>
                                                                     </tr>
                                                                     <tr>
@@ -1735,8 +1623,7 @@ if ($destino != '') {
                                                         <hr style="margin: auto;width: 260px">
                                                     </div>
 
-                                                    <div class="col-sm-12" style="height: 295px; overflow-y: auto; overflow-x: hidden;">
-                                                        <br>
+                                                    <div class="col-sm-12" style="height: 295px; overflow-y: auto; overflow-x: hidden;"><br>
 
                                                         <table class="table table-hover table-striped condensed width-full">
                                                             <thead>
@@ -1848,8 +1735,7 @@ if ($destino != '') {
 
                                                 <div class="col-6 col"><br>
                                                     <div class="col-12 text-center"><br>
-                                                        <h4 class="form-section-center"><i class="fas fa-hospital-alt"></i> Estadias Anteriores
-                                                        </h4>
+                                                        <h4 class="form-section-center"><i class="fas fa-hospital-alt"></i> Estadias Anteriores</h4>
                                                         <hr style="margin: auto;width: 260px">
                                                     </div>
 
@@ -1941,8 +1827,7 @@ if ($destino != '') {
                                             <div class="col-12 d-flex">
                                                 <div class="col-6 col"><br>
                                                     <div class="col-12 text-center"><br>
-                                                        <h4 class="form-section-center"><i class="fas fa-hospital-alt"></i>Historico de Atestados
-                                                        </h4>
+                                                        <h4 class="form-section-center"><i class="fas fa-hospital-alt"></i>Historico de Atestados</h4>
                                                         <hr style="margin: auto;width: 260px">
                                                     </div>
 
@@ -1999,18 +1884,14 @@ if ($destino != '') {
                                 <?php } ?>
                                 <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) echo $disable ?>>
                                     <option value=""></option>;
-                                    <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') echo "selected"; ?>>
-                                        ALTA
+                                    <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') echo "selected"; ?>>ALTA
                                     </option>;
-                                    <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') echo "selected"; ?>>
-                                        EM
+                                    <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') echo "selected"; ?>>EM
                                         OBSERVAÇÃO / MEDICAÇÃO</option>;
                                     <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
-                                    <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') echo "selected"; ?>>
-                                        EXAMES /
+                                    <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') echo "selected"; ?>>EXAMES /
                                         REAVALIACAO</option>;
-                                    <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') echo "selected"; ?>>
-                                        PERMANÊNCIA.
+                                    <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') echo "selected"; ?>>PERMANÊNCIA.
                                     </option>;
                                     <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '20') { ?>
                                         <option value="20" selected>ALTA VIA SISTEMA
@@ -2088,11 +1969,8 @@ if ($destino != '') {
                             <?php } else if ($destino == '') { ?>
                                 <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
                             <?php } ?>
-                            <?php if ($origem == 12) { ?>
-                                <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button>
-                            <?php } ?>
                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
-                            <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal" data-target="#referencia_contra">Referencia/Contra Referencia</button>
+
 
 
                             <button type="button" id="receituario" class="btn btn-success" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
@@ -2144,13 +2022,10 @@ if ($destino != '') {
     <script src="app-assets/js/scripts.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.jss"></script>
 
@@ -2170,9 +2045,7 @@ if ($destino != '') {
                 '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-5"><div class="form-group"><label class="control-label">Modo de usar</label><input id="usar-' +
                 contador +
                 '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-1"><div class="form-group"><button onclick="apagar_item_receituario(this)" value="' +
-                contador +
-                '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>'
-            );
+                contador + '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>');
             $("#salvar_receituario").attr("value", contador);
             contador++;
         });
@@ -2283,16 +2156,13 @@ if ($destino != '') {
         //////////////////////////INICIO LOGICA MODULO DE PRESCRIÇÃO//////////////////////////
         function solicitacaoprescricao(valor) { //ABRE O MODAL ONDE É LISTADO OS MEDICAMENTOS QUE ESTÁ GRAVADO NA SESSION
             $('#modaSolictalPrecricao').modal('toggle');
-            $.get('listaprescricao.php?atendimento=<?php echo $_GET['
-            id '] ?>',
-                function(dataReturn) {
-                    $('#conteudoPrescricaoModal').html(dataReturn);
-                });
+            $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>', function(dataReturn) {
+                $('#conteudoPrescricaoModal').html(dataReturn);
+            });
         }
 
         function modal_prescricao(
-            valor
-        ) { //FUNÇÃO PARA ABRIR O MODAL ONDE É REALIZADO A ESCOLHA DO TIPO DE PRESCRIÇÃO: DIETA, HIDRATAÇÃO, MEDICAMENTOS E CUIDADOS
+            valor) { //FUNÇÃO PARA ABRIR O MODAL ONDE É REALIZADO A ESCOLHA DO TIPO DE PRESCRIÇÃO: DIETA, HIDRATAÇÃO, MEDICAMENTOS E CUIDADOS
             $('#modalPrecricao').modal('toggle');
             $("#novo_prescricao").prop('disabled', true);
             $('#conteudoModal').html('');
@@ -2356,11 +2226,9 @@ if ($destino != '') {
             } //SALVAPRESCRICAOSISTEMA.PHP: SALVA OS MEDICAMENTOS NA SESSION		
 
             $.get(url, function(dataReturn) {
-                $.get('listaprescricao.php?atendimento=<?php echo $_GET['
-                id '] ?>',
-                    function(Return) {
-                        $('#conteudoPrescricaoModal').html(Return);
-                    });
+                $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>', function(Return) {
+                    $('#conteudoPrescricaoModal').html(Return);
+                });
             }); //LISTAPRESCRICAO.PHP: LISTA OS MEDICAMENTOS SALVOS NA SESSION
 
             event.preventDefault();
@@ -2395,10 +2263,8 @@ if ($destino != '') {
                 var cuidados = new Array();
                 var tipo = new Array();
                 var nova_sequencia = '';
-                var data = '<?php echo date('
-            Y - m - d '); ?>';
-                var hora = '<?php echo date('
-            H: i '); ?>';
+                var data = '<?php echo date('Y-m-d'); ?>';
+                var hora = '<?php echo date('H:i'); ?>';
 
 
                 while (i <= total_campos) {
@@ -2410,9 +2276,7 @@ if ($destino != '') {
                         cuidados[i] = $('#cuidados' + i + '').val();
 
                         url = 'gerarnovaprescricao_clinico.php?cuidados=' + cuidados[i] + '&atendimento=' +
-                            <
-                            ?
-                            php echo $_GET['id'] ? > +'&flag=' + i + '&nova_sequencia=' + nova_sequencia +
+                            <?php echo $_GET['id'] ?> + '&flag=' + i + '&nova_sequencia=' + nova_sequencia +
                             '&data=' + data + '&hora=' + hora + '&tipo_prescricao=' + tipo[i];
 
                     } else if ($('#hidratacao_text' + i + '').val() != undefined) {
@@ -2427,9 +2291,7 @@ if ($destino != '') {
                         url = 'gerarnovaprescricao_clinico.php?hidratacao_text=' + hidratacao_text[i] +
                             '&componente1=' + componente1[i] + '&componente2=' + componente2[i] + '&componente3=' +
                             componente3[i] + '&descricao_hd=' + descricao_hd[i] + '&atendimento=' +
-                            <
-                            ?
-                            php echo $_GET['id'] ? > +'&flag=' + i + '&nova_sequencia=' + nova_sequencia +
+                            <?php echo $_GET['id'] ?> + '&flag=' + i + '&nova_sequencia=' + nova_sequencia +
                             '&data=' + data + '&hora=' + hora + '&tipo_prescricao=' + tipo[i];
 
                     } else {
@@ -2457,9 +2319,7 @@ if ($destino != '') {
 
                         url = 'gerarnovaprescricao_clinico.php?dosagem=' + dosagem[i] + '&medicamento=' +
                             medicamento[i] + '&via=' + via[i] + '&aprazamento=' + aprazamento[i] + '&atendimento=' +
-                            <
-                            ?
-                            php echo $_GET['id'] ? > +'&flag=' + i + '&cod_medicamento=' + cod_medicamento[i] +
+                            <?php echo $_GET['id'] ?> + '&flag=' + i + '&cod_medicamento=' + cod_medicamento[i] +
                             '&nova_sequencia=' + nova_sequencia + '&data=' + data + '&hora=' + hora +
                             '&tipo_prescricao=' + tipo[i];
                     } //GERANOVAPRESCRICAO_CLINICI.PHP: SALVA NO BANCO DE DADOS O QUE ESTA SALVO NA SESSION
@@ -2472,8 +2332,7 @@ if ($destino != '') {
                 }
 
                 //LISTA_PRESCRICAO_CLINICO.PHP: RETORNA PARA DENTRO DA DIV COM ID=modaSolictalPrecricao OS MEDICAMENTOS SALVOS NO BANCO
-                urls = 'lista_prescricao_clinico.php?atendimento=<?php echo $_GET['
-            id '] ?>';
+                urls = 'lista_prescricao_clinico.php?atendimento=<?php echo $_GET['id'] ?>';
 
                 $('#modaSolictalPrecricao').modal('hide');
             }
@@ -2481,15 +2340,12 @@ if ($destino != '') {
         });
 
         function remover_prescricao(
-            indice
-        ) { //FUNCÃO É CHAMADA CLICA EM DELETAR UM MEDICAMENTO QUE ESTA LA LISTAGEM DE MEDICAMENTOS, ISTO PRESENTE NA SESSION
+            indice) { //FUNCÃO É CHAMADA CLICA EM DELETAR UM MEDICAMENTO QUE ESTA LA LISTAGEM DE MEDICAMENTOS, ISTO PRESENTE NA SESSION
             $.get('exlcuirIndiceArray.php?indice=' + indice);
 
-            $.get('listaprescricao.php?atendimento=<?php echo $_GET['
-            id '] ?>&flag=1',
-                function(Return) {
-                    $('#conteudoPrescricaoModal').html(Return);
-                });
+            $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>&flag=1', function(Return) {
+                $('#conteudoPrescricaoModal').html(Return);
+            });
         }
 
 
@@ -2505,8 +2361,7 @@ if ($destino != '') {
 
                 if ($("[name='cb_prescricao[]']").is(":checked") ==
                     true) { //VALIDA SE FOI SELECIONADO ALGUM MEDICAMENTO, CHECKBOX.
-                    window.open('relprescricao.php?id=<?php echo $_GET['
-                    id '] ?>&medicamentos=' + prescricoes, '_blank');
+                    window.open('relprescricao.php?id=<?php echo $_GET['id'] ?>&medicamentos=' + prescricoes, '_blank');
                 } else {
                     swal("Marque a caixa de selecao ao lado dos medicamentos que deseja imprimir", "", "warning")
                 }
@@ -2569,8 +2424,7 @@ if ($destino != '') {
 
 
         $("#novo_exame").click(function() {
-            var data_atendimento = '<?php echo date('
-        d / m / Y '); ?>';
+            var data_atendimento = '<?php echo date('d/m/Y'); ?>';
             var atendimento = $('#atendimento').val();
             var prioridade = $('#prioridade').val();
             var profissional = $('#profissional').val();
@@ -2582,18 +2436,14 @@ if ($destino != '') {
 
             if (procedimento != "" && procedimento != null) {
                 $("#loading-hover").css("z-index", "1"); // Alterna loading ao clicar em "solicitar"
-                jQuery.get('solicitapedido.php?paciente_id=' + id + '&prioridade=' + prioridade +
-                    '&data_atendimento=' + data_atendimento + '&atendimento=' + atendimento + '&profissional=' +
-                    profissional + '&prontuario=' + prontuario + '&procedimento=' + procedimento + '&origem=' +
-                    origem,
-                    function(dataReturn, status) {
-                        $('#exames_atendimentos').html(dataReturn);
-                        if (status == "success") {
-                            $("#loading-hover").css("z-index", "-1"); // Alterna loading apos processamento
-                            $('#procedimento').val('').trigger('chosen:updated');
-                            swal("Sucesso,", "o procedimento foi solicitado.", "success");
-                        }
-                    });
+                jQuery.get('solicitapedido.php?paciente_id=' + id + '&prioridade=' + prioridade + '&data_atendimento=' + data_atendimento + '&atendimento=' + atendimento + '&profissional=' + profissional + '&prontuario=' + prontuario + '&procedimento=' + procedimento + '&origem=' + origem, function(dataReturn, status) {
+                    $('#exames_atendimentos').html(dataReturn);
+                    if (status == "success") {
+                        $("#loading-hover").css("z-index", "-1"); // Alterna loading apos processamento
+                        $('#procedimento').val('').trigger('chosen:updated');
+                        swal("Sucesso,", "o procedimento foi solicitado.", "success");
+                    }
+                });
             } else {
                 swal("Selecione um procedimento.", "", "warning");
             }
@@ -2606,8 +2456,7 @@ if ($destino != '') {
                 e.preventDefault(); //cancel default action
 
                 //Recuperate href value
-                var data_atendimento = '<?php echo date('
-            d / m / Y '); ?>';
+                var data_atendimento = '<?php echo date('d/m/Y'); ?>';
                 var atendimento = $('#atendimento').val();
                 var prioridade = $('#prioridade').val();
                 var profissional = $('#profissional').val();
@@ -2637,12 +2486,9 @@ if ($destino != '') {
                     })
                     .then((willDelete) => {
                         if (willDelete) {
-                            $.get('solicitapedidoxj.php?paciente_id=' + id + '&prioridade=' +
-                                prioridade +
-                                '&data_atendimento=' + data_atendimento + '&atendimento=' +
-                                atendimento +
-                                '&profissional=' + profissional + '&prontuario=' + prontuario +
-                                '&procedimento=' +
+                            $.get('solicitapedidoxj.php?paciente_id=' + id + '&prioridade=' + prioridade +
+                                '&data_atendimento=' + data_atendimento + '&atendimento=' + atendimento +
+                                '&profissional=' + profissional + '&prontuario=' + prontuario + '&procedimento=' +
                                 procedimento + '&origem=' + origem,
                                 function(dataReturn, status) {
                                     $('#exames_laboratorio').html(dataReturn);
@@ -2911,8 +2757,7 @@ if ($destino != '') {
         function laboratorio() {
             var data = document.getElementById("data").value;
             if (data) {
-                window.open("<?= "
-                http: //" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" + data + "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>");
+                window.open("<?= "http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" + data + "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>");
             } else {
                 alert("Informe da data!!!");
             }
@@ -2941,31 +2786,6 @@ if ($destino != '') {
             }
             return contador <= 25;
         }
-
-        function limitLines(obj, limit) {
-            var values = obj.value.replace(/\r\n/g, "\n").split("\n")
-            if (values.length > limit) {
-                obj.value = values.slice(0, limit).join("\n")
-            }
-        }
-        $("#queixa_paciente_pmmg").bind('paste', function(e) {
-            limitLines(this, 3);
-        });
-        $("#diagnostico_medico_pmmg").bind('paste', function(e) {
-            limitLines(this, 2);
-        });
-        $("#orientacao_paciente_pmmg").bind('paste', function(e) {
-            limitLines(this, 3);
-        });
-        // $("#justificativa_referencia").bind('paste', function(e) {
-        //     limitLines(this, 15);
-        // });
-        // $("#diagnostico_referencia").bind('paste', function(e) {
-        //     limitLines(this, 2);
-        // });
-        // $("#resultado_referencia").bind('paste', function(e) {
-        //     limitLines(this, 5);
-        // });
     </script>
 
 </body>
