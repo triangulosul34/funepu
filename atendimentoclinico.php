@@ -2091,7 +2091,7 @@ if ($destino != '') {
                                 <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
                             <?php } ?>
                             <?php if ($origem == 12) { ?>
-                                <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button>
+                                <!-- <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button> -->
                             <?php } ?>
                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
                             <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal" data-target="#referencia_contra">Referencia/Contra Referencia</button>
