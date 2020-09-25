@@ -404,7 +404,7 @@ $qtdAtendiemento = $rowCount->qtd;
                 $.get(url, function(dataReturn) {
                     $('#retorno_atd').html(dataReturn);
                 });
-                document.location.reload(true);
+                window.location.href = window.location.href
             }
 
             function atualizar() {
