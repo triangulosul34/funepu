@@ -63,45 +63,44 @@ $html2pdf = new Html2Pdf(
     $margins = array(5, 5, 5, 8),
     $pdfa = false
 );
-$html2pdf->writeHTML('
+//$html2pdf->writeHTML('
 ?>
 <style>
-table {
-    border-collapse: collapse;
-}
+    table {
+        border-collapse: collapse;
+    }
 
-table,
-th,
-td {
-    border: 1px solid black;
-}
+    table,
+    th,
+    td {
+        border: 1px solid black;
+    }
 
-th,
-td {
-    text-align: center;
-}
+    th,
+    td {
+        text-align: center;
+    }
 
-span {
-    font-size: 15px;
-}
+    span {
+        font-size: 15px;
+    }
 
-.sansserif {
-    font-family: Arial, Helvetica, sans-serif;
-}
+    .sansserif {
+        font-family: Arial, Helvetica, sans-serif;
+    }
 
-.borda {
-    width: 100%;
-    height: 75%;
-    border: 1px solid;
-}
+    .borda {
+        width: 100%;
+        height: 75%;
+        border: 1px solid;
+    }
 </style>
 
 <body>
     <table>
         <tr>
             <td style="width:20%;"><img src="app-assets/img/gallery/upa24.png" width="130" height="110"></td>
-            <td
-                style="width:60%;vertical-align: top;padding-top: 30px;padding-right: 25px;padding-left: 25px;font-size: 18px;line-height: 1.5;">
+            <td style="width:60%;vertical-align: top;padding-top: 30px;padding-right: 25px;padding-left: 25px;font-size: 18px;line-height: 1.5;">
                 <b class="sansserif">GUIA DE REFERÊNCIA / CONTRA REFERÊNCIA</b>
             </td>
             <td style="width:20%;"><img src="app-assets/img/gallery/upa24.png" width="130" height="100"></td>
@@ -163,14 +162,14 @@ span {
         <img src="app-assets/img/gallery/sus.jpg" width="70" height="50">
     </span>
     <span style="margin-left:80px">
-    <img src="app-assets/img/gallery/logo_uberaba.png" width="80" height="50">
+        <img src="app-assets/img/gallery/logo_uberaba.png" width="80" height="50">
     </span>
     <span style="margin-left:80px">
-    <img src="app-assets/img/gallery/logo_governo_minas.png" width="80" height="50">
+        <img src="app-assets/img/gallery/logo_governo_minas.png" width="80" height="50">
     </span>
     <span style="margin-left:80px">
         <img src="app-assets/img/gallery/logo_brasil.png" width="80" height="50">
     </span>
 </body>
-');
-$html2pdf->output();
+<!-- '); -->
+<!-- $html2pdf->output(); -->

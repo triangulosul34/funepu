@@ -2094,7 +2094,7 @@ if ($destino != '') {
                                 <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button>
                             <?php } ?>
                             <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
-                            <!-- <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal" data-target="#referencia_contra">Referencia/Contra Referencia</button> -->
+                            <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal" data-target="#referencia_contra">Referencia/Contra Referencia</button>
 
 
                             <button type="button" id="receituario" class="btn btn-success" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
