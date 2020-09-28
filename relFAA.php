@@ -16,7 +16,7 @@ $stmt = "select a.transacao, a.cid_principal,a,hora_cad,l.nome as nomecad, a.des
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome,c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.nome_mae, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem as origem_chegada,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica,x.oxigenio,x.dor, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade,x.glicose as glicemia,
-		a.data_destino,a.hora_destino,a.destino_paciente, z.nome as medico_atendimento, f.nome as medico_finalizador, a.acompanhante, w.nome as usuario_triagem, w.num_conselho_reg as coren, w.perfil
+		a.data_destino,a.hora_destino,a.destino_paciente, z.nome as medico_atendimento, f.nome as medico_finalizador, a.acompanhante, w.nome as usuario_triagem, a.hora_triagem, w.num_conselho_reg as coren, w.perfil
 		from atendimentos a 
 		left join pessoas c on a.paciente_id=c.pessoa_id
 		left join pessoas l on l.username = a.cad_user
@@ -98,6 +98,7 @@ if ($row->medico_finalizador) {
 }
 $acompanhante = $row->acompanhante;
 $usuario_triagem = $row->usuario_triagem;
+$hora_triagem = $row->hora_triagem;
 $coren = $row->coren;
 $perfil = $row->perfil;
 $dia    = date('d', strtotime($data_transacao));
@@ -197,7 +198,7 @@ class PDF extends FPDF
             $oque_faz,    $com_oqfaz, $tempo_faz,    $como_faz, $queixa, $exame_fisico, $cid_principal, $pressaodiastolica, $pressaosistolica, $peso,
             $temperatura, $pulso, $relato, $discriminador, $destino, $prioridade, $atendprioridade, $cns, $diagnostico_principal, $horacad, $datacad, $glicemia,
             $data_destino, $hora_destino, $destino_paciente, $dor, $oxigenio, $nomecad, $medico_atendimento, $nome_social, $origem_chegada, $acompanhante, $usuario_triagem,
-            $coren, $perfil;
+            $coren, $hora_triagem, $perfil;
         $this->Image('app-assets/img/gallery/logo.png', 10, 5, 48);
         $this->Image('app-assets/img/gallery/sus.jpg', 80, 3, 22);
         $this->Ln(6);
@@ -396,10 +397,11 @@ class PDF extends FPDF
         $this->MultiCell(165, 4, utf8_decode($relato), 0, 'J');
 
         if ($perfil == '03') {
-            $this->Cell(30, 7, utf8_decode('Medica(o): ' . $usuario_triagem . ' - CRM: ' . $coren), 0, 0, 'L');
+            $this->Cell(120, 7, utf8_decode('Medica(o): ' . $usuario_triagem . ' - CRM: ' . $coren), 0, 0, 'L');
         } else {
-            $this->Cell(30, 7, utf8_decode('Enfermeira(o): ' . $usuario_triagem . ' - COREN: ' . $coren), 0, 0, 'L');
+            $this->Cell(120, 7, utf8_decode('Enfermeira(o): ' . $usuario_triagem . ' - COREN: ' . $coren), 0, 0, 'L');
         }
+        $this->Cell(65, 7, utf8_decode('hora triagem: ' . $hora_triagem), 0, 0, 'R');
 
         $this->Ln(6);
 

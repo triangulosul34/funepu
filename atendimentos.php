@@ -778,9 +778,9 @@ if (isset($_POST["excel"])) {
                                                             echo "</td>";
 
                                                             echo "<td>";
-                                                            /*if($row->status != 'Aguardando Triagem'){*/
-                                                            echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\" style=\"color:$color\"><i class=\"fas fa-file-medical\"></i></a>";
-                                                            /*}*/
+                                                            if ($row->status != 'Aguardando Triagem' and ($perfil == '06' or $perfil == '03')) {
+                                                                echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\" style=\"color:$color\"><i class=\"fas fa-file-medical\"></i></a>";
+                                                            }
 
 
                                                             if ($row->tipo == 9) {
