@@ -851,6 +851,65 @@ if ($destino != '') {
             </div>
         </div>
     </div>
+    <div class="modal fade" id="comparecimento" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title" id="exampleModalTabs">Atestado</h4>
+                </div>
+
+
+
+                <form method="post" enctype="multipart/form-data" action="relComparecimento.php" target="_blank">
+                    <div class="modal-body" id='modalbody'>
+                        <input type="hidden" name="nome_comparecimento" value="<?= $nome; ?>">
+                        <div class="row">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Data do atendimento</label>
+                                    <input type="text" name="data_atendimento" id="data_atendimento" class="form-control" value="<?php echo inverteData($data_transacao); ?>" onKeyPress="formata(this,'##/##/####')" maxlength="10">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Hora do atendimento</label>
+                                    <input type="text" name="hora_atendimento" id="hora_atendimento" class="form-control" value="<?php echo $hora_transacao; ?>" onKeyPress="formata(this,'##:##')" maxlength="5">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Fim do atendimento</label>
+                                    <input type="text" style="border-color:red" name="hora_final" id="hora_final" class="form-control" value="<?php echo date('H:m'); ?>" value="" onKeyPress="formata(this,'##:##')" maxlength="5" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="">Afim de:</label>
+                                    <textarea name="relato_comparecimento" id="relato_comparecimento" class="form-control" cols="30" rows="10"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" name="enviar" class="btn btn-default">Imprimir</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
     <div class="modal fade text-left" id="modalLaboratorio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -2083,35 +2142,33 @@ if ($destino != '') {
                     </div>
                 </div>
                 <div class="col-md-12" align="center"><br><br>
-                    <form method="post" enctype="multipart/form-data" action="relComparecimento.php" target="_blank">
-                        <div class="form-group">
-                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') { ?>
-                                <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
-                            <?php } else if ($destino == '') { ?>
-                                <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
-                            <?php } ?>
-                            <?php if ($origem == 12) { ?>
-                                <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button>
-                            <?php } ?>
-                            <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
-                            <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal" data-target="#referencia_contra">Referencia/Contra Referencia</button>
+                    <div class="form-group">
+                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') { ?>
+                            <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
+                        <?php } else if ($destino == '') { ?>
+                            <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
+                        <?php } ?>
+                        <?php if ($origem == 12) { ?>
+                            <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button>
+                        <?php } ?>
+                        <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
+                        <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal" data-target="#referencia_contra">Referencia/Contra Referencia</button>
 
 
-                            <button type="button" id="receituario" class="btn btn-success" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
-                                Solicitação de Internação
-                            </button>
+                        <button type="button" id="receituario" class="btn btn-success" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
+                            Solicitação de Internação
+                        </button>
 
-                            <input type="hidden" value="<?= $_GET['id'] ?>">
-                            <input type='submit' id="declaracao_comparecimento" value='Declaração de Comparecimento' class="btn btn-warning">
+                        <input type="hidden" value="<?= $_GET['id'] ?>">
+                        <input type='button' id="declaracao_comparecimento" data-toggle="modal" data-target="#comparecimento" value='Declaração de Comparecimento' class="btn btn-warning">
 
-                            <a href="relFAA.php?id=<?= $_GET['id'] ?>" target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
-                            <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>" target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
-                            <input type='hidden' readOnly class="form-control" name="origem" id="origem" value='<?php echo $origem; ?>'>
-                            <!--<input type='submit' name='imprimir'  class="btn btn-primary" value='Imprimir'>-->
-                            <!--<input type='submit' name='xcancelar' class="btn btn-danger"  value='Cancelar'>-->
+                        <a href="relFAA.php?id=<?= $_GET['id'] ?>" target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
+                        <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>" target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
+                        <input type='hidden' readOnly class="form-control" name="origem" id="origem" value='<?php echo $origem; ?>'>
+                        <!--<input type='submit' name='imprimir'  class="btn btn-primary" value='Imprimir'>-->
+                        <!--<input type='submit' name='xcancelar' class="btn btn-danger"  value='Cancelar'>-->
 
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div> <!-- FINALIZANDO TABS -->
 

@@ -7,6 +7,7 @@ $hora_final = $_POST['hora_final'];
 $dia = substr($data_atendimento, 0, 2);
 $mes = substr($data_atendimento, 3, 2);
 $ano = substr($data_atendimento, 6, 4);
+$relato = $_POST['relato_comparecimento'];
 require('fpdf/fpdf.php');
 class PDF extends FPDF
 {
@@ -104,4 +105,7 @@ $pdf->ln(5);
 $pdf->setX(15);
 $pdf->SetFont('Arial', '', 10);
 $pdf->Cell(180, 5, utf8_decode('Assinatura'), 0, 0, 'C');
+$pdf->setY(88);
+$pdf->setX(15);
+$pdf->MultiCell(180, 10, utf8_decode($relato), 0, 'J');
 $pdf->Output();
