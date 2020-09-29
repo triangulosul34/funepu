@@ -2021,7 +2021,7 @@ if ($destino != '') {
                                 </select>
                             </div>
                         </div>
-                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03') { ?>
+                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '00') { ?>
                             <div class="col-md-2">
                                 <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
                             </div>

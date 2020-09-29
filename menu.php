@@ -32,11 +32,12 @@
                             </li>
                         <?php
                         }
-                        if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
-                            <li class="is-shown">
-                                <a href="resultado_exames.php" class="menu-item">RESULTADO DE EXAMES</a>
-                            </li>
-                        <?php }
+                        //if ($perfil == '06' or $perfil == '08' or $perfil == '03') { 
+                        ?>
+                        <li class="is-shown">
+                            <a href="resultado_exames.php" class="menu-item">RESULTADO DE EXAMES</a>
+                        </li>
+                        <?php //}
                         if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                             <li class="is-shown">
                                 <a href="evolucoes.php" class="menu-item">EVOLUCAO DIARIA</a>
