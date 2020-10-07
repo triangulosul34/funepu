@@ -772,7 +772,7 @@ if (isset($_POST["excel"])) {
                                                             }
                                                             echo "</td>";
                                                             echo "<td style=\"color:$color\">";
-                                                            if ($row->destino_paciente) {
+                                                            if ($row->destino_paciente and ($row->destino_paciente != '07' and $row->destino_paciente != '10' and $row->destino_paciente != '03')) {
                                                                 echo inverteData(substr($row->data_paciente, 0, 10));
                                                             }
                                                             echo "</td>";
