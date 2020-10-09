@@ -79,7 +79,7 @@ if (in_array("82", $procedimentos) and in_array("81", $procedimentos)) {
 }
 
 include('conexao_laboratorio.php');
-$sql = "select count(*), exame_id from pedido_item where " . ORIGEM_CONFIG  . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . " = substring(ordem_servico, 5,9)::integer and exame_id in ($procedi) group by 2 order by count";
+$sql = "selectx count(*), exame_id from pedido_item where " . ORIGEM_CONFIG  . str_pad($atendimento, 7, '0', STR_PAD_LEFT) . " = substring(ordem_servico, 5,9)::integer and exame_id in ($procedi) group by 2 order by count desc";
 $result = pg_query($sql) or die($sql);
 $row = pg_fetch_object($result);
 
