@@ -153,6 +153,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $where = $where . " (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
             }
         }
+        if ($start == "") {
+            $data = inverteData($start);
+            if ($where != "") {
+                $where = $where . " and (a.dat_cad >= '" . date('Y-m-d') . "')";
+            } else {
+                $where = $where . " (a.dat_cad >= '" . date('Y-m-d') . "')";
+            }
+        }
+
+        if ($end == "") {
+            $data = inverteData($end);
+            if ($where != "") {
+                $where = $where . " and (a.dat_cad <= '" . date('Y-m-d') . "')";
+            } else {
+                $where = $where . " (a.dat_cad <= '" . date('Y-m-d') . "')";
+            }
+        }
     }
 
 
