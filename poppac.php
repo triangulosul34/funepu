@@ -58,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" type="text/css" href="app-assets/css/tsul.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <!--load all styles -->
     <script type="text/javascript">
         function formatar(mascara, documento) {
@@ -112,7 +114,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 window.opener.document.getElementById('fdoc').innerHTML = '<div class="row mt-3"><div class="col-md-12"><a href="documents/' + doc + '" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc">Visualizar Documentos <i class="far fa-address-card"></i></a></div></div>';
             }
 
-            window.close(); //fecha a janla popup 
+            arr_idade = idade.split('');
+            controle_idade = '';
+
+            for (i = 0; !isNaN(arr_idade[i]); i++) {
+                controle_idade = controle_idade + arr_idade[i];
+            }
+
+            if (controle_idade < 14) {
+                Swal.fire("Paciente tem menos de 14 anos").then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        window.close(); //fecha a janla popup
+                    }
+                });
+            } else {
+                window.close(); //fecha a janla popup
+            }
         }
     </script>
     <script>

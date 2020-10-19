@@ -233,8 +233,16 @@
                     </li>
                 <?php }
                 if ($perfil != '08' && $perfil != '03') { ?>
-                    <li class="nav-item">
-                        <a href="farmacia.php"><i class="fas fa-pills"></i><span class="menu-title">FARMACIA</span></a>
+                    <li class="has-sub nav-item">
+                        <a href="#"><i class="fas fa-pills"></i><span class="menu-title">FARMACIA</span></a>
+                        <ul class="menu-content">
+                            <li class="is-shown">
+                                <a href="farmacia.php">MEDICAMENTOS</a>
+                            </li>
+                            <li class="is-shown">
+                                <a href="controle_antibioticos.php">CONTROLE ANTIBIOTICOS</a>
+                            </li>
+                        </ul>
                     </li>
                 <?php }
                 if ($perfil == '14' or $perfil == '06') { ?>
