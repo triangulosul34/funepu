@@ -118,7 +118,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 1";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 1 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -158,7 +158,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 2";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 2 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -198,7 +198,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 3";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 3 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -238,7 +238,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 4";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 4 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -278,7 +278,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 5 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -318,7 +318,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 6";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 6 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -358,7 +358,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 7";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 7 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -398,7 +398,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 8";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 8 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -438,7 +438,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select * from controle_antimicrobiano a inner join medicamentos b on a.medicamento = b.id where categoria = 9";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 9 group by 1,2,3,4,5";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -492,6 +492,8 @@
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
     <script>
         function adicionar(a) {
             $.get("adicionar_linha_antibiotico.php?categoria=" + a, function(dataReturn) {
@@ -539,14 +541,14 @@
             var salvar = par.children("td:nth-child(7)");
 
             ordem.html("<input type='text' class='form-control' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value='" + ordem.html() + "'/>");
-            antibiotico.html("<select class='form-control selectnew' data-size='4' data-live-search='true' name='antibiotico' id='antibiotico' ><option value=''></option><?php
-                                                                                                                                                                            include('conexao.php');
-                                                                                                                                                                            $stmt = 'Select a.descricao,a.id,a.perigo from medicamentos a inner join medicamentos3 b on a.id = b.id where b.antibiotico = 1';
-                                                                                                                                                                            $sth = pg_query($stmt) or die($stmt);
-                                                                                                                                                                            while ($row = pg_fetch_object($sth)) {
-                                                                                                                                                                                echo '<option value=\'' . $row->id . '\'';
-                                                                                                                                                                                echo '>' . $row->descricao . '</option>';
-                                                                                                                                                                            } ?></select>");
+            antibiotico.html("<select class='form-control selectnew multat' data-size='4' multiple='multiple' data-live-search='true' name='antibiotico' id='antibiotico' ><option value=''></option><?php
+                                                                                                                                                                                                        include('conexao.php');
+                                                                                                                                                                                                        $stmt = 'Select a.descricao,a.id,a.perigo from medicamentos a inner join medicamentos3 b on a.id = b.id where b.antibiotico = 1';
+                                                                                                                                                                                                        $sth = pg_query($stmt) or die($stmt);
+                                                                                                                                                                                                        while ($row = pg_fetch_object($sth)) {
+                                                                                                                                                                                                            echo '<option value=\'' . $row->id . '\'';
+                                                                                                                                                                                                            echo '>' . $row->descricao . '</option>';
+                                                                                                                                                                                                        } ?></select>");
             via.html("<select class='form-control selectnew' data-size='4' data-live-search='true' name='via' id='via'><option value=" +
                 "></option>" +
                 <?php include('conexao.php');
@@ -562,6 +564,7 @@
                 ?> "</select>");
             categoria.html(categoria.html());
             salvar.html("<button class='btn btn-success' onclick='editar_antibiotico(this)'>Salvar</button>");
+            $('.multat').select2();
         }
 
         function deletar_antibiotico(a, b) {
