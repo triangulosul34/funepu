@@ -1611,22 +1611,23 @@ if ($destino != '') {
                                                         </table>
                                                     </div>
 
-                                                    <?php if ($perfil == '06' or $perfil == '03') { ?>
-                                                        <div class="col-12">
-                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
-                                                                <table class="table table-hover table-striped condensed width-full">
-                                                                    <tr>
-                                                                        <td class="text-center" colspan="2"><label class="control-label">
-                                                                                <font color='#12A1A6'>Adicionar
-                                                                                    Exames/Procedimentos</font>
-                                                                            </label></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <select name="procedimento" id="procedimento" title="Selecione o Procedimento">
-                                                                                <?php
-                                                                                include('conexao.php');
-                                                                                $sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
+                                                    <?php //if ($perfil == '06' or $perfil == '03') { 
+                                                    ?>
+                                                    <div class="col-12">
+                                                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
+                                                            <table class="table table-hover table-striped condensed width-full">
+                                                                <tr>
+                                                                    <td class="text-center" colspan="2"><label class="control-label">
+                                                                            <font color='#12A1A6'>Adicionar
+                                                                                Exames/Procedimentos</font>
+                                                                        </label></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <select name="procedimento" id="procedimento" title="Selecione o Procedimento">
+                                                                            <?php
+                                                                            include('conexao.php');
+                                                                            $sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
                                                                         WHERE descricao <> '%EXCLUIDO%' AND procedimento_id NOT IN (729,730,822,821,779) AND descricao NOT IN ('DOSAGEM DE FOLATO',
                                                                         'DOSAGEM DE PROTEINAS TOTAIS',
                                                                         'TROPONINA T',
@@ -1691,24 +1692,25 @@ if ($destino != '') {
                                                                         'SOROLOGIA ANTI-HIV I/II',
                                                                         'CLORO',
                                                                         'ROTINA ACIDENTE DE TRABALHO, [FUNEPU]') order by descricao";
-                                                                                $sth = pg_query($sql) or die($sql);
+                                                                            $sth = pg_query($sql) or die($sql);
 
-                                                                                while ($row = pg_fetch_object($sth)) {
-                                                                                    echo "<option value=\"" . $row->procedimento_id . "\"";
-                                                                                    echo ">" . $row->descricao . "</option>";
-                                                                                }
-                                                                                ?>
-                                                                            </select>
+                                                                            while ($row = pg_fetch_object($sth)) {
+                                                                                echo "<option value=\"" . $row->procedimento_id . "\"";
+                                                                                echo ">" . $row->descricao . "</option>";
+                                                                            }
+                                                                            ?>
+                                                                        </select>
 
-                                                                        </td>
-                                                                        <td><input type='button' name='novo_exame' id="novo_exame" class="btn btn-primary" value='Solicitar'>
-                                                                            <input type='submit' name='req_exame' id="req_exame" class="btn btn-success" value='Imprimir' onclick="document.getElementById('destino').removeAttribute('required');">
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            <?php } ?>
-                                                        </div>
-                                                    <?php } ?>
+                                                                    </td>
+                                                                    <td><input type='button' name='novo_exame' id="novo_exame" class="btn btn-primary" value='Solicitar'>
+                                                                        <input type='submit' name='req_exame' id="req_exame" class="btn btn-success" value='Imprimir' onclick="document.getElementById('destino').removeAttribute('required');">
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        <?php } ?>
+                                                    </div>
+                                                    <?php //} 
+                                                    ?>
                                                 </div>
                                                 <!-- Exames Laboratoriais -->
                                                 <div class="col-6">
