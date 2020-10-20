@@ -1613,7 +1613,7 @@ if ($destino != '') {
 
                                                     <?php if ($perfil == '06' or $perfil == '03') { ?>
                                                         <div class="col-12">
-                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04' or $perfil == '08') { ?>
+                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
                                                                 <table class="table table-hover table-striped condensed width-full">
                                                                     <tr>
                                                                         <td class="text-center" colspan="2"><label class="control-label">
