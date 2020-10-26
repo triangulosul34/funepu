@@ -60,7 +60,7 @@ if ($row->qtd == 0) {
     $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, data_controle) 
 					values ($atendimento, $destino, '$motivoalta', '$data', '$hora','$data_controle')";
     $sth = pg_query($stmt) or die($stmt);
-} else if ($row->destino_encaminhamento == 3 or $row->destino_encaminhamento == 20) {
+} elseif ($row->destino_encaminhamento == 3 or $row->destino_encaminhamento == 20 or $row->destino_encaminhamento == 7 or $row->destino_encaminhamento == 10) {
     $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, data_controle = '$data_controle'
     where atendimento_id = '$atendimento'";
     $sth = pg_query($stmt) or die($stmt);
@@ -102,56 +102,71 @@ if ($row->qtd == 0) {
         $sql = "SELECT a.destino_id, b.paciente_id, c.nome, b.dat_cad as data_entrada, a.data as data_saida, a.hora, a.destino_encaminhamento as destino  FROM destino_paciente a INNER JOIN atendimentos b ON a.atendimento_id = b.transacao INNER JOIN pessoas c ON b.paciente_id = c.pessoa_id INNER JOIN controle_permanencia d ON d.atendimento_id = a.atendimento_id WHERE motivo = 'Finalizado pelo controle de Permanencia' AND data_controle = '" . date('Y-m-d') . "' ORDER BY d.controle_permanecia_id desc";
         $result = pg_query($sql) or die($sql);
         while ($row = pg_fetch_object($result)) {
-        ?>
-            <tr>
-                <td><?= $row->paciente_id; ?></td>
-                <td><?= $row->nome; ?></td>
-                <td><?= inverteData(substr($row->data_entrada, 0, 10)); ?></td>
-                <td><input type="text" id="data_saida" value="<?= inverteData($row->data_saida); ?>" OnKeyPress="formatar('##/##/####', this)" onblur="altera_data(this.value,<?= $row->destino_id; ?>)"></td>
-                <td><input type="text" id="data_saida" value="<?= $row->hora; ?>" OnKeyPress="formatar('##:##', this)" onblur="altera_hora(this.value,<?= $row->destino_id; ?>)"></td>
-                <?php
+            ?>
+        <tr>
+            <td><?= $row->paciente_id; ?>
+            </td>
+            <td><?= $row->nome; ?>
+            </td>
+            <td><?= inverteData(substr($row->data_entrada, 0, 10)); ?>
+            </td>
+            <td><input type="text" id="data_saida"
+                    value="<?= inverteData($row->data_saida); ?>"
+                    OnKeyPress="formatar('##/##/####', this)"
+                    onblur="altera_data(this.value,<?= $row->destino_id; ?>)">
+            </td>
+            <td><input type="text" id="data_saida"
+                    value="<?= $row->hora; ?>"
+                    OnKeyPress="formatar('##:##', this)"
+                    onblur="altera_hora(this.value,<?= $row->destino_id; ?>)">
+            </td>
+            <?php
                 if ($row->destino == '01') {
                     echo '<td>ALTA</td>';
-                } else if ($row->destino == '02') {
+                } elseif ($row->destino == '02') {
                     echo '<td>ALTA / ENCAM. AMBUL.</td>';
-                } else if ($row->destino == '07') {
+                } elseif ($row->destino == '07') {
                     echo '<td>EM OBSERVAÇÃO / MEDICAÇÃO</td>';
-                } else if ($row->destino == '10') {
+                } elseif ($row->destino == '10') {
                     echo '<td>EXAMES / REAVALIACAO</td>';
-                } else if ($row->destino == '03') {
+                } elseif ($row->destino == '03') {
                     echo '<td>PERMANÊCIA</td>';
-                } else if ($row->destino == '04') {
+                } elseif ($row->destino == '04') {
                     echo '<td>TRANSF. OUTRA UPA</td>';
-                } else if ($row->destino == '05') {
+                } elseif ($row->destino == '05') {
                     echo '<td>TRANSF. INTERN. HOSPITALAR</td>';
-                } else if ($row->destino == '06') {
+                } elseif ($row->destino == '06') {
                     echo '<td>ÓBITO</td>';
-                } else if ($row->destino == '09') {
+                } elseif ($row->destino == '09') {
                     echo '<td>NAO RESPONDEU CHAMADO</td>';
-                } else if ($row->destino == '11') {
+                } elseif ($row->destino == '11') {
                     echo '<td>ALTA EVASÃO</td>';
-                } else if ($row->destino == '12') {
+                } elseif ($row->destino == '12') {
                     echo '<td>ALTA PEDIDO</td>';
-                } else if ($row->destino == '14') {
+                } elseif ($row->destino == '14') {
                     echo '<td>ALTA / POLICIA</td>';
-                } else if ($row->destino == '15') {
+                } elseif ($row->destino == '15') {
                     echo '<td>ALTA / PENITENCIÁRIA</td>';
-                } else if ($row->destino == '16') {
+                } elseif ($row->destino == '16') {
                     echo '<td>ALTA / PÓS MEDICAMENTO</td>';
-                } else if ($row->destino == '20') {
+                } elseif ($row->destino == '20') {
                     echo '<td>ALTA VIA SISTEMA</td>';
-                } else if ($row->destino == '21') {
+                } elseif ($row->destino == '21') {
                     echo '<td>TRANSFERENCIA</td>';
                 }
-                $d1 = strtotime($row->data_saida);
-                $d2 = strtotime(substr($row->data_entrada, 0, 10));
-                $dataFinal = ($d2 - $d1) / 86400;
-                if ($dataFinal < 0)
-                    $dataFinal *= -1;
-                ?>
-                <td><?= $dataFinal; ?></td>
-                <td><button class="btn btn-raised btn-danger btn-min-width mr-1 mb-1" onclick="cancelar_permanencia(<?= $row->destino_id; ?>)">Cancelar</button></td>
-            </tr>
-        <?php } ?>
+            $d1 = strtotime($row->data_saida);
+            $d2 = strtotime(substr($row->data_entrada, 0, 10));
+            $dataFinal = ($d2 - $d1) / 86400;
+            if ($dataFinal < 0) {
+                $dataFinal *= -1;
+            } ?>
+            <td><?= $dataFinal; ?>
+            </td>
+            <td><button class="btn btn-raised btn-danger btn-min-width mr-1 mb-1"
+                    onclick="cancelar_permanencia(<?= $row->destino_id; ?>)">Cancelar</button>
+            </td>
+        </tr>
+        <?php
+        } ?>
     </tbody>
 </table>
