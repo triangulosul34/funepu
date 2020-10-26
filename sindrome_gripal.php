@@ -174,7 +174,9 @@ if ($_POST['idexcluir']) {
                                                                 <td>
                                                                     <a href="form_sindrome_gripal_pdf.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1"><i class="fas fa-print"></i></a>
                                                                     <a href="form_sindrome_gripal.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1 danger"><i class="fas fa-pencil-alt"></i></a>
-                                                                    <button type="button" name="excluir_formulario" onclick="excluir(<?= $row->sindrome_gripal_id; ?>)" class="btn btn-sm btn-warning"><i class="fas fa-trash"></i></button>
+                                                                    <?php if($perfil == '06'){ ?>
+                                                                        <button type="button" name="excluir_formulario" onclick="excluir(<?= $row->sindrome_gripal_id; ?>)" class="btn btn-sm btn-warning"><i class="fas fa-trash"></i></button>
+                                                                    <?php } ?>
                                                                 </td>
                                                             </tr>
                                                         <?php } ?>
