@@ -13,7 +13,7 @@ $transacao = $_GET['id'];
 include('conexao.php');
 include('conexao.php');
 $stmt = "
-		select a.transacao, a.cid_principal,a,hora_cad, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.obs_modal as modal, a.diagnostico_principal,a.prioridade,
+		select a.transacao, a.cid_internacao,a,hora_cad, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.obs_modal as modal, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.nome_mae, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade,x.glicose as glicemia,
@@ -71,7 +71,7 @@ $origem = $row->tipo;
 $queixa = $row->queixa;
 $obs_modal = $row->modal;
 $exame_fisico = $row->exame_fisico;
-$cid_principal = $row->cid_principal;
+$cid_internacao = $row->cid_internacao;
 $destino  = $row->destino_paciente;
 $pressaodiastolica = $row->pressaodiastolica;
 $pressaosistolica = $row->pressaosistolica;
@@ -170,7 +170,7 @@ class PDF extends FPDF
         // Logo
         global $transacao, $prontuario, $nome, $nome_mae, $sexo, $idade, $nome_convenio, $origem, $enfermaria, $leito, $solicitante, $dt_nasc,
             $telsolicitante, $senha, $dt_solicitacao, $enderecox, $end_numero, $complemento, $bairro, $cep, $cpf, $cidade, $estado, $telefone, $celular,
-            $oque_faz,    $com_oqfaz, $tempo_faz,    $como_faz, $queixa, $exame_fisico, $cid_principal, $pressaodiastolica, $pressaosistolica, $peso,
+            $oque_faz,    $com_oqfaz, $tempo_faz,    $como_faz, $queixa, $exame_fisico, $cid_internacao, $pressaodiastolica, $pressaosistolica, $peso,
             $temperatura, $pulso, $relato, $discriminador, $destino, $prioridade, $atendprioridade, $cns, $diagnostico_principal, $horacad, $datacad, $glicemia,
             $data_destino, $hora_destino, $destino_paciente, $obs_modal;
         $this->Image('app-assets/img/gallery/logo.png', 10, 5, 48);
@@ -311,7 +311,7 @@ class PDF extends FPDF
         $this->Cell(90, 9, utf8_decode(' CLINICA :   ' . $destino), 1, 0, 'L');
 
         $this->Cell(60, 9, utf8_decode(' TIPO LEITO:   '), 1, 0, 'L');
-        $this->Cell(35, 9, utf8_decode(' CID:   ' . $cid_principal), 1, 0, 'L');
+        $this->Cell(35, 9, utf8_decode(' CID:   ' . $cid_internacao), 1, 0, 'L');
 
         $this->Ln(9);
         $this->SetFont('Arial', '', 8);

@@ -5,6 +5,11 @@
     } elseif (count(explode("-", $data)) > 1) {
         return implode("/", array_reverse(explode("-", $data)));
     }
+}
+if ($_POST['idexcluir']) {
+    include("conexao.php");
+    $sql = "delete from sindrome_gripal where sindrome_gripal_id = " . $_POST['idexcluir'];
+    $result = pg_query($sql) or die($sql);
 } ?>
 <!DOCTYPE html>
 <html lang="pt-br" class="loading">
@@ -102,70 +107,83 @@
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
-                                    <form action="#" method="post">
+                                    <form action="#" method="post" id="sindrome_gripal">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-9">
                                                 <div class="form-group">
-                                                    <label for="">Nome</label><input type="text" name="nome" id="nome" class="form-control">
+                                                    <label for="">Nome</label><input type="text" name="nome" id="nome" class="form-control" value="<?= $_POST["nome"]; ?>">
                                                 </div>
                                             </div>
                                             <div class="col-md-3">
-                                                <label for="">Data de Nascimento</label><input type="date" name="data_nascimento" id="data_nascimento" class="form-control">
+                                                <label for="">Data de Nascimento</label><input type="date" name="data_nascimento" id="data_nascimento" class="form-control" value="<?= $_POST["data_nascimento"]; ?>">
                                             </div>
-                                            <div class="col-md-3">
-                                                <label for="">Data de Notificação</label><input type="date" name="data_notificacao" id="data_notificacao" class="form-control">
+                                            <div class="col col-lg-3">
+                                                <label class="control-label" for="inputBasicFirstName">Data de Notificação</label>
+                                                <input type="date" class="form-control text-center" name="start" id="start" value="<?= $_POST["start"]; ?>" />
                                             </div>
-                                            <div class="col-md-2 mt-3"><button type="submit" class="btn btn-primary">Pesquisar</button></div>
+
+                                            <div class="col col-lg-3 text-center">
+                                                <label class="control-label" for="inputBasicFirstName">.</label>
+                                                <input type="date" class="form-control text-center" name="end" value="<?= $_POST["end"]; ?>">
+                                            </div>
+                                            <div class="col-md-1 mt-3"><button type="submit" class="btn btn-primary">Pesquisar</button></div>
                                         </div>
-                                    </form>
-                                    <div class="row m-1">
-                                        <div class="col-md-12" align="center">
-                                            <a href="form_sindrome_gripal.php" type="button" class="btn btn-success">Nova Ficha</a>
+                                        <div class="row mt-5">
+                                            <div class="col-md-12" align="center">
+                                                <a href="form_sindrome_gripal.php" type="button" class="btn btn-success">Nova Ficha</a>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-12">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Nome</th>
-                                                        <th>Data de Nascimento</th>
-                                                        <th>Ação</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    include "conexao.php";
-                                                    $sql = "SELECT * FROM sindrome_gripal WHERE ";
-                                                    if ($_POST["nome"]) {
-                                                        ($where) ?  $where =  $where . " AND nome like '{$_POST["nome"]}'" : $where = "nome like '{$_POST["nome"]}'";
-                                                    }
-                                                    if ($_POST["data_nascimento"]) {
-                                                        ($where) ?  $where =  $where . " AND data_nascimento = '{$_POST["data_nascimento"]}'" : $where = "data_nascimento = '{$_POST["data_nascimento"]}'";
-                                                    }
-                                                    if ($_POST["data_notificacao"]) {
-                                                        ($where) ?  $where =  $where . " AND data_notificacao = '{$_POST["data_notificacao"]}'" : $where = "data_notificacao = '{$_POST["data_notificacao"]}'";
-                                                    }
-                                                    if (!$where) {
-                                                        $where = "data_form ='" . date('Y-m-d') . "'";
-                                                    }
-                                                    $sql = $sql . " $where";
-                                                    $result = pg_query($sql) or die($sql);
-                                                    while ($row = pg_fetch_object($result)) {
-                                                    ?>
+                                        <div class="row mt-3">
+                                            <div class="col-md-12">
+                                                <table class="table" id="data_table">
+                                                    <thead>
                                                         <tr>
-                                                            <td><?= $row->nome; ?></td>
-                                                            <td><?= inverteData($row->data_nascimento); ?></td>
-                                                            <td>
-                                                                <a href="form_sindrome_gripal_pdf.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1"><i class="fas fa-print"></i></a>
-                                                                <a href="form_sindrome_gripal.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1 danger"><i class="fas fa-pencil-alt"></i></a>
-                                                            </td>
+                                                            <th>Nome</th>
+                                                            <th>Data de Nascimento</th>
+                                                            <th>Ação</th>
                                                         </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        include "conexao.php";
+                                                        $sql = "SELECT * FROM sindrome_gripal WHERE ";
+                                                        if ($_POST["nome"]) {
+                                                            ($where) ?  $where =  $where . " AND nome like '{$_POST["nome"]}'" : $where = "nome like '{$_POST["nome"]}'";
+                                                        }
+                                                        if ($_POST["data_nascimento"]) {
+                                                            ($where) ?  $where =  $where . " AND data_nascimento = '{$_POST["data_nascimento"]}'" : $where = "data_nascimento = '{$_POST["data_nascimento"]}'";
+                                                        }
+                                                        if ($_POST["start"]) {
+                                                            ($where) ?  $where =  $where . " AND data_notificacao BETWEEN '{$_POST["start"]}'" : $where = "data_notificacao BETWEEN '{$_POST["start"]}'";
+                                                            if ($_POST["end"]) {
+                                                                $where = $where . " AND '{$_POST["end"]}'";
+                                                            } else {
+                                                                $where = $where . " AND '" . date('Y-m-d') . "'";
+                                                            }
+                                                        }
+                                                        if (!$where) {
+                                                            $where = "data_form ='" . date('Y-m-d') . "'";
+                                                        }
+                                                        $sql = $sql . " $where";
+                                                        $result = pg_query($sql) or die($sql);
+                                                        while ($row = pg_fetch_object($result)) {
+                                                        ?>
+                                                            <tr>
+                                                                <td><?= $row->nome; ?></td>
+                                                                <td><?= inverteData($row->data_nascimento); ?></td>
+                                                                <td>
+                                                                    <a href="form_sindrome_gripal_pdf.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1"><i class="fas fa-print"></i></a>
+                                                                    <a href="form_sindrome_gripal.php?id=<?= $row->sindrome_gripal_id; ?>" class="m-1 danger"><i class="fas fa-pencil-alt"></i></a>
+                                                                    <button type="button" name="excluir_formulario" onclick="excluir(<?= $row->sindrome_gripal_id; ?>)" class="btn btn-sm btn-warning"><i class="fas fa-trash"></i></button>
+                                                                </td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <input type="text" name="idexcluir" id="idexcluir" value="">
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -197,6 +215,12 @@
     <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script>
+        function excluir(a) {
+            document.getElementById('idexcluir').value = a;
+            document.getElementById("sindrome_gripal").submit();
+        }
+    </script>
 </body>
 
 </html>

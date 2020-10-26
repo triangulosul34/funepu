@@ -26,6 +26,7 @@ $categoria = $_GET['categoria'];
         while ($row = pg_fetch_object($sth)) { ?> "<option value='<?= $row->descricao; ?>'><?= $row->descricao; ?></option>" +
         <?php }
         ?> "</select></td>" +
+        "<td><input type='text' class='form-control' onkeypress='return event.charCode >= 48 && event.charCode <= 57' /></td>" +
         "<td style='display:none;'><?= $categoria; ?></td>" +
         "<td><button class='btn btn-success' onclick='salvar(this)'>Salvar</button></td>" +
         "</tr>");

@@ -1004,21 +1004,76 @@ if ($destino != '') {
             </div>
         </div>
     </div>
-    <div class="modal fade" id="ExemploModalCentralizado" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+    <div class="modal" id="ExemploModalCentralizado" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <!-- <h5 class="modal-title" id="TituloModalCentralizado">Título do modal</h5> -->
-                    <div class="modal-body">
-
-                        <label for="message-text" class="col-form-label">Observações:</label>
+                    <h5 class="modal-title" id="TituloModalCentralizado">Solicitação de Internação</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="message-text" class="col-form-label">Observações:</label>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <!-- <textarea class="form-control" name="obs_modal" id="obs_modal" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea> -->
-                        <textarea name="obs_modal" id="obs_modal" cla3ss="form-control" rows="15" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea>
-                        <br>
+                        <div class="col-md-3 ml-3">
+                            <label class="control-label">CID</label>
+                            <input type="text" name="CID_permanencia" id="CID_permanencia" class="form-control" value="" onkeyup="maiuscula(this)" onblur="buscaCidpermanencia(this)" maxlength='5'>
+                        </div>
+                        <div class="col-md-8">
+                            <label class="control-label">Diagnóstico Principal</label>
+                            <input type="text" name="diag_pri_permanencia" id="diag_pri_permanencia" onkeyup="retornaCidpermanencia(this)" class="form-control" value="">
 
+                            <!-- Está parte do codigo é referente a busca do CID -->
+
+                            <style>
+                                table #cidTable {
+                                    border-collapse: collapse;
+                                    width: 100%;
+                                }
+
+                                #cidTable th,
+                                #cidTable td {
+                                    text-align: left;
+                                    padding: 8px;
+                                }
+
+                                #cidTable tr:nth-child(even) {
+                                    background-color: #f0f0f0;
+                                }
+
+                                #lista_diagnostico {
+                                    height: 150px;
+                                    overflow: scroll;
+                                    display: none;
+                                    overflow-x: hidden;
+
+                                }
+
+                                #cidTable a {
+                                    text-decoration: none;
+                                }
+
+                                .linha {
+                                    padding: 10px;
+                                    border-top: 1px solid #999999;
+                                }
+                            </style>
+                            <div id="lista_diagnostico_permanencia">
+                                <table id="cidTablepermanencia" class="table table-hover table-striped width-full">
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea name="obs_modal" id="obs_modal" cla3ss="form-control" rows="15" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea>
+                        </div>
                     </div>
                 </div>
-
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                     <button type="button" data-dismiss="modal" onclick="modal_obs(<?php echo $transacao; ?> );" class="btn btn-primary">Salvar mudanças</button>
@@ -2240,6 +2295,10 @@ if ($destino != '') {
             $("#cidAtestado").val(cid.value);
         }
 
+        function copiarCidpermanencia(cid) {
+            $("#cidAtestado").val(cid.value);
+        }
+
         function marcardesmarcar() {
             $('.marcar').each(function() {
                 if (this.checked) $(this).attr("checked", false);
@@ -2775,6 +2834,14 @@ if ($destino != '') {
                 $('#diag_pri').val(dataReturn);
             });
         });
+
+        function buscaCidpermanencia(a) {
+            var url = 'ajax_buscar_cid_permanencia.php?cid=' + a.value;
+            $.get(url, function(dataReturn) {
+                $('#diag_pri_permanencia').val(dataReturn);
+            });
+        }
+
         // Autenticacao da pendÃªncia do paciente
         $("#autoriza-pendencia-bt").click(function() {
 
@@ -2846,17 +2913,22 @@ if ($destino != '') {
 
         function modal_obs(id) {
             var modal = document.getElementById('obs_modal').value;
+            var cid = document.getElementById('CID_permanencia').value;
             // modal = modal.replace(/(?:\r\n|\r|\n)/g, '/p');
             // modal = modal.replace('#', '');
-            // alert("salvar_obs.php?modal=" + modal + "&id=" + id);
-            $.get("salvar_obs.php", {
-                    modal: modal,
-                    id: id
-                },
+            if (cid == '') {
+                alert("Por favor preencha o CID referente a internação!!!");
+            } else {
+                $.get("salvar_obs.php", {
+                        modal: modal,
+                        cid: cid,
+                        id: id
+                    },
 
-                function(dataReturn) {
-                    $('#teste').html(dataReturn);
-                })
+                    function(dataReturn) {
+                        $('#teste').html(dataReturn);
+                    })
+            }
         }
 
         $("select").chosen({
@@ -3004,6 +3076,27 @@ if ($destino != '') {
                 checkeds.push($(this).val());
             });
             if (checkeds) window.open('impexamelab.php?id=' + checkeds);
+        }
+
+        function retornaCidpermanencia(valor) { //A fun褯 顰ara retorno do CID 10
+            var cid = valor.value;
+            $("#lista_diagnostico_permanencia").css("display", "block");
+            $.get('retorno_cid_permanencia.php?cid=' + cid, function(dataReturn) {
+                $('#cidTablepermanencia').html(dataReturn);
+            });
+
+            //Ocultar a caixa de sugest䯠do CID
+            if (cid == "") {
+                $("#lista_diagnostico_permanencia").slideUp(100);
+            }
+
+        }
+
+        function preencheCidpermanencia(cid, descricao) {
+            $("#CID_permanencia").val(cid);
+            $("#diag_pri_permanencia").val(descricao);
+            $('#cidTablepermanencia').empty();
+            $("#lista_diagnostico_permanencia").slideUp(100);
         }
     </script>
 

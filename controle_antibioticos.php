@@ -113,12 +113,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(1)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 1 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 1 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -126,6 +127,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -153,12 +155,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(2)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 2 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 2 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -166,6 +169,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -193,12 +197,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(3)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 3 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 3 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -206,6 +211,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -233,12 +239,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(4)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 4 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 4 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -246,6 +253,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -273,12 +281,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(5)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 5 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 5 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -286,6 +295,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -313,12 +323,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(6)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 6 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 6 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -326,6 +337,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -353,12 +365,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(7)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 7 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 7 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -366,6 +379,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -393,12 +407,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(8)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 8 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 8 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -406,6 +421,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->categoria; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -433,12 +449,13 @@
                                                                         <th>Antibiotico</th>
                                                                         <th>Via</th>
                                                                         <th>Aprazamento</th>
+                                                                        <th>Quantidade</th>
                                                                         <th>Ação <button onclick="adicionar(9)" class="btn btn-sm btn-primary ml-2">Novo</button></th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     <?php include('conexao.php');
-                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 9 group by 1,2,3,4,5";
+                                                                    $sql = "select a.controle_id, a.ordem, a.via, a.aprazamento, a.quantidade, a.categoria, array_to_string(array_agg(b.descricao),' + ') as descricao from (select controle_id, ordem, via, aprazamento, quantidade, categoria, unnest(string_to_array(medicamento, ',')) medicamento from controle_antimicrobiano) a inner join medicamentos b on a.medicamento::integer = b.id where categoria = 9 group by 1,2,3,4,5,6 order by ordem";
                                                                     $sth = pg_query($sql) or die($sql);
                                                                     while ($row = pg_fetch_object($sth)) { ?>
                                                                         <tr>
@@ -446,6 +463,7 @@
                                                                             <td><?= $row->descricao; ?></td>
                                                                             <td><?= $row->via; ?></td>
                                                                             <td><?= $row->aprazamento; ?></td>
+                                                                            <td><?= $row->quantidade; ?></td>
                                                                             <td style='display:none;'><?= $row->categoria; ?></td>
                                                                             <td style='display:none;'><?= $row->controle_id; ?></td>
                                                                             <td><button class="btn btn-sm btn-warning m-1" onclick="editar(this,<?= $row->controle_id; ?>)"><i class="far fa-edit"></i></button><button class="btn btn-sm btn-danger m-1" onclick="deletar_antibiotico(<?= $row->controle_id; ?>,<?= $row->controle; ?>)"><i class="far fa-trash-alt"></i></button></td>
@@ -507,12 +525,14 @@
             var antibiotico = par.children("td:nth-child(2)").children("select").val();
             var via = par.children("td:nth-child(3)").children("select").val();
             var aprazamento = par.children("td:nth-child(4)").children("select").val();
-            var categoria = par.children("td:nth-child(5)").html();
+            var quantidade = par.children("td:nth-child(5)").children("input[type=text]").val();
+            var categoria = par.children("td:nth-child(6)").html();
 
-            $.get("salvar_antibiotico.php?ordem=" + ordem + "&antibiotico=" + antibiotico + "&via=" + via + "&aprazamento=" + aprazamento + "&categoria=" + categoria, function(dataReturn) {
-                $('#retorno').html(dataReturn);
-                Swal.fire('Cadastrado com sucesso');
-            });
+            $.get("salvar_antibiotico.php?ordem=" + ordem + "&antibiotico=" + antibiotico + "&via=" + via + "&aprazamento=" + aprazamento + "&quantidade=" + quantidade + "&categoria=" + categoria,
+                function(dataReturn) {
+                    $('#retorno').html(dataReturn);
+                    Swal.fire('Cadastrado com sucesso');
+                });
         }
 
         function editar_antibiotico(a, b) {
@@ -521,10 +541,11 @@
             var antibiotico = par.children("td:nth-child(2)").children("select").val();
             var via = par.children("td:nth-child(3)").children("select").val();
             var aprazamento = par.children("td:nth-child(4)").children("select").val();
-            var categoria = par.children("td:nth-child(5)").html();
-            var id = par.children("td:nth-child(6)").html();
+            var quantidade = par.children("td:nth-child(5)").children("input[type=text]").val();
+            var categoria = par.children("td:nth-child(6)").html();
+            var id = par.children("td:nth-child(7)").html();
 
-            $.get("editar_antibiotico.php?ordem=" + ordem + "&antibiotico=" + antibiotico + "&via=" + via + "&aprazamento=" + aprazamento + "&categoria=" + categoria + "&id=" + id, function(dataReturn) {
+            $.get("editar_antibiotico.php?ordem=" + ordem + "&antibiotico=" + antibiotico + "&via=" + via + "&aprazamento=" + aprazamento + "&categoria=" + categoria + "&quantidade=" + quantidade + "&id=" + id, function(dataReturn) {
                 $('#retorno').html(dataReturn);
                 Swal.fire('Cadastrado com sucesso');
             });
@@ -536,9 +557,10 @@
             var antibiotico = par.children("td:nth-child(2)");
             var via = par.children("td:nth-child(3)");
             var aprazamento = par.children("td:nth-child(4)");
-            var categoria = par.children("td:nth-child(5)");
+            var quantidade = par.children("td:nth-child(5)");
             var categoria = par.children("td:nth-child(6)");
-            var salvar = par.children("td:nth-child(7)");
+            var controle = par.children("td:nth-child(7)");
+            var salvar = par.children("td:nth-child(8)");
 
             ordem.html("<input type='text' class='form-control' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value='" + ordem.html() + "'/>");
             antibiotico.html("<select class='form-control selectnew multat' data-size='4' multiple='multiple' data-live-search='true' name='antibiotico' id='antibiotico' ><option value=''></option><?php
@@ -563,6 +585,8 @@
                 <?php }
                 ?> "</select>");
             categoria.html(categoria.html());
+            quantidade.html("<input type='text' class='form-control' onkeypress='return event.charCode >= 48 && event.charCode <= 57' value='" + quantidade.html() + "'/>");
+            controle.html(categoria.html());
             salvar.html("<button class='btn btn-success' onclick='editar_antibiotico(this)'>Salvar</button>");
             $('.multat').select2();
         }
