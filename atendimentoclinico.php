@@ -25,14 +25,12 @@ function validaCPF($cpf = null)
         return false;
     }  // Verifica se nenhuma das sequências invalidas abaixo
     // foi digitada. Caso afirmativo, retorna falso
-    else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
+    elseif ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
         return false;
-        // Calcula os digitos verificadores para verificar se o
+    // Calcula os digitos verificadores para verificar se o
         // CPF é válido
     } else {
-
         for ($t = 9; $t < 11; $t++) {
-
             for ($d = 0, $c = 0; $c < $t; $c++) {
                 $d += $cpf{
                     $c} * (($t + 1) - $c);
@@ -623,7 +621,9 @@ if ($destino != '') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -638,10 +638,12 @@ if ($destino != '') {
 
     <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"> -->
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 
-    <link rel="stylesheet " href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet "
+        href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
 
     <!--load all styles -->
 
@@ -729,7 +731,8 @@ if ($destino != '') {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
-    <div class="modal fade text-left" id="modalFimEvolucao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+    <div class="modal fade text-left" id="modalFimEvolucao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary white">
@@ -744,7 +747,8 @@ if ($destino != '') {
 
                             <div class="col-sm-12">
                                 <label class="control-label  margin-top-10">Destino dado ao Paciente</label>
-                                <select class="form-control" name="destino" id="destino2" onchange="seleciona_setor(this)" required>
+                                <select class="form-control" name="destino" id="destino2"
+                                    onchange="seleciona_setor(this)" required>
                                     <option value="">Escolha um Destino
                                     </option>;
                                     <option value="01">ALTA
@@ -764,18 +768,22 @@ if ($destino != '') {
 
                             <div class="col-sm-12 margin-top-20">
                                 <label class="control-label">Motivo do Extorno</label>
-                                <textarea name="motivo_extorno" rows="5" class="form-control" onkeyup="maiuscula(this)" required></textarea>
-                                <input type="hidden" name="atendimento" value="<?php echo $transacao; ?>">
+                                <textarea name="motivo_extorno" rows="5" class="form-control" onkeyup="maiuscula(this)"
+                                    required></textarea>
+                                <input type="hidden" name="atendimento"
+                                    value="<?php echo $transacao; ?>">
                             </div>
                         </div>
 
                         <div class="col-md-12 margin-top-10 padding-0">
 
                             <div class="col-md-6">
-                                <input type='submit' name='extornar_alta' id="extornar_alta" class="btn btn-success width-full" value='Salvar'>
+                                <input type='submit' name='extornar_alta' id="extornar_alta"
+                                    class="btn btn-success width-full" value='Salvar'>
                             </div>
                             <div class="col-md-6">
-                                <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal" class="btn btn-danger width-full" value='Cancelar'>
+                                <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal"
+                                    class="btn btn-danger width-full" value='Cancelar'>
                             </div>
                         </div>
 
@@ -786,7 +794,8 @@ if ($destino != '') {
             </div>
         </div>
     </div>
-    <div class="modal fade" id="exampleTabs" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+    <div class="modal fade" id="exampleTabs" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog"
+        tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -806,21 +815,28 @@ if ($destino != '') {
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Data do atendimento</label>
-                                    <input type="text" name="data_atendimento" id="data_atendimento" class="form-control" value="<?php echo inverteData($data_transacao); ?>" onKeyPress="formata(this,'##/##/####')" maxlength="10">
+                                    <input type="text" name="data_atendimento" id="data_atendimento"
+                                        class="form-control"
+                                        value="<?php echo inverteData($data_transacao); ?>"
+                                        onKeyPress="formata(this,'##/##/####')" maxlength="10">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Hora do atendimento</label>
-                                    <input type="text" name="hora_atendimento" id="hora_atendimento" class="form-control" value="<?php echo $hora_transacao; ?>" onKeyPress="formata(this,'##:##')" maxlength="5">
+                                    <input type="text" name="hora_atendimento" id="hora_atendimento"
+                                        class="form-control"
+                                        value="<?php echo $hora_transacao; ?>"
+                                        onKeyPress="formata(this,'##:##')" maxlength="5">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Dias de atestado</label>
-                                    <input type="text" name="dias_atestado" id="dias_atestado" class="form-control" value="">
+                                    <input type="text" name="dias_atestado" id="dias_atestado" class="form-control"
+                                        value="">
                                 </div>
                             </div>
 
@@ -828,7 +844,9 @@ if ($destino != '') {
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">CID</label>
-                                    <input type="text" name="cidAtestado" id="cidAtestado" class="form-control" value="<?php echo $CID; ?>" onkeyup="maiuscula(this)">
+                                    <input type="text" name="cidAtestado" id="cidAtestado" class="form-control"
+                                        value="<?php echo $CID; ?>"
+                                        onkeyup="maiuscula(this)">
                                 </div>
                             </div>
 
@@ -837,9 +855,12 @@ if ($destino != '') {
 
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="atendimento" id="atendimento" value="<?= $_GET['id'] ?>">
-                        <input type="hidden" name="profissional" id="profissional" value="<?php echo $usuario ?>">
-                        <input type="hidden" name="paciente" id="paciente" value="<?php echo $prontuario ?>">
+                        <input type="hidden" name="atendimento" id="atendimento"
+                            value="<?= $_GET['id'] ?>">
+                        <input type="hidden" name="profissional" id="profissional"
+                            value="<?php echo $usuario ?>">
+                        <input type="hidden" name="paciente" id="paciente"
+                            value="<?php echo $prontuario ?>">
 
                         <button type="submit" name="enviar" class="btn btn-default">Imprimir</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
@@ -851,7 +872,8 @@ if ($destino != '') {
             </div>
         </div>
     </div>
-    <div class="modal fade" id="comparecimento" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+    <div class="modal fade" id="comparecimento" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog"
+        tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -865,34 +887,45 @@ if ($destino != '') {
 
                 <form method="post" enctype="multipart/form-data" action="relComparecimento.php" target="_blank">
                     <div class="modal-body" id='modalbody'>
-                        <input type="hidden" name="nome_comparecimento" value="<?= $nome; ?>">
+                        <input type="hidden" name="nome_comparecimento"
+                            value="<?= $nome; ?>">
                         <div class="row">
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Data do atendimento</label>
-                                    <input type="text" name="data_atendimento" id="data_atendimento" class="form-control" value="<?php echo inverteData($data_transacao); ?>" onKeyPress="formata(this,'##/##/####')" maxlength="10">
+                                    <input type="text" name="data_atendimento" id="data_atendimento"
+                                        class="form-control"
+                                        value="<?php echo inverteData($data_transacao); ?>"
+                                        onKeyPress="formata(this,'##/##/####')" maxlength="10">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Hora do atendimento</label>
-                                    <input type="text" name="hora_atendimento" id="hora_atendimento" class="form-control" value="<?php echo $hora_transacao; ?>" onKeyPress="formata(this,'##:##')" maxlength="5">
+                                    <input type="text" name="hora_atendimento" id="hora_atendimento"
+                                        class="form-control"
+                                        value="<?php echo $hora_transacao; ?>"
+                                        onKeyPress="formata(this,'##:##')" maxlength="5">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Fim do atendimento</label>
-                                    <input type="text" style="border-color:red" name="hora_final" id="hora_final" class="form-control" value="<?php echo date('H:m'); ?>" value="" onKeyPress="formata(this,'##:##')" maxlength="5" required>
+                                    <input type="text" style="border-color:red" name="hora_final" id="hora_final"
+                                        class="form-control"
+                                        value="<?php echo date('H:m'); ?>"
+                                        value="" onKeyPress="formata(this,'##:##')" maxlength="5" required>
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="">Afim de:</label>
-                                    <textarea name="relato_comparecimento" id="relato_comparecimento" class="form-control" cols="30" rows="10"></textarea>
+                                    <textarea name="relato_comparecimento" id="relato_comparecimento"
+                                        class="form-control" cols="30" rows="10"></textarea>
                                 </div>
                             </div>
 
@@ -910,7 +943,8 @@ if ($destino != '') {
             </div>
         </div>
     </div>
-    <div class="modal fade text-left" id="modalLaboratorio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+    <div class="modal fade text-left" id="modalLaboratorio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary white">
@@ -947,13 +981,15 @@ if ($destino != '') {
 
                 <div class="modal-footer">
                     <input type='button' name='soclab' id="soclab" class="btn btn-success width-full" value='Salvar'>
-                    <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal" class="btn btn-danger width-full" value='Cancelar'>
+                    <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal"
+                        class="btn btn-danger width-full" value='Cancelar'>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modalSolicitaReceituario" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+    <div class="modal fade" id="modalSolicitaReceituario" aria-hidden="true" aria-labelledby="exampleModalTabs"
+        role="dialog" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -969,33 +1005,38 @@ if ($destino != '') {
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Item/Medicamento</label>
-                                    <input id="medicamento-1" maxlength="100" name="medicamento-1" class="form-control" value="" onkeyup="maiuscula(this)">
+                                    <input id="medicamento-1" maxlength="100" name="medicamento-1" class="form-control"
+                                        value="" onkeyup="maiuscula(this)">
                                 </div>
                             </div>
 
                             <div class="col-2">
                                 <div class="form-group">
                                     <label>Quantidade</label>
-                                    <input id="quantidade-1" maxlength="50" name="quantidade-1" class="form-control" value="" onkeyup="maiuscula(this)">
+                                    <input id="quantidade-1" maxlength="50" name="quantidade-1" class="form-control"
+                                        value="" onkeyup="maiuscula(this)">
                                 </div>
                             </div>
 
                             <div class="col-5">
                                 <div class="form-group">
                                     <label>Modo de usar</label>
-                                    <input id="usar-1" name="usar-1" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)">
+                                    <input id="usar-1" name="usar-1" maxlength="50" class="form-control" value=""
+                                        onkeyup="maiuscula(this)">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div id="botao">
                         <div class="col-12" style="text-aling: center">
-                            <input type='button' style="margin: 0 auto;" id="novo_receituario" class="btn btn-success" value="Adicionar Item">
+                            <input type='button' style="margin: 0 auto;" id="novo_receituario" class="btn btn-success"
+                                value="Adicionar Item">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="salvar_receituario" value="" class="btn btn-default" onclick="salvar_prescricao(this)">Salvar</button>
+                    <button type="button" id="salvar_receituario" value="" class="btn btn-default"
+                        onclick="salvar_prescricao(this)">Salvar</button>
                     <button type="button" id="closemodal" class="btn btn-default" data-dismiss="modal">Fechar</button>
                 </div>
 
@@ -1004,7 +1045,8 @@ if ($destino != '') {
             </div>
         </div>
     </div>
-    <div class="modal" id="ExemploModalCentralizado" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+    <div class="modal" id="ExemploModalCentralizado" tabindex="-1" role="dialog"
+        aria-labelledby="TituloModalCentralizado" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1017,14 +1059,17 @@ if ($destino != '') {
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <!-- <textarea class="form-control" name="obs_modal" id="obs_modal" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea> -->
+                        <!-- <textarea class="form-control" name="obs_modal" id="obs_modal" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea>
+                        -->
                         <div class="col-md-3 ml-3">
                             <label class="control-label">CID</label>
-                            <input type="text" name="CID_permanencia" id="CID_permanencia" class="form-control" value="" onkeyup="maiuscula(this)" onblur="buscaCidpermanencia(this)" maxlength='5'>
+                            <input type="text" name="CID_permanencia" id="CID_permanencia" class="form-control" value=""
+                                onkeyup="maiuscula(this)" onblur="buscaCidpermanencia(this)" maxlength='5'>
                         </div>
                         <div class="col-md-8">
                             <label class="control-label">Diagnóstico Principal</label>
-                            <input type="text" name="diag_pri_permanencia" id="diag_pri_permanencia" onkeyup="retornaCidpermanencia(this)" class="form-control" value="">
+                            <input type="text" name="diag_pri_permanencia" id="diag_pri_permanencia"
+                                onkeyup="retornaCidpermanencia(this)" class="form-control" value="">
 
                             <!-- Está parte do codigo é referente a busca do CID -->
 
@@ -1070,19 +1115,24 @@ if ($destino != '') {
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <textarea name="obs_modal" id="obs_modal" cla3ss="form-control" rows="15" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea>
+                            <textarea name="obs_modal" id="obs_modal" cla3ss="form-control" rows="15"
+                                style="resize: none" rows="10" cols="60" form="usrform"
+                                static><?php echo $obs_modal; ?></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                    <button type="button" data-dismiss="modal" onclick="modal_obs(<?php echo $transacao; ?> );" class="btn btn-primary">Salvar mudanças</button>
+                    <button type="button" data-dismiss="modal"
+                        onclick="modal_obs(<?php echo $transacao; ?> );"
+                        class="btn btn-primary">Salvar mudanças</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="relatorio_pmmg" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+    <div class="modal fade" id="relatorio_pmmg" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1097,25 +1147,34 @@ if ($destino != '') {
                 ?>
                 <form action="relatorio_pmmg.php" id="form_pmmg" target="_blank" method="post">
                     <div class="modal-body">
-                        <input type="hidden" name="atendimento_id_pmmg" value="<?= $transacao ?>">
+                        <input type="hidden" name="atendimento_id_pmmg"
+                            value="<?= $transacao ?>">
                         <label for="">Queixa do Paciente</label>
-                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="300" name="queixa_paciente_pmmg" id="queixa_paciente_pmmg" class="form-control"><?= $row->queixa_paciente; ?></textarea>
+                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;"
+                            maxlength="300" name="queixa_paciente_pmmg" id="queixa_paciente_pmmg"
+                            class="form-control"><?= $row->queixa_paciente; ?></textarea>
                         <label for="">Diagnostico Medico</label>
-                        <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;" maxlength="200" name="diagnostico_medico_pmmg" id="diagnostico_medico_pmmg" class="form-control"><?= $row->diagnostico_medico; ?></textarea>
+                        <textarea rows="2" onkeydown="limitLines(this, 2)" style="resize:none;overflow: hidden;"
+                            maxlength="200" name="diagnostico_medico_pmmg" id="diagnostico_medico_pmmg"
+                            class="form-control"><?= $row->diagnostico_medico; ?></textarea>
                         <label for="">Orientação Paciente</label>
-                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;" maxlength="300" name="orientacao_paciente_pmmg" id="orientacao_paciente_pmmg" class="form-control"><?= $row->orientacao_paciente; ?></textarea>
+                        <textarea rows="3" onkeydown="limitLines(this, 3)" style="resize:none;overflow: hidden;"
+                            maxlength="300" name="orientacao_paciente_pmmg" id="orientacao_paciente_pmmg"
+                            class="form-control"><?= $row->orientacao_paciente; ?></textarea>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                        <button type="button" onclick="this.form.submit();" data-dismiss="modal" class="btn btn-primary">Salvar</button>
+                        <button type="button" onclick="this.form.submit();" data-dismiss="modal"
+                            class="btn btn-primary">Salvar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="referencia_contra" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+    <div class="modal fade" id="referencia_contra" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -1130,25 +1189,35 @@ if ($destino != '') {
                 ?>
                 <form action="referenciaecontra.php" id="form_referencia" target="_blank" method="post">
                     <div class="modal-body">
-                        <input type="hidden" name="atendimento_id_referencia" value="<?= $transacao ?>">
+                        <input type="hidden" name="atendimento_id_referencia"
+                            value="<?= $transacao ?>">
                         <label for="">Unidade</label>
                         <select name="unidade_referencia" id="unidade_referencia">
                             <option value="UNIDADE BASICA DE SAUDE">UNIDADE BASICA DE SAUDE</option>
                             <option value="UNIDADE DIA">UNIDADE DIA</option>
                             <option value="COT">COT</option>
+                            <option value="CAPS">CAPS</option>
+                            <option value="SIAP">SIAP</option>
                         </select>
                         <br>
                         <label for="">Justificativa</label>
-                        <textarea rows="15" style="resize:none;overflow: hidden;" maxlength="500" name="justificativa_referencia" id="justificativa_referencia" class="form-control"><?= $row->justificativa; ?></textarea>
+                        <textarea rows="15" style="resize:none;overflow: hidden;" maxlength="500"
+                            name="justificativa_referencia" id="justificativa_referencia"
+                            class="form-control"><?= $row->justificativa; ?></textarea>
                         <label for="">Diagnostico ou hipótese diagnostica</label>
-                        <textarea rows="2" style="resize:none;overflow: hidden;" maxlength="300" name="diagnostico_referencia" id="diagnostico_referencia" class="form-control"><?= $row->diagnostico; ?></textarea>
+                        <textarea rows="2" style="resize:none;overflow: hidden;" maxlength="300"
+                            name="diagnostico_referencia" id="diagnostico_referencia"
+                            class="form-control"><?= $row->diagnostico; ?></textarea>
                         <label for="">Resultado Exames Realizados</label>
-                        <textarea rows="5" style="resize:none;overflow: hidden;" maxlength="300" name="resultado_referencia" id="resultado_referencia" class="form-control"><?= $row->resultado; ?></textarea>
+                        <textarea rows="5" style="resize:none;overflow: hidden;" maxlength="300"
+                            name="resultado_referencia" id="resultado_referencia"
+                            class="form-control"><?= $row->resultado; ?></textarea>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-                        <button type="button" onclick="this.form.submit();" data-dismiss="modal" class="btn btn-primary">Salvar</button>
+                        <button type="button" onclick="this.form.submit();" data-dismiss="modal"
+                            class="btn btn-primary">Salvar</button>
                     </div>
                 </form>
             </div>
@@ -1177,7 +1246,8 @@ if ($destino != '') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Atendimento Clínico
                                                 </h4>
                                             </div>
@@ -1202,29 +1272,43 @@ if ($destino != '') {
 
                         <!-- CORPO DA PAGINA -->
                         <form method="post" id="pedido" name='pedido' autocomplete="off">
-                            <input type="hidden" value="<?php echo $prioridade; ?>" id="prioridade">
-                            <input type="hidden" value="<?php echo $coronavirus; ?>" id="coronavirus" name="coronavirus">
-                            <input type="hidden" name="transacao" id="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly>
+                            <input type="hidden"
+                                value="<?php echo $prioridade; ?>"
+                                id="prioridade">
+                            <input type="hidden"
+                                value="<?php echo $coronavirus; ?>"
+                                id="coronavirus" name="coronavirus">
+                            <input type="hidden" name="transacao" id="transacao" class="form-control"
+                                value="<?php echo $transacao; ?>"
+                                readonly>
                             <div class="col-12">
                                 <div style="display: flex; width: 100%;max-height: 280px">
-                                    <div class="user text-center d-flex flex-column justify-content-center align-items-center" style="background-color: #12a1a6;border-radius: 20px; margin-right: 20px; padding:15px; max-width: 170px; justify-content: space-evenly;">
-                                        <div class="col-12 d-flex flex-column align-items-center" style="justify-content: space-between; padding: 0">
-                                            <img src="app-assets/img/gallery/user-circle.png" alt="\" height="70" width="70">
+                                    <div class="user text-center d-flex flex-column justify-content-center align-items-center"
+                                        style="background-color: #12a1a6;border-radius: 20px; margin-right: 20px; padding:15px; max-width: 170px; justify-content: space-evenly;">
+                                        <div class="col-12 d-flex flex-column align-items-center"
+                                            style="justify-content: space-between; padding: 0">
+                                            <img src="app-assets/img/gallery/user-circle.png" alt="\" height="70"
+                                                width="70">
                                             <h6 style="color: white"><b id="nome"><?php if ($nome_social == '') {
-                                                                                        echo $nome;
-                                                                                    } else {
-                                                                                        echo $nome_social;
-                                                                                    } ?></b></h6>
-                                            <h6 style="color: white"><b id="sexo"><?php echo $sexo; ?></b></h6>
-                                            <h6 style="color: white"><b id="cns"><?php echo $cns; ?></b></h6>
+                    echo $nome;
+                } else {
+                    echo $nome_social;
+                } ?>
+                                                </b></h6>
+                                            <h6 style="color: white"><b id="sexo"><?php echo $sexo; ?></b>
+                                            </h6>
+                                            <h6 style="color: white"><b id="cns"><?php echo $cns; ?></b>
+                                            </h6>
                                         </div>
                                     </div>
 
-                                    <div class="quadros" style="background-color: #EEEEEE;border-radius: 20px; border: #12a1a6 solid 2px;flex: 1;">
+                                    <div class="quadros"
+                                        style="background-color: #EEEEEE;border-radius: 20px; border: #12a1a6 solid 2px;flex: 1;">
                                         <div class="" style="display: flex; justify-content: space-around; margin: 8px">
                                             <div class="item">
                                                 <div class="d-flex">
-                                                    <i class="fas fa-weight" aria-hidden="true" style="font-size: 20pt"></i>
+                                                    <i class="fas fa-weight" aria-hidden="true"
+                                                        style="font-size: 20pt"></i>
                                                     <h2 style="font-weight: 700;margin: 0 10px;color: #12a1a6; ">
                                                         <?php echo $peso; ?>KG
                                                     </h2>
@@ -1240,7 +1324,8 @@ if ($destino != '') {
 
                                             <div class="item">
                                                 <div class="d-flex">
-                                                    <img src="app-assets/img/svg/glicose.png" alt="\" height="30" width="20">
+                                                    <img src="app-assets/img/svg/glicose.png" alt="\" height="30"
+                                                        width="20">
                                                     <h2 style="font-weight: 700;margin: 0 10px;color: #12a1a6; ">
                                                         <?php echo $glicose; ?>
                                                     </h2>
@@ -1264,7 +1349,8 @@ if ($destino != '') {
                                                 </div>
                                                 <div class="d-flex">
 
-                                                    <img src="app-assets/img/svg/dor.png" alt="\" height="25" width="25">
+                                                    <img src="app-assets/img/svg/dor.png" alt="\" height="25"
+                                                        width="25">
                                                     <h2 style="font-weight: 700;margin: 0 10px;color: #12a1a6; ">
                                                         <?php echo $dor; ?>
                                                     </h2>
@@ -1273,13 +1359,15 @@ if ($destino != '') {
                                             </div>
                                             <div class="item ">
                                                 <div class="d-flex">
-                                                    <img src="app-assets/img/svg/nano.png" alt="\" height="25" width="25">
+                                                    <img src="app-assets/img/svg/nano.png" alt="\" height="25"
+                                                        width="25">
                                                     <h2 style="font-weight: 700;margin: 0 10px;color: #12a1a6; ">
                                                         <?php echo $pressaosistolica . "X" . $pressaodiastolica; ?>
                                                     </h2>
                                                 </div>
                                                 <div class="d-flex">
-                                                    <img src="app-assets/img/svg/pulso.png" alt="\" height="30" width="20">
+                                                    <img src="app-assets/img/svg/pulso.png" alt="\" height="30"
+                                                        width="20">
 
                                                     <?php
                                                     $data_finalizado = substr($datahora, 0, -8);
@@ -1287,15 +1375,16 @@ if ($destino != '') {
                                                     $cor = '#FFC107';
                                                     if ($prioridade == "AZUL") {
                                                         $cor = '#2196F3';
-                                                    } else if ($prioridade == "LARANJA") {
+                                                    } elseif ($prioridade == "LARANJA") {
                                                         $cor = '#FF9800';
-                                                    } else if ($prioridade == 'VERMELHO') {
+                                                    } elseif ($prioridade == 'VERMELHO') {
                                                         $cor = '#B71C1C';
-                                                    } else if ($prioridade == 'VERDE') {
+                                                    } elseif ($prioridade == 'VERDE') {
                                                         $cor = '#4CAF50';
                                                     }
                                                     ?>
-                                                    <h2 style="font-weight: 700;margin: 0 10px;color: <?php echo $cor; ?> ">
+                                                    <h2
+                                                        style="font-weight: 700;margin: 0 10px;color: <?php echo $cor; ?> ">
                                                         <?php echo $prioridade; ?>
                                                     </h2>
                                                 </div>
@@ -1303,15 +1392,18 @@ if ($destino != '') {
                                         </div>
                                         <div id="teste"></div>
 
-                                        <div class="d-flex flex-column justify-content-center align-items-center" style="background-color: #12a1a6; height: 20px">
+                                        <div class="d-flex flex-column justify-content-center align-items-center"
+                                            style="background-color: #12a1a6; height: 20px">
                                             <h6 style="color: white;font-weight: bold;margin-bottom: 0px;">Observações
                                             </h6>
                                         </div>
 
 
                                         <div class="texto text-center">
-                                            <textarea disabled name="" id="texto" cols="" rows="4" style="width: 95.9%;height: 115px; border-radius: 0 0 20px 20px; border: 1px; padding: 10px 10px 0 10px;margin: 15px 20px 10px 15px;resize: none"><?php echo $relato; ?></textarea>
-                                            <div class="d-flex flex-column justify-content-center align-items-center" style="background-color: #12a1a6; height: 20px;border-radius: 0 0 17px 17px;">
+                                            <textarea disabled name="" id="texto" cols="" rows="4"
+                                                style="width: 95.9%;height: 115px; border-radius: 0 0 20px 20px; border: 1px; padding: 10px 10px 0 10px;margin: 15px 20px 10px 15px;resize: none"><?php echo $relato; ?></textarea>
+                                            <div class="d-flex flex-column justify-content-center align-items-center"
+                                                style="background-color: #12a1a6; height: 20px;border-radius: 0 0 17px 17px;">
                                                 <h8 style="color: white;margin-bottom: 0px;">
                                                     <?php echo "Realizado na data: <b>" . inverteData(trim($data_finalizado)) . "</b> no horário: <b>" . $hora_finalizada . "</b>  pelo username: <b>" . $usuario_enf . "</b>" ?>
                                                 </h8>
@@ -1320,144 +1412,221 @@ if ($destino != '') {
                                     </div>
                                 </div>
                                 <?php if ($coronavirus == 1 or $coronavirus == 10) {
-                                ?>
-                                    <div class="row mt-3">
-                                        <div class="col-md-2">
-                                            <h4 class="form-section-center"><img src="virus-home.png"> CheckList Covid</h4>
+                                                        ?>
+                                <div class="row mt-3">
+                                    <div class="col-md-2">
+                                        <h4 class="form-section-center"><img src="virus-home.png"> CheckList Covid</h4>
+                                    </div>
+                                    <div class="col-3 col">
+                                        <div class="col-sm-12"><br>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="tosse_secracao" name="tosse_secracao" <?php if ($tosse_secracao == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="tosse_secracao">Tosse/Secreção
+                                                    Catarral</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="dificuldade_respirar" name="dificuldade_respirar" <?php if ($dificuldade_respirar == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label"
+                                                    for="dificuldade_respirar">Dificuldade de Respirar</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="fadiga" name="fadiga" <?php if ($fadiga == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="fadiga">Fadiga</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="febre_alta" name="febre_alta" <?php if ($febre_alta == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="febre_alta">Febre Alta</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="congestao_nasal" name="congestao_nasal" <?php if ($congestao_nasal == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="congestao_nasal">Congestão
+                                                    Nasal</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="cefaleia" name="cefaleia" <?php if ($cefaleia == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="cefaleia">Cefaléia</label>
+                                            </div>
                                         </div>
-                                        <div class="col-3 col">
-                                            <div class="col-sm-12"><br>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="tosse_secracao" name="tosse_secracao" <?php if ($tosse_secracao == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="tosse_secracao">Tosse/Secreção
-                                                        Catarral</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dificuldade_respirar" name="dificuldade_respirar" <?php if ($dificuldade_respirar == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="dificuldade_respirar">Dificuldade de Respirar</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="fadiga" name="fadiga" <?php if ($fadiga == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="fadiga">Fadiga</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="febre_alta" name="febre_alta" <?php if ($febre_alta == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="febre_alta">Febre Alta</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="congestao_nasal" name="congestao_nasal" <?php if ($congestao_nasal == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="congestao_nasal">Congestão
-                                                        Nasal</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="cefaleia" name="cefaleia" <?php if ($cefaleia == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="cefaleia">Cefaléia</label>
-                                                </div>
+
+                                    </div>
+                                    <div id="covid2" class="col-3">
+                                        <div class="col-12"><br>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="dor_garganta" name="dor_garganta" <?php if ($dor_garganta == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="dor_garganta">Dor de
+                                                    Garganta</label>
                                             </div>
 
-                                        </div>
-                                        <div id="covid2" class="col-3">
-                                            <div class="col-12"><br>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dor_garganta" name="dor_garganta" <?php if ($dor_garganta == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="dor_garganta">Dor de
-                                                        Garganta</label>
-                                                </div>
 
 
-
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="diarreia" name="diarreia" <?php if ($diarreia == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="diarreia">Diarréia</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="nausea_vomito" name="nausea_vomito" <?php if ($nausea_vomito == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="nausea_vomito">Nausea/Vomitos</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="mialgia_artralgia" name="mialgia_artralgia" <?php if ($mialgia_artralgia == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="mialgia_artralgia">Mialgia ou
-                                                        Artralgia</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="calafrios" name="calafrios" <?php if ($calafrios == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="calafrios">Calafrios</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="anosmia_hiposmia" name="anosmia_hiposmia" <?php if ($anosmia_hiposmia == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="anosmia_hiposmia">Anosmia/Hiposmia/Digeusia</label>
-                                                </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="diarreia" name="diarreia" <?php if ($diarreia == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="diarreia">Diarréia</label>
                                             </div>
-
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="nausea_vomito" name="nausea_vomito" <?php if ($nausea_vomito == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label"
+                                                    for="nausea_vomito">Nausea/Vomitos</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="mialgia_artralgia" name="mialgia_artralgia" <?php if ($mialgia_artralgia == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="mialgia_artralgia">Mialgia ou
+                                                    Artralgia</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="calafrios" name="calafrios" <?php if ($calafrios == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="calafrios">Calafrios</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="anosmia_hiposmia" name="anosmia_hiposmia" <?php if ($anosmia_hiposmia == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label"
+                                                    for="anosmia_hiposmia">Anosmia/Hiposmia/Digeusia</label>
+                                            </div>
                                         </div>
-                                        <div id="covid2" class="col-3">
-                                            <div class="col-12"><br>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="diabetes" name="diabetes" <?php if ($diabetes == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="diabetes">Diabetes</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="has" name="has" <?php if ($has == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="has">HAS</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="obesidade" name="obesidade" <?php if ($obesidade == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="obesidade">Obesidade</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="doenca_coronariana" name="doenca_coronariana" <?php if ($doenca_coronariana == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="doenca_coronariana">Doenca
-                                                        Coronariana</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="dpoc_asma" name="dpoc_asma" <?php if ($dpoc_asma == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="dpoc_asma">DPOC ou Asma</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="cancer" name="cancer" <?php if ($cancer == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="cancer">Cancer</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="drc" name="drc" <?php if ($drc == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="drc">DRC</label>
-                                                </div>
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input" id="imunodeficiencia" name="imunodeficiencia" <?php if ($imunodeficiencia == '1') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="imunodeficiencia">Imunodeficiência</label>
-                                                </div>
+
+                                    </div>
+                                    <div id="covid2" class="col-3">
+                                        <div class="col-12"><br>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="diabetes" name="diabetes" <?php if ($diabetes == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="diabetes">Diabetes</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="has" name="has" <?php if ($has == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="has">HAS</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="obesidade" name="obesidade" <?php if ($obesidade == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="obesidade">Obesidade</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="doenca_coronariana" name="doenca_coronariana" <?php if ($doenca_coronariana == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="doenca_coronariana">Doenca
+                                                    Coronariana</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="dpoc_asma" name="dpoc_asma" <?php if ($dpoc_asma == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="dpoc_asma">DPOC ou Asma</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="cancer" name="cancer" <?php if ($cancer == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="cancer">Cancer</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="drc" name="drc" <?php if ($drc == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label" for="drc">DRC</label>
+                                            </div>
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
+                                                id="imunodeficiencia" name="imunodeficiencia" <?php if ($imunodeficiencia == '1') {
+                                                            echo "checked";
+                                                        } ?>>
+                                                <label class="custom-control-label"
+                                                    for="imunodeficiencia">Imunodeficiência</label>
                                             </div>
                                         </div>
                                     </div>
-                                <?php } ?>
+                                </div>
+                                <?php
+                                                    } ?>
                                 <div class="card-body row">
                                     <!-- iniciando tabs -->
                                     <ul class="nav nav-tabs nav-justified col-12" style="padding-right: 0px;">
                                         <li class="nav-item">
-                                            <a class="nav-link active" id="active-tab" data-toggle="tab" href="#active" aria-controls="active" aria-expanded="true">Informaçoes do
+                                            <a class="nav-link active" id="active-tab" data-toggle="tab" href="#active"
+                                                aria-controls="active" aria-expanded="true">Informaçoes do
                                                 Atendimento</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="link-tab" data-toggle="tab" href="#link" aria-controls="link" aria-expanded="false">Exames de
+                                            <a class="nav-link" id="link-tab" data-toggle="tab" href="#link"
+                                                aria-controls="link" aria-expanded="false">Exames de
                                                 Imagem/Laboratoriais</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="click-tab" data-toggle="tab" href="#click" aria-controls="click" aria-expanded="false">Prescrições</a>
+                                            <a class="nav-link" id="click-tab" data-toggle="tab" href="#click"
+                                                aria-controls="click" aria-expanded="false">Prescrições</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="linkOpt-tab" data-toggle="tab" href="#linkOpt" aria-controls="linkOpt">Estadias/Receituário</a>
+                                            <a class="nav-link" id="linkOpt-tab" data-toggle="tab" href="#linkOpt"
+                                                aria-controls="linkOpt">Estadias/Receituário</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="linkOpt-tab" data-toggle="tab" href="#linkAtestados" aria-controls="linkOpt">Historico Atestados</a>
+                                            <a class="nav-link" id="linkOpt-tab" data-toggle="tab" href="#linkAtestados"
+                                                aria-controls="linkOpt">Historico Atestados</a>
                                         </li>
                                     </ul>
-                                    <input type="hidden" name="atendimento" id="atendimento" value="<?= $_GET['id'] ?>">
-                                    <input type="hidden" name="profissional" id="profissional" value="<?php echo $usuario ?>">
-                                    <input type="hidden" name="paciente" id="paciente" value="<?php echo $prontuario ?>">
-                                    <input type="hidden" id="id" value="<?php echo $paciente_id; ?>">
-                                    <input type="hidden" name="idade" id="idade" class="form-control" value="<?php echo $idade; ?>" readonly>
+                                    <input type="hidden" name="atendimento" id="atendimento"
+                                        value="<?= $_GET['id'] ?>">
+                                    <input type="hidden" name="profissional" id="profissional"
+                                        value="<?php echo $usuario ?>">
+                                    <input type="hidden" name="paciente" id="paciente"
+                                        value="<?php echo $prontuario ?>">
+                                    <input type="hidden" id="id"
+                                        value="<?php echo $paciente_id; ?>">
+                                    <input type="hidden" name="idade" id="idade" class="form-control"
+                                        value="<?php echo $idade; ?>"
+                                        readonly>
                                     <!-- Informaçoes do Atendimento Realizado -->
                                     <div class="tab-content px-1 col-12" style="height: 600px">
-                                        <div role="tabpanel" class="tab-pane active show" id="active" aria-labelledby="active-tab" aria-expanded="true">
+                                        <div role="tabpanel" class="tab-pane active show" id="active"
+                                            aria-labelledby="active-tab" aria-expanded="true">
 
                                             <div class="col-12 text-center mt-4 mb-4">
                                                 <h4 class="form-section-center"><i class="fas fa-info-circle"></i>
@@ -1468,12 +1637,16 @@ if ($destino != '') {
                                             <br>
                                             <div class="col-sm-12">
                                                 <label class="control-label">Queixa</label>
-                                                <input type="text" name="queixa" id="queixa" class="form-control" value="<?php echo $queixa; ?>" maxlength="80" onkeyup="maiuscula(this)" <?php echo $rdonly ?>>
+                                                <input type="text" name="queixa" id="queixa" class="form-control"
+                                                    value="<?php echo $queixa; ?>"
+                                                    maxlength="80" onkeyup="maiuscula(this)" <?php echo $rdonly ?>>
                                             </div>
                                             <br>
                                             <div class="col-sm-12 margin-top-10">
                                                 <label class="control-label">Exame Físico</label>
-                                                <textarea name="exame_fisico" class="form-control" rows="15" <?php echo $rdonly ?> required><?php echo $exame_fisico; ?></textarea> </br>
+                                                <textarea name="exame_fisico" class="form-control" rows="15"
+                                                    <?php echo $rdonly ?> required><?php echo $exame_fisico; ?></textarea>
+                                                </br>
                                             </div>
 
                                             <input id="usuario-autorizado" name="usuario-autorizado" type="hidden" />
@@ -1519,7 +1692,8 @@ if ($destino != '') {
                                         </div>
 
                                         <!-- EXAMES -->
-                                        <div class="tab-pane" id="link" role="tabpanel" aria-labelledby="link-tab" aria-expanded="false">
+                                        <div class="tab-pane" id="link" role="tabpanel" aria-labelledby="link-tab"
+                                            aria-expanded="false">
                                             <style>
                                                 input[type=checkbox] {
                                                     width: 20px;
@@ -1545,7 +1719,8 @@ if ($destino != '') {
                                                     </div>
 
                                                     <div class="col-sm-12 scroll">
-                                                        <table class="table condensed width-full" id="exames_atendimentos">
+                                                        <table class="table condensed width-full"
+                                                            id="exames_atendimentos">
                                                             <thead>
                                                                 <tr>
                                                                     <th></th>
@@ -1580,7 +1755,6 @@ if ($destino != '') {
 																LEFT JOIN modalidades f ON f.modalidade_id = e.setor where d.exame_id = " . $row->procedimento_id . " and a.data = '" . substr($row->dat_cad, 0, 10) . "' and c.origem = '01' and b.origem = 1 and pessoa_id_origem = $prontuario order by a.data, a.horario";
                                                                         $result = pg_query($sql) or die($sql);
                                                                         while ($rows = pg_fetch_object($result)) {
-
                                                                             if ($rows->exame_id == $row->procedimento_id) {
                                                                                 echo "<tr>";
                                                                                 echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $row->exame_nro . "\"><label></label></div></td>";
@@ -1595,7 +1769,7 @@ if ($destino != '') {
                                                                         $data = $row->dat_cad;
                                                                         $procedimento_lab = $row->procedimento_id;
                                                                         $x = $x + 1;
-                                                                        //}
+                                                                    //}
                                                                     } else {
                                                                         $x = $x + 1;
                                                                         if ($row->situacao == 'Aut.Pendente') {
@@ -1666,21 +1840,24 @@ if ($destino != '') {
                                                         </table>
                                                     </div>
 
-                                                    <?php //if ($perfil == '06' or $perfil == '03') { 
+                                                    <?php //if ($perfil == '06' or $perfil == '03') {
                                                     ?>
                                                     <div class="col-12">
                                                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
-                                                            <table class="table table-hover table-striped condensed width-full">
-                                                                <tr>
-                                                                    <td class="text-center" colspan="2"><label class="control-label">
-                                                                            <font color='#12A1A6'>Adicionar
-                                                                                Exames/Procedimentos</font>
-                                                                        </label></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <select name="procedimento" id="procedimento" title="Selecione o Procedimento">
-                                                                            <?php
+                                                        <table
+                                                            class="table table-hover table-striped condensed width-full">
+                                                            <tr>
+                                                                <td class="text-center" colspan="2"><label
+                                                                        class="control-label">
+                                                                        <font color='#12A1A6'>Adicionar
+                                                                            Exames/Procedimentos</font>
+                                                                    </label></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>
+                                                                    <select name="procedimento" id="procedimento"
+                                                                        title="Selecione o Procedimento">
+                                                                        <?php
                                                                             include('conexao.php');
                                                                             $sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
                                                                         WHERE descricao <> '%EXCLUIDO%' AND procedimento_id NOT IN (729,730,822,821,779) AND descricao NOT IN ('DOSAGEM DE FOLATO',
@@ -1754,23 +1931,28 @@ if ($destino != '') {
                                                                                 echo ">" . $row->descricao . "</option>";
                                                                             }
                                                                             ?>
-                                                                        </select>
+                                                                    </select>
 
-                                                                    </td>
-                                                                    <td><input type='button' name='novo_exame' id="novo_exame" class="btn btn-primary" value='Solicitar'>
-                                                                        <input type='submit' name='req_exame' id="req_exame" class="btn btn-success" value='Imprimir' onclick="document.getElementById('destino').removeAttribute('required');">
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
+                                                                </td>
+                                                                <td><input type='button' name='novo_exame'
+                                                                        id="novo_exame" class="btn btn-primary"
+                                                                        value='Solicitar'>
+                                                                    <input type='submit' name='req_exame' id="req_exame"
+                                                                        class="btn btn-success" value='Imprimir'
+                                                                        onclick="document.getElementById('destino').removeAttribute('required');">
+                                                                </td>
+                                                            </tr>
+                                                        </table>
                                                         <?php } ?>
                                                     </div>
-                                                    <?php //} 
+                                                    <?php //}
                                                     ?>
                                                 </div>
                                                 <!-- Exames Laboratoriais -->
                                                 <div class="col-6">
                                                     <div class="col-12 text-center mb-4"><br>
-                                                        <h4 class="form-section-center"><i class="fas fa-microscope"></i> Exames Laboratoriais</h4>
+                                                        <h4 class="form-section-center"><i
+                                                                class="fas fa-microscope"></i> Exames Laboratoriais</h4>
                                                         <hr style="margin: auto;width: 260px">
                                                     </div>
                                                     <!-- <i class="fas fa-microscope white font-large-2 float-left"></i>
@@ -1810,7 +1992,7 @@ if ($destino != '') {
                                                                     echo "<td>$rows->descricao</td>";
                                                                     if ($rows->situacao == 'Liberado') {
                                                                         echo "<td><a href='http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"fas fa-search\"></a></td>";
-                                                                    } else if ($rows->situacao != 'Liberado') {
+                                                                    } elseif ($rows->situacao != 'Liberado') {
                                                                         echo "<td>" . $rows->situacao . "</td>";
                                                                     }
                                                                     echo "</tr>";
@@ -1822,47 +2004,63 @@ if ($destino != '') {
                                                         <!-- </div> -->
                                                     </div>
                                                     <?php if ($perfil == '06' or $perfil == '03' or $perfil == '04' or $perfil == '08') { ?>
-                                                        <div class="col-md-12 text-center mt-5">
-                                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') { ?>
-                                                                <div class="row">
-                                                                    <div class="col-md-12 text-center">
-                                                                        <input type='button' id="solicita_laboratorio" href="#" data-target="#modalLaboratorio" value='Solicitar Laboratorio' class="btn btn-success" data-toggle="modal">
-                                                                        <input type='button' name='req_exame_lab' id="req_exame_lab" class="btn btn-warning" value='Imprimir Solicitados' onclick="imprimir_laboratorio();">
-                                                                    </div>
-                                                                </div>
-                                                            <?php } ?>
-                                                            <div class="row">
-                                                                <div class="col-md-12 text-center">
-                                                                    <input type="date" name="data" id="data">
-                                                                    <input type='button' name='imprimir_exames' id="imprimir_exames" class="btn btn-primary" value='Imprimir Exames' onclick="laboratorio()">
-                                                                </div>
+                                                    <div class="col-md-12 text-center mt-5">
+                                                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') { ?>
+                                                        <div class="row">
+                                                            <div class="col-md-12 text-center">
+                                                                <input type='button' id="solicita_laboratorio" href="#"
+                                                                    data-target="#modalLaboratorio"
+                                                                    value='Solicitar Laboratorio'
+                                                                    class="btn btn-success" data-toggle="modal">
+                                                                <input type='button' name='req_exame_lab'
+                                                                    id="req_exame_lab" class="btn btn-warning"
+                                                                    value='Imprimir Solicitados'
+                                                                    onclick="imprimir_laboratorio();">
                                                             </div>
-
                                                         </div>
+                                                        <?php } ?>
+                                                        <div class="row">
+                                                            <div class="col-md-12 text-center">
+                                                                <input type="date" name="data" id="data">
+                                                                <input type='button' name='imprimir_exames'
+                                                                    id="imprimir_exames" class="btn btn-primary"
+                                                                    value='Imprimir Exames' onclick="laboratorio()">
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
                                                     <?php } ?>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- Prescrições/Receituário -->
-                                        <div class="tab-pane" id="click" role="tabpanel" aria-labelledby="click-tab" aria-expanded="false">
+                                        <div class="tab-pane" id="click" role="tabpanel" aria-labelledby="click-tab"
+                                            aria-expanded="false">
                                             <div class="col-sm-12">
                                                 <div id="retorno_prescricao">
                                                     <div class="col-12 text-center"><br>
-                                                        <h4 class="form-section-center"><i class="fas fa-notes-medical"></i> Prescrições</h4>
+                                                        <h4 class="form-section-center"><i
+                                                                class="fas fa-notes-medical"></i> Prescrições</h4>
                                                         <hr style="margin: auto;width: 260px">
                                                     </div>
 
-                                                    <div class="col-sm-12" style="height: 295px; overflow-y: auto; overflow-x: hidden;">
+                                                    <div class="col-sm-12"
+                                                        style="height: 295px; overflow-y: auto; overflow-x: hidden;">
                                                         <br>
 
-                                                        <table class="table table-hover table-striped condensed width-full">
+                                                        <table
+                                                            class="table table-hover table-striped condensed width-full">
                                                             <thead>
                                                                 <tr>
-                                                                    <th><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"></th>
+                                                                    <th><input type="checkbox" name="todos" id='todos'
+                                                                            onclick='marcardesmarcar();' value="T"></th>
                                                                     <th width="10%">Data</th>
                                                                     <th>Prescrição/Profissional</th>
-                                                                    <th width="40%"><input type="button" name="atualizart" id="atualizart" onclick="atualizat(<?php echo $transacao; ?>)" class="form-control" value="Atualizar"></th>
+                                                                    <th width="40%"><input type="button"
+                                                                            name="atualizart" id="atualizart"
+                                                                            onclick="atualizat(<?php echo $transacao; ?>)"
+                                                                            class="form-control" value="Atualizar"></th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody id="conteudoPrescricao">
@@ -1900,7 +2098,7 @@ if ($destino != '') {
                                                                         echo "<td class='small'>" . utf8_encode($row->descricao) . "<br>" . $row->nome . "</td>";
                                                                     }
 
-                                                                    //echo "<td class='small'><a href=\"deletarprescricao.php?id=$row->prescricao_id&atendimento=$transacao\" data-toggle=\"tooltip\" data-original-title=\"Deletar Prescrição\"><i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i></a></td>";	
+                                                                    //echo "<td class='small'><a href=\"deletarprescricao.php?id=$row->prescricao_id&atendimento=$transacao\" data-toggle=\"tooltip\" data-original-title=\"Deletar Prescrição\"><i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i></a></td>";
 
                                                                     echo "<tr>";
                                                                 }
@@ -1950,10 +2148,15 @@ if ($destino != '') {
                                                     </div>
                                                     <div class="col-sm-12 text-center">
                                                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') { ?>
-                                                            <!--<input type='button' value="Solicitar Prescrição" id="prescricaoSolicitaModal" onclick="solicitacaoprescricao('<?php echo $_GET['id'] ?>')" class="btn btn-success margin-10" data-toggle="modal" >-->
-                                                            <!--<input type='button' value="Solicitar Prescrição" id="prescricaoSolicitaModal" onclick="solicitacaoprescricao('<?php echo $_GET['id'] ?>')" class="btn btn-success margin-10" data-toggle="modal" >-->
-                                                            <input type='button' id="pres" value='Solicitar Prescricão' class="btn btn-success" onClick="window.open('popprescricao.php?prioridade=<?php echo $prioridade; ?>&id=<?php echo $transacao; ?>&nome=<?php echo $nome; ?>&cns=<?php echo $cns; ?>&idade=<?php echo $idade; ?>&prontuario=<?php echo $prontuario; ?>', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1030, height=550'); return false;">
-                                                            <input type='button' id="prescricao" onclick="return validar()" value='Imprimir Prescricão' class="btn btn-warning">
+                                                        <!--<input type='button' value="Solicitar Prescrição" id="prescricaoSolicitaModal" onclick="solicitacaoprescricao('<?php echo $_GET['id'] ?>')"
+                                                        class="btn btn-success margin-10" data-toggle="modal" >-->
+                                                        <!--<input type='button' value="Solicitar Prescrição" id="prescricaoSolicitaModal" onclick="solicitacaoprescricao('<?php echo $_GET['id'] ?>')"
+                                                        class="btn btn-success margin-10" data-toggle="modal" >-->
+                                                        <input type='button' id="pres" value='Solicitar Prescricão'
+                                                            class="btn btn-success"
+                                                            onClick="window.open('popprescricao.php?prioridade=<?php echo $prioridade; ?>&id=<?php echo $transacao; ?>&nome=<?php echo $nome; ?>&cns=<?php echo $cns; ?>&idade=<?php echo $idade; ?>&prontuario=<?php echo $prontuario; ?>', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1030, height=550'); return false;">
+                                                        <input type='button' id="prescricao" onclick="return validar()"
+                                                            value='Imprimir Prescricão' class="btn btn-warning">
                                                         <?php } ?>
                                                     </div>
                                                 </div>
@@ -1961,12 +2164,14 @@ if ($destino != '') {
                                             </div>
                                         </div>
 
-                                        <div class="tab-pane" id="linkOpt" role="tabpanel" aria-labelledby="linkOpt-tab" aria-expanded="false">
+                                        <div class="tab-pane" id="linkOpt" role="tabpanel" aria-labelledby="linkOpt-tab"
+                                            aria-expanded="false">
                                             <div class="col-12 d-flex">
 
                                                 <div class="col-6 col"><br>
                                                     <div class="col-12 text-center"><br>
-                                                        <h4 class="form-section-center"><i class="fas fa-hospital-alt"></i> Estadias Anteriores
+                                                        <h4 class="form-section-center"><i
+                                                                class="fas fa-hospital-alt"></i> Estadias Anteriores
                                                         </h4>
                                                         <hr style="margin: auto;width: 260px">
                                                     </div>
@@ -2004,7 +2209,8 @@ if ($destino != '') {
                                                 <div id="receit" class="col-6">
                                                     <div class="col-12"><br>
                                                         <div class="col-12 text-center"><br>
-                                                            <h4 class="form-section-center"><i class="fas fa-clipboard"></i> Receituário</h4>
+                                                            <h4 class="form-section-center"><i
+                                                                    class="fas fa-clipboard"></i> Receituário</h4>
                                                             <hr style="margin: auto;width: 260px">
                                                         </div>
 
@@ -2055,11 +2261,13 @@ if ($destino != '') {
                                                 <input id="senha-autorizado" name="senha-autorizado" type="hidden" />
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="linkAtestados" role="tabpanel" aria-labelledby="linkOpt-tab" aria-expanded="false">
+                                        <div class="tab-pane" id="linkAtestados" role="tabpanel"
+                                            aria-labelledby="linkOpt-tab" aria-expanded="false">
                                             <div class="col-12 d-flex">
                                                 <div class="col-6 col"><br>
                                                     <div class="col-12 text-center"><br>
-                                                        <h4 class="form-section-center"><i class="fas fa-hospital-alt"></i>Historico de Atestados
+                                                        <h4 class="form-section-center"><i
+                                                                class="fas fa-hospital-alt"></i>Historico de Atestados
                                                         </h4>
                                                         <hr style="margin: auto;width: 260px">
                                                     </div>
@@ -2112,35 +2320,50 @@ if ($destino != '') {
                             <div class="form-group">
                                 <label class="control-label">Destino dado ao Paciente</label>
                                 <?php if ($destino == '19' and $med == 1) { ?>
-                                    <label class="control-label">guardando os resultados de exames</label>
-                                    <textarea name="evolucao" class="form-control" style="height: 404px" id="evolucao"></textarea> </br>
+                                <label class="control-label">guardando os resultados de exames</label>
+                                <textarea name="evolucao" class="form-control" style="height: 404px"
+                                    id="evolucao"></textarea> </br>
                                 <?php } ?>
-                                <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) echo $disable ?>>
+                                <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) {
+                                                                    echo $disable;
+                                                                } ?>>
                                     <option value=""></option>;
-                                    <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') echo "selected"; ?>>
+                                    <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') {
+                                                                    echo "selected";
+                                                                } ?>>
                                         ALTA
                                     </option>;
-                                    <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') echo "selected"; ?>>
+                                    <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') {
+                                                                    echo "selected";
+                                                                } ?>>
                                         EM
                                         OBSERVAÇÃO / MEDICAÇÃO</option>;
-                                    <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') echo "selected"; ?>>EXAMES LABORATORIAIS</option>; -->
-                                    <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') echo "selected"; ?>>
+                                    <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') {
+                                                                    echo "selected";
+                                                                } ?>>EXAMES
+                                    LABORATORIAIS</option>; -->
+                                    <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') {
+                                                                    echo "selected";
+                                                                } ?>>
                                         EXAMES /
                                         REAVALIACAO</option>;
-                                    <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') echo "selected"; ?>>
+                                    <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') {
+                                                                    echo "selected";
+                                                                } ?>>
                                         PERMANÊNCIA.
                                     </option>;
                                     <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '20') { ?>
-                                        <option value="20" selected>ALTA VIA SISTEMA
-                                        </option>;
+                                    <option value="20" selected>ALTA VIA SISTEMA
+                                    </option>;
                                     <?php } ?>
                                 </select>
                             </div>
                         </div>
                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '00') { ?>
-                            <div class="col-md-2">
-                                <button type="button" data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
-                            </div>
+                        <div class="col-md-2">
+                            <button type="button" data-target="#modalFimEvolucao" data-toggle="modal"
+                                class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
+                        </div>
                         <?php } ?>
                     </div>
                 </div>
@@ -2150,11 +2373,14 @@ if ($destino != '') {
 
                     <div class="col-3 ml-3">
                         <label class="control-label">CID</label>
-                        <input type="text" name="CID" id="CID" class="form-control" value="<?php echo $CID; ?>" onkeyup="maiuscula(this),copiarCid(this)" maxlength='5' <?php echo $rdonly ?>>
+                        <input type="text" name="CID" id="CID" class="form-control"
+                            value="<?php echo $CID; ?>"
+                            onkeyup="maiuscula(this),copiarCid(this)" maxlength='5' <?php echo $rdonly ?>>
                     </div>
                     <div class="col-8">
                         <label class="control-label">Diagnóstico Principal</label>
-                        <input type="text" name="diag_pri" id="diag_pri" onkeyup="retornaCid(this)" class="form-control" value="<?php echo $diag_pri; ?>" <?php echo $rdonly ?>>
+                        <input type="text" name="diag_pri" id="diag_pri" onkeyup="retornaCid(this)" class="form-control"
+                            value="<?php echo $diag_pri; ?>" <?php echo $rdonly ?>>
 
                         <!-- Está parte do codigo é referente a busca do CID -->
 
@@ -2201,27 +2427,41 @@ if ($destino != '') {
                 <div class="col-md-12" align="center"><br><br>
                     <div class="form-group">
                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') { ?>
-                            <a href="evolucao_atendimento.php?id=<?= $transacao ?>" target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
-                        <?php } else if ($destino == '') { ?>
-                            <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar' onclick="g()">
+                        <a href="evolucao_atendimento.php?id=<?= $transacao ?>"
+                            target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
+                        <?php } elseif ($destino == '') { ?>
+                        <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar'
+                            onclick="g()">
                         <?php } ?>
                         <?php if ($origem == 12) { ?>
-                            <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal" data-target="#relatorio_pmmg">Relatorio PMMG</button>
+                        <button type="button" id="brelatorio_pmmg" class="btn btn-success" data-toggle="modal"
+                            data-target="#relatorio_pmmg">Relatorio PMMG</button>
                         <?php } ?>
-                        <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-warning" data-toggle="modal">
-                        <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal" data-target="#referencia_contra">Referencia/Contra Referencia</button>
+                        <input type='button' id="atestado" href="#"
+                            data-id="<?= $_GET['id'] ?>"
+                            data-target="#exampleTabs" onclick="return validar()" value='Atestados'
+                            class="btn btn-warning" data-toggle="modal">
+                        <button type="button" id="breferencia_contra" class="btn btn-success" data-toggle="modal"
+                            data-target="#referencia_contra">Referencia/Contra Referencia</button>
 
 
-                        <button type="button" id="receituario" class="btn btn-success" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
+                        <button type="button" id="receituario" class="btn btn-success" href="#"
+                            data-id="<?= $_GET['id']; ?>"
+                            data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário'>
                             Solicitação de Internação
                         </button>
 
-                        <input type="hidden" value="<?= $_GET['id'] ?>">
-                        <input type='button' id="declaracao_comparecimento" data-toggle="modal" data-target="#comparecimento" value='Declaração de Comparecimento' class="btn btn-warning">
+                        <input type="hidden"
+                            value="<?= $_GET['id'] ?>">
+                        <input type='button' id="declaracao_comparecimento" data-toggle="modal"
+                            data-target="#comparecimento" value='Declaração de Comparecimento' class="btn btn-warning">
 
-                        <a href="relFAA.php?id=<?= $_GET['id'] ?>" target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
-                        <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>" target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
-                        <input type='hidden' readOnly class="form-control" name="origem" id="origem" value='<?php echo $origem; ?>'>
+                        <a href="relFAA.php?id=<?= $_GET['id'] ?>"
+                            target="_blank" name="faa" class="btn btn-primary">FAA / Imprimir</a>
+                        <a href="formapacant.php?paciente=<?php echo $paciente_id; ?>"
+                            target="_blank" name="faa" class="btn btn-primary">Solicitar APAC</a>
+                        <input type='hidden' readOnly class="form-control" name="origem" id="origem"
+                            value='<?php echo $origem; ?>'>
                         <!--<input type='submit' name='imprimir'  class="btn btn-primary" value='Imprimir'>-->
                         <!--<input type='submit' name='xcancelar' class="btn btn-danger"  value='Cancelar'>-->
 
@@ -2260,12 +2500,15 @@ if ($destino != '') {
     <script src="app-assets/js/scripts.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
     </script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.jss"></script>
@@ -2286,7 +2529,9 @@ if ($destino != '') {
                 '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-5"><div class="form-group"><label class="control-label">Modo de usar</label><input id="usar-' +
                 contador +
                 '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-1"><div class="form-group"><button onclick="apagar_item_receituario(this)" value="' +
-                contador + '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>');
+                contador +
+                '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>'
+                );
             $("#salvar_receituario").attr("value", contador);
             contador++;
         });
@@ -2399,15 +2644,18 @@ if ($destino != '') {
 
 
         //////////////////////////INICIO LOGICA MODULO DE PRESCRIÇÃO//////////////////////////
-        function solicitacaoprescricao(valor) { //ABRE O MODAL ONDE É LISTADO OS MEDICAMENTOS QUE ESTÁ GRAVADO NA SESSION
+        function solicitacaoprescricao(
+        valor) { //ABRE O MODAL ONDE É LISTADO OS MEDICAMENTOS QUE ESTÁ GRAVADO NA SESSION
             $('#modaSolictalPrecricao').modal('toggle');
-            $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>', function(dataReturn) {
-                $('#conteudoPrescricaoModal').html(dataReturn);
-            });
+            $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>',
+                function(dataReturn) {
+                    $('#conteudoPrescricaoModal').html(dataReturn);
+                });
         }
 
         function modal_prescricao(
-            valor) { //FUNÇÃO PARA ABRIR O MODAL ONDE É REALIZADO A ESCOLHA DO TIPO DE PRESCRIÇÃO: DIETA, HIDRATAÇÃO, MEDICAMENTOS E CUIDADOS
+            valor
+            ) { //FUNÇÃO PARA ABRIR O MODAL ONDE É REALIZADO A ESCOLHA DO TIPO DE PRESCRIÇÃO: DIETA, HIDRATAÇÃO, MEDICAMENTOS E CUIDADOS
             $('#modalPrecricao').modal('toggle');
             $("#novo_prescricao").prop('disabled', true);
             $('#conteudoModal').html('');
@@ -2424,7 +2672,8 @@ if ($destino != '') {
         }
 
         $("#novo_prescricao").click(function(
-            event) { //FUNÇÃO PARA SALVAR OS MEDICAMENTOS NA SESSION E POSTERIORMENTE LISTAR O QUE FOI SOLICITADO
+            event
+            ) { //FUNÇÃO PARA SALVAR OS MEDICAMENTOS NA SESSION E POSTERIORMENTE LISTAR O QUE FOI SOLICITADO
             var atendimento = $('#transacao').val();
             var dosagem = $('#dosagem').val();
             var aprazamento = $('#aprazamento').val();
@@ -2464,16 +2713,18 @@ if ($destino != '') {
 
 
                 url = 'salvarprescricaosistema.php?atendimento=' + atendimento + '&descricao_hd=' +
-                    descricao_hd + '&componente1=' + componente1 + '&componente2=' + componente2 + '&componente3=' +
+                    descricao_hd + '&componente1=' + componente1 + '&componente2=' + componente2 +
+                    '&componente3=' +
                     componente3 + '&hidratacao_text=' + hidratacao_text + '&medico=' + medico +
                     '&tipo_prescricao=' + tipo_prescricao;
 
             } //SALVAPRESCRICAOSISTEMA.PHP: SALVA OS MEDICAMENTOS NA SESSION		
 
             $.get(url, function(dataReturn) {
-                $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>', function(Return) {
-                    $('#conteudoPrescricaoModal').html(Return);
-                });
+                $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>',
+                    function(Return) {
+                        $('#conteudoPrescricaoModal').html(Return);
+                    });
             }); //LISTAPRESCRICAO.PHP: LISTA OS MEDICAMENTOS SALVOS NA SESSION
 
             event.preventDefault();
@@ -2483,7 +2734,8 @@ if ($destino != '') {
         });
 
 
-        $("#confirmar_prescricao").click(function(event) { //FUNÇÃO É CHAMANDA QUANDO O BOTAO CONFIRMAR PRESCRICAO É CLICADO
+        $("#confirmar_prescricao").click(function(
+        event) { //FUNÇÃO É CHAMANDA QUANDO O BOTAO CONFIRMAR PRESCRICAO É CLICADO
 
             var total_campos = $("#tamanhoArray").val();
             if (total_campos == 0) {
@@ -2508,8 +2760,10 @@ if ($destino != '') {
                 var cuidados = new Array();
                 var tipo = new Array();
                 var nova_sequencia = '';
-                var data = '<?php echo date('Y-m-d'); ?>';
-                var hora = '<?php echo date('H:i'); ?>';
+                var data =
+                    '<?php echo date('Y-m-d'); ?>';
+                var hora =
+                    '<?php echo date('H:i'); ?>';
 
 
                 while (i <= total_campos) {
@@ -2521,7 +2775,8 @@ if ($destino != '') {
                         cuidados[i] = $('#cuidados' + i + '').val();
 
                         url = 'gerarnovaprescricao_clinico.php?cuidados=' + cuidados[i] + '&atendimento=' +
-                            <?php echo $_GET['id'] ?> + '&flag=' + i + '&nova_sequencia=' + nova_sequencia +
+                            <?php echo $_GET['id'] ?>
+                            +'&flag=' + i + '&nova_sequencia=' + nova_sequencia +
                             '&data=' + data + '&hora=' + hora + '&tipo_prescricao=' + tipo[i];
 
                     } else if ($('#hidratacao_text' + i + '').val() != undefined) {
@@ -2534,9 +2789,11 @@ if ($destino != '') {
                         componente3[i] = $('#componente3' + i + '').val();
                         descricao_hd[i] = $('#descricao_hd' + i + '').val();
                         url = 'gerarnovaprescricao_clinico.php?hidratacao_text=' + hidratacao_text[i] +
-                            '&componente1=' + componente1[i] + '&componente2=' + componente2[i] + '&componente3=' +
+                            '&componente1=' + componente1[i] + '&componente2=' + componente2[i] +
+                            '&componente3=' +
                             componente3[i] + '&descricao_hd=' + descricao_hd[i] + '&atendimento=' +
-                            <?php echo $_GET['id'] ?> + '&flag=' + i + '&nova_sequencia=' + nova_sequencia +
+                            <?php echo $_GET['id'] ?>
+                            +'&flag=' + i + '&nova_sequencia=' + nova_sequencia +
                             '&data=' + data + '&hora=' + hora + '&tipo_prescricao=' + tipo[i];
 
                     } else {
@@ -2563,8 +2820,10 @@ if ($destino != '') {
                         }
 
                         url = 'gerarnovaprescricao_clinico.php?dosagem=' + dosagem[i] + '&medicamento=' +
-                            medicamento[i] + '&via=' + via[i] + '&aprazamento=' + aprazamento[i] + '&atendimento=' +
-                            <?php echo $_GET['id'] ?> + '&flag=' + i + '&cod_medicamento=' + cod_medicamento[i] +
+                            medicamento[i] + '&via=' + via[i] + '&aprazamento=' + aprazamento[i] +
+                            '&atendimento=' +
+                            <?php echo $_GET['id'] ?>
+                            +'&flag=' + i + '&cod_medicamento=' + cod_medicamento[i] +
                             '&nova_sequencia=' + nova_sequencia + '&data=' + data + '&hora=' + hora +
                             '&tipo_prescricao=' + tipo[i];
                     } //GERANOVAPRESCRICAO_CLINICI.PHP: SALVA NO BANCO DE DADOS O QUE ESTA SALVO NA SESSION
@@ -2577,7 +2836,8 @@ if ($destino != '') {
                 }
 
                 //LISTA_PRESCRICAO_CLINICO.PHP: RETORNA PARA DENTRO DA DIV COM ID=modaSolictalPrecricao OS MEDICAMENTOS SALVOS NO BANCO
-                urls = 'lista_prescricao_clinico.php?atendimento=<?php echo $_GET['id'] ?>';
+                urls =
+                    'lista_prescricao_clinico.php?atendimento=<?php echo $_GET['id'] ?>';
 
                 $('#modaSolictalPrecricao').modal('hide');
             }
@@ -2585,12 +2845,14 @@ if ($destino != '') {
         });
 
         function remover_prescricao(
-            indice) { //FUNCÃO É CHAMADA CLICA EM DELETAR UM MEDICAMENTO QUE ESTA LA LISTAGEM DE MEDICAMENTOS, ISTO PRESENTE NA SESSION
+            indice
+            ) { //FUNCÃO É CHAMADA CLICA EM DELETAR UM MEDICAMENTO QUE ESTA LA LISTAGEM DE MEDICAMENTOS, ISTO PRESENTE NA SESSION
             $.get('exlcuirIndiceArray.php?indice=' + indice);
 
-            $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>&flag=1', function(Return) {
-                $('#conteudoPrescricaoModal').html(Return);
-            });
+            $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>&flag=1',
+                function(Return) {
+                    $('#conteudoPrescricaoModal').html(Return);
+                });
         }
 
 
@@ -2606,7 +2868,9 @@ if ($destino != '') {
 
                 if ($("[name='cb_prescricao[]']").is(":checked") ==
                     true) { //VALIDA SE FOI SELECIONADO ALGUM MEDICAMENTO, CHECKBOX.
-                    window.open('relprescricao.php?id=<?php echo $_GET['id'] ?>&medicamentos=' + prescricoes, '_blank');
+                    window.open(
+                        'relprescricao.php?id=<?php echo $_GET['id'] ?>&medicamentos=' +
+                        prescricoes, '_blank');
                 } else {
                     swal("Marque a caixa de selecao ao lado dos medicamentos que deseja imprimir", "", "warning")
                 }
@@ -2669,7 +2933,8 @@ if ($destino != '') {
 
 
         $("#novo_exame").click(function() {
-            var data_atendimento = '<?php echo date('d/m/Y'); ?>';
+            var data_atendimento =
+                '<?php echo date('d/m/Y'); ?>';
             var atendimento = $('#atendimento').val();
             var prioridade = $('#prioridade').val();
             var profissional = $('#profissional').val();
@@ -2681,14 +2946,18 @@ if ($destino != '') {
 
             if (procedimento != "" && procedimento != null) {
                 $("#loading-hover").css("z-index", "1"); // Alterna loading ao clicar em "solicitar"
-                jQuery.get('solicitapedido.php?paciente_id=' + id + '&prioridade=' + prioridade + '&data_atendimento=' + data_atendimento + '&atendimento=' + atendimento + '&profissional=' + profissional + '&prontuario=' + prontuario + '&procedimento=' + procedimento + '&origem=' + origem, function(dataReturn, status) {
-                    $('#exames_atendimentos').html(dataReturn);
-                    if (status == "success") {
-                        $("#loading-hover").css("z-index", "-1"); // Alterna loading apos processamento
-                        $('#procedimento').val('').trigger('chosen:updated');
-                        swal("Sucesso,", "o procedimento foi solicitado.", "success");
-                    }
-                });
+                jQuery.get('solicitapedido.php?paciente_id=' + id + '&prioridade=' + prioridade +
+                    '&data_atendimento=' + data_atendimento + '&atendimento=' + atendimento +
+                    '&profissional=' + profissional + '&prontuario=' + prontuario + '&procedimento=' +
+                    procedimento + '&origem=' + origem,
+                    function(dataReturn, status) {
+                        $('#exames_atendimentos').html(dataReturn);
+                        if (status == "success") {
+                            $("#loading-hover").css("z-index", "-1"); // Alterna loading apos processamento
+                            $('#procedimento').val('').trigger('chosen:updated');
+                            swal("Sucesso,", "o procedimento foi solicitado.", "success");
+                        }
+                    });
             } else {
                 swal("Selecione um procedimento.", "", "warning");
             }
@@ -2701,7 +2970,8 @@ if ($destino != '') {
                 e.preventDefault(); //cancel default action
 
                 //Recuperate href value
-                var data_atendimento = '<?php echo date('d/m/Y'); ?>';
+                var data_atendimento =
+                    '<?php echo date('d/m/Y'); ?>';
                 var atendimento = $('#atendimento').val();
                 var prioridade = $('#prioridade').val();
                 var profissional = $('#profissional').val();
@@ -2731,9 +3001,12 @@ if ($destino != '') {
                     })
                     .then((willDelete) => {
                         if (willDelete) {
-                            $.get('solicitapedidoxj.php?paciente_id=' + id + '&prioridade=' + prioridade +
-                                '&data_atendimento=' + data_atendimento + '&atendimento=' + atendimento +
-                                '&profissional=' + profissional + '&prontuario=' + prontuario + '&procedimento=' +
+                            $.get('solicitapedidoxj.php?paciente_id=' + id + '&prioridade=' +
+                                prioridade +
+                                '&data_atendimento=' + data_atendimento + '&atendimento=' +
+                                atendimento +
+                                '&profissional=' + profissional + '&prontuario=' + prontuario +
+                                '&procedimento=' +
                                 procedimento + '&origem=' + origem,
                                 function(dataReturn, status) {
                                     $('#exames_laboratorio').html(dataReturn);
@@ -2796,7 +3069,8 @@ if ($destino != '') {
             var profissional = $('#profissional').val();
 
             $.get('salvaratestado.php?prontuario=' + prontuario + '&data_atendimento=' + data_atendimento +
-                '&hora_entrada=' + hora_entrada + '&hora_saida=' + hora_saida + '&finalidade=' + finalidade +
+                '&hora_entrada=' + hora_entrada + '&hora_saida=' + hora_saida + '&finalidade=' +
+                finalidade +
                 '&descricao=' + descricao + '&atendimento=' + atendimento + '&profissional=' + profissional,
                 function(dataReturn) {
                     $('#modalbody').html(dataReturn);
@@ -2904,7 +3178,8 @@ if ($destino != '') {
             var cns = document.getElementById("cns").innerhtml;
             var idade = document.getElementById("idade").value;
             var prontuario = document.getElementById("paciente").value;
-            var url = 'ajax_tabela_atendimento.php?transacao=' + a + '&nome=' + nome + '&cns=' + cns + '&idade=' + idade +
+            var url = 'ajax_tabela_atendimento.php?transacao=' + a + '&nome=' + nome + '&cns=' + cns + '&idade=' +
+                idade +
                 '&prontuario=' + prontuario;
             $.get(url, function(dataReturn) {
                 $('#conteudoPrescricao').html(dataReturn);
@@ -3015,7 +3290,11 @@ if ($destino != '') {
         function laboratorio() {
             var data = document.getElementById("data").value;
             if (data) {
-                window.open("<?= "http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" + data + "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>");
+                window.open(
+                    "<?= "http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" +
+                    data +
+                    "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>"
+                    );
             } else {
                 alert("Informe da data!!!");
             }
