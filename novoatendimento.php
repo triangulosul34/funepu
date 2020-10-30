@@ -27,14 +27,12 @@ function validaCPF($cpf = null)
         return false;
     }  // Verifica se nenhuma das sequências invalidas abaixo
     // foi digitada. Caso afirmativo, retorna falso
-    else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
+    elseif ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
         return false;
-        // Calcula os digitos verificadores para verificar se o
+    // Calcula os digitos verificadores para verificar se o
         // CPF é válido
     } else {
-
         for ($t = 9; $t < 11; $t++) {
-
             for ($d = 0, $c = 0; $c < $t; $c++) {
                 $d += $cpf{
                     $c} * (($t + 1) - $c);
@@ -163,7 +161,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $date = new DateTime($dt_nasc); // data de nascimento
             $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
             $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
-
         }
         if ($agendamento != "") {
             include('conexao.php');
@@ -199,7 +196,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $date = new DateTime($dt_nasc); // data de nascimento
             $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
             $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
-
         }
     }
 }
@@ -257,7 +253,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $erro = "Origem deve ser Informado";
     }
     if ($dt_nascimento == "") {
-
         $erro = "Data Nascimento deve ser Informado";
     }
     $dt_nasc = substr($dt_nascimento, 6, 4) . "-" . substr($dt_nascimento, 3, 2) . "-" . substr($dt_nascimento, 0, 2);
@@ -354,28 +349,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
                 /*
-				if ($origem<>'6' && $origem<>'9' && $origem<>'10' && $origem<>'11')
-				{	
-					$dta_atendimento = date('Y-m-d H:i:s');
-					$dt_nasc = substr($dt_nascimento,6,4)."-".substr($dt_nascimento,3,2)."-".substr($dt_nascimento,0,2);
-					
-					$client = new SoapClient('http://172.18.52.181:8085/WebServiceEmerges/IntegracaoWS?wsdl');
-					$function = 'admissaoPaciente';
-					$arguments= array('admissaoPaciente' => array(
-											'nome'            => $nome,
-											'dataNascimento'  => $dt_nasc,
-											'sexo'            => $sexo,
-											'nomeMae'         => $nomeMae,										
-											'CARTAO_SUS'      => $cns,
-											'PRONTUARIO'  	  => $prontuario,
-											'ATENDIMENTO'	  => $transacao,									
-											'DATA_ATENDIMENTO'=> $dta_atendimento			
-									));
-					$options = array('');
-					$result = $client->__soapCall($function, $arguments, $option);
-					$retorno = 'Mensagem ToLife:'.$result->return.$dta_atendimento.$dt_nasc;
-				}
-				*/
+                if ($origem<>'6' && $origem<>'9' && $origem<>'10' && $origem<>'11')
+                {
+                    $dta_atendimento = date('Y-m-d H:i:s');
+                    $dt_nasc = substr($dt_nascimento,6,4)."-".substr($dt_nascimento,3,2)."-".substr($dt_nascimento,0,2);
+
+                    $client = new SoapClient('http://172.18.52.181:8085/WebServiceEmerges/IntegracaoWS?wsdl');
+                    $function = 'admissaoPaciente';
+                    $arguments= array('admissaoPaciente' => array(
+                                            'nome'            => $nome,
+                                            'dataNascimento'  => $dt_nasc,
+                                            'sexo'            => $sexo,
+                                            'nomeMae'         => $nomeMae,
+                                            'CARTAO_SUS'      => $cns,
+                                            'PRONTUARIO'  	  => $prontuario,
+                                            'ATENDIMENTO'	  => $transacao,
+                                            'DATA_ATENDIMENTO'=> $dta_atendimento
+                                    ));
+                    $options = array('');
+                    $result = $client->__soapCall($function, $arguments, $option);
+                    $retorno = 'Mensagem ToLife:'.$result->return.$dta_atendimento.$dt_nasc;
+                }
+                */
                 header("location: atendimentos.php");
             } else {
                 include('conexao.php');
@@ -401,7 +396,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
     if (isset($_POST['encerrar']) != '') {
-
         include('conexao.php');
         $dt_transacao = inverteData(substr($data_transacao, 0, 10));
         $dt_solicitacao = inverteData($dt_nsolicitacao);
@@ -441,7 +435,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -705,12 +701,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        window.location = "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
+                        window.location =
+                            "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
                         window.location.reload()
                     }
                 }
 
-                xmlhttp.open("GET", "apagaagendatemp.php?id=<?php echo $transacao; ?>");
+                xmlhttp.open("GET",
+                    "apagaagendatemp.php?id=<?php echo $transacao; ?>");
                 xmlhttp.send();
             }
         }
@@ -898,7 +896,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Página Padrão
                                                 </h4>
                                             </div>
@@ -929,10 +928,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             } ?>
                             <div class="card-content">
                                 <div class="card-body">
-                                    <form method="post" name='pedido' id='pedido' enctype="multipart/form-data" autocomplete="off" action="#">
+                                    <form method="post" name='pedido' id='pedido' enctype="multipart/form-data"
+                                        autocomplete="off" action="#">
                                         <div id="dados-paciente-div">
                                             <div class="col-12 text-center">
-                                                <h4 class="form-section-center"><i class="ft-user"></i> Identificação do Paciente</h4>
+                                                <h4 class="form-section-center"><i class="ft-user"></i> Identificação do
+                                                    Paciente</h4>
                                                 <!-- <h3 class="title" align="center">Identificação do Paciente</h3> -->
                                                 <hr style="margin: auto;width: 350px">
                                             </div>
@@ -961,7 +962,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </label> -->
                                                             <div class="input-group ">
                                                                 <span class="input-group-btn">
-                                                                    <button type="button" class="btn btn-primary" onClick="window.open('poppac.php', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;" style="margin-left: 50px">
+                                                                    <button type="button" class="btn btn-primary"
+                                                                        onClick="window.open('poppac.php', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;"
+                                                                        style="margin-left: 50px">
                                                                         <i class="fa fa-search" aria-hidden="true"></i>
                                                                     </button>
                                                                 </span>
@@ -971,61 +974,145 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </div>
                                                 <div class="col-10">
                                                     <div class="row">
-                                                        <input type="hidden" name="pessoa_id" id="pessoa_id" class="form-control" value="<?php echo $prontuario; ?>" readonly><input type="hidden" name="transacao" id="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly><input type="hidden" name="data_transacao" class="form-control" value="<?php echo inverteData($data_transacao); ?>" readonly><input type="hidden" name="hora_transacao" class="form-control" value="<?php echo $hora_transacao; ?>" readonly><input type="hidden" name="senhac" class="form-control" value="<?php echo $senhal; ?>" readonly><input type="hidden" name="usuario_transacao" class="form-control" value="<?php echo $usuario; ?>" readonly><input type="hidden" name="situacao" class="form-control" value="<?php echo $situacao; ?>" readonly>
-                                                        <input type="hidden" class="form-control" name="prontuario" id="prontuario" placeholder="Paciente..." value='<?php echo $prontuario; ?>' readonly>
-                                                        <input type="hidden" class="form-control" name="imagem" id="imagem" value="<?php echo $imagem; ?>" value='<?php echo $imagem; ?>' readonly>
+                                                        <input type="hidden" name="pessoa_id" id="pessoa_id"
+                                                            class="form-control"
+                                                            value="<?php echo $prontuario; ?>"
+                                                            readonly><input type="hidden" name="transacao"
+                                                            id="transacao" class="form-control"
+                                                            value="<?php echo $transacao; ?>"
+                                                            readonly><input type="hidden" name="data_transacao"
+                                                            class="form-control"
+                                                            value="<?php echo inverteData($data_transacao); ?>"
+                                                            readonly><input type="hidden" name="hora_transacao"
+                                                            class="form-control"
+                                                            value="<?php echo $hora_transacao; ?>"
+                                                            readonly><input type="hidden" name="senhac"
+                                                            class="form-control"
+                                                            value="<?php echo $senhal; ?>"
+                                                            readonly><input type="hidden" name="usuario_transacao"
+                                                            class="form-control"
+                                                            value="<?php echo $usuario; ?>"
+                                                            readonly><input type="hidden" name="situacao"
+                                                            class="form-control"
+                                                            value="<?php echo $situacao; ?>"
+                                                            readonly>
+                                                        <input type="hidden" class="form-control" name="prontuario"
+                                                            id="prontuario" placeholder="Paciente..."
+                                                            value='<?php echo $prontuario; ?>'
+                                                            readonly>
+                                                        <input type="hidden" class="form-control" name="imagem"
+                                                            id="imagem"
+                                                            value="<?php echo $imagem; ?>"
+                                                            value='<?php echo $imagem; ?>'
+                                                            readonly>
 
                                                         <div class="col-sm-6">
-                                                            <label class="control-label">Nome </label> <input type="text" name="nome" id="nome" class="form-control" style="font-weight: bold;" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)">
+                                                            <label class="control-label">Nome </label> <input
+                                                                type="text" name="nome" id="nome" class="form-control"
+                                                                style="font-weight: bold;"
+                                                                value="<?php echo $nome; ?>"
+                                                                onkeyup="maiuscula(this)">
                                                         </div>
-
-                                                        <div class="col-sm-6">
-                                                            <label class="control-label">Nome Social</label> <input type="text" name="nome_social" id="nome_social" class="form-control" value="<?php echo $nome_social; ?>" style="font-weight: bold;" onkeyup="maiuscula(this)">
+                                                        <div class="col-sm-6" id="idpnomesocial">
+                                                            <div class="form-group">
+                                                                <label>Nome Social?</label>
+                                                                <div class="input-group">
+                                                                    <div
+                                                                        class="custom-control custom-checkbox custom-control-inline">
+                                                                        <input type="checkbox" id="pnome_social"
+                                                                            name="pnome_social"
+                                                                            class="custom-control-input"
+                                                                            onclick="pnomesocial()">
+                                                                        <label class="custom-control-label"
+                                                                            for="pnome_social">Sim</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6" style="display: none;" id="nnome_social">
+                                                            <label class="control-label">Nome Social</label> <input
+                                                                type="text" name="nome_social" id="nome_social"
+                                                                class="form-control"
+                                                                value="<?php echo $nome_social; ?>"
+                                                                style="font-weight: bold;" onkeyup="maiuscula(this)">
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-sm-9">
-                                                            <label class="control-label">Nome do Acompanhante</label> <input type="text" name="nome_acompanhante" id="nome_acompanhante" class="form-control" value="<?php echo $nome_acompanhante; ?>" style="font-weight: bold;" onkeyup="maiuscula(this)">
+                                                            <label class="control-label">Nome do Acompanhante</label>
+                                                            <input type="text" name="nome_acompanhante"
+                                                                id="nome_acompanhante" class="form-control"
+                                                                value="<?php echo $nome_acompanhante; ?>"
+                                                                style="font-weight: bold;" onkeyup="maiuscula(this)">
                                                         </div>
                                                         <div class="col-sm-3">
                                                             <label class="control-label">
                                                                 <font color='red'>CNS</font>
-                                                            </label> <input type="text" name="cns" id="cns" class="form-control" value="<?php echo $cns; ?>" onkeypress='return SomenteNumero(event)'>
+                                                            </label> <input type="text" name="cns" id="cns"
+                                                                class="form-control"
+                                                                value="<?php echo $cns; ?>"
+                                                                onkeypress='return SomenteNumero(event)'>
                                                         </div>
                                                     </div>
 
                                                     <div class="row">
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Nascimento</label> <input type="text" name="dt_nascimento" id="dt_nascimento" class="form-control" value="<?php echo $dt_nascimento; ?>" OnKeyPress="formatar('##/##/####', this)" OnBlur="calcularIdade(this.value)">
+                                                            <label class="control-label">Nascimento</label> <input
+                                                                type="text" name="dt_nascimento" id="dt_nascimento"
+                                                                class="form-control"
+                                                                value="<?php echo $dt_nascimento; ?>"
+                                                                OnKeyPress="formatar('##/##/####', this)"
+                                                                OnBlur="calcularIdade(this.value)">
                                                         </div>
 
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Idade</label> <input type="text" name="idade" id="idade" class="form-control" value="<?php echo $idade; ?>" readonly>
+                                                            <label class="control-label">Idade</label> <input
+                                                                type="text" name="idade" id="idade" class="form-control"
+                                                                value="<?php echo $idade; ?>"
+                                                                readonly>
                                                         </div>
 
                                                         <div class="col-sm-2">
-                                                            <label class="control-label">Sexo</label> <select name="sexo" id="sexo" class="form-control">
+                                                            <label class="control-label">Sexo</label> <select
+                                                                name="sexo" id="sexo" class="form-control">
                                                                 <option></option>
                                                                 <option value="F" <?php if ($sexo == 'F') {
-                                                                                        echo 'selected';
-                                                                                    } ?>>Feminino</option>
+                                                                    echo 'selected';
+                                                                } ?>>Feminino
+                                                                </option>
                                                                 <option value="M" <?php if ($sexo == 'M') {
-                                                                                        echo 'selected';
-                                                                                    } ?>>Masculino</option>
-                                                            </select> <input type="hidden" name="pendencia" id="pendencia" class="form-control" value="<?php echo $pendencia; ?>" readonly> <input type="hidden" name="pendencia" id="pendencia" class="form-control" value="<?php echo $pendencia; ?>" readonly>
+                                                                    echo 'selected';
+                                                                } ?>>Masculino
+                                                                </option>
+                                                            </select> <input type="hidden" name="pendencia"
+                                                                id="pendencia" class="form-control"
+                                                                value="<?php echo $pendencia; ?>"
+                                                                readonly> <input type="hidden" name="pendencia"
+                                                                id="pendencia" class="form-control"
+                                                                value="<?php echo $pendencia; ?>"
+                                                                readonly>
                                                         </div>
 
                                                         <div class="col-sm-4">
-                                                            <label class="control-label">CPF</label> <input type="text" name="cpf" onblur='verifica_cpf(this.value)' maxlength="15" id="cpf" class="form-control" value="<?php echo $cpf; ?>">
+                                                            <label class="control-label">CPF</label> <input type="text"
+                                                                name="cpf" onblur='verifica_cpf(this.value)'
+                                                                maxlength="15" id="cpf" class="form-control"
+                                                                value="<?php echo $cpf; ?>">
                                                             <div id="cpf_exists"></div>
                                                         </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-sm-4">
-                                                            <label class="control-label">RG</label> <input type="text" name="rg" id="rg" class="form-control" value="<?php echo $identidade; ?>">
+                                                            <label class="control-label">RG</label> <input type="text"
+                                                                name="rg" id="rg" class="form-control"
+                                                                value="<?php echo $identidade; ?>">
                                                         </div>
                                                         <div class="col-sm-3">
-                                                            <label class="control-label">Expedição</label> <input type="text" name="org_expeditor" id="org_expeditor" class="form-control" OnKeyPress="formatar('##/##/####', this)" value="<?php echo $org_expeditor; ?>"><br>
+                                                            <label class="control-label">Expedição</label> <input
+                                                                type="text" name="org_expeditor" id="org_expeditor"
+                                                                class="form-control"
+                                                                OnKeyPress="formatar('##/##/####', this)"
+                                                                value="<?php echo $org_expeditor; ?>"><br>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1034,15 +1121,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="col-sm-2">
                                                     <label class="control-label">
                                                         <font color='red'>Telefone</font>
-                                                    </label> <input type="text" name="telefone" class="form-control" value="<?php echo $telefone; ?>" OnKeyPress="formatar('##-########', this)" maxlength="11">
+                                                    </label> <input type="text" name="telefone" class="form-control"
+                                                        value="<?php echo $telefone; ?>"
+                                                        OnKeyPress="formatar('##-########', this)" maxlength="11">
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <label class="control-label">Celular</label> <input type="text" name="celular" id="celular" class="form-control" value="<?php echo $celular; ?>" OnKeyPress="formatar('##-#########', this)" maxlength="12">
+                                                    <label class="control-label">Celular</label> <input type="text"
+                                                        name="celular" id="celular" class="form-control"
+                                                        value="<?php echo $celular; ?>"
+                                                        OnKeyPress="formatar('##-#########', this)" maxlength="12">
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <label class="control-label">
                                                         <font color='red'>Nome da Mae</font>
-                                                    </label> <input type="text" name="nomeMae" id="nome_mae" class="form-control" value="<?php echo $nomeMae; ?>" onkeyup="maiuscula(this)">
+                                                    </label> <input type="text" name="nomeMae" id="nome_mae"
+                                                        class="form-control"
+                                                        value="<?php echo $nomeMae; ?>"
+                                                        onkeyup="maiuscula(this)">
                                                 </div>
 
 
@@ -1050,7 +1145,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label class="control-label">
                                                         <font color='red'>Origem</font>
                                                     </label>
-                                                    <select class="form-control" name="origem" id="origem" onChange="showenfermaria(this.value)">
+                                                    <select class="form-control" name="origem" id="origem"
+                                                        onChange="showenfermaria(this.value)">
                                                         <option value=""></option>;
                                                         <?php
                                                         include('conexao.php');
@@ -1070,28 +1166,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                             <div class="row mt-3 mb-3 align-items-center">
                                                 <div class="col-6">
-                                                    <label class="control-label">Necessidades Especiais</label> <select name="deficiencia" class="form-control">
+                                                    <label class="control-label">Necessidades Especiais</label> <select
+                                                        name="deficiencia" class="form-control">
                                                         <option value="Nenhuma" <?php if ($deficiencia == "nenhuma") {
-                                                                                    echo "selected";
-                                                                                } ?>>Nenhuma</option>
+                                                            echo "selected";
+                                                        } ?>>Nenhuma
+                                                        </option>
                                                         <option value="Visual" <?php if ($deficiencia == "Visual") {
-                                                                                    echo "selected";
-                                                                                } ?>>Visual</option>
+                                                            echo "selected";
+                                                        } ?>>Visual
+                                                        </option>
                                                         <option value="Motora" <?php if ($deficiencia == "Motora") {
-                                                                                    echo "selected";
-                                                                                } ?>>Motora</option>
+                                                            echo "selected";
+                                                        } ?>>Motora
+                                                        </option>
                                                         <option value="Mental" <?php if ($deficiencia == "Mental") {
-                                                                                    echo "selected";
-                                                                                } ?>>Mental</option>
+                                                            echo "selected";
+                                                        } ?>>Mental
+                                                        </option>
                                                         <option value="Auditiva" <?php if ($deficiencia == "Auditiva") {
-                                                                                        echo "selected";
-                                                                                    } ?>>Auditiva</option>
+                                                            echo "selected";
+                                                        } ?>>Auditiva
+                                                        </option>
                                                     </select>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="custom-control custom-checkbox ">
-                                                        <input type="checkbox" class="custom-control-input" name="coronavirus" id="coronavirus" value='CM' <?php if ($coronavirus == 1) echo "checked"; ?>>
-                                                        <label class="custom-control-label" style="font-size: 10pt" for="coronavirus">Problema Respirátorio</label>
+                                                        <input type="checkbox" class="custom-control-input"
+                                                            name="coronavirus" id="coronavirus" value='CM' <?php if ($coronavirus == 1) {
+                                                            echo "checked";
+                                                        } ?>>
+                                                        <label class="custom-control-label" style="font-size: 10pt"
+                                                            for="coronavirus">Problema Respirátorio</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1103,18 +1209,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                             <div class="row">
                                                 <div class="col-sm-2">
-                                                    <label class="control-label">CEP</label> <input type="text" name="end_cep" id="end_cep" class="form-control" maxlength="9" value="<?php echo $cep; ?>" OnKeyPress="formatar('#####-###', this)" onblur="pesquisacep(this.value);">
+                                                    <label class="control-label">CEP</label> <input type="text"
+                                                        name="end_cep" id="end_cep" class="form-control" maxlength="9"
+                                                        value="<?php echo $cep; ?>"
+                                                        OnKeyPress="formatar('#####-###', this)"
+                                                        onblur="pesquisacep(this.value);">
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">Endereço</label> <input type="text" name="endereco" id="endereco" class="form-control" value="<?php echo $enderecox; ?>">
+                                                    <label class="control-label">Endereço</label> <input type="text"
+                                                        name="endereco" id="endereco" class="form-control"
+                                                        value="<?php echo $enderecox; ?>">
                                                 </div>
 
                                                 <div class="col-sm-2">
-                                                    <label class="control-label">Numero</label> <input type="text" name="end_num" id="end_num" class="form-control" value="<?php echo $end_numero; ?>">
+                                                    <label class="control-label">Numero</label> <input type="text"
+                                                        name="end_num" id="end_num" class="form-control"
+                                                        value="<?php echo $end_numero; ?>">
                                                 </div>
 
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">Complemento</label> <input type="text" name="end_comp" id="end_comp" class="form-control" value="<?php echo $complemento; ?>">
+                                                    <label class="control-label">Complemento</label> <input type="text"
+                                                        name="end_comp" id="end_comp" class="form-control"
+                                                        value="<?php echo $complemento; ?>">
                                                 </div>
                                             </div>
 
@@ -1122,14 +1238,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                             <div class="row">
                                                 <div class="col-sm-4">
-                                                    <label class="control-label">Bairro</label> <input type="text" name="end_bairro" id="end_bairro" class="form-control" value="<?php echo $bairro; ?>">
+                                                    <label class="control-label">Bairro</label> <input type="text"
+                                                        name="end_bairro" id="end_bairro" class="form-control"
+                                                        value="<?php echo $bairro; ?>">
                                                 </div>
                                                 <div class="col-sm-6">
-                                                    <label class="control-label">Cidade</label> <input type="text" name="end_cidade" id="end_cidade" class="form-control" value="<?php echo $cidade; ?>">
+                                                    <label class="control-label">Cidade</label> <input type="text"
+                                                        name="end_cidade" id="end_cidade" class="form-control"
+                                                        value="<?php echo $cidade; ?>">
                                                 </div>
                                                 <div class="col-sm-2">
                                                     <label class="control-label">UF</label>
-                                                    <input type="text" name="end_uf" id="end_uf" class="form-control" value="<?php echo $estado; ?>" maxlength="2" onkeyup="maiuscula(this)">
+                                                    <input type="text" name="end_uf" id="end_uf" class="form-control"
+                                                        value="<?php echo $estado; ?>"
+                                                        maxlength="2" onkeyup="maiuscula(this)">
                                                 </div>
 
                                             </div>
@@ -1141,11 +1263,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                             <div id="fdoc">
                                                 <?php if ($documento) { ?>
-                                                    <div class="row mt-3">
-                                                        <div class="col-md-12">
-                                                            <a href="<?= "documents/{$documento}"; ?>" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc">Visualizar Documentos <i class="far fa-address-card"></i></a>
-                                                        </div>
+                                                <div class="row mt-3">
+                                                    <div class="col-md-12">
+                                                        <a href="<?= "documents/{$documento}"; ?>"
+                                                            class="btn btn-primary btn-lg mr-5" target="_blank"
+                                                            id="doc">Visualizar Documentos <i
+                                                                class="far fa-address-card"></i></a>
                                                     </div>
+                                                </div>
                                                 <?php } ?>
                                             </div>
 
@@ -1156,8 +1281,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                         <div class="col-md-12 mt-3" align="center">
                                             <div class="form-group">
-                                                <input type='submit' name='gravar' onclick="return valida()" id='gravar' class="btn btn-primary" value='Gravar'>
-                                                <input type='button' name='xcancelar' class="btn btn-danger" value='Cancelar' onclick="javascript:location.href='http://mr.midaspa.com.br/mr/funepu/atendimentos.php'">
+                                                <input type='submit' name='gravar' onclick="return valida()" id='gravar'
+                                                    class="btn btn-primary" value='Gravar'>
+                                                <input type='button' name='xcancelar' class="btn btn-danger"
+                                                    value='Cancelar'
+                                                    onclick="javascript:location.href='http://mr.midaspa.com.br/mr/funepu/atendimentos.php'">
                                             </div>
                                         </div>
 
@@ -1232,7 +1360,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script defer src="/your-path-to-fontawesome/js/all.js"></script>
         <script>
@@ -1274,7 +1403,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if (data == "1") {
 
                             var oNome = $("#nome");
-                            var sHtmlI = '<i title="PendÃªncia autorizada!" class="icon fa-check has-warning" aria-hidden="true" style="margin-left: 1em; cursor:pointer; font-size: 1.2em;"></i>';
+                            var sHtmlI =
+                                '<i title="PendÃªncia autorizada!" class="icon fa-check has-warning" aria-hidden="true" style="margin-left: 1em; cursor:pointer; font-size: 1.2em;"></i>';
 
                             sweetAlert("UsuÃ¡rio autenticado com sucesso!", "", "success");
 
@@ -1389,6 +1519,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $.get('verifica_cpf.php?cpf=' + a + '&id=' + pessoa_id, function(dataReturn) {
                     $("#cpf_exists").html(dataReturn);
                 });
+            }
+
+            function pnomesocial() {
+                document.getElementById("idpnomesocial").style.display = 'none';
+                document.getElementById("nnome_social").style.display = 'block';
             }
         </script>
 </body>
