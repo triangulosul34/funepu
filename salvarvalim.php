@@ -99,14 +99,14 @@ while ($row = pg_fetch_object($sth)) {
         $r++;
     }
 }
-if ($nao == 1) {
-    echo '<script>alert("Alguns medicamento nao podem ser prescritos");</script>';
-} else {
+// if ($nao == 1) {
+//     echo '<script>alert("Alguns medicamento nao podem ser prescritos");</script>';
+// } else {
     include("conexaovalimh.php");
     $stmtvalim = "select * from insereprescricaoupa" . FUNCTIONBD_FARMACIA . "('FUNEPU','$medico','$nome',
 					'000.000.000.00',$prescricao,'$data','$hora',array[$valim]::prodprescricao[])";
     $sthvalim = pg_query($stmtvalim) or die($stmtvalim);
     echo '<script>document.getElementById("formp").submit();</script>';
-}
+// }
 
 echo $stmtvalim;

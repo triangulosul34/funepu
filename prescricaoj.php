@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $prioridade  = $_GET['prioridade'];
     $pr           = $_GET['pr'];
     if ($prescricao == '') {
-
         include('conexao.php');
         $stmt = "select nextval('prescricoes_prescricao_id_seq')";
         $sth = pg_query($stmt) or die($stmt);
@@ -124,7 +123,9 @@ if (isset($_POST["cancelar"])) {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -135,7 +136,8 @@ if (isset($_POST["cancelar"])) {
     <link rel="stylesheet" type="text/css" href="app-assets/css/tsul.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/pickadate/pickadate.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <!--load all styles -->
 
@@ -180,7 +182,8 @@ if (isset($_POST["cancelar"])) {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Nova Prescricao
                                                 </h4>
                                             </div>
@@ -202,20 +205,29 @@ if (isset($_POST["cancelar"])) {
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
-                                    <form method="POST" enctype="multipart/form-data" action="#" id="formp" onsubmit="sal.disabled = true; return true;">
-                                        <input type="hidden" name="precricao" id="prescricao" class="form-control" value="<?php echo $prescricao; ?>" readonly>
+                                    <form method="POST" enctype="multipart/form-data" action="#" id="formp"
+                                        onsubmit="sal.disabled = true; return true;">
+                                        <input type="hidden" name="precricao" id="prescricao" class="form-control"
+                                            value="<?php echo $prescricao; ?>"
+                                            readonly>
                                         <div class="row">
                                             <div class="col-2">
                                                 <div class="form-group">
                                                     <label>Atendimento</label>
-                                                    <input type="text" name="atendimento" id="atendimento" class="form-control square" value="<?php echo $atendimento; ?>" readonly>
-                                                    <input type="hidden" name="medico" id="medico" class="form-control" value="<?php echo $usuario; ?>" readonly>
+                                                    <input type="text" name="atendimento" id="atendimento"
+                                                        class="form-control square"
+                                                        value="<?php echo $atendimento; ?>"
+                                                        readonly>
+                                                    <input type="hidden" name="medico" id="medico" class="form-control"
+                                                        value="<?php echo $usuario; ?>"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-10">
                                                 <div class="form-group">
                                                     <label>Nome do Paciente</label>
-                                                    <input type="text" class="form-control square" id="nome" name="nome" value="<?php echo $nome; ?>">
+                                                    <input type="text" class="form-control square" id="nome" name="nome"
+                                                        value="<?php echo $nome; ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -223,26 +235,37 @@ if (isset($_POST["cancelar"])) {
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>CNS</label>
-                                                    <input type="text" class="form-control square" id="cns" name="cns" value="<?php echo $cns; ?>">
+                                                    <input type="text" class="form-control square" id="cns" name="cns"
+                                                        value="<?php echo $cns; ?>">
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Idade</label>
-                                                    <input type="text" class="form-control square" id="idade" name="idade" value="<?php echo $idade; ?>" readonly>
-                                                    <input type="hidden" class="form-control square" id="prioridade" name="prioridade" value="<?php echo $prioridade; ?>" readonly>
+                                                    <input type="text" class="form-control square" id="idade"
+                                                        name="idade"
+                                                        value="<?php echo $idade; ?>"
+                                                        readonly>
+                                                    <input type="hidden" class="form-control square" id="prioridade"
+                                                        name="prioridade"
+                                                        value="<?php echo $prioridade; ?>"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Prontuario</label>
-                                                    <input type="text" class="form-control square" id="prontuario" name="prontuario" value="<?php echo $prontuario; ?>">
+                                                    <input type="text" class="form-control square" id="prontuario"
+                                                        name="prontuario"
+                                                        value="<?php echo $prontuario; ?>">
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
                                                 <div class="form-group">
                                                     <label>Data</label>
-                                                    <input type="text" class="form-control square" id="data" name="data" value="<?php echo date("d/m/Y") ?>" readonly>
+                                                    <input type="text" class="form-control square" id="data" name="data"
+                                                        value="<?php echo date("d/m/Y") ?>"
+                                                        readonly>
                                                 </div>
                                             </div>
                                         </div>
@@ -251,54 +274,70 @@ if (isset($_POST["cancelar"])) {
                                             <div class="col-12 mt-2">
                                                 <div class="form-group">
                                                     <label>
-                                                        <input class="mr-2" type="radio" name="optradio" id="optradio" value="dietas" onclick="radio()" <?php if ($optradio == 'dietas') {
-                                                                                                                                                            echo "checked";
-                                                                                                                                                        } ?>>Dieta
+                                                        <input class="mr-2" type="radio" name="optradio" id="optradio"
+                                                            value="dietas" onclick="radio()" <?php if ($optradio == 'dietas') {
+    echo "checked";
+} ?>>Dieta
                                                     </label>
                                                     <label>
-                                                        <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="medicamentos" onclick="radio()" <?php if ($optradio == 'medicamentos') {
-                                                                                                                                                                        echo "checked";
-                                                                                                                                                                    } ?>>Medicamento
+                                                        <input class="mr-2 ml-2" type="radio" name="optradio"
+                                                            id="optradio" value="medicamentos" onclick="radio()" <?php if ($optradio == 'medicamentos') {
+    echo "checked";
+} ?>>Medicamento
                                                     </label>
                                                     <label>
-                                                        <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="solucoes" onclick="radio()" <?php if ($optradio == 'solucoes') {
-                                                                                                                                                                    echo "checked";
-                                                                                                                                                                } ?>>Soluções
+                                                        <input class="mr-2 ml-2" type="radio" name="optradio"
+                                                            id="optradio" value="solucoes" onclick="radio()" <?php if ($optradio == 'solucoes') {
+    echo "checked";
+} ?>>Soluções
+                                                    </label>
+                                                    <?php if ($prioridade != 'VERDE' and $prioridade != 'AZUL' and $prioridade != '') { ?>
+                                                    <label>
+                                                        <input class="mr-2 ml-2" type="radio" name="optradio"
+                                                            id="optradio" value="antibioticos" onclick="radio()" <?php if ($optradio == 'antibioticos') {
+    echo "checked";
+} ?>>Antibioticos
+                                                    </label>
+                                                    <?php } ?>
+                                                    <label>
+                                                        <input class="mr-2 ml-2" type="radio" name="optradio"
+                                                            id="optradio" value="prescricao_cuidados" onclick="radio()"
+                                                            <?php if ($optradio == 'precricao_cuidados') {
+    echo "checked";
+} ?>>Cuidado
                                                     </label>
                                                     <label>
-                                                        <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="prescricao_cuidados" onclick="radio()" <?php if ($optradio == 'precricao_cuidados') {
-                                                                                                                                                                                echo "checked";
-                                                                                                                                                                            } ?>>Cuidado
-                                                    </label>
-                                                    <label>
-                                                        <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="paciente" onclick="radio()" <?php if ($optradio == 'paciente') {
-                                                                                                                                                                    echo "checked";
-                                                                                                                                                                } ?>>medicamento particular do paciente
+                                                        <input class="mr-2 ml-2" type="radio" name="optradio"
+                                                            id="optradio" value="paciente" onclick="radio()" <?php if ($optradio == 'paciente') {
+    echo "checked";
+} ?>>medicamento
+                                                        particular do paciente
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-12" align="center" id="teste" name="teste" style="display:none;">
+                                            <div class="col-md-12" align="center" id="teste" name="teste"
+                                                style="display:none;">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div id="tabela" class="col-12">
                                                 <?php if ($pr) { ?>
-                                                    <table id="tabela" class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="30">Procedimento</th>
-                                                                <th width="20">Via</th>
-                                                                <th width="10%">Aprazamento</th>
-                                                                <th width="10%">Quantidade</th>
-                                                                <th width="10%">Diluente</th>
-                                                                <th width="10%">Complemento</th>
-                                                                <th width="10%">Ação</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <?php
+                                                <table id="tabela" class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="30">Procedimento</th>
+                                                            <th width="20">Via</th>
+                                                            <th width="10%">Aprazamento</th>
+                                                            <th width="10%">Quantidade</th>
+                                                            <th width="10%">Diluente</th>
+                                                            <th width="10%">Complemento</th>
+                                                            <th width="10%">Ação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
                                                             include('conexao.php');
                                                             $stmt = "select *
 																	from prescricao_item
@@ -317,15 +356,18 @@ if (isset($_POST["cancelar"])) {
                                                                 echo "</tr>";
                                                             }
                                                             ?>
-                                                        </tbody>
-                                                    </table>
+                                                    </tbody>
+                                                </table>
                                                 <?php } ?>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-12" align="center">
-                                                <input type="button" name='sal' id='sal' onclick="javascript:salvar();window.opener.location.reload()" class="btn btn-success" value="Finalizar">
-                                                <input type="submit" name='cancelar' id='cancelar' class="btn btn-danger" value="Cancelar Prescricao">
+                                                <input type="button" name='sal' id='sal'
+                                                    onclick="javascript:salvar();window.opener.location.reload()"
+                                                    class="btn btn-success" value="Finalizar">
+                                                <input type="submit" name='cancelar' id='cancelar'
+                                                    class="btn btn-danger" value="Cancelar Prescricao">
                                             </div>
                                         </div>
                                     </form>
@@ -353,7 +395,8 @@ if (isset($_POST["cancelar"])) {
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script src="app-assets/js/popover.js" type="text/javascript"></script>
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
@@ -362,12 +405,27 @@ if (isset($_POST["cancelar"])) {
         <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/i18n/defaults-*.min.js"></script>
         <script>
+            function obs_med(elem) {
+                // 	var indiceDoSelectEscolhido = elem.selectedIndex;
+                // 	var valorDoElementoEscolhido = elem.options[indiceDoSelectEscolhido];
+                // 	alert("oi")
+                // 	document.getElementById("teste").style.display="block";
+                var obs = document.getElementById("obs_text").value;
+                //alert(obs)
+            }
+
+
+
             //$("#escolha").chosen({width: "100%"})
             //$("#via").chosen({width: "100%"})
             //$("#aprazamento").chosen({width: "100%"})
-            // $("select").chosen({
-            //     width: "100%"
-            // })
+            $("select").chosen({
+                width: "100%"
+            })
+
+            $("#escolha").change(function() {
+                alert("Oi")
+            });
 
             function adc() {
                 var rads = $("input[name='optradio']:checked").val();
@@ -403,6 +461,8 @@ if (isset($_POST["cancelar"])) {
                     var a = document.getElementById("aprazamento");
                     var aprazamento = a.options[a.selectedIndex].text;
                     var obs = document.getElementById("obs_text").value;
+                    var obs_final = obs.trim();
+                    var alphaExp = /(.*[a-z]){3}/i;
                     //[aux + 1] = diluente;
                     //alert(obs);
 
@@ -410,6 +470,24 @@ if (isset($_POST["cancelar"])) {
                         if (obs == '') {
                             swal({
                                 title: "Informe o Diagnóstico",
+                                text: "",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonColor: '#428bca',
+                                confirmButtonText: 'OK',
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+
+                            document.getElementById('teste2').focus;
+                            return false;
+                        }
+                    }
+
+                    if ($("#teste").is(":visible")) {
+                        if (alphaExp.test(obs)) {} else {
+                            swal({
+                                title: "Descreva corretamente a hipótese diagnóstica.",
                                 text: "",
                                 type: "error",
                                 showCancelButton: false,
@@ -450,7 +528,8 @@ if (isset($_POST["cancelar"])) {
                         });
                         document.getElementById('aprazamento').focus;
                         return false;
-                    } else if (escolha == '') {
+
+                    } else if (escolha === null || escolha.length == 0) {
                         swal({
                             title: "Informe um medicamento",
                             text: "",
@@ -492,7 +571,10 @@ if (isset($_POST["cancelar"])) {
                     } else {
                         //alert('Passei 4');
                         //alert(obs);
-                        var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolhavetor=' + s + '&diluente=' + diluente + '&dosagemvetor=' + c + '&radio=' + rads + '&diluente=' + diluente + '&complemento=' + complemento + '&via=' + via + '&aprazamento=' + aprazamento + '&bomba=' + b + '&obs=' + obs;
+                        var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' +
+                            nome + '&prescricao=' + prescricao + '&escolhavetor=' + s + '&diluente=' + diluente +
+                            '&dosagemvetor=' + c + '&radio=' + rads + '&diluente=' + diluente + '&complemento=' +
+                            complemento + '&via=' + via + '&aprazamento=' + aprazamento + '&bomba=' + b + '&obs=' + obs;
                         $.get(url, function(dataReturn) {
                             $('#tabela').html(dataReturn);
                         });
@@ -505,7 +587,8 @@ if (isset($_POST["cancelar"])) {
                     var nome = document.getElementById("nome").value;
                     var paciente = document.getElementById("paciente").value;
 
-                    var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&paciente=' + paciente + '&radio=' + rads;
+                    var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome +
+                        '&prescricao=' + prescricao + '&paciente=' + paciente + '&radio=' + rads;
                     $.get(url, function(dataReturn) {
                         $('#tabela').html(dataReturn);
                     });
@@ -533,7 +616,10 @@ if (isset($_POST["cancelar"])) {
                     var qtd = document.getElementById("aprazamento").value;
                     var obs = document.getElementById("obs_text").value;
                     //alert(obs);
-                    var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via + '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&bomba=' + b + '&obs=' + obs;
+                    var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome +
+                        '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via + '&aprazamento=' +
+                        aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem + '&radio=' + rads +
+                        '&value=' + value + '&qtd=' + qtd + '&bomba=' + b + '&obs=' + obs;
                     $.get(url, function(dataReturn) {
                         $('#tabela').html(dataReturn);
                     });
@@ -555,12 +641,32 @@ if (isset($_POST["cancelar"])) {
                     var aprazamento = a.options[a.selectedIndex].text;
                     var qtd = document.getElementById("aprazamento").value;
                     var obs = document.getElementById("obs_text").value;
+                    var obs_final = obs.trim();
+                    var alphaExp = /(.*[a-z]){3}/i;
                     //alert(obs);
 
                     if ($("#teste").is(":visible")) {
                         if (obs == '') {
                             swal({
                                 title: "Informe o Diagnóstico",
+                                text: "",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonColor: '#428bca',
+                                confirmButtonText: 'OK',
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+
+                            document.getElementById('teste2').focus;
+                            return false;
+                        }
+                    }
+
+                    if ($("#teste").is(":visible")) {
+                        if (alphaExp.test(obs)) {} else {
+                            swal({
+                                title: "Descreva corretamente a hipótese diagnóstica.",
                                 text: "",
                                 type: "error",
                                 showCancelButton: false,
@@ -628,7 +734,10 @@ if (isset($_POST["cancelar"])) {
                         document.getElementById('diluente').focus;
                         return false;
                     } else {
-                        var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via + '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&obs=' + obs;
+                        var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' +
+                            nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via +
+                            '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem +
+                            '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&obs=' + obs;
                         $.get(url, function(dataReturn) {
                             $('#tabela').html(dataReturn);
                         });
@@ -646,7 +755,10 @@ if (isset($_POST["cancelar"])) {
                     var aprazamento = a.options[a.selectedIndex].text;
                     var qtd = document.getElementById("aprazamento").value;
 
-                    var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&obs=' + obs;
+                    var url = 'ajax_prescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome +
+                        '&prescricao=' + prescricao + '&escolha=' + escolha + '&aprazamento=' + aprazamento +
+                        '&complemento=' + complemento + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&obs=' +
+                        obs;
                     $.get(url, function(dataReturn) {
                         $('#tabela').html(dataReturn);
                     });
@@ -660,47 +772,10 @@ if (isset($_POST["cancelar"])) {
                 });
             }
 
-            function obs_medi() {
-                var esc = $('[name=escolha]').val();
-                var arrayId = ['105139', '105452', '106577', '105377', '105384', '105352', '105034', '105361', '105354', '105091', '105088', '105457', '106576', '105427', '105426'];
-                if (arrayId.indexOf(esc) != -1) {
-                    document.getElementById("teste").style.display = "block";
-                    div.innerHTML = '<div class="col-md-12" align="center" id="teste2" name="teste2" >' +
-                        '<label>Hipótese Diagnostica</label>' +
-                        '<textarea  class="form-control" id="obs_text" name="obs_text"></textarea>' +
-                        '<br>' +
-                        '</div>';
-                } else {
-                    document.getElementById("teste").style.display = "none";
-                }
-
-                if (esc == 105342) {
-                    $("#diluente option[value='9999']").remove();
-                    $("#diluente option[value='8888']").remove();
-                    $("#diluente option[value='105472']").remove();
-                    $("#diluente option[value='105340']").remove();
-                    $("#diluente option[value='105336']").remove();
-                    $("#diluente option[value='105335']").remove();
-                    $("#diluente option[value='105204']").remove();
-                    $("#diluente option[value='104942']").remove();
-                } else {
-                    if ($("#diluente option[value='9999']").length < 1) {
-                        $("#diluente").append('<option value="9999">EM BOLUS</option>');
-                        $("#diluente").append('<option value="8888">PURO</option>');
-                        $("#diluente").append('<option value="105472">AGUA DESTILADA 10 ML</option>');
-                        $("#diluente").append('<option value="105340">CLORETO DE SODIO 0, 9 % -AMPOLA DE 10 ML</option>');
-                        $("#diluente").append('<option value="105336">CLORETO SODIO 0, 9 % 100 ML</option>');
-                        $("#diluente").append('<option value="105335">CLORETO SODIO 0,9% 250ML</option>');
-                        $("#diluente").append('<option value="105204">GLICOSE 5% 250ML</option>');
-                        $("#diluente").append('<option value="104942">SOLUÇAO DE RINGER COM LACTATO FRASCO DE</option>');
-                    }
-                }
-            }
-
             function radio() {
-                var rads = $("input[name='optradio']:checked").val();
                 var idade = document.getElementById("idade").value;
                 var prioridade = document.getElementById("prioridade").value;
+                var rads = $("input[name='optradio']:checked").val();
                 var url = 'ajax_selectverde.php?radio=' + rads + '&idade=' + idade + '&prioridade=' + prioridade;
                 $.get(url, function(dataReturn) {
                     $('#solucoes').html(dataReturn);
@@ -715,10 +790,11 @@ if (isset($_POST["cancelar"])) {
                 });
             }
 
-            function editaconta(id, tipo) {
+            function editaconta(id, tipo, item_id) {
                 var idade = document.getElementById("idade").value;
                 var prioridade = document.getElementById("prioridade").value;
-                var url = 'ajax_selectedit.php?tipo=' + tipo + '&id=' + id + '&idade=' + idade + '&prioridade=' + prioridade;
+                var url = 'ajax_selectedit.php?tipo=' + tipo + '&id=' + id + '&id_item=' + item_id + '&idade=' + idade +
+                    '&prioridade=' + prioridade;
                 $.get(url, function(dataReturn) {
                     $('#solucoes').html(dataReturn);
                 });
@@ -735,9 +811,8 @@ if (isset($_POST["cancelar"])) {
                     }
                     var s = new Array;
                     escolha = document.getElementsByClassName('teste');
-                    for (i = 0; i < escolha.length; i++) {
+                    for (i = 0; i < escolha.length - 1; i++) {
                         s[i] = escolha[i].value;
-                        //aux = i;
                     }
                     var c = new Array;
                     dosagem = document.getElementsByClassName('dosagem');
@@ -755,6 +830,47 @@ if (isset($_POST["cancelar"])) {
                     var via = v.options[v.selectedIndex].text;
                     var a = document.getElementById("aprazamento");
                     var aprazamento = a.options[a.selectedIndex].text;
+                    var obs = document.getElementById("obs_text").value;
+                    var obs_final = obs.trim();
+                    var alphaExp = /(.*[a-z]){3}/i;
+                    //[aux + 1] = diluente;
+                    //alert(obs);
+
+                    if ($("#teste").is(":visible")) {
+                        if (obs == '') {
+                            swal({
+                                title: "Informe o Diagnóstico",
+                                text: "",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonColor: '#428bca',
+                                confirmButtonText: 'OK',
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+
+                            document.getElementById('teste2').focus;
+                            return false;
+                        }
+                    }
+
+                    if ($("#teste").is(":visible")) {
+                        if (alphaExp.test(obs)) {} else {
+                            swal({
+                                title: "Descreva corretamente a hipótese diagnóstica.",
+                                text: "",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonColor: '#428bca',
+                                confirmButtonText: 'OK',
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+
+                            document.getElementById('teste2').focus;
+                            return false;
+                        }
+                    }
                     if (via == '') {
                         swal({
                             title: "Informe uma via de administração",
@@ -834,7 +950,11 @@ if (isset($_POST["cancelar"])) {
                         document.getElementById('diluente').focus;
                         return false;
                     } else {
-                        var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolhavetor=' + s + '&diluente=' + diluente + '&dosagemvetor=' + c + '&radio=' + rads + '&diluente=' + diluente + '&complemento=' + complemento + '&via=' + via + '&aprazamento=' + aprazamento + '&bomba=' + b + '&id=' + id;
+                        var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento +
+                            '&nome=' + nome + '&prescricao=' + prescricao + '&escolhavetor=' + s + '&diluente=' +
+                            diluente + '&dosagemvetor=' + c + '&radio=' + rads + '&diluente=' + diluente +
+                            '&complemento=' + complemento + '&via=' + via + '&aprazamento=' + aprazamento + '&bomba=' +
+                            b + '&id=' + id + '&obs=' + obs;
                         $.get(url, function(dataReturn) {
                             $('#tabela').html(dataReturn);
                         });
@@ -846,7 +966,8 @@ if (isset($_POST["cancelar"])) {
                     var medico = document.getElementById("medico").value;
                     var nome = document.getElementById("nome").value;
                     var paciente = document.getElementById("paciente").value;
-                    var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&paciente=' + paciente + '&radio=' + rads + '&id=' + id;
+                    var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' +
+                        nome + '&prescricao=' + prescricao + '&paciente=' + paciente + '&radio=' + rads + '&id=' + id;
                     $.get(url, function(dataReturn) {
                         $('#tabela').html(dataReturn);
                     });
@@ -873,13 +994,15 @@ if (isset($_POST["cancelar"])) {
                     var aprazamento = a.options[a.selectedIndex].text;
                     var qtd = document.getElementById("aprazamento").value;
 
-                    var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via + '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&bomba=' + b + '&id=' + id;
+                    var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' +
+                        nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via + '&aprazamento=' +
+                        aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem + '&radio=' + rads +
+                        '&value=' + value + '&qtd=' + qtd + '&bomba=' + b + '&id=' + id;
                     $.get(url, function(dataReturn) {
                         $('#tabela').html(dataReturn);
                     });
 
                 } else if (rads == 'medicamentos') {
-
                     var prescricao = document.getElementById("prescricao").value;
                     var atendimento = document.getElementById("atendimento").value;
                     var medico = document.getElementById("medico").value;
@@ -894,6 +1017,47 @@ if (isset($_POST["cancelar"])) {
                     var a = document.getElementById("aprazamento");
                     var aprazamento = a.options[a.selectedIndex].text;
                     var qtd = document.getElementById("aprazamento").value;
+                    var obs = document.getElementById("obs_text").value;
+                    var obs_final = obs.trim();
+                    var alphaExp = /(.*[a-z]){3}/i;
+                    //[aux + 1] = diluente;
+                    //alert(obs);
+
+                    if ($("#teste").is(":visible")) {
+                        if (obs == '') {
+                            swal({
+                                title: "Informe o Diagnóstico",
+                                text: "",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonColor: '#428bca',
+                                confirmButtonText: 'OK',
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+
+                            document.getElementById('teste2').focus;
+                            return false;
+                        }
+                    }
+
+                    if ($("#teste").is(":visible")) {
+                        if (alphaExp.test(obs)) {} else {
+                            swal({
+                                title: "Descreva corretamente a hipótese diagnóstica.",
+                                text: "",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonColor: '#428bca',
+                                confirmButtonText: 'OK',
+                                closeOnConfirm: false,
+                                closeOnCancel: false
+                            });
+
+                            document.getElementById('teste2').focus;
+                            return false;
+                        }
+                    }
                     if (via == '') {
                         swal({
                             title: "Informe uma via de administração",
@@ -947,7 +1111,10 @@ if (isset($_POST["cancelar"])) {
                         document.getElementById('diluente').focus;
                         return false;
                     } else {
-                        var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via + '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&id=' + id;
+                        var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento +
+                            '&nome=' + nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&via=' + via +
+                            '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&dosagem=' + dosagem +
+                            '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&id=' + id + '&obs=' + obs;
                         $.get(url, function(dataReturn) {
                             $('#tabela').html(dataReturn);
                         });
@@ -964,7 +1131,10 @@ if (isset($_POST["cancelar"])) {
                     var a = document.getElementById("aprazamento");
                     var aprazamento = a.options[a.selectedIndex].text;
                     var qtd = document.getElementById("aprazamento").value;
-                    var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' + nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&aprazamento=' + aprazamento + '&complemento=' + complemento + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&id=' + id;
+                    var url = 'ajax_editaprescricao.php?medico=' + medico + '&atendimento=' + atendimento + '&nome=' +
+                        nome + '&prescricao=' + prescricao + '&escolha=' + escolha + '&aprazamento=' + aprazamento +
+                        '&complemento=' + complemento + '&radio=' + rads + '&value=' + value + '&qtd=' + qtd + '&id=' +
+                        id;
                     $.get(url, function(dataReturn) {
                         $('#tabela').html(dataReturn);
                     });
@@ -992,14 +1162,20 @@ if (isset($_POST["cancelar"])) {
                     var via = v.options[v.selectedIndex].text;
                     var a = document.getElementById("aprazamento");
                     var aprazamento = a.options[a.selectedIndex].text;
-                    var url = 'ajax_selectverde.php?radio=solucoes&complemento=' + complemento + '&dosagem=' + dosagem + '&escolha=' + escolha + '&via=' + via + '&aprazamento=' + aprazamento + '&prescricao=' + prescricao + '&idade=' + idade + '&prioridade=' + prioridade;
+                    var url = 'ajax_selectverde.php?radio=solucoes&complemento=' + complemento + '&dosagem=' + dosagem +
+                        '&escolha=' + escolha + '&via=' + via + '&aprazamento=' + aprazamento + '&prescricao=' +
+                        prescricao + '&idade=' + idade + '&prioridade=' + prioridade + '&escolha_id=' + $(
+                            '[name=escolha]').val();
                     $.get(url, function(dataReturn) {
                         $('#solucoes').html(dataReturn);
                         var esc = $('[name=escolha]').val();
-                        var arrayId = ['105139', '105452', '106577', '105377', '105384', '105352', '105034', '105361', '105354', '105091', '105088', '105457', '106576', '105427', '105426'];
+                        var arrayId = ['105139', '105452', '106577', '105377', '105384', '105352', '105034',
+                            '105361', '105354', '105091', '105088', '105457', '106576', '105427', '105426'
+                        ];
                         if (arrayId.indexOf(esc) != -1) {
                             document.getElementById("teste").style.display = "block";
-                            div.innerHTML = '<div class="col-md-12" align="center" id="teste2" name="teste2" >' +
+                            div.innerHTML =
+                                '<div class="col-md-12" align="center" id="teste2" name="teste2" >' +
                                 '<label>Hipótese Diagnostica</label>' +
                                 '<textarea  class="form-control" id="obs_text" name="obs_text"></textarea>' +
                                 '<br>' +
@@ -1011,6 +1187,50 @@ if (isset($_POST["cancelar"])) {
                 }
             }
 
+            function antibioticos(i) {
+                var url = 'ajax_selectverde.php?controle_id=' + i + '&antibiotico=1';
+                $.get(url, function(dataReturn) {
+                    $('#solucoes').html(dataReturn);
+                    var esc = $('[name=escolha]').val();
+                    var arrayId = ['105139', '105452', '106577', '105377', '105384', '105352', '105034',
+                        '105361', '105354', '105091', '105088', '105457', '106576', '105427', '105426'
+                    ];
+                    if (arrayId.indexOf(esc) != -1) {
+                        document.getElementById("teste").style.display = "block";
+                        div.innerHTML =
+                            '<div class="col-md-12" align="center" id="teste2" name="teste2" >' +
+                            '<label>Hipótese Diagnostica</label>' +
+                            '<textarea  class="form-control" id="obs_text" name="obs_text"></textarea>' +
+                            '<br>' +
+                            '</div>';
+                    } else {
+                        document.getElementById("teste").style.display = "none";
+                    }
+                });
+            }
+
+            function outros_antibioticos() {
+                var url = 'ajax_selectverde.php?outro_antibiotico=' + $('#antibiotico').val() + '&outro=1';
+                $.get(url, function(dataReturn) {
+                    $('#solucoes').html(dataReturn);
+                    var esc = $('[name=escolha]').val();
+                    var arrayId = ['105139', '105452', '106577', '105377', '105384', '105352', '105034',
+                        '105361', '105354', '105091', '105088', '105457', '106576', '105427', '105426'
+                    ];
+                    if (arrayId.indexOf(esc) != -1) {
+                        document.getElementById("teste").style.display = "block";
+                        div.innerHTML =
+                            '<div class="col-md-12" align="center" id="teste2" name="teste2" >' +
+                            '<label>Hipótese Diagnostica</label>' +
+                            '<textarea  class="form-control" id="obs_text" name="obs_text"></textarea>' +
+                            '<br>' +
+                            '</div>';
+                    } else {
+                        document.getElementById("teste").style.display = "none";
+                    }
+                });
+            }
+
             function salvar() {
                 document.getElementById("sal").disabled = true;
                 var prescricao = document.getElementById("prescricao").value;
@@ -1019,7 +1239,8 @@ if (isset($_POST["cancelar"])) {
                 var prioridade = document.getElementById("prioridade").value;
                 var idade = document.getElementById("idade").value;
                 var atendimento = document.getElementById("atendimento").value;
-                var url = 'salvarvalim.php?prescricao=' + prescricao + '&medico=' + medico + '&nome=' + nome + '&atendimento=' + atendimento + '&prioridade=' + prioridade + '&idade=' + idade;
+                var url = 'salvarvalim.php?prescricao=' + prescricao + '&medico=' + medico + '&nome=' + nome +
+                    '&atendimento=' + atendimento + '&prioridade=' + prioridade + '&idade=' + idade;
                 $.get(url, function(dataReturn) {
                     $('#teste').html(dataReturn);
                 });
@@ -1031,7 +1252,9 @@ if (isset($_POST["cancelar"])) {
                 er.lastIndex = 0;
                 var campo = num;
                 var c = campo.value;
-                if (value != 105194 && value != 105019 && value != 105283 && value != 105159 && value != 105041 && value != 105242 && value != 105129 && value != 105338 && value != 105164 && value != 105165 && value != 105000 && value != 105131 && value != 105130) {
+                if (value != 105195 && value != 105194 && value != 105019 && value != 105283 && value != 105159 &&
+                    value != 105041 && value != 105242 && value != 105129 && value != 105338 && value != 105164 &&
+                    value != 105165 && value != 105000 && value != 105131 && value != 105130) {
                     if (c > 20) {
                         campo.value = "";
                         swal({
@@ -1046,7 +1269,9 @@ if (isset($_POST["cancelar"])) {
                         });
                     }
                 }
-                if (value != 105194 && value != 105019 && value != 105283 && value != 105159 && value != 105041 && value != 105242 && value != 105129 && value != 105338 && value != 105164 && value != 105165 && value != 105000 && value != 105131 && value != 105130) {
+                if (value != 105195 && value != 105194 && value != 105019 && value != 105283 && value != 105159 &&
+                    value != 105041 && value != 105242 && value != 105129 && value != 105338 && value != 105164 &&
+                    value != 105165 && value != 105000 && value != 105131 && value != 105130) {
                     if (er.test(campo.value)) {
                         campo.value = "";
                         swal({
@@ -1099,6 +1324,47 @@ if (isset($_POST["cancelar"])) {
             $('input').on("input", function(e) {
                 $(this).val($(this).val().replace(/'/g, ""));
             });
+
+            function obs_medi() {
+                var esc = $('[name=escolha]').val();
+                var arrayId = ['105139', '105452', '106577', '105377', '105384', '105352', '105034', '105361', '105354',
+                    '105091', '105088', '105457', '106576', '105427', '105426'
+                ];
+                if (arrayId.indexOf(esc) != -1) {
+                    document.getElementById("teste").style.display = "block";
+                    div.innerHTML = '<div class="col-md-12" align="center" id="teste2" name="teste2" >' +
+                        '<label>Hipótese Diagnostica</label>' +
+                        '<textarea  class="form-control" id="obs_text" name="obs_text"></textarea>' +
+                        '<br>' +
+                        '</div>';
+                } else {
+                    document.getElementById("teste").style.display = "none";
+                }
+
+                if (esc == 105342) {
+                    $("#diluente option[value='9999']").remove();
+                    $("#diluente option[value='8888']").remove();
+                    $("#diluente option[value='105472']").remove();
+                    $("#diluente option[value='105340']").remove();
+                    $("#diluente option[value='105336']").remove();
+                    $("#diluente option[value='105335']").remove();
+                    $("#diluente option[value='105204']").remove();
+                    $("#diluente option[value='104942']").remove();
+                } else {
+                    if ($("#diluente option[value='9999']").length < 1) {
+                        $("#diluente").append('<option value="9999">EM BOLUS</option>');
+                        $("#diluente").append('<option value="8888">PURO</option>');
+                        $("#diluente").append('<option value="105472">AGUA DESTILADA 10 ML</option>');
+                        $("#diluente").append(
+                            '<option value="105340">CLORETO DE SODIO 0, 9 % -AMPOLA DE 10 ML</option>');
+                        $("#diluente").append('<option value="105336">CLORETO SODIO 0, 9 % 100 ML</option>');
+                        $("#diluente").append('<option value="105335">CLORETO SODIO 0,9% 250ML</option>');
+                        $("#diluente").append('<option value="105204">GLICOSE 5% 250ML</option>');
+                        $("#diluente").append(
+                            '<option value="104942">SOLUÇAO DE RINGER COM LACTATO FRASCO DE</option>');
+                    }
+                }
+            }
         </script>
 </body>
 

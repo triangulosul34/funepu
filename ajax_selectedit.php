@@ -43,6 +43,11 @@ if ($optradio == '5') {
                                                                                                                             } ?>>Soluções
                 </label>
                 <label class="radio-inline">
+                    <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="antibioticos" onclick="radio()" <?php if ($optradio == '7') {
+                                                                                                                                    echo "checked";
+                                                                                                                                } ?>>Antibioticos
+                </label>
+                <label class="radio-inline">
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="prescricao_cuidados" onclick="radio()" <?php if ($optradio == '10') {
                                                                                                                                             echo "checked";
                                                                                                                                         } ?>>Cuidado
@@ -191,6 +196,11 @@ if ($optradio == '5') {
                                                                                                                             } ?>>Soluções
                 </label>
                 <label class="radio-inline">
+                    <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="antibioticos" onclick="radio()" <?php if ($optradio == '7') {
+                                                                                                                                    echo "checked";
+                                                                                                                                } ?>>Antibioticos
+                </label>
+                <label class="radio-inline">
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="prescricao_cuidados" onclick="radio()" <?php if ($optradio == '10') {
                                                                                                                                             echo "checked";
                                                                                                                                         } ?>>Cuidado
@@ -278,6 +288,11 @@ if ($optradio == '5') {
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="solucoes" onclick="radio()" <?php if ($optradio == '6') {
                                                                                                                                 echo "checked";
                                                                                                                             } ?>>Soluções
+                </label>
+                <label class="radio-inline">
+                    <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="antibioticos" onclick="radio()" <?php if ($optradio == '7') {
+                                                                                                                                    echo "checked";
+                                                                                                                                } ?>>Antibioticos
                 </label>
                 <label class="radio-inline">
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="prescricao_cuidados" onclick="radio()" <?php if ($optradio == '10') {
@@ -404,6 +419,11 @@ if ($optradio == '5') {
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="solucoes" onclick="radio()" <?php if ($optradio == '6') {
                                                                                                                                 echo "checked";
                                                                                                                             } ?>>Soluções
+                </label>
+                <label class="radio-inline">
+                    <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="antibioticos" onclick="radio()" <?php if ($optradio == '7') {
+                                                                                                                                    echo "checked";
+                                                                                                                                } ?>>Antibioticos
                 </label>
                 <label class="radio-inline">
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="prescricao_cuidados" onclick="radio()" <?php if ($optradio == '10') {
@@ -591,6 +611,11 @@ if ($optradio == '5') {
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="solucoes" onclick="radio()" <?php if ($optradio == '6') {
                                                                                                                                 echo "checked";
                                                                                                                             } ?>>Soluções
+                </label>
+                <label class="radio-inline">
+                    <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="antibioticos" onclick="radio()" <?php if ($optradio == '7') {
+                                                                                                                                    echo "checked";
+                                                                                                                                } ?>>Antibioticos
                 </label>
                 <label class="radio-inline">
                     <input class="mr-2 ml-2" type="radio" name="optradio" id="optradio" value="prescricao_cuidados" onclick="radio()" <?php if ($optradio == '10') {
