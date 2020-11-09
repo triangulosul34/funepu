@@ -66,10 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
         }
 
-        $stmt = $stmt . " and (p.destino_encaminhamento <> 6 or p.destino_encaminhamento is null)  order by a.hora_cad desc ";
+        $stmt = $stmt . " and (p.destino_encaminhamento <> 6 or p.destino_encaminhamento is null)  order by c.nome";
         $sth = pg_query($stmt) or die($stmt);
         while ($row = pg_fetch_object($sth)) {
-
             $html .= '<tr>';
             $html .= '<td>' . $row->transacao . '</td>';
             $html .= '<td>' . $row->nome . '</td>';
@@ -99,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit;
     }
     if (isset($_POST["excel"])) {
-
         $arquivo = 'Relatorio Atendimento.xls';
         // Criamos uma tabela HTML com o formato da planilha
         $html = '';
@@ -143,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //echo $stmt;
         $qtde = 0;
         while ($row = pg_fetch_object($sth)) {
-
             $html .= '<tr>';
             $html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
             $html .= '<td>' . $row->nome . '</td>';
@@ -200,7 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -255,7 +254,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Relatorio de Atendimentos Diario
                                                 </h4>
                                             </div>
@@ -282,24 +282,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Data Inicial</label>
-                                                    <input type="date" class="form-control square" id="start" name="start" value="<?php echo $_POST['start']; ?>" onkeydown="mascaraData(this)">
+                                                    <input type="date" class="form-control square" id="start"
+                                                        name="start"
+                                                        value="<?php echo $_POST['start']; ?>"
+                                                        onkeydown="mascaraData(this)">
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Data Final</label>
-                                                    <input type="date" class="form-control square" id="end" name="end" value="<?php echo $_POST['end']; ?>" onkeydown="mascaraData(this)">
+                                                    <input type="date" class="form-control square" id="end" name="end"
+                                                        value="<?php echo $_POST['end']; ?>"
+                                                        onkeydown="mascaraData(this)">
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <label class="control-label">Ação</label><br>
-                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary" style="width:100%">Pesquisar</button>
+                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary"
+                                                    style="width:100%">Pesquisar</button>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
-                                                <button type="submit" name="excel" class="btn btn-success" value="excel">Gerar Excel </button>
-                                                <button type="submit" name="permanencia" class="btn btn-info">Tempo de Permanência em Excel</button>
+                                                <button type="submit" name="excel" class="btn btn-success"
+                                                    value="excel">Gerar Excel </button>
+                                                <button type="submit" name="permanencia" class="btn btn-info">Tempo de
+                                                    Permanência em Excel</button>
                                             </div>
                                         </div>
                                         <div class="row mt-3">
@@ -308,7 +316,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <thead>
                                                         <tr>
                                                             <th style="display:none;">
-                                                                <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
+                                                                <div class="checkbox-custom checkbox-primary"><input
+                                                                        type="checkbox" name="todos" id='todos'
+                                                                        onclick='marcardesmarcar();'
+                                                                        value="T"><label></label></div>
                                                             </th>
                                                             <th width="10%">Data/Hora</th>
                                                             <th width="25%">Paciente</th>
@@ -344,9 +355,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         }
                                                         $stmt = $stmt . " order by a.dat_cad desc,a.hora_cad desc ";
                                                         $sth = pg_query($stmt) or die($stmt);
-                                                        //echo $stmt; 
+                                                        //echo $stmt;
                                                         while ($row = pg_fetch_object($sth)) {
-
                                                             if ($row->prioridade   == 'AMARELO') {
                                                                 $classe = "style=\"background-color:#FFEE58\"";
                                                                 $color = "black";
@@ -380,7 +390,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
                                                                 echo "<td class='blink'>" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . "</td>";
                                                                 echo "<td class='blink'><a data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank'>" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
-                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";							
+                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";
                                                                 echo "<td class='blink'>" . $row->hora_triagem . "</td>";
                                                                 echo "<td class='blink'>" . $row->hora_destino . "</td>";
 
@@ -394,7 +404,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
                                                                 echo "<td>" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad .  '<br>' . $row->paciente_id . "</td>";
                                                                 echo "<td ><a data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank' style=\"color:$color\">" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
-                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";							
+                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";
                                                                 echo "<td>" . $row->hora_triagem . "</td>";
                                                                 echo "<td>" . $row->hora_destino . "</td>";
 
@@ -418,20 +428,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             } else {
                                                                 echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
                                                             }
-                                                            // if ($perfil == '06' or $perfil == '04') { 
+                                                            // if ($perfil == '06' or $perfil == '04') {
                                                         ?>
-                                                            <?php if ($row->status != 'Atendimento Finalizado') { ?>
-                                                                <a id="triagemmanual" data-id="<?php echo $row->transacao; ?>" class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn" data-target="#modalConteudo" data-toggle="modal" data-original-title="Triagem" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white" <?php } ?> onClick="valorTriagem(this);">
-                                                                    <i class="fas fa-check-circle" aria-hidden="true" onclick=""></i>
-                                                                </a>
+                                                        <?php if ($row->status != 'Atendimento Finalizado') { ?>
+                                                        <a id="triagemmanual"
+                                                            data-id="<?php echo $row->transacao; ?>"
+                                                            class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn"
+                                                            data-target="#modalConteudo" data-toggle="modal"
+                                                            data-original-title="Triagem" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white"
                                                             <?php } ?>
-                                                            <?php //}
+                                                            onClick="valorTriagem(this);">
+                                                            <i class="fas fa-check-circle" aria-hidden="true"
+                                                                onclick=""></i>
+                                                        </a>
+                                                        <?php } ?>
+                                                        <?php //}
 
                                                             if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
-                                                                <a id="mudasituacao" data-id="<?php echo $row->transacao; ?>" class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn" data-target="#modalConteudoSitu" data-toggle="modal" data-original-title="Mudar Situação" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white" <?php } ?> onClick="valorSituacao(this);">
-                                                                    <i class="fa fa-user" aria-hidden="true" onclick=""></i>
-                                                                </a>
+                                                        <a id="mudasituacao"
+                                                            data-id="<?php echo $row->transacao; ?>"
+                                                            class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn"
+                                                            data-target="#modalConteudoSitu" data-toggle="modal"
+                                                            data-original-title="Mudar Situação" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white"
                                                             <?php } ?>
+                                                            onClick="valorSituacao(this);">
+                                                            <i class="fa fa-user" aria-hidden="true" onclick=""></i>
+                                                        </a>
+                                                        <?php } ?>
 
                                                         <?php echo "</tr>";
                                                         }

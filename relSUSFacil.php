@@ -14,10 +14,10 @@ include('conexao.php');
 include('conexao.php');
 $stmt = "
 		select a.transacao, a.cid_internacao,a,hora_cad, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.obs_modal as modal, a.diagnostico_principal,a.prioridade,
-		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
+		a.paciente_id, a.status, a.tipo, a.tipo_leito, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.nome_mae, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade,x.glicose as glicemia,
-		a.data_destino,a.hora_destino,a.destino_paciente
+		a.data_destino,a.hora_destino,a.destino_paciente, pa_sis_internacao, pa_dist_internacao, temperatura_internacao, dor_internacao, oxigenio_internacao, pulso_internacao, glicose_internacao, ecg_internacao
 		from atendimentos a 
 		left join pessoas c on a.paciente_id=c.pessoa_id 
 		left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
@@ -32,7 +32,7 @@ $data_destino = $row->data_destino;
 $hora_destino = $row->hora_destino;
 $destino_paciente = $row->destino_paciente;
 $horacad = $row->hora_cad;
-$datacad = date('d/m/Y',  strtotime($row->cadastro));
+$datacad = date('d/m/Y', strtotime($row->cadastro));
 $prontuario = $row->paciente_id;
 $sexo = $row->sexo;
 $nome = $row->nome;
@@ -73,17 +73,25 @@ $obs_modal = $row->modal;
 $exame_fisico = $row->exame_fisico;
 $cid_internacao = $row->cid_internacao;
 $destino  = $row->destino_paciente;
+$tipo_leito  = $row->tipo_leito;
 $pressaodiastolica = $row->pressaodiastolica;
 $pressaosistolica = $row->pressaosistolica;
 $peso = $row->peso;
 $temperatura = $row->temperatura;
-$pulso = $row->pulso;
+//$pulso = $row->pulso;
 $relato = $row->relato;
 $discriminador = $row->discriminador;
 $prioridade = $row->prioridade;
 $atendprioridade = $row->atendprioridade;
 $diagnostico_principal = $row->diagnostico_principal;
-$glicemia = $row->glicemia;
+$pulso= $row->pulso_internacao;
+$glicemia= $row->glicose_internacao;
+$pa_sitolica= $row->pa_sis_internacao;
+$pa_distolica= $row->pa_dist_internacao;
+$oxigenio= $row->oxigenio_internacao;
+$temperatura= $row->temperatura_internacao;
+$dor = $row->dor_internacao;
+$ecg= $row->ecg_internacao;
 
 
 $dia    = date('d', strtotime($data_transacao));
@@ -164,15 +172,15 @@ $data_dia = "$semana, $dia de $mes de $ano";
 class PDF extends FPDF
 {
     // Page header
-    function Header()
+    public function Header()
     {
 
         // Logo
         global $transacao, $prontuario, $nome, $nome_mae, $sexo, $idade, $nome_convenio, $origem, $enfermaria, $leito, $solicitante, $dt_nasc,
             $telsolicitante, $senha, $dt_solicitacao, $enderecox, $end_numero, $complemento, $bairro, $cep, $cpf, $cidade, $estado, $telefone, $celular,
             $oque_faz,    $com_oqfaz, $tempo_faz,    $como_faz, $queixa, $exame_fisico, $cid_internacao, $pressaodiastolica, $pressaosistolica, $peso,
-            $temperatura, $pulso, $relato, $discriminador, $destino, $prioridade, $atendprioridade, $cns, $diagnostico_principal, $horacad, $datacad, $glicemia,
-            $data_destino, $hora_destino, $destino_paciente, $obs_modal;
+            $temperatura, $relato, $discriminador, $destino, $tipo_leito, $prioridade, $atendprioridade, $cns, $diagnostico_principal, $horacad, $datacad,
+            $data_destino, $hora_destino, $destino_paciente, $obs_modal, $dor, $pulso,$glicemia,$pa_sitolica,$pa_distolica,$oxigenio,$temperatura,$ecg;
         $this->Image('app-assets/img/gallery/logo.png', 10, 5, 48);
         $this->Image('app-assets/img/gallery/sus.jpg', 80, 3, 22);
         $this->Ln(5);
@@ -195,13 +203,13 @@ class PDF extends FPDF
         $this->SetFont('Arial', 'B', 7);
         $this->Cell(300, 5, $senha, 0, 0, 'C');
         $this->Ln(1);
-        $this->Line(10,  30, 195, 30);
+        $this->Line(10, 30, 195, 30);
 
 
         $this->Line(157, 270, 157, 290);
         $this->Line(10, 280, 195, 280);
         $this->Line(10, 290, 195, 290);
-        $this->Line(10, 30,  10, 290);
+        $this->Line(10, 30, 10, 290);
         $this->Line(195, 30, 195, 290);
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(20, 5, ' UNIDADE.:', 0, 0, 'R');
@@ -299,18 +307,19 @@ class PDF extends FPDF
 
         //$this->SetFont('Arial','B',9);
         $this->SetXY(10, 185);
-        $this->Cell(185, 5, utf8_decode('SINAIS VITAIS         | Pulsos:               FC             PA:           FR:       SpO2:         T.axiliar:         Glasgow:          '), 1, 0, 'L');
+        $this->Cell(185, 5, utf8_decode('SINAIS VITAIS         | Pulsos: '.$pulso.'              Glicemia: '.$glicemia.'             PA: '.$pa_sitolica.'x'.$pa_distolica.'       dor: '.$dor.'       SpO2: '.$oxigenio.'         T.axiliar: '.$temperatura.'         ECG: '.$ecg.'          '), 1, 0, 'L');
         $this->Ln(7);
         $this->Cell(185, 5, utf8_decode(' MEDICAMENTOS EM USO'), 0, 0, 'L');
-        $this->Line(50, 190,  50, 205);
+        $this->Line(50, 190, 50, 205);
 
 
         //$this->SetFont('Arial','',9);
         $this->SetXY(10, 205);
 
-        $this->Cell(90, 9, utf8_decode(' CLINICA :   ' . $destino), 1, 0, 'L');
+        //$this->Cell(90, 9, utf8_decode(' CLINICA :   ' . $destino), 1, 0, 'L');
+        $this->Cell(90, 9, utf8_decode(' CLINICA :   '), 1, 0, 'L');
 
-        $this->Cell(60, 9, utf8_decode(' TIPO LEITO:   '), 1, 0, 'L');
+        $this->Cell(60, 9, utf8_decode(' TIPO LEITO:   '.$tipo_leito), 1, 0, 'L');
         $this->Cell(35, 9, utf8_decode(' CID:   ' . $cid_internacao), 1, 0, 'L');
 
         $this->Ln(9);
@@ -323,13 +332,13 @@ class PDF extends FPDF
         $this->Cell(185, 5, utf8_decode(' Condições que justifiquem'), 0, 0, 'L');
         $this->Ln(7);
         $this->Cell(185, 5, utf8_decode(' a internação'), 0, 0, 'L');
-        $this->Line(50, 228,  50, 245);
-        $this->Line(10, 242,  195, 242);
+        $this->Line(50, 228, 50, 245);
+        $this->Line(10, 242, 195, 242);
         $this->Ln(7);
         $this->Cell(185, 5, utf8_decode(' Principais Resultados de'), 0, 0, 'L');
         $this->Ln(7);
         $this->Cell(185, 5, utf8_decode(' Provas Diagnósticas'), 0, 0, 'L');
-        $this->Line(50, 245, 50,  270);
+        $this->Line(50, 245, 50, 270);
         $this->Line(50, 251, 195, 251);
         $this->Line(50, 260, 195, 260);
         $this->Line(10, 270, 195, 270);
@@ -350,7 +359,7 @@ class PDF extends FPDF
     }
 
     // Page footer
-    function Footer()
+    public function Footer()
     {
         global $transacao, $usuario_transacao, $data_transacao, $hora_transacao;
         // Position at 1.5 cm from bottom
@@ -361,7 +370,7 @@ class PDF extends FPDF
         //$this->Cell(0,10,'Transacao - '.str_pad($transacao,7,"0",STR_PAD_LEFT).' - '.$usuario_transacao.' '.$data_transacao.' '.$hora_transacao.'/{nb}',0,0,'C');
     }
 
-    function Codabar($xpos, $ypos, $code, $start = 'A', $end = 'A', $basewidth = 0.35, $height = 10)
+    public function Codabar($xpos, $ypos, $code, $start = 'A', $end = 'A', $basewidth = 0.35, $height = 10)
     {
         $barChar = array(
             '0' => array(6.5, 10.4, 6.5, 10.4, 6.5, 24.3, 17.9),

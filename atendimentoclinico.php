@@ -649,6 +649,44 @@ if ($destino != '') {
 
 </head>
 <style>
+    .slidecontainer {
+        width: 100%;
+    }
+
+    .slider {
+        -webkit-appearance: none;
+        width: 90%;
+        height: 10px;
+        border-radius: 5px;
+        background: #e4e9f2;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+    }
+
+    .slider:hover {
+        opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #12A1A6;
+        cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #12A1A6;
+        cursor: pointer;
+    }
+
     .scroll {
         max-height: 500px;
         height: 350px;
@@ -1054,11 +1092,103 @@ if ($destino != '') {
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
-                            <label for="message-text" class="col-form-label">Observações:</label>
+                        <!-- PA Sistolica -->
+                        <div class="col-4 form-group">
+                            <label>PA Sistolica</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" class="form-control square" name="pa_sis"
+                                    value="<?php echo $rowRetorno->pressaosistolica ?>"
+                                    id="pa_sis">
+                                <div class="form-control-position" style="top: 0px">
+                                    <img src="app-assets/img/svg/nano.png" alt="\" height="20" width="20">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PA Distolica -->
+                        <div class="col-4 form-group">
+                            <label>PA Distolica</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" class="form-control square" name="pa_dis"
+                                    value="<?php echo $rowRetorno->pressaodiastolica ?>"
+                                    id="pa_dis">
+                                <div class="form-control-position" style="top: 0px">
+                                    <img src="app-assets/img/svg/nano.png" alt="\" height="20" width="20">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Oxigênio -->
+                        <div class="col-4 form-group">
+                            <label>Oxigênio</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" id="oxigenio" class="form-control" name="oxigenio"
+                                    value="<?php echo $rowRetorno->oxigenio ?>"
+                                    id="oxigenio">
+                                <div class="form-control-position" style="top: 0px">
+                                    <img src="app-assets/img/svg/o2.png" alt="\" height="20" width="20">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 form-group">
+                            <!-- Pulso -->
+                            <label>Pulso</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" id="pulso" class="form-control square" name="pulso"
+                                    value="<?php echo $rowRetorno->pulso ?>"
+                                    id="pulso">
+                                <div class="form-control-position" style="top: 0px">
+                                    <i class="fas fa-stethoscope"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 form-group">
+                            <!-- Temperatura -->
+                            <label>Temperatura</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" class="form-control square" name="temp"
+                                    value="<?php echo $rowRetorno->temperatura ?>"
+                                    id="temp">
+                                <div class="form-control-position" style="top: 0px">
+                                    <i class="fas fa-thermometer" style="font-size: 15pt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 form-group">
+                            <!-- Glicemia -->
+                            <label>Glicemia</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" id="glicose" class="form-control square"
+                                    value="<?php echo $rowRetorno->glicose ?>"
+                                    name="glicose" id="glicose">
+                                <div class="form-control-position" style="top: 0px">
+                                    <img src="app-assets/img/svg/glicose.png" alt="\" height="25" width="18">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 form-group">
+                            <!-- Glicemia -->
+                            <label>ECG:</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" class="form-control square"
+                                    value="<?php echo $rowRetorno->glicose ?>"
+                                    name="ecg" id="ecg">
+                                <div class="form-control-position" style="top: 0px">
+                                    <img src="app-assets/img/svg/glicose.png" alt="\" height="25" width="18">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <p class="text-center"><img src="app-assets/img/svg/dor.png" alt="\" height="25" width="25">
+                                Dor</p>
+                            <input type="range" id="dor" class="slider mr-3" name="dor" min="0" max="9"
+                                value="<?php echo $rowRetorno->dor ?>">
+                            <strong id="valor" style="font-size: 20pt;"></strong>
+                        </div>
+                    </div>
+                    <div class="row mb-3 mt-4">
                         <!-- <textarea class="form-control" name="obs_modal" id="obs_modal" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea>
                         -->
                         <div class="col-md-3 ml-3">
@@ -1111,6 +1241,15 @@ if ($destino != '') {
 
                                 </table>
                             </div>
+                        </div>
+                        <div class="col-6">
+                            <label for="">Tipo de Leito:</label>
+                            <select name="tipo_leito" id="tipo_leito">
+                                <option value=""></option>
+                                <option value="clinica">clinica</option>
+                                <option value="cirurgica">cirurgica</option>
+                                <option value="uti">uti</option>
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -2337,7 +2476,8 @@ if ($destino != '') {
                                                                     echo "selected";
                                                                 } ?>>
                                         EM
-                                        OBSERVAÇÃO / MEDICAÇÃO</option>;
+                                        OBSERVAÇÃO / MEDICAÇÃO
+                                    </option>;
                                     <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') {
                                                                     echo "selected";
                                                                 } ?>>EXAMES
@@ -2346,7 +2486,8 @@ if ($destino != '') {
                                                                     echo "selected";
                                                                 } ?>>
                                         EXAMES /
-                                        REAVALIACAO</option>;
+                                        REAVALIACAO
+                                    </option>;
                                     <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') {
                                                                     echo "selected";
                                                                 } ?>>
@@ -2519,6 +2660,14 @@ if ($destino != '') {
     <script>
     </script>
     <script>
+        var slider = document.getElementById("dor");
+        var output = document.getElementById("valor");
+        output.innerHTML = slider.value;
+
+        slider.oninput = function() {
+            output.innerHTML = this.value;
+        }
+
         var contador = 2;
         $("#novo_receituario").click(function(event) {
             $('#bloco_receituario').prepend('<div id="item-' + contador +
@@ -2531,7 +2680,7 @@ if ($destino != '') {
                 '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-1"><div class="form-group"><button onclick="apagar_item_receituario(this)" value="' +
                 contador +
                 '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>'
-                );
+            );
             $("#salvar_receituario").attr("value", contador);
             contador++;
         });
@@ -2645,7 +2794,7 @@ if ($destino != '') {
 
         //////////////////////////INICIO LOGICA MODULO DE PRESCRIÇÃO//////////////////////////
         function solicitacaoprescricao(
-        valor) { //ABRE O MODAL ONDE É LISTADO OS MEDICAMENTOS QUE ESTÁ GRAVADO NA SESSION
+            valor) { //ABRE O MODAL ONDE É LISTADO OS MEDICAMENTOS QUE ESTÁ GRAVADO NA SESSION
             $('#modaSolictalPrecricao').modal('toggle');
             $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>',
                 function(dataReturn) {
@@ -2655,7 +2804,7 @@ if ($destino != '') {
 
         function modal_prescricao(
             valor
-            ) { //FUNÇÃO PARA ABRIR O MODAL ONDE É REALIZADO A ESCOLHA DO TIPO DE PRESCRIÇÃO: DIETA, HIDRATAÇÃO, MEDICAMENTOS E CUIDADOS
+        ) { //FUNÇÃO PARA ABRIR O MODAL ONDE É REALIZADO A ESCOLHA DO TIPO DE PRESCRIÇÃO: DIETA, HIDRATAÇÃO, MEDICAMENTOS E CUIDADOS
             $('#modalPrecricao').modal('toggle');
             $("#novo_prescricao").prop('disabled', true);
             $('#conteudoModal').html('');
@@ -2673,7 +2822,7 @@ if ($destino != '') {
 
         $("#novo_prescricao").click(function(
             event
-            ) { //FUNÇÃO PARA SALVAR OS MEDICAMENTOS NA SESSION E POSTERIORMENTE LISTAR O QUE FOI SOLICITADO
+        ) { //FUNÇÃO PARA SALVAR OS MEDICAMENTOS NA SESSION E POSTERIORMENTE LISTAR O QUE FOI SOLICITADO
             var atendimento = $('#transacao').val();
             var dosagem = $('#dosagem').val();
             var aprazamento = $('#aprazamento').val();
@@ -2735,7 +2884,7 @@ if ($destino != '') {
 
 
         $("#confirmar_prescricao").click(function(
-        event) { //FUNÇÃO É CHAMANDA QUANDO O BOTAO CONFIRMAR PRESCRICAO É CLICADO
+            event) { //FUNÇÃO É CHAMANDA QUANDO O BOTAO CONFIRMAR PRESCRICAO É CLICADO
 
             var total_campos = $("#tamanhoArray").val();
             if (total_campos == 0) {
@@ -2846,7 +2995,7 @@ if ($destino != '') {
 
         function remover_prescricao(
             indice
-            ) { //FUNCÃO É CHAMADA CLICA EM DELETAR UM MEDICAMENTO QUE ESTA LA LISTAGEM DE MEDICAMENTOS, ISTO PRESENTE NA SESSION
+        ) { //FUNCÃO É CHAMADA CLICA EM DELETAR UM MEDICAMENTO QUE ESTA LA LISTAGEM DE MEDICAMENTOS, ISTO PRESENTE NA SESSION
             $.get('exlcuirIndiceArray.php?indice=' + indice);
 
             $.get('listaprescricao.php?atendimento=<?php echo $_GET['id'] ?>&flag=1',
@@ -3189,15 +3338,38 @@ if ($destino != '') {
         function modal_obs(id) {
             var modal = document.getElementById('obs_modal').value;
             var cid = document.getElementById('CID_permanencia').value;
+            var tipo_leito = document.getElementById('tipo_leito').value;
+            var pa_sis = $("#pa_sis").val();
+            var pa_dist = $("#pa_dis").val();
+            var temperatura = $("#temp").val();
+            var dor = $("#dor").val();
+            var oxigenio = $("#oxigenio").val();
+            var pulso = $("#pulso").val();
+            var glicose = $("#glicose").val();
+            var ecg = $("#ecg").val();
             // modal = modal.replace(/(?:\r\n|\r|\n)/g, '/p');
             // modal = modal.replace('#', '');
-            if (cid == '') {
+            if (pa_sis == '' || pa_dist == '' || temperatura == '' || dor == '' || oxigenio == '' || pulso == '' ||
+                glicose == '' || ecg == '') {
+                alert("Por favor preencha os sinais vitais!!!");
+            } else if (cid == '') {
                 alert("Por favor preencha o CID referente a internação!!!");
+            } else if (tipo_leito == '') {
+                alert("Por favor preencha o leito referente a internação!!!");
             } else {
                 $.get("salvar_obs.php", {
                         modal: modal,
                         cid: cid,
-                        id: id
+                        id: id,
+                        tipo_leito: tipo_leito,
+                        pa_sis: pa_sis,
+                        pa_dist: pa_dist,
+                        temperatura: temperatura,
+                        dor: dor,
+                        oxigenio: oxigenio,
+                        pulso: pulso,
+                        glicose: glicose,
+                        ecg: ecg
                     },
 
                     function(dataReturn) {
@@ -3294,7 +3466,7 @@ if ($destino != '') {
                     "<?= "http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" +
                     data +
                     "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>"
-                    );
+                );
             } else {
                 alert("Informe da data!!!");
             }
