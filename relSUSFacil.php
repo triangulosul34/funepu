@@ -307,7 +307,7 @@ class PDF extends FPDF
 
         //$this->SetFont('Arial','B',9);
         $this->SetXY(10, 185);
-        $this->Cell(185, 5, utf8_decode('SINAIS VITAIS         | Pulsos: '.$pulso.'              Glicemia: '.$glicemia.'             PA: '.$pa_sitolica.'x'.$pa_distolica.'       dor: '.$dor.'       SpO2: '.$oxigenio.'         T.axiliar: '.$temperatura.'         ECG: '.$ecg.'          '), 1, 0, 'L');
+        $this->Cell(185, 5, utf8_decode('SINAIS VITAIS         | Pulsos: '.$pulso.'              Glicemia: '.$glicemia.'             PA: '.$pa_sitolica.'x'.$pa_distolica.'       dor: '.$dor.'       SpO2: '.$oxigenio.'         T.axiliar: '.$temperatura.'         Glasgow: '.$ecg.'          '), 1, 0, 'L');
         $this->Ln(7);
         $this->Cell(185, 5, utf8_decode(' MEDICAMENTOS EM USO'), 0, 0, 'L');
         $this->Line(50, 190, 50, 205);

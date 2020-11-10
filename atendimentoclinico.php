@@ -1168,7 +1168,7 @@ if ($destino != '') {
                         </div>
                         <div class="col-3 form-group">
                             <!-- Glicemia -->
-                            <label>ECG:</label>
+                            <label>Glasgow:</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" class="form-control square"
                                     value="<?php echo $rowRetorno->glicose ?>"
@@ -3350,8 +3350,8 @@ if ($destino != '') {
             var ecg = $("#ecg").val();
             // modal = modal.replace(/(?:\r\n|\r|\n)/g, '/p');
             // modal = modal.replace('#', '');
-            if (pa_sis == '' || pa_dist == '' || temperatura == '' || dor == '' || oxigenio == '' || pulso == '' ||
-                glicose == '' || ecg == '') {
+            // if (pa_sis == '' || pa_dist == '' || temperatura == '' || dor == '' || oxigenio == '' || pulso == '' || glicose == '' || ecg == '') 
+            if (pa_sis == '' || pa_dist == '') {
                 alert("Por favor preencha os sinais vitais!!!");
             } else if (cid == '') {
                 alert("Por favor preencha o CID referente a internação!!!");
