@@ -53,9 +53,8 @@ function inverteData($data)
 							WHERE status = 'Aguardando Atendimento' and  dat_cad between '" . date('d/m/Y', strtotime("-1 days")) . "' and '" . date('d/m/Y') . "' and a.especialidade = 'Ortopedia' and tipo != '6' and tipo != '9' 
 							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                 $sth = pg_query($stmt) or die($stmt);
-                //echo $stmt; 
+                //echo $stmt;
                 while ($row = pg_fetch_object($sth)) {
-
                     if ($row->prioridade   == 'AMARELO') {
                         $classe = "style=\"background-color:gold\"";
                     }
@@ -122,13 +121,14 @@ function inverteData($data)
                 $stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
 							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
 							CASE
-                                WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
-                                WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
-                                WHEN a.destino_paciente = '19' THEN '2' 
-                                WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '3' 
-                                WHEN a.prioridade = 'VERDE' and a.destino_paciente is null THEN '4' 
-                                WHEN a.prioridade = 'AZUL' and a.destino_paciente is null THEN '5' 
-                            ELSE '6'  
+                            WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
+                            WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
+                            WHEN a.destino_paciente = '10' and a.prioridade = 'AMARELO'  THEN '2'
+                            WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '3' 
+                            WHEN a.destino_paciente = '10' and a.prioridade = 'VERDE'  THEN '4'
+                            WHEN a.prioridade = 'VERDE' and a.destino_paciente is null THEN '5' 
+                            WHEN a.prioridade = 'AZUL' and a.destino_paciente is null THEN '6' 
+                        ELSE '7'  
 							END as ORDEM 
 							from atendimentos a 
 							left join pessoas c on a.paciente_id=c.pessoa_id 
@@ -137,7 +137,6 @@ function inverteData($data)
 							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                 $sth = pg_query($stmt) or die($stmt);
                 while ($row = pg_fetch_object($sth)) {
-
                     if ($row->prioridade   == 'AMARELO') {
                         $classe = "style=\"background-color:gold\"";
                     }
@@ -216,7 +215,6 @@ function inverteData($data)
 							ORDER by ORDEM ASC, pidade, dat_cad, hora_cad asc";
                 $sth = pg_query($stmt) or die($stmt);
                 while ($row = pg_fetch_object($sth)) {
-
                     if ($row->prioridade   == 'AMARELO') {
                         $classe = "style=\"background-color:gold\"";
                     }
@@ -279,18 +277,25 @@ function inverteData($data)
                     $result2 = pg_query($sql2) or die($sql2);
                     $row2 = pg_fetch_object($result2);
                     if ($row2) {
-                ?>
-                        <tr <?php if ($row2->situacao == '') { ?>bgcolor="#FF0000" style="color: #fff;" <?php } else if ($row2->situacao == 'Liberado') { ?>bgcolor="#0B610B" style="color: #fff;" <?php } else { ?>bgcolor="#F7FE2E" style="color: #000000;" <?php } ?>>
-                            <td><?php echo inverteData($row2->data); ?></td>
-                            <td><?php echo $row2->nome; ?></td>
-                            <td><?php echo $row2->medico_solicitante; ?></td>
-                            <td>
-                                <?php if ($row2->situacao == 'Liberado') {
-                                    echo "<a href='atendimentoclinico.php?id=$row->atendimento_id' target='_blank' class=\"btn btn-pure btn-danger\"><i class=\"far fa-eye\"></i></a>";
-                                } ?>
-                            </td>
-                        </tr>
-                <?php }
+                        ?>
+                <tr <?php if ($row2->situacao == '') { ?>bgcolor="#FF0000"
+                    style="color: #fff;" <?php } elseif ($row2->situacao == 'Liberado') { ?>bgcolor="#0B610B"
+                    style="color: #fff;" <?php } else { ?>bgcolor="#F7FE2E" style="color:
+                    #000000;" <?php } ?>>
+                    <td><?php echo inverteData($row2->data); ?>
+                    </td>
+                    <td><?php echo $row2->nome; ?>
+                    </td>
+                    <td><?php echo $row2->medico_solicitante; ?>
+                    </td>
+                    <td>
+                        <?php if ($row2->situacao == 'Liberado') {
+                            echo "<a href='atendimentoclinico.php?id=$row->atendimento_id' target='_blank' class=\"btn btn-pure btn-danger\"><i class=\"far fa-eye\"></i></a>";
+                        } ?>
+                    </td>
+                </tr>
+                <?php
+                    }
                 }
                 ?>
             </tbody>
