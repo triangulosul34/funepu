@@ -1249,6 +1249,7 @@ if ($destino != '') {
                                 <option value="clinica">clinica</option>
                                 <option value="cirurgica">cirurgica</option>
                                 <option value="uti">uti</option>
+                                <option value="psiquiatria">psiquiatria</option>
                             </select>
                         </div>
                     </div>
