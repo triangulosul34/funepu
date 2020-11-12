@@ -2,8 +2,17 @@
 include('verifica.php');
 include('conexao.php');
 
+function inverteData($data)
+{
+    if (count(explode("/", $data)) > 1) {
+        return implode("-", array_reverse(explode("/", $data)));
+    } elseif (count(explode("-", $data)) > 1) {
+        return implode("/", array_reverse(explode("-", $data)));
+    }
+}
+
 $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
-	a.dat_cad, c.nome, c.nome_social, k.origem, a.tipo, a.coronavirus 
+	a.dat_cad, c.nome, c.nome_social, c.dt_nasc, k.origem, a.tipo, a.coronavirus 
 	from atendimentos a 
 	left join pessoas c on a.paciente_id=c.pessoa_id 
 	left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
@@ -11,9 +20,8 @@ $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURR
 	cast(tipo as integer) != '6' and tipo_at is null
 	ORDER by 3, 1";
 $sth = pg_query($stmt) or die($stmt);
-//echo $stmt; 
+//echo $stmt;
 while ($row = pg_fetch_object($sth)) {
-
     if ($row->prioridade   == 'AMARELO') {
         $classe = "style=\"background-color:gold\"";
     }
@@ -37,7 +45,7 @@ while ($row = pg_fetch_object($sth)) {
     echo "<tr " . $classe . ">";
     if ($row->coronavirus == 1) {
         echo "<td class='blink'>" . $row->transacao . "</td>";
-        echo "<td class='blink'>" . date('d/m/Y',  strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
+        echo "<td class='blink'>" . date('d/m/Y', strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
         if ($row->nome_social == '') {
             echo "<td class='blink'>" . $row->nome;
         } else {
@@ -47,11 +55,12 @@ while ($row = pg_fetch_object($sth)) {
             echo "<br>Paciente com deficiencia $row->nec_especiais";
         }
         echo "</td>";
+        echo "<td class='blink'>" . inverteData($row->dt_nasc) . "</td>";
         echo "<td class='blink'>" . $row->origem . "</td>";
         echo "<td class='blink'>" . $row->status . "</td>";
     } else {
         echo "<td>" . $row->transacao . "</td>";
-        echo "<td>" . date('d/m/Y',  strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
+        echo "<td>" . date('d/m/Y', strtotime($row->dat_cad)) . " - " . $row->hora_cad . "</td>";
         if ($row->nome_social == '') {
             echo "<td>" . $row->nome;
         } else {
@@ -61,6 +70,7 @@ while ($row = pg_fetch_object($sth)) {
             echo "<br>Paciente com deficiencia $row->nec_especiais";
         }
         echo "</td>";
+        echo "<td>" . inverteData($row->dt_nasc) . "</td>";
         echo "<td>" . $row->origem . "</td>";
         echo "<td>" . $row->status . "</td>";
     }

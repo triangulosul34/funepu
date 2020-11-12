@@ -153,7 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($transfere != "") {
         if (isset($_POST["transferir"])) {
-
             include('conexao.php');
             $stmty = "Select username from pessoas where pessoa_id = $profissional";
 
@@ -174,7 +173,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
         if (isset($_POST["transfconf"])) {
-
             include('conexao.php');
             $stmty = "Select username from pessoas where pessoa_id = $profissional";
 
@@ -198,7 +196,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "<script>alert('Imprimir')</script>";
         }
         if (isset($_POST["enviar"])) {
-
             include('conexao.php');
             $stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
                 where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Finalizado' or situacao='Impresso')";
@@ -233,7 +230,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -300,7 +299,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </script>
 
 <body class="pace-done" cz-shortcut-listen="true">
-    <div class="modal fade text-left" id="modalConteudo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+    <div class="modal fade text-left" id="modalConteudo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary white">
@@ -313,8 +313,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 </div>
                 <div class="modal-footer">
-                    <input type='button' name='confTriagem' id="confTriagem" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1" value='Salvar Triagem' onclick="salvar_triagem()">
-                    <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal" class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1" value='Cancelar'>
+                    <input type='button' name='confTriagem' id="confTriagem"
+                        class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1" value='Salvar Triagem'
+                        onclick="salvar_triagem()">
+                    <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal"
+                        class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1" value='Cancelar'>
                 </div>
             </div>
         </div>
@@ -343,7 +346,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>aguardando triagem
                                                 </h4>
                                             </div>
@@ -373,7 +377,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <tr>
                                                         <th width="5%">#</th>
                                                         <th width="15%">Solicitação</th>
-                                                        <th width="40%">Paciente</th>
+                                                        <th width="30%">Paciente</th>
+                                                        <th width="10%">DT. Nascimento</th>
                                                         <th width="25%">Origem</th>
                                                         <th width="20%">Situação</th>
                                                         <th width="5%">Acao</th>
@@ -385,7 +390,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     $i = 0;
                                                     include('conexao.php');
                                                     $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
-                                                            a.dat_cad, c.nome, c.nome_social, k.origem, a.tipo, a.coronavirus
+                                                            a.dat_cad, c.nome, c.nome_social, c.dt_nasc, k.origem, a.tipo, a.coronavirus
                                                             from atendimentos a 
                                                             left join pessoas c on a.paciente_id=c.pessoa_id 
                                                             left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
@@ -394,7 +399,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             ORDER by 3, 1";
                                                     $sth = pg_query($stmt) or die($stmt);
                                                     while ($row = pg_fetch_object($sth)) {
-
                                                         if ($row->prioridade   == 'AMARELO') {
                                                             $classe = "style=\"background-color:gold\"";
                                                         }
@@ -429,6 +433,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<br>Paciente com deficiencia $row->nec_especiais";
                                                             }
                                                             echo "</td>";
+                                                            echo "<td class='blink'>" . inverteData($row->dt_nasc) . "</td>";
                                                             echo "<td class='blink'>" . $row->origem . "</td>";
                                                             echo "<td class='blink'>" . $row->status . "</td>";
                                                         } else {
@@ -443,6 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 echo "<br>Paciente com deficiencia $row->nec_especiais";
                                                             }
                                                             echo "</td>";
+                                                            echo "<td>" . inverteData($row->dt_nasc) . "</td>";
                                                             echo "<td>" . $row->origem . "</td>";
                                                             echo "<td>" . $row->status . "</td>";
                                                         }
@@ -483,7 +489,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script src="app-assets/js/popover.js" type="text/javascript"></script>
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
@@ -529,7 +536,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             function valorTriagem(valor) {
                 transacao = $(valor).attr("data-id");
-                $.get('triagemmanual.php?transacao=' + transacao, function(dataReturn) {
+                $.get('triagemmanual.php?transacao=' + transacao + '&triagem_manual=1', function(dataReturn) {
                     $('#conteudoModal').html(dataReturn);
                 });
                 event.preventDefault();

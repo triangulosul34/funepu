@@ -1,3 +1,6 @@
+<?php
+include('verifica.php');
+?>
 <link rel="stylesheet" href="assets/vendor/sweetalert/dist/sweetalert.css">
 <script src="assets/vendor/sweetalert/dist/sweetalert.min.js"></script>
 <script>
@@ -10,6 +13,88 @@
 </script>
 <?php
 $transacao = $_GET['transacao'];
+
+if ($_GET['triagem_manual'] == 1) {
+    function inverteData($data)
+    {
+        if (count(explode("/", $data)) > 1) {
+            return implode("-", array_reverse(explode("/", $data)));
+        } elseif (count(explode("-", $data)) > 1) {
+            return implode("/", array_reverse(explode("-", $data)));
+        }
+    }
+
+    include('conexao.php');
+    $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
+			k.origem, f.descricao as clinica,c.nome_social,c.dt_nasc
+			from atendimentos a 
+			left join pessoas c on a.paciente_id=c.pessoa_id  
+			left join especialidade f on a.especialidade = f.descricao 
+			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
+			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
+            cast(tipo as integer) != '6' and cast(tipo as integer) != '11'
+            and transacao = $transacao
+			order by 3, 1 asc limit 1
+			";
+    $sth         = pg_query($stmt) or die($stmt);
+    $row         = pg_fetch_object($sth);
+    $nome         = $row->nome;
+    $data_nascimento         = inverteData($row->dt_nasc);
+    $transacao     =  $row->transacao;
+
+    if ($row->nome_social != '') {
+        $nome         = $row->nome_social . '(' . $row->nome . ')';
+    } else {
+        $nome         = $row->nome;
+    }
+    if ($transacao != "") {
+        include('conexao.php');
+        $sql = "select * from painel_atendimento where transacao = $row->transacao";
+        //$result = pg_query($sql) or die($sql);
+        $rowt = pg_fetch_object($result);
+        if ($rowt->transacao == '') {
+            include('conexao.php');
+            $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "')";
+            //$result = pg_query($sql) or die($sql);
+
+            $data = date('Y-m-d');
+            $hora = date('H:i');
+            include('conexao.php');
+            $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+        //$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+        } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+            include('conexao.php');
+            $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null where transacao = $row->transacao";
+            //$result = pg_query($sql) or die($sql);
+
+            $data = date('Y-m-d');
+            $hora = date('H:i');
+            include('conexao.php');
+            $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+        //$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+        } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+            include('conexao.php');
+            $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+            //$result = pg_query($sql) or die($sql);
+
+            $data = date('Y-m-d');
+            $hora = date('H:i');
+            include('conexao.php');
+            $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+            values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+        //$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+        } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+            //$erro = "Paciente ainda esta sendo chamado";
+        } else {
+            //$erro = "Paciente sendo chamado por outro consultorio";
+            //$nome = '';
+            //$transacao = '';
+        }
+    }
+}
+
 include('conexao.php');
 $stmtRetorno = "Select * from classificacao c where cast(atendimento_id as integer) = '$transacao'";
 $sthRetorno = pg_query($stmtRetorno) or die($stmtRetorno);
@@ -39,12 +124,19 @@ $date = new DateTime($rowNome->dt_nasc); // data de nascimento
 $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
 $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
 
+include('conexao.php');
+$stmt   = "Update Atendimentos set status='Em Triagem' where transacao = $transacao ";
+$sth         = pg_query($stmt) or die($stmt);
+
 if ($rowcns->descricao != '') {
-?>
-    <script>
-        sweetAlert("<?php echo utf8_encode('Aten��o, paciente com notifica��o epidemiologica'); ?>", "<?php echo $rowcns->descricao; ?>", "warning");
-    </script>
-<?php } ?>
+    ?>
+<script>
+    sweetAlert(
+        "<?php echo utf8_encode('Aten��o, paciente com notifica��o epidemiologica'); ?>",
+        "<?php echo $rowcns->descricao; ?>", "warning");
+</script>
+<?php
+} ?>
 <style>
     .slidecontainer {
         width: 100%;
@@ -86,29 +178,41 @@ if ($rowcns->descricao != '') {
 </style>
 <div class="col-md-12 pl-0 pr-0">
     <div class="row">
-        <div class="col-9">
-            <input type="hidden" class="form-control" value="<?php echo $rowNome->paciente_id ?>" name="paciente" id="paciente">
+        <div class="col-8">
+            <input type="hidden" class="form-control"
+                value="<?php echo $rowNome->paciente_id ?>"
+                name="paciente" id="paciente">
             <h4 style="font-size: 100%; padding:0;margin:0; margin-bottom: 10px;">
                 Nome: <span style="font-weight: bold;">
                     <?php if ($rowNome->nome_social == '') { ?>
-                        <?php echo $rowNome->nome; ?>
+                    <?php echo $rowNome->nome; ?>
                     <?php } else { ?>
-                        <?php echo $rowNome->nome_social; ?> (<?php echo $rowNome->nome; ?>)
+                    <?php echo $rowNome->nome_social; ?> (<?php echo $rowNome->nome; ?>)
                     <?php } ?>
                     <?php if ($rowNome->nec_especiais != 'Nenhuma') {
-                    ?>
-                        <br>Paciente com deficiência <?= $rowNome->nec_especiais; ?>
-                    <?php } ?>
+        ?>
+                    <br>Paciente com deficiência <?= $rowNome->nec_especiais; ?>
+                    <?php
+    } ?>
                 </span>
             </h4>
         </div>
 
-        <div class="col-3">
-            <h3 style="font-size: 100%; padding:0;margin:0; margin-bottom: 10px;">
-                <span style="font-weight: bold;">
-                    <?php echo $idade; ?>
-                </span>
-            </h3>
+        <div class="col-4">
+            <div class="col-12">
+                <h3 style="font-size: 100%; padding:0;margin:0; margin-bottom: 10px;">
+                    <span style="font-weight: bold;">
+                        <?php echo $data_nascimento; ?>
+                    </span>
+                </h3>
+            </div>
+            <div class="col-12">
+                <h3 style="font-size: 100%; padding:0;margin:0; margin-bottom: 10px;">
+                    <span style="font-weight: bold;">
+                        <?php echo $idade; ?>
+                    </span>
+                </h3>
+            </div>
         </div>
 
         <hr style="margin: auto;width: 95%; height: 2px;">
@@ -116,7 +220,8 @@ if ($rowcns->descricao != '') {
     <div class="row mt-2">
         <div class="col-6">
             <label>Fluxograma</label>
-            <select class="form-control square" style='font-size:small;' name="fluxograma" id="fluxograma" onchange='carrega_discriminador()'>
+            <select class="form-control square" style='font-size:small;' name="fluxograma" id="fluxograma"
+                onchange='carrega_discriminador()'>
                 <option value="">Selecione o Fluxograma</option>
                 <?php
                 include('conexao.php');
@@ -150,7 +255,9 @@ if ($rowcns->descricao != '') {
                 <div class="col-4 form-group">
                     <label>PA Sistolica</label>
                     <div class="position-relative has-icon-left">
-                        <input type="text" class="form-control square" name="pa_sis" value="<?php echo $rowRetorno->pressaosistolica ?>" id="pa_sis">
+                        <input type="text" class="form-control square" name="pa_sis"
+                            value="<?php echo $rowRetorno->pressaosistolica ?>"
+                            id="pa_sis">
                         <div class="form-control-position" style="top: 0px">
                             <img src="app-assets/img/svg/nano.png" alt="\" height="20" width="20">
                         </div>
@@ -161,7 +268,9 @@ if ($rowcns->descricao != '') {
                 <div class="col-4 form-group">
                     <label>PA Distolica</label>
                     <div class="position-relative has-icon-left">
-                        <input type="text" class="form-control square" name="pa_dis" value="<?php echo $rowRetorno->pressaodiastolica ?>" id="pa_dis">
+                        <input type="text" class="form-control square" name="pa_dis"
+                            value="<?php echo $rowRetorno->pressaodiastolica ?>"
+                            id="pa_dis">
                         <div class="form-control-position" style="top: 0px">
                             <img src="app-assets/img/svg/nano.png" alt="\" height="20" width="20">
                         </div>
@@ -172,7 +281,9 @@ if ($rowcns->descricao != '') {
                 <div class="col-4 form-group">
                     <label>Oxigênio</label>
                     <div class="position-relative has-icon-left">
-                        <input type="text" id="oxigenio" class="form-control" name="oxigenio" value="<?php echo $rowRetorno->oxigenio ?>" id="oxigenio">
+                        <input type="text" id="oxigenio" class="form-control" name="oxigenio"
+                            value="<?php echo $rowRetorno->oxigenio ?>"
+                            id="oxigenio">
                         <div class="form-control-position" style="top: 0px">
                             <img src="app-assets/img/svg/o2.png" alt="\" height="20" width="20">
                         </div>
@@ -186,7 +297,9 @@ if ($rowcns->descricao != '') {
                     <!-- Pulso -->
                     <label>Pulso</label>
                     <div class="position-relative has-icon-left">
-                        <input type="text" id="pulso" class="form-control square" name="pulso" value="<?php echo $rowRetorno->pulso ?>" id="pulso">
+                        <input type="text" id="pulso" class="form-control square" name="pulso"
+                            value="<?php echo $rowRetorno->pulso ?>"
+                            id="pulso">
                         <div class="form-control-position" style="top: 0px">
                             <i class="fas fa-stethoscope"></i>
                         </div>
@@ -196,7 +309,9 @@ if ($rowcns->descricao != '') {
                     <!-- Temperatura -->
                     <label>Temperatura</label>
                     <div class="position-relative has-icon-left">
-                        <input type="text" class="form-control square" name="temp" value="<?php echo $rowRetorno->temperatura ?>" id="temp">
+                        <input type="text" class="form-control square" name="temp"
+                            value="<?php echo $rowRetorno->temperatura ?>"
+                            id="temp">
                         <div class="form-control-position" style="top: 0px">
                             <i class="fas fa-thermometer" style="font-size: 15pt"></i>
                         </div>
@@ -206,7 +321,9 @@ if ($rowcns->descricao != '') {
                     <!-- Glicemia -->
                     <label>Glicemia</label>
                     <div class="position-relative has-icon-left">
-                        <input type="text" id="glicose" class="form-control square" value="<?php echo $rowRetorno->glicose ?>" name="glicose" id="glicose">
+                        <input type="text" id="glicose" class="form-control square"
+                            value="<?php echo $rowRetorno->glicose ?>"
+                            name="glicose" id="glicose">
                         <div class="form-control-position" style="top: 0px">
                             <img src="app-assets/img/svg/glicose.png" alt="\" height="25" width="18">
                         </div>
@@ -216,7 +333,9 @@ if ($rowcns->descricao != '') {
                     <!-- Peso -->
                     <label>Peso</label>
                     <div class="position-relative has-icon-left">
-                        <input type="text" id="peso" class="form-control square" value="<?php echo $rowRetorno->peso ?>" name="peso" id="peso">
+                        <input type="text" id="peso" class="form-control square"
+                            value="<?php echo $rowRetorno->peso ?>"
+                            name="peso" id="peso">
                         <div class="form-control-position" style="top: 0px">
                             <i class="fas fa-weight" aria-hidden="true" style="font-size: 15pt;"></i></h1>
                         </div>
@@ -233,20 +352,23 @@ if ($rowcns->descricao != '') {
 <div class="row mt-2">
     <div class="col-12">
         <p class="text-center"><img src="app-assets/img/svg/dor.png" alt="\" height="25" width="25"> Dor</p>
-        <input type="range" id="dor" class="slider mr-3" name="dor" min="0" max="9" value="<?php echo $rowRetorno->dor ?>">
+        <input type="range" id="dor" class="slider mr-3" name="dor" min="0" max="9"
+            value="<?php echo $rowRetorno->dor ?>">
         <strong id="valor" style="font-size: 20pt;"></strong>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
         <label class="control-label">Queixa</label>
-        <textarea class="form-control" name="queixa" id="queixa" rows="5"><?php echo $rowRetorno->queixa ?></textarea>
+        <textarea name="queixa" class="form-control" rows="5" id="queixa"
+            maxlength="360"><?php echo $rowRetorno->queixa ?></textarea>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
         <label class="control-label">Observação</label>
-        <input type="text" class="form-control" name="observacao" id="observacao" value="<?= $rowRetorno->observacao ?>">
+        <input type="text" class="form-control" name="observacao" id="observacao"
+            value="<?= $rowRetorno->observacao ?>">
     </div>
 </div>
 <?php
@@ -267,7 +389,6 @@ $prioridades = array(
             <option value="">Selecione a Prioridade</option>
             <?php
             foreach ($prioridades as $key => $value) {
-
                 if ($rowRetorno->prioridade == $key) {
                     echo '<option value="' . $key . '" selected>' . utf8_encode($value) . '</option>';
                 } else {
@@ -284,31 +405,26 @@ $prioridades = array(
 
 
             if ($rowRetorno->encaminhamentos == utf8_encode('Ortopedia')) {
-
                 echo '<option value="' . utf8_encode('Ortopedia') . '" selected >' . utf8_encode('Ortopedia') . '</option>';
                 echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
                 echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
                 echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
-            } else if ($rowRetorno->encaminhamentos == utf8_encode('Consultorio Adulto')) {
-
+            } elseif ($rowRetorno->encaminhamentos == utf8_encode('Consultorio Adulto')) {
                 echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
                 echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '" selected >' . utf8_encode('Consultorio Adulto') . '</option>';
                 echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
                 echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
-            } else if ($rowRetorno->encaminhamentos == utf8_encode('Ala Vermelha')) {
-
+            } elseif ($rowRetorno->encaminhamentos == utf8_encode('Ala Vermelha')) {
                 echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
                 echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
                 echo '<option value="' . utf8_encode('Ala Vermelha') . '" selected>' . utf8_encode('Ala Vermelha') . '</option>';
                 echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
-            } else if ($rowRetorno->encaminhamentos == utf8_encode('Troca de Sonda')) {
-
+            } elseif ($rowRetorno->encaminhamentos == utf8_encode('Troca de Sonda')) {
                 echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
                 echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
                 echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
                 echo '<option value="' . utf8_encode('Troca de Sonda') . '" selected>' . utf8_encode('Troca de Sonda') . '</option>';
             } else {
-
                 echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
                 echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
                 echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
@@ -319,7 +435,8 @@ $prioridades = array(
         </select>
     </div>
 </div>
-<input type="hidden" name="transacaoModal" id="transacaoModal" value="<?php echo $_GET['transacao']; ?>">
+<input type="hidden" name="transacaoModal" id="transacaoModal"
+    value="<?php echo $_GET['transacao']; ?>">
 </div>
 <script>
     var slider = document.getElementById("dor");
@@ -353,4 +470,16 @@ $prioridades = array(
         }
         return contador <= campo.rows;
     }
+
+    $(document).ready(function() {
+
+        $('#queixa').keydown(function(e) {
+
+            var linhasAtuais = $(this).val().split("\n").length;
+
+            if (e.keyCode == 13 && linhasAtuais >= 5) {
+                return false;
+            }
+        });
+    });
 </script>
