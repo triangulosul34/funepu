@@ -116,19 +116,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $html .= '<td><b>Situacao</b></td>';
         $html .= '</tr>';
         include('conexao.php');
-        $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento,
-						 a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
-						CASE prioridade 
-									WHEN 'VERMELHO' THEN '0' 
-									WHEN 'LARANJA' THEN '1' 
-									WHEN 'AMARELO' THEN '2'
-									WHEN 'VERDE' THEN '3'  
-									WHEN 'AZUL' THEN '4' 
-									ELSE '5'
-									END as ORDEM from atendimentos a 
-						left join pessoas c on a.paciente_id = c.pessoa_id
-						left join pessoas d on a.med_atendimento = d.username
-						left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo  ";
+        $stmt = "select a.status, a.hora_cad,a.hora_triagem, c.nome, a.hora_destino from atendimentos a 
+						left join pessoas c on a.paciente_id = c.pessoa_id";
 
         if ($where != "") {
             $stmt = $stmt . " where " . $where;
@@ -136,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
         }
 
-        $stmt = $stmt . " order by a.dat_cad desc,c.nome asc ";
+        $stmt = $stmt . " order by c.nome collate ordenacao_nome";
         $sth = pg_query($stmt) or die($stmt);
         //echo $stmt;
         $qtde = 0;
