@@ -116,8 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $html .= '<td><b>Situacao</b></td>';
         $html .= '</tr>';
         include('conexao.php');
-        $stmt = "select a.status, a.hora_cad,a.hora_triagem, c.nome, a.hora_destino from atendimentos a 
-						left join pessoas c on a.paciente_id = c.pessoa_id";
+        $stmt = "select a.status, a.dat_cad, a.hora_cad,a.hora_triagem, c.nome, a.hora_destino, k.origem from atendimentos a 
+                        left join pessoas c on a.paciente_id = c.pessoa_id
+                        left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo";
 
         if ($where != "") {
             $stmt = $stmt . " where " . $where;
@@ -131,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $qtde = 0;
         while ($row = pg_fetch_object($sth)) {
             $html .= '<tr>';
-            $html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
+            $html .= '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . '</td>';
             $html .= '<td>' . $row->nome . '</td>';
             $html .= '<td>' . $row->origem . '</td>';
             $html .= '<td>' . $row->hora_cad . '</td>';
