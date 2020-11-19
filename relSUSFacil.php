@@ -17,7 +17,7 @@ $stmt = "
 		a.paciente_id, a.status, a.tipo, a.tipo_leito, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.nome_mae, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade,x.glicose as glicemia,
-		a.data_destino,a.hora_destino,a.destino_paciente, pa_sis_internacao, pa_dist_internacao, temperatura_internacao, dor_internacao, oxigenio_internacao, pulso_internacao, glicose_internacao, ecg_internacao
+		a.data_destino,a.hora_destino,a.destino_paciente, pa_sis_internacao, pa_dist_internacao, temperatura_internacao, dor_internacao, oxigenio_internacao, pulso_internacao, glicose_internacao, ecg_internacao, frequencia_respiratoria
 		from atendimentos a 
 		left join pessoas c on a.paciente_id=c.pessoa_id 
 		left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
@@ -92,6 +92,7 @@ $oxigenio= $row->oxigenio_internacao;
 $temperatura= $row->temperatura_internacao;
 $dor = $row->dor_internacao;
 $ecg= $row->ecg_internacao;
+$frequencia_respiratoria = $row->frequencia_respiratoria;
 
 
 $dia    = date('d', strtotime($data_transacao));
@@ -180,7 +181,7 @@ class PDF extends FPDF
             $telsolicitante, $senha, $dt_solicitacao, $enderecox, $end_numero, $complemento, $bairro, $cep, $cpf, $cidade, $estado, $telefone, $celular,
             $oque_faz,    $com_oqfaz, $tempo_faz,    $como_faz, $queixa, $exame_fisico, $cid_internacao, $pressaodiastolica, $pressaosistolica, $peso,
             $temperatura, $relato, $discriminador, $destino, $tipo_leito, $prioridade, $atendprioridade, $cns, $diagnostico_principal, $horacad, $datacad,
-            $data_destino, $hora_destino, $destino_paciente, $obs_modal, $dor, $pulso,$glicemia,$pa_sitolica,$pa_distolica,$oxigenio,$temperatura,$ecg;
+            $data_destino, $hora_destino, $destino_paciente, $obs_modal, $dor, $pulso,$glicemia,$pa_sitolica,$pa_distolica,$oxigenio,$temperatura,$ecg,$frequencia_respiratoria;
         $this->Image('app-assets/img/gallery/logo.png', 10, 5, 48);
         $this->Image('app-assets/img/gallery/sus.jpg', 80, 3, 22);
         $this->Ln(5);
@@ -307,7 +308,7 @@ class PDF extends FPDF
 
         //$this->SetFont('Arial','B',9);
         $this->SetXY(10, 185);
-        $this->Cell(185, 5, utf8_decode('SINAIS VITAIS         | Pulsos: '.$pulso.'              Glicemia: '.$glicemia.'             PA: '.$pa_sitolica.'x'.$pa_distolica.'       dor: '.$dor.'       SpO2: '.$oxigenio.'         T.axiliar: '.$temperatura.'         Glasgow: '.$ecg.'          '), 1, 0, 'L');
+        $this->Cell(185, 5, utf8_decode('SINAIS VITAIS         | Pulsos: '.$pulso.'            Glicemia: '.$glicemia.'           PA: '.$pa_sitolica.'x'.$pa_distolica.'       FR:'. $frequencia_respiratoria.'      dor: '.$dor.'      SpO2: '.$oxigenio.'        T.axiliar: '.$temperatura.'        Glasgow: '.$ecg.'          '), 1, 0, 'L');
         $this->Ln(7);
         $this->Cell(185, 5, utf8_decode(' MEDICAMENTOS EM USO'), 0, 0, 'L');
         $this->Line(50, 190, 50, 205);

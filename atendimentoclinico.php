@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $destinox     = $row->destino_paciente;
         $status = $row->status;
 
-        if (($status == "Atendimento Finalizado") && ($destino != "07" && $destino != "10")) {
+        if (($status == "Atendimento Finalizado") && ($destino != "07" && $destino != "10" && $destino != "09")) {
             $liberacao = "readonly";
             $liberacaox = "disabled";
         } else {
@@ -1093,7 +1093,7 @@ if ($destino != '') {
                 <div class="modal-body">
                     <div class="row">
                         <!-- PA Sistolica -->
-                        <div class="col-4 form-group">
+                        <div class="col-3 form-group">
                             <label>PA Sistolica</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" class="form-control square" name="pa_sis"
@@ -1106,7 +1106,7 @@ if ($destino != '') {
                         </div>
 
                         <!-- PA Distolica -->
-                        <div class="col-4 form-group">
+                        <div class="col-3 form-group">
                             <label>PA Distolica</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" class="form-control square" name="pa_dis"
@@ -1119,7 +1119,7 @@ if ($destino != '') {
                         </div>
 
                         <!-- Oxigênio -->
-                        <div class="col-4 form-group">
+                        <div class="col-3 form-group">
                             <label>Oxigênio</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" id="oxigenio" class="form-control" name="oxigenio"
@@ -1127,6 +1127,18 @@ if ($destino != '') {
                                     id="oxigenio">
                                 <div class="form-control-position" style="top: 0px">
                                     <img src="app-assets/img/svg/o2.png" alt="\" height="20" width="20">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 form-group">
+                            <label>Freq. Resp.</label>
+                            <div class="position-relative has-icon-left">
+                                <input type="text" id="frequencia_respiratoria" class="form-control"
+                                    name="frequencia_respiratoria"
+                                    value="<?php echo $rowRetorno->frequencia_respiratoria ?>"
+                                    id="frequencia_respiratoria">
+                                <div class="form-control-position" style="top: 0px">
+                                    <!-- <img src="app-assets/img/svg/o2.png" alt="\" height="20" width="20"> -->
                                 </div>
                             </div>
                         </div>
@@ -1174,7 +1186,7 @@ if ($destino != '') {
                                     value="<?php echo $rowRetorno->glicose ?>"
                                     name="ecg" id="ecg">
                                 <div class="form-control-position" style="top: 0px">
-                                    <img src="app-assets/img/svg/glicose.png" alt="\" height="25" width="18">
+                                    <!-- <img src="app-assets/img/svg/glicose.png" alt="\" height="25" width="18"> -->
                                 </div>
                             </div>
                         </div>
@@ -1784,7 +1796,8 @@ if ($destino != '') {
                                             <br>
                                             <div class="col-sm-12 margin-top-10">
                                                 <label class="control-label">Exame Físico</label>
-                                                <textarea name="exame_fisico" class="form-control" rows="15"
+                                                <textarea name="exame_fisico" id="exame_fisico" class="form-control"
+                                                    rows="15" maxlength="990"
                                                     <?php echo $rdonly ?> required><?php echo $exame_fisico; ?></textarea>
                                                 </br>
                                             </div>
@@ -2498,10 +2511,15 @@ if ($destino != '') {
                                     <option value="20" selected>ALTA VIA SISTEMA
                                     </option>;
                                     <?php } ?>
+                                    <option value="09" <?php if ($destino == '09') {
+                                                                    echo "selected";
+                                                                } ?>>NAO
+                                        RESPONDEU CHAMADO
+                                    </option>;
                                 </select>
                             </div>
                         </div>
-                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '00') { ?>
+                        <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) <> '07' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '10' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '03' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '00' and str_pad($destino, 2, '0', STR_PAD_LEFT) <> '09') { ?>
                         <div class="col-md-2">
                             <button type="button" data-target="#modalFimEvolucao" data-toggle="modal"
                                 class="btn btn-raised btn-danger square btn-min-width mr-1 mt-4">Extornar Alta</button>
@@ -2571,7 +2589,7 @@ if ($destino != '') {
                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') { ?>
                         <a href="evolucao_atendimento.php?id=<?= $transacao ?>"
                             target="_blank" name="faa" class="btn btn-primary" onclick="evoluir()">Evoluir</a>
-                        <?php } elseif ($destino == '') { ?>
+                        <?php } elseif ($destino == '' or $destino == '09') { ?>
                         <input type='button' id="gravar" name='gravar' class="btn btn-primary" value='Gravar'
                             onclick="g()">
                         <?php } ?>
@@ -3345,6 +3363,7 @@ if ($destino != '') {
             var temperatura = $("#temp").val();
             var dor = $("#dor").val();
             var oxigenio = $("#oxigenio").val();
+            var frequencia_respiratoria = $("#frequencia_respiratoria").val();
             var pulso = $("#pulso").val();
             var glicose = $("#glicose").val();
             var ecg = $("#ecg").val();
@@ -3368,6 +3387,7 @@ if ($destino != '') {
                         temperatura: temperatura,
                         dor: dor,
                         oxigenio: oxigenio,
+                        frequencia_respiratoria: frequencia_respiratoria,
                         pulso: pulso,
                         glicose: glicose,
                         ecg: ecg
@@ -3550,6 +3570,18 @@ if ($destino != '') {
             $('#cidTablepermanencia').empty();
             $("#lista_diagnostico_permanencia").slideUp(100);
         }
+
+        $(document).ready(function() {
+
+            $('#exame_fisico').keydown(function(e) {
+
+                var linhasAtuais = $(this).val().split("\n").length;
+
+                if (e.keyCode == 13 && linhasAtuais >= 20) {
+                    return false;
+                }
+            });
+        });
     </script>
 
 </body>
