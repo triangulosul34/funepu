@@ -52,19 +52,18 @@ $stmt2 = "select medicamentos,quantidade,modo_usar
 			where transacao = $transacao";
 $sth2 = pg_query($stmt2) or die($stmt2);
 while ($row = pg_fetch_object($sth2)) {
-
     $pdf->Cell(10, 5, '', 0, 0, 'L');
-    $pdf->Cell(80, 5, $row->medicamentos, 0, 0, 'L');
+    $pdf->Cell(80, 5, utf8_decode($row->medicamentos), 0, 0, 'L');
     $pdf->Cell(71, 5, $row->quantidade, 0, 0, 'L');
 
-    $pdf->Cell(80, 5, $row->medicamentos, 0, 0, 'L');
+    $pdf->Cell(80, 5, utf8_decode($row->medicamentos), 0, 0, 'L');
     $pdf->Cell(25, 5, $row->quantidade, 0, 0, 'L');
     $pdf->Ln(5);
 
     $pdf->Cell(10, 5, '', 0, 0, 'L');
-    $pdf->Cell(105, 5, $row->modo_usar, 0, 0, 'L');
+    $pdf->Cell(105, 5, utf8_decode($row->modo_usar), 0, 0, 'L');
     $pdf->Cell(46, 5, '', 0, 0, 'L');
-    $pdf->Cell(105, 5, $row->modo_usar, 0, 0, 'L');
+    $pdf->Cell(105, 5, utf8_decode($row->modo_usar), 0, 0, 'L');
     $pdf->Ln(7);
 
 
