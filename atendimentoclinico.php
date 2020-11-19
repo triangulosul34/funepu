@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad AS cadastro, a.obs_modal, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
-		x.peso, x.pressaodiastolica, x.usuario, x.fimclassificacao, x.pressaosistolica, x.queixa AS relato, x.pulso, x.temperatura, x.discriminador, x.prioridade AS atendprioridade, x.glicose, x.dor, x.oxigenio, a.coronavirus
+		x.peso, x.pressaodiastolica, x.usuario, x.fimclassificacao, x.pressaosistolica, x.queixa AS relato, x.pulso, x.temperatura, x.discriminador, x.prioridade AS atendprioridade, x.glicose, x.dor, x.oxigenio, a.coronavirus, a.pa_sis_internacao,a.pa_dist_internacao,a.temperatura_internacao,a.dor_internacao,a.oxigenio_internacao,a.pulso_internacao,a.pulso_internacao,a.glicose_internacao,a.ecg_internacao,a.frequencia_respiratoria
 		FROM atendimentos a 
 		LEFT JOIN pessoas c ON a.paciente_id=c.pessoa_id 
 		LEFT JOIN tipo_origem k ON CAST(k.tipo_id AS VARCHAR)=a.tipo 
@@ -193,6 +193,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $hora_dest    = $row->hora_destino;
         $obs_modal  = $row->obs_modal;
         $coronavirus  = $row->coronavirus;
+        $pressaosistolica = $row->pa_sis_internacao;
+        $pressaodiastolica = $row->pa_dist_internacao;
+        $oxigenio = $row->oxigenio_internacao;
+        $frequencia_respiratoria = $row->frequencia_respiratoria;
+        $pulso = $row->pulso_internacao;
+        $temperatura = $row->temperatura_internacao;
+        $glicose = $row->glicose_internacao;
+        $ecg = $row->ecg_internacao;
     } else {
         $data_transacao = date('Y-m-d');
         $hora_transacao = date('H:i');
@@ -1097,7 +1105,7 @@ if ($destino != '') {
                             <label>PA Sistolica</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" class="form-control square" name="pa_sis"
-                                    value="<?php echo $rowRetorno->pressaosistolica ?>"
+                                    value="<?php echo $pressaosistolica ?>"
                                     id="pa_sis">
                                 <div class="form-control-position" style="top: 0px">
                                     <img src="app-assets/img/svg/nano.png" alt="\" height="20" width="20">
@@ -1110,7 +1118,7 @@ if ($destino != '') {
                             <label>PA Distolica</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" class="form-control square" name="pa_dis"
-                                    value="<?php echo $rowRetorno->pressaodiastolica ?>"
+                                    value="<?php echo $pressaodiastolica ?>"
                                     id="pa_dis">
                                 <div class="form-control-position" style="top: 0px">
                                     <img src="app-assets/img/svg/nano.png" alt="\" height="20" width="20">
@@ -1123,7 +1131,7 @@ if ($destino != '') {
                             <label>Oxigênio</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" id="oxigenio" class="form-control" name="oxigenio"
-                                    value="<?php echo $rowRetorno->oxigenio ?>"
+                                    value="<?php echo $oxigenio ?>"
                                     id="oxigenio">
                                 <div class="form-control-position" style="top: 0px">
                                     <img src="app-assets/img/svg/o2.png" alt="\" height="20" width="20">
@@ -1135,7 +1143,7 @@ if ($destino != '') {
                             <div class="position-relative has-icon-left">
                                 <input type="text" id="frequencia_respiratoria" class="form-control"
                                     name="frequencia_respiratoria"
-                                    value="<?php echo $rowRetorno->frequencia_respiratoria ?>"
+                                    value="<?php echo $frequencia_respiratoria ?>"
                                     id="frequencia_respiratoria">
                                 <div class="form-control-position" style="top: 0px">
                                     <!-- <img src="app-assets/img/svg/o2.png" alt="\" height="20" width="20"> -->
@@ -1147,7 +1155,7 @@ if ($destino != '') {
                             <label>Pulso</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" id="pulso" class="form-control square" name="pulso"
-                                    value="<?php echo $rowRetorno->pulso ?>"
+                                    value="<?php echo $pulso ?>"
                                     id="pulso">
                                 <div class="form-control-position" style="top: 0px">
                                     <i class="fas fa-stethoscope"></i>
@@ -1159,7 +1167,7 @@ if ($destino != '') {
                             <label>Temperatura</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" class="form-control square" name="temp"
-                                    value="<?php echo $rowRetorno->temperatura ?>"
+                                    value="<?php echo $temperatura ?>"
                                     id="temp">
                                 <div class="form-control-position" style="top: 0px">
                                     <i class="fas fa-thermometer" style="font-size: 15pt"></i>
@@ -1171,7 +1179,7 @@ if ($destino != '') {
                             <label>Glicemia</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" id="glicose" class="form-control square"
-                                    value="<?php echo $rowRetorno->glicose ?>"
+                                    value="<?php echo $glicose ?>"
                                     name="glicose" id="glicose">
                                 <div class="form-control-position" style="top: 0px">
                                     <img src="app-assets/img/svg/glicose.png" alt="\" height="25" width="18">
@@ -1183,7 +1191,7 @@ if ($destino != '') {
                             <label>Glasgow:</label>
                             <div class="position-relative has-icon-left">
                                 <input type="text" class="form-control square"
-                                    value="<?php echo $rowRetorno->glicose ?>"
+                                    value="<?php echo $ecg ?>"
                                     name="ecg" id="ecg">
                                 <div class="form-control-position" style="top: 0px">
                                     <!-- <img src="app-assets/img/svg/glicose.png" alt="\" height="25" width="18"> -->
@@ -1205,7 +1213,8 @@ if ($destino != '') {
                         -->
                         <div class="col-md-3 ml-3">
                             <label class="control-label">CID</label>
-                            <input type="text" name="CID_permanencia" id="CID_permanencia" class="form-control" value=""
+                            <input type="text" name="CID_permanencia" id="CID_permanencia" class="form-control"
+                                value="<?= $cid_internacao; ?>"
                                 onkeyup="maiuscula(this)" onblur="buscaCidpermanencia(this)" maxlength='5'>
                         </div>
                         <div class="col-md-8">
