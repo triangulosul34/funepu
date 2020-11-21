@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $temperatura = $_GET['temperatura'];
     $dor = $_GET['dor'];
     $oxigenio = $_GET['oxigenio'];
-    $frequencia_respiratoria = $_GET['frequencia_repiratoria'];
+    $frequencia_respiratoria = $_GET['frequencia_respiratoria'];
     $pulso = $_GET['pulso'];
     $glicose = $_GET['glicose'];
     $ecg = $_GET['ecg'];
