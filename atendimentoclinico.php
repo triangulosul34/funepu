@@ -1366,6 +1366,7 @@ if ($destino != '') {
                             <option value="COT">COT</option>
                             <option value="CAPS">CAPS</option>
                             <option value="SIAP">SIAP</option>
+                            <option value="CTA">CTA</option>
                         </select>
                         <br>
                         <label for="">Justificativa</label>
@@ -1813,7 +1814,7 @@ if ($destino != '') {
                                             <div class="col-sm-12 margin-top-10">
                                                 <label class="control-label">Exame Físico</label>
                                                 <textarea name="exame_fisico" id="exame_fisico" class="form-control"
-                                                    rows="15" maxlength="990"
+                                                    rows="15" maxlength="1200"
                                                     <?php echo $rdonly ?> required><?php echo $exame_fisico; ?></textarea>
                                                 </br>
                                             </div>

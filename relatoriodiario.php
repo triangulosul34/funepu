@@ -101,9 +101,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $arquivo = 'Relatorio Atendimento.xls';
         // Criamos uma tabela HTML com o formato da planilha
         $html = '';
-        $html .= '<table style="font-size:8px" border="1">';
+        $html .= '<table style="font-size:12px" border="1">';
         $html .= '<tr>';
-        $html .= '<td colspan="7" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - RELACAO ATENDIMENTOS</td>';
+        $html .= '<td colspan="8" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - RELACAO ATENDIMENTOS</td>';
         $html .= '</tr>';
         $html .= '<tr>';
         $html .= '<tr align=\'center\'>';
@@ -114,6 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $html .= '<td><b>Triagem</b></td>';
         $html .= '<td><b>Atendimento</b></td>';
         $html .= '<td><b>Situacao</b></td>';
+        $html .= '<td><b>Data de Envio</b></td>';
         $html .= '</tr>';
         include('conexao.php');
         $stmt = "select a.status, a.dat_cad, a.hora_cad,a.hora_triagem, c.nome, a.hora_destino, k.origem from atendimentos a 
@@ -139,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $html .= '<td>' . $row->hora_triagem . '</td>';
             $html .= '<td>' . $row->hora_destino . '</td>';
             $html .= '<td>' . $row->status . '</td>';
+            $html .= '<td></td>';
             $html .= '</tr>';
 
             $qtde = $qtde + 1;

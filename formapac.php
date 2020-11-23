@@ -4,7 +4,7 @@ include('verifica.php');
 include('funcoes.php');
 
 // if($apac=="")
-//     { 
+//     {
 //       include('conexao.php');
 //       $sql = "SELECT nextval('apacs_solicitadas_apac_id_seq')";
 //       $result = pg_query ( $sql ) or die ( $sql );
@@ -13,7 +13,6 @@ include('funcoes.php');
 //     }
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
     $pessoa_id   = $_GET['id'];
 
     include('conexao.php');
@@ -28,7 +27,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     $usuario          = $_POST['usuario'];
     $procedimento     = $_POST['procedimento'];
     $pessoa_id        = $_POST['prontuario'];
@@ -73,7 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -128,7 +128,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Nova APAC
                                                 </h4>
                                             </div>
@@ -153,7 +154,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-2">
                                                 <div class="user-image">
-                                                    <img src="app-assets/img/gallery/user-transp.png" height="130" width="130" class="img-responsive" alt="usuario" id="blah" onclick="window.open('poppac.php', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;">
+                                                    <img src="app-assets/img/gallery/user-transp.png" height="130"
+                                                        width="130" class="img-responsive" alt="usuario" id="blah"
+                                                        onclick="window.open('poppac.php', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;">
                                                     <!--Foto deve ter o tamanho 300x300-->
                                                 </div>
                                             </div>
@@ -162,38 +165,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <div class="col-8">
                                                         <div class="form-group">
                                                             <label>Nome</label>
-                                                            <input type="hidden" name="usuario" value="<?php echo $usuario; ?>">
+                                                            <input type="hidden" name="usuario"
+                                                                value="<?php echo $usuario; ?>">
                                                             <input type="hidden" name="nome_social" id="nome_social">
-                                                            <input type="hidden" name="nome_acompanhante" id="nome_acompanhante">
+                                                            <input type="hidden" name="nome_acompanhante"
+                                                                id="nome_acompanhante">
                                                             <input type="hidden" name="idade" id="idade">
-                                                            <input type="hidden" name="prontuario" id="prontuario" value="<?php echo $pessoa_id; ?>">
-                                                            <input type="hidden" name="org_expeditor" id="org_expeditor">
+                                                            <input type="hidden" name="prontuario" id="prontuario"
+                                                                value="<?php echo $pessoa_id; ?>">
+                                                            <input type="hidden" name="org_expeditor"
+                                                                id="org_expeditor">
                                                             <input type="hidden" name="telefone" id="telefone">
                                                             <input type="hidden" name="celular" id="celular">
                                                             <input type="hidden" name="nomeMae" id="nomeMae">
                                                             <input type="hidden" name="origem" id="origem">
-                                                            <input type="hidden" name="data_solicitacao" id="data_solicitacao" onkeypress="mascaraData(this)" value="<?php echo date('d/m/Y') ?>" />
-                                                            <input type="text" class="form-control square" id="nome" name="nome" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" readOnly>
+                                                            <input type="hidden" name="data_solicitacao"
+                                                                id="data_solicitacao" onkeypress="mascaraData(this)"
+                                                                value="<?php echo date('d/m/Y') ?>" />
+                                                            <input type="text" class="form-control square" id="nome"
+                                                                name="nome"
+                                                                value="<?php echo $nome; ?>"
+                                                                onkeyup="maiuscula(this)" readOnly>
                                                         </div>
                                                     </div>
                                                     <div class="col-2">
                                                         <div class="form-group">
                                                             <label>Raca/Cor</label>
-                                                            <select class="form-control campo-requerido square" name="raca_cor" id="raca_cor">
+                                                            <select class="form-control campo-requerido square"
+                                                                name="raca_cor" id="raca_cor">
                                                                 <option></option>
-                                                                <option value="01" <?php if ($raca_cor == "01")   echo "selected"; ?>>Branca</option>
-                                                                <option value="02" <?php if ($raca_cor == "02")   echo "selected"; ?>>Preta</option>
-                                                                <option value="03" <?php if ($raca_cor == "03")   echo "selected"; ?>>Parda</option>
-                                                                <option value="04" <?php if ($raca_cor == "04")   echo "selected"; ?>>Amarela</option>
-                                                                <option value="05" <?php if ($raca_cor == "05")   echo "selected"; ?>>Indigena</option>
-                                                                <option value="99" <?php if ($raca_cor == "99")   echo "selected"; ?>>Nao Informado</option>
+                                                                <option value="01" <?php if ($raca_cor == "01") {
+    echo "selected";
+} ?>>Branca
+                                                                </option>
+                                                                <option value="02" <?php if ($raca_cor == "02") {
+    echo "selected";
+} ?>>Preta
+                                                                </option>
+                                                                <option value="03" <?php if ($raca_cor == "03") {
+    echo "selected";
+} ?>>Parda
+                                                                </option>
+                                                                <option value="04" <?php if ($raca_cor == "04") {
+    echo "selected";
+} ?>>Amarela
+                                                                </option>
+                                                                <option value="05" <?php if ($raca_cor == "05") {
+    echo "selected";
+} ?>>Indigena
+                                                                </option>
+                                                                <option value="99" <?php if ($raca_cor == "99") {
+    echo "selected";
+} ?>>Nao
+                                                                    Informado</option>
                                                             </select>
                                                         </div>
                                                     </div>
                                                     <div class="col-2">
                                                         <div class="form-group">
                                                             <label>Sexo</label>
-                                                            <input type="text" value="<?php echo $sexo; ?>" class="form-control square" name="sexo" id="sexo" readOnly>
+                                                            <input type="text"
+                                                                value="<?php echo $sexo; ?>"
+                                                                class="form-control square" name="sexo" id="sexo"
+                                                                readOnly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -201,54 +235,83 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <div class="col-3">
                                                         <div class="form-group">
                                                             <label>Data Nascimento</label>
-                                                            <input type="text" value="<?php echo $dt_nasc; ?>" placeholder="__/__/____" class="form-control square" id="dt_nascimento" maxlength="20" name="dt_nascimento" readOnly>
+                                                            <input type="text"
+                                                                value="<?php echo $dt_nasc; ?>"
+                                                                placeholder="__/__/____" class="form-control square"
+                                                                id="dt_nascimento" maxlength="20" name="dt_nascimento"
+                                                                readOnly>
                                                         </div>
                                                     </div>
                                                     <div class="col-4">
                                                         <div class='form-group'>
                                                             <label>CNS</label>
-                                                            <input type="text" value="<?php echo $cns; ?>" class="form-control square" name="cns" id="cns" readOnly>
+                                                            <input type="text"
+                                                                value="<?php echo $cns; ?>"
+                                                                class="form-control square" name="cns" id="cns"
+                                                                readOnly>
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
                                                         <div class="form-group">
                                                             <label> CPF</label>
-                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' maxlength="11" class="form-control square" id="cpf" name="cpf" readOnly>
+                                                            <input type="text" placeholder="99999999999"
+                                                                value="<?php echo $cpf; ?>"
+                                                                onkeypress='return SomenteNumero(event)' maxlength="11"
+                                                                class="form-control square" id="cpf" name="cpf"
+                                                                readOnly>
                                                         </div>
                                                     </div>
                                                     <div class="col-2">
                                                         <div class="form-group">
                                                             <label>Identidade</label>
-                                                            <input type="text" class="form-control square" id="rg" name="rg" value="<?php echo $identidade; ?>" onkeyup="maiuscula(this)" readOnly>
+                                                            <input type="text" class="form-control square" id="rg"
+                                                                name="rg"
+                                                                value="<?php echo $identidade; ?>"
+                                                                onkeyup="maiuscula(this)" readOnly>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-12" style="background-color: #ccc; height: 1px; width: 100%; margin-top: 10px; margin-bottom: 15px"></div>
+                                        <div class="col-12"
+                                            style="background-color: #ccc; height: 1px; width: 100%; margin-top: 10px; margin-bottom: 15px">
+                                        </div>
                                         <div class="row">
                                             <div class="col-2">
                                                 <div class="form-group">
                                                     <label>CEP</label>
-                                                    <input class="form-control square" placeholder="99999-999" type="text" name="end_cep" maxlength="9" id="end_cep" value="<?php echo $cep; ?>" OnKeyPress="formatar('#####-###', this)" onblur="getEndereco(this.value);" readOnly>
+                                                    <input class="form-control square" placeholder="99999-999"
+                                                        type="text" name="end_cep" maxlength="9" id="end_cep"
+                                                        value="<?php echo $cep; ?>"
+                                                        OnKeyPress="formatar('#####-###', this)"
+                                                        onblur="getEndereco(this.value);" readOnly>
                                                 </div>
                                             </div>
                                             <div class="col-5">
                                                 <div class="form-group">
                                                     <label>Rua</label>
-                                                    <input class="form-control square" type="text" name="endereco" id="endereco" onkeyup="maiuscula(this)" value="<?php echo $rua; ?>" readOnly>
+                                                    <input class="form-control square" type="text" name="endereco"
+                                                        id="endereco" onkeyup="maiuscula(this)"
+                                                        value="<?php echo $rua; ?>"
+                                                        readOnly>
                                                 </div>
                                             </div>
                                             <div class="col-2">
                                                 <div class="form-group">
                                                     <label>Numero</label>
-                                                    <input class="form-control tooltips square" type="text" name="end_num" id="end_num" value="<?php echo $numero; ?>" readOnly>
+                                                    <input class="form-control tooltips square" type="text"
+                                                        name="end_num" id="end_num"
+                                                        value="<?php echo $numero; ?>"
+                                                        readOnly>
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Complemento</label>
-                                                    <input class="form-control square" type="text" name="end_comp" id="end_comp" onkeyup="maiuscula(this)" value="<?php echo $complemento; ?>" readOnly>
+                                                    <input class="form-control square" type="text" name="end_comp"
+                                                        id="end_comp" onkeyup="maiuscula(this)"
+                                                        value="<?php echo $complemento; ?>"
+                                                        readOnly>
                                                 </div>
                                             </div>
                                         </div>
@@ -256,28 +319,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Bairro</label>
-                                                    <input class="form-control square" type="text" name="end_bairro" id="end_bairro" value="<?php echo $bairro; ?>" onkeyup="maiuscula(this)" readOnly>
+                                                    <input class="form-control square" type="text" name="end_bairro"
+                                                        id="end_bairro"
+                                                        value="<?php echo $bairro; ?>"
+                                                        onkeyup="maiuscula(this)" readOnly>
                                                 </div>
                                             </div>
                                             <div class="col-7">
                                                 <div class="form-group">
                                                     <label>Cidade</label>
-                                                    <input class="form-control square" type="text" name="end_cidade" id="end_cidade" value="<?php echo $cidade; ?>" onkeyup="maiuscula(this)" readOnly>
+                                                    <input class="form-control square" type="text" name="end_cidade"
+                                                        id="end_cidade"
+                                                        value="<?php echo $cidade; ?>"
+                                                        onkeyup="maiuscula(this)" readOnly>
                                                 </div>
                                             </div>
                                             <div class="col-2">
                                                 <div class="form-group">
                                                     <label>UF</label>
-                                                    <input class="form-control square" type="text" name="end_uf" id="end_uf" value="<?php echo $uf; ?>" onkeyup="maiuscula(this)" maxlength="2" readOnly>
+                                                    <input class="form-control square" type="text" name="end_uf"
+                                                        id="end_uf"
+                                                        value="<?php echo $uf; ?>"
+                                                        onkeyup="maiuscula(this)" maxlength="2" readOnly>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-12" style="background-color: #ccc; height: 1px; width: 100%; margin-top: 10px; margin-bottom: 15px"></div>
+                                        <div class="col-12"
+                                            style="background-color: #ccc; height: 1px; width: 100%; margin-top: 10px; margin-bottom: 15px">
+                                        </div>
                                         <div class="row">
                                             <div class="col-5">
                                                 <div class='form-group'>
                                                     <label>Proc. Solicitado</label>
-                                                    <select class="form-control  campo-requerido square" name="procedimento" id="procedimento">
+                                                    <select class="form-control  campo-requerido square"
+                                                        name="procedimento" id="procedimento">
                                                         <option></option>
                                                         <?php
                                                         include('conexao.php');
@@ -297,13 +372,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-2">
                                                 <div class="form-group">
                                                     <label>CID</label>
-                                                    <input type="text" name="cid" id="cid" class="form-control campo-requerido square" value="<?php echo $cid; ?>" onkeyup="maiuscula(this),copiarCid(this)" maxlength='5' <?php echo $rdonly ?>>
+                                                    <input type="text" name="cid" id="cid"
+                                                        class="form-control campo-requerido square"
+                                                        value="<?php echo $cid; ?>"
+                                                        onkeyup="maiuscula(this),copiarCid(this)" maxlength='5' <?php echo $rdonly ?>>
                                                 </div>
                                             </div>
                                             <div class="col-5">
                                                 <div class="form-group">
                                                     <label>Diagnóstico Principal</label>
-                                                    <input type="text" name="diag_pri" id="diag_pri" onkeyup="retornaCid(this),maiuscula(this)" class="form-control campo-requerido square" value="<?php echo $diag_pri; ?>" <?php echo $rdonly ?>>
+                                                    <input type="text" name="diag_pri" id="diag_pri"
+                                                        onkeyup="retornaCid(this),maiuscula(this)"
+                                                        class="form-control campo-requerido square"
+                                                        value="<?php echo $diag_pri; ?>"
+                                                        <?php echo $rdonly ?>>
                                                     <style>
                                                         table #cidTable {
                                                             border-collapse: collapse;
@@ -348,7 +430,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         }
                                                     </style>
                                                     <div id="lista_diagnostico" style="display: none;">
-                                                        <table id="cidTable" class="table table-hover table-striped width-full"></table>
+                                                        <table id="cidTable"
+                                                            class="table table-hover table-striped width-full"></table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -357,32 +440,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-12">
                                                 <div class="form-group">
                                                     <label>Justificativa do procedimento</label>
-                                                    <textarea data-minSize="150" maxlength="250" rows="4" cols="50" class="form-control form-white campo-requerido minSize square" onkeyup="this.value = this.value.toUpperCase(); contChar(this, 'contJustProc', '150')" name="justificativa"></textarea>
+                                                    <textarea data-minSize="150" maxlength="250" rows="4" cols="50"
+                                                        class="form-control form-white campo-requerido minSize square"
+                                                        onkeyup="this.value = this.value.toUpperCase(); contChar(this, 'contJustProc', '150')"
+                                                        name="justificativa"></textarea>
                                                     <div id="contJustProc" class="counttext">
                                                         0 / 250
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-12" style="background-color: #ccc; height: 1px; width: 100%; margin-top: 10px; margin-bottom: 15px"></div>
+                                        <div class="col-12"
+                                            style="background-color: #ccc; height: 1px; width: 100%; margin-top: 10px; margin-bottom: 15px">
+                                        </div>
                                         <div class="row">
                                             <div class="col-10">
                                                 <div class='form-group'>
                                                     <label>Medico Solicitante</label>
-                                                    <input class="form-control square" type="text" name="solicitante" id="solicitante" value="<?php echo $solicitante; ?>" readOnly>
+                                                    <input class="form-control square" type="text" name="solicitante"
+                                                        id="solicitante"
+                                                        value="<?php echo $solicitante; ?>"
+                                                        readOnly>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label class="control-label">CRM</label>
-                                                    <input class="form-control" type="text" name="crm" id="crm" value="<?php echo $crm; ?>" onkeyup="maiuscula(this)" readOnly>
+                                                    <input class="form-control" type="text" name="crm" id="crm"
+                                                        value="<?php echo $crm; ?>"
+                                                        onkeyup="maiuscula(this)" readOnly>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div align="center" class="col-md-12 margin-bottom-30">
-                                                <button type="button" onclick="checkSubmit()" class="btn btn-wide btn-primary">Imprimir</button>
-                                                <a href="selformapac.php"><button type="button" class="btn btn-wide btn-danger">Fechar</button>
+                                                <button type="button" onclick="checkSubmit()"
+                                                    class="btn btn-wide btn-primary">Imprimir</button>
+                                                <a href="selformapac.php"><button type="button"
+                                                        class="btn btn-wide btn-danger">Fechar</button>
                                             </div>
                                         </div>
                                     </form>
@@ -640,7 +735,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($(value).val() == "") {
                     erro = "Preencha o campo (" + $(value).siblings(".control-label").text() + ")"
                 } else if ($(value).hasClass("minSize") && value.value.length < $(value).attr("data-minSize")) {
-                    erro = $(value).siblings(".control-label").text() + " deve ter no mínimo " + $(value).attr("data-minSize") + " caracteres"
+                    erro = $(value).siblings(".control-label").text() + " deve ter no mínimo " + $(value).attr(
+                        "data-minSize") + " caracteres"
                 }
             })
             if (erro != false) {
