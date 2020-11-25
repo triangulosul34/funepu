@@ -19,6 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['gerarrelatorio'])) {
         $start = $_POST['start'];
         $end   = $_POST['end'];
+        $medico = $_POST['medico'];
+        $where = '';
+
+        if ($medico) {
+            $where = " and pessoa_id = $medico";
+        }
 
         include('conexao.php');
         $stmt1 = "select nome, p.pessoa_id, count(*) as qtd,a.med_atendimento, 
@@ -30,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					WHEN a.hora_destino >= '19:00' and a.hora_destino >= '00:00' THEN '19h e passou das 23:59'
 					END as HORAS FROM atendimentos a 
 					left join pessoas p on p.username = a.med_atendimento
-					WHERE nome is not null AND status = 'Atendimento Finalizado' and dat_cad between '$start' and '$end'								
+					WHERE nome is not null AND status = 'Atendimento Finalizado' $where and dat_cad between '$start' and '$end'								
 					group by 1,2,4,5
 					order by nome";
 
@@ -45,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
 					END as horas FROM evolucoes e
 					left join pessoas p on p.username = e.usuario
-					where nome is not null and data between '$start' and '$end' and p.pessoa_id not in ($leo)					
+					where nome is not null and data between '$start' and '$end' $where and p.pessoa_id not in ($leo)					
 					group by 1,2,4,5
 					order by nome";
 
@@ -55,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt3 = "select p.nome,l.usuario,p.perfil, min(l.hora) as login from logs l
 					left join pessoas p on p.username = l.usuario
 					left join atendimentos a on a.med_atendimento = p.username  
-					where data between '$start' and '$end' and p.perfil = '03'
+					where data between '$start' and '$end' $where and p.perfil = '03'
 					group by 1,2,3";
 
         $sth3 = pg_query($stmt3);
@@ -81,7 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -92,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" type="text/css" href="app-assets/css/tsul.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/vendors/css/pickadate/pickadate.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.css" />
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <!--load all styles -->
 
@@ -136,7 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Relatório de Presença Medica
                                                 </h4>
                                             </div>
@@ -164,27 +174,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <h1 align='center'>UPA Parque do Mirante</h1>
                                                 <h2 style="text-align: center">Atendimento Externo</h2>
                                             </div>
-                                            <div class="col-md-8">
+                                            <div class="col-md-6">
                                                 <div class="row">
                                                     <div class="col col-md-6">
-                                                        <label class="control-label" for="inputBasicFirstName">Data Ínicial</label>
-                                                        <input type="date" class="form-control text-center" name="start" id="start" value="<?php echo $_POST['start']; ?>" />
+                                                        <label class="control-label" for="inputBasicFirstName">Data
+                                                            Ínicial</label>
+                                                        <input type="date" class="form-control text-center" name="start"
+                                                            id="start"
+                                                            value="<?php echo $_POST['start']; ?>" />
                                                     </div>
                                                     <div class="col col-md-6 text-center">
-                                                        <label class="control-label" for="inputBasicFirstName">Data Final</label>
-                                                        <input type="date" class="form-control text-center" name="end" id="end" value="<?php echo $_POST['end']; ?>">
+                                                        <label class="control-label" for="inputBasicFirstName">Data
+                                                            Final</label>
+                                                        <input type="date" class="form-control text-center" name="end"
+                                                            id="end"
+                                                            value="<?php echo $_POST['end']; ?>">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mt-3">
-                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary" style="width:100%">Gerar Dados</button>
+                                            <div class="col-md-3">
+                                                <label for="">Medico</label>
+                                                <select name="medico" id="medico" class="form-control">
+                                                    <option value=""></option>
+                                                    <?php
+                                                include('conexao.php');
+                                                $sql = "select * from pessoas where tipo_pessoa = 'Medico Laudador'";
+                                                $result = pg_query($sql);
+                                                while ($row = pg_fetch_object($result)) {
+                                                    ?>
+                                                    <option
+                                                        value="<?= $row->pessoa_id; ?>"
+                                                        <?php if ($_POST['medico'] == $row->pessoa_id) {
+                                                        echo "selected";
+                                                    } ?>>
+                                                        <?= $row->nome; ?>
+                                                    </option>
+                                                    <?php
+                                                } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 mt-3">
+                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary"
+                                                    style="width:100%">Gerar Dados</button>
                                             </div>
                                         </div>
                                         <div class="row mt-3">
                                             <div class="col-md-6">
                                                 <div class="counter text-left">
-                                                    <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span class="font-size-18">
-                                                            <?php echo inverteData($_POST['end']); ?></span></p>
+                                                    <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span
+                                                            class="font-size-18">
+                                                            <?php echo inverteData($_POST['end']); ?></span>
+                                                    </p>
                                                     <?php
 
                                                     $horaAtual = date('H');
@@ -193,8 +233,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                     include('conexao.php');
                                                     $stmt = "	SELECT count(*) as qtd  
-															FROM atendimentos  
-															WHERE dat_cad between '$datainicio' and '$datafinal' AND status = 'Atendimento Finalizado' 
+															FROM atendimentos a
+                                                            inner join pessoas b on a.med_atendimento = b.username 
+															WHERE dat_cad between '$datainicio' and '$datafinal' $where AND status = 'Atendimento Finalizado' 
 															and med_atendimento is not null";
 
                                                     $sth = pg_query($stmt);
@@ -228,12 +269,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     include('conexao.php');
                                                     while ($row = pg_fetch_object($sth1)) { ?>
 
-                                                        <?php $meuarray[$i++] = $row->pessoa_id; ?>
-                                                        <tr>
-                                                            <td><?php echo $row->nome ?></td>
-                                                            <td><?php echo $row->horas ?></td>
-                                                            <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?></td>
-                                                        </tr>
+                                                    <?php $meuarray[$i++] = $row->pessoa_id; ?>
+                                                    <tr>
+                                                        <td><?php echo $row->nome ?>
+                                                        </td>
+                                                        <td><?php echo $row->horas ?>
+                                                        </td>
+                                                        <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?>
+                                                        </td>
+                                                    </tr>
 
 
                                                     <?php }
@@ -257,8 +301,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <div class="counter text-left">
-                                                    <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span class="font-size-18">
-                                                            <?php echo inverteData($_POST['end']); ?></span></p>
+                                                    <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span
+                                                            class="font-size-18">
+                                                            <?php echo inverteData($_POST['end']); ?></span>
+                                                    </p>
                                                     <?php
                                                     $horaAtual = date('H');
                                                     $datainicio = $_POST['start'];
@@ -266,8 +312,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                     include('conexao.php');
                                                     $stmt = "	SELECT count(*) as qtd  
-														FROM evolucoes  
-														WHERE data between '$datainicio' and '$datafinal' 
+														FROM evolucoes a
+                                                        inner join pessoas b on b.username = a.usuario 
+														WHERE data between '$datainicio' and '$datafinal' $where
 														and usuario is not null";
 
                                                     $sth = pg_query($stmt);
@@ -303,18 +350,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
 													END as horas FROM evolucoes e
 													left join pessoas p on p.username = e.usuario
-													where nome is not null and data between '$start' and '$end'	and p.pessoa_id not in ($leo)				
+													where nome is not null and data between '$start' and '$end' $where and p.pessoa_id not in ($leo)				
 													group by 1,2,4,5
 													order by nome";
 
                                                     $sth2 = pg_query($stmt2);
 
                                                     while ($row = pg_fetch_object($sth2)) { ?>
-                                                        <tr>
-                                                            <td><?php echo $row->nome ?></td>
-                                                            <td><?php echo $row->horas ?></td>
-                                                            <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?></td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td><?php echo $row->nome ?>
+                                                        </td>
+                                                        <td><?php echo $row->horas ?>
+                                                        </td>
+                                                        <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?>
+                                                        </td>
+                                                    </tr>
                                                     <?php }
                                                     ?>
                                                 </table>
@@ -331,16 +381,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <?php
                                                     include('conexao.php');
                                                     while ($row = pg_fetch_object($sth3)) { ?>
-                                                        <tr>
-                                                            <td><?php echo $row->nome ?></td>
-                                                            <td><?php echo $row->login ?></td>
-                                                        </tr>
+                                                    <tr>
+                                                        <td><?php echo $row->nome ?>
+                                                        </td>
+                                                        <td><?php echo $row->login ?>
+                                                        </td>
+                                                    </tr>
                                                     <?php }
-                                                    ?></table>
+                                                    ?>
+                                                </table>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-12" align="center"><button id="imprimirelatorio" class="btn btn-success">Imprimir</button></div>
+                                            <div class="col-md-12" align="center"><button id="imprimirelatorio"
+                                                    class="btn btn-success">Imprimir</button></div>
                                         </div>
                                     </form>
                                 </div>
@@ -374,6 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.jquery.js" type="text/javascript"></script>
     <script>
         $("#imprimirelatorio").click(function(event) {
             var profissional = $("#profissional").val();
@@ -382,6 +437,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             var url = 'relpresencamedica.php?start=' + start + '&end=' + end;
             window.open(url);
+        });
+
+        $("select").chosen({
+            width: "100%"
         });
     </script>
 </body>
