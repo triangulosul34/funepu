@@ -434,8 +434,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             var profissional = $("#profissional").val();
             var start = $("#start").val();
             var end = $("#end").val();
+            var medico = $("#medico").val();
 
-            var url = 'relpresencamedica.php?start=' + start + '&end=' + end;
+            var url = 'relpresencamedica.php?start=' + start + '&end=' + end+'&medico='+medico;
             window.open(url);
         });
 
