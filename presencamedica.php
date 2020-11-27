@@ -58,10 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sth2 = pg_query($stmt2) or die($stmt2);
 
         include('conexao.php');
-        $stmt3 = "select p.nome,l.usuario,p.perfil, min(l.hora) as login from logs l
+        $stmt3 = "selectx p.nome,l.usuario,p.perfil, min(l.hora) as login from logs l
 					left join pessoas p on p.username = l.usuario
 					left join atendimentos a on a.med_atendimento = p.username  
-					where data between '$start' and '$end' $where and p.perfil = '03'
+					where data between '$start' and '$end' $where and p.perfil = '03' and username is not null
 					group by 1,2,3";
 
         $sth3 = pg_query($stmt3) or die($stmt3);
