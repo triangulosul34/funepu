@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					group by 1,2,4,5
 					order by nome";
 
-        $sth1 = pg_query($stmt1);
+        $sth1 = pg_query($stmt1) or die($stmt1);
 
         include('conexao.php');
         $stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
@@ -51,11 +51,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
 					END as horas FROM evolucoes e
 					left join pessoas p on p.username = e.usuario
-					where nome is not null and data between '$start' and '$end' $where and p.pessoa_id not in ($leo)					
+					where nome is not null and data between '$start' and '$end' $where					
 					group by 1,2,4,5
 					order by nome";
 
-        $sth2 = pg_query($stmt2);
+        $sth2 = pg_query($stmt2) or die($stmt2);
 
         include('conexao.php');
         $stmt3 = "select p.nome,l.usuario,p.perfil, min(l.hora) as login from logs l
@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					where data between '$start' and '$end' $where and p.perfil = '03'
 					group by 1,2,3";
 
-        $sth3 = pg_query($stmt3);
+        $sth3 = pg_query($stmt3) or die($stmt3);
     }
 }
 ?>
@@ -351,7 +351,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
 													END as horas FROM evolucoes e
 													left join pessoas p on p.username = e.usuario
-													where nome is not null and data between '$start' and '$end' $where and p.pessoa_id not in ($leo)				
+													where nome is not null and data between '$start' and '$end' $where				
 													group by 1,2,4,5
 													order by nome";
 
