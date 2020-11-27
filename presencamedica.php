@@ -171,7 +171,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <form method="POST" action="">
                                         <div class="row">
                                             <div class="col-md-12 mb-4">
-                                                <h1 align='center'>UPA Parque do Mirante</h1>
+                                                <h1 align='center'>UPA <?= UNIDADE_CONFIG; ?>
+                                                </h1>
                                                 <h2 style="text-align: center">Atendimento Externo</h2>
                                             </div>
                                             <div class="col-md-6">
@@ -436,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             var end = $("#end").val();
             var medico = $("#medico").val();
 
-            var url = 'relpresencamedica.php?start=' + start + '&end=' + end+'&medico='+medico;
+            var url = 'relpresencamedica.php?start=' + start + '&end=' + end + '&medico=' + medico;
             window.open(url);
         });
 
