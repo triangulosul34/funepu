@@ -129,6 +129,9 @@
                             <a href="presencamedica.php" class="menu-item">PRESENÇA MEDICA</a>
                         </li>
                         <li class="is-shown">
+                            <a href="acoes_medicas.php" class="menu-item">ACOES MEDICAS</a>
+                        </li>
+                        <li class="is-shown">
                             <a href="acoes_usuario.php" class="menu-item">LOGS</a>
                         </li>
                         <li class="has-sub nav-item">
