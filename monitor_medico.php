@@ -47,14 +47,15 @@ $rowCountqtdmd = pg_fetch_object($sthqtdmd);
 $qtdatmed = $rowCountqtdmd->qtd;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     $codigo         = $_POST['codigo'];
     $transacao         = $_POST['transacao'];
     $pesquisa_paciente = $_POST['pesquisa_paciente'];
     $item            = $_POST['item'];
     $prontuario        = $_POST['prontuario'];
-    $descricao      = $_POST['descricao'];;
-    $classificacao    = $_POST['classificacao'];;
+    $descricao      = $_POST['descricao'];
+    ;
+    $classificacao    = $_POST['classificacao'];
+    ;
     include('conexao.php');
     $stmt   = "select descricao, tipo_atendimento from boxes where box_id='$box'";
     $sth = pg_query($stmt) or die($stmt);
@@ -63,6 +64,99 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $tipo_atendimento = $row->tipo_atendimento;
 
     if (isset($_POST['proximo']) and $pesquisa_paciente == "") {
+        include('conexao.php');
+        $stmt   = "select a.destino_paciente, a.transacao, a.paciente_id, a.status, a.prioridade, a.observacao_triagem, a.hora_cad,a.hora_triagem,a.hora_atendimento, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.dat_cad as cadastro,
+		c.nome,c.nome_social, k.origem, f.descricao as clinica, CASE
+            WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
+            WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
+            WHEN a.destino_paciente = '10' and a.prioridade = 'AMARELO'  THEN '2'
+            WHEN a.prioridade = 'AMARELO' and a.destino_paciente is null THEN '3' 
+            WHEN a.destino_paciente = '10' and a.prioridade = 'VERDE'  THEN '4'
+            WHEN a.prioridade = 'VERDE' and a.destino_paciente is null THEN '5' 
+            WHEN a.prioridade = 'AZUL' and a.destino_paciente is null THEN '6' 
+        ELSE '7' END as prioridade_cor
+		from atendimentos a left join pessoas c on a.paciente_id=c.pessoa_id  left join especialidade f on a.especialidade = f.descricao left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
+		 ";
+
+        if (rtrim($tipo_atendimento) == 'ADULTO') {
+            $stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' ";
+        } elseif (rtrim($tipo_atendimento) == 'PEDIATRIA') {
+            $stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Ortopedia' ";
+        } elseif (rtrim($tipo_atendimento) == 'EXAME') {
+            $stmt = $stmt . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Triagem') AND a.tipo = '6' ";
+        } elseif (rtrim($tipo_atendimento) == 'PORTA') {
+            $stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
+        }
+
+        $stmt = $stmt . " and cast(a.tipo as integer) != 9 and dat_cad > '2019-08-11' order by a.dat_cad,prioridade_cor,pidade, a.hora_cad limit 1";
+        $sth         = pg_query($stmt) or die($stmt);
+        $row         = pg_fetch_object($sth);
+
+        if ($row->nome_social != '') {
+            $nome         = $row->nome_social . '(' . $row->nome . ')';
+        } else {
+            $nome         = $row->nome;
+        }
+        if ($row->nec_especiais != 'Nenhuma') {
+            $deficiência = $row->nec_especiais;
+        }
+        $destino_paciente = $row->destino_paciente;
+        $transacao     =  $row->transacao;
+        $observacao_triagem =  $row->observacao_triagem;
+
+        if ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03') {
+            // if ($transacao != "") {
+            //     include('conexao.php');
+            //     $sql = "select * from painel_atendimento where transacao = $row->transacao";
+            //     $result = pg_query($sql) or die($sql);
+            //     $rowt = pg_fetch_object($result);
+            //     if ($rowt->transacao == '') {
+            //         include('conexao.php');
+            //         $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "')";
+            //         $result = pg_query($sql) or die($sql);
+
+            //         $data = date('Y-m-d');
+            //         $hora = date('H:i');
+            //         include('conexao.php');
+            //         $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+            // 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+            //         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            //     } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+            //         include('conexao.php');
+            //         $sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null where transacao = $row->transacao";
+            //         $result = pg_query($sql) or die($sql);
+
+            //         $data = date('Y-m-d');
+            //         $hora = date('H:i');
+            //         include('conexao.php');
+            //         $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+            // 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+            //         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            //     } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+            //         include('conexao.php');
+            //         $sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+            //         $result = pg_query($sql) or die($sql);
+
+            //         $data = date('Y-m-d');
+            //         $hora = date('H:i');
+            //         include('conexao.php');
+            //         $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+            // 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+            //         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            //     } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+            //         $erro = "Paciente ainda esta sendo chamado";
+            //     } else {
+            //         $erro = "Paciente chamado por outro consultorio";
+            //         $nome = '';
+            //         $transacao = '';
+            //     }
+            // }
+        } else {
+            $controle_reavaliação = 1;
+        }
+    }
+
+    if (isset($_POST['chamar_novamente'])) {
         include('conexao.php');
         $stmt   = "select a.destino_paciente, a.transacao, a.paciente_id, a.status, a.prioridade, a.observacao_triagem, a.hora_cad,a.hora_triagem,a.hora_atendimento, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.dat_cad as cadastro,
 		c.nome,c.nome_social, k.origem, f.descricao as clinica, CASE
@@ -86,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
         }
 
-        $stmt = $stmt . " and cast(a.tipo as integer) != 9 and dat_cad > '2019-08-11' order by prioridade_cor,pidade, a.hora_cad limit 1";
+        $stmt = $stmt . " and cast(a.tipo as integer) != 9 and dat_cad > '2019-08-11' and transacao = $transacao order by prioridade_cor,pidade, a.hora_cad limit 1";
         $sth         = pg_query($stmt) or die($stmt);
         $row         = pg_fetch_object($sth);
 
@@ -101,10 +195,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $destino_paciente = $row->destino_paciente;
         $transacao     =  $row->transacao;
         $observacao_triagem =  $row->observacao_triagem;
+
+        if ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03') {
+            if ($transacao != "") {
+                include('conexao.php');
+                $sql = "select * from painel_atendimento where transacao = $row->transacao";
+                $result = pg_query($sql) or die($sql);
+                $rowt = pg_fetch_object($result);
+                if ($rowt->transacao == '') {
+                    include('conexao.php');
+                    $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "')";
+                    $result = pg_query($sql) or die($sql);
+
+                    $data = date('Y-m-d');
+                    $hora = date('H:i');
+                    include('conexao.php');
+                    $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+                    $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+                } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+                    include('conexao.php');
+                    $sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null where transacao = $row->transacao";
+                    $result = pg_query($sql) or die($sql);
+
+                    $data = date('Y-m-d');
+                    $hora = date('H:i');
+                    include('conexao.php');
+                    $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+                    $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+                } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+                    include('conexao.php');
+                    $sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+                    $result = pg_query($sql) or die($sql);
+
+                    $data = date('Y-m-d');
+                    $hora = date('H:i');
+                    include('conexao.php');
+                    $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+                    $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+                } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+                    $erro = "Paciente ainda esta sendo chamado";
+                } else {
+                    $erro = "Paciente chamado por outro consultorio";
+                    $nome = '';
+                    $transacao = '';
+                }
+            }
+        } else {
+            $controle_reavaliação = 1;
+        }
     }
 
     if (isset($_POST['nrchamada'])) {
-
         include('conexao.php');
         $stmtnrc = "update atendimentos set status='Não Respondeu Chamado',destino_paciente= (case when destino_paciente is null then '09' else destino_paciente end),data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = '$transacao' ";
         $sthnrc     = pg_query($stmtnrc) or die($stmtnrc);
@@ -117,7 +261,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
     }
     if (isset($_POST['nrchamadalab'])) {
-
         include('conexao.php');
         $stmtnrc = "update atendimentos set status='Não respondeu retorno para resultado de exames',data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = '$transacao' ";
         $sthnrc     = pg_query($stmtnrc) or die($stmtnrc);
@@ -169,7 +312,9 @@ $qtdAtendiemento = $rowCount->qtd;
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -224,7 +369,8 @@ $qtdAtendiemento = $rowCount->qtd;
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Monitor Medico
                                                 </h4>
                                             </div>
@@ -246,7 +392,8 @@ $qtdAtendiemento = $rowCount->qtd;
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
-                                    <input type="hidden" id="tipoAt" value="<?php echo $tipo_atendimento; ?>">
+                                    <input type="hidden" id="tipoAt"
+                                        value="<?php echo $tipo_atendimento; ?>">
                                     <div id="retorno_atd"></div>
                                     <div class="row">
                                         <div class="col-12 mb-5" id="qtdPaciente">
@@ -254,10 +401,10 @@ $qtdAtendiemento = $rowCount->qtd;
 
 
                                                 <?php if ($qtdAtendiemento > 1) {
-                                                    echo 'pacientes';
-                                                } else {
-                                                    echo 'paciente';
-                                                }
+    echo 'pacientes';
+} else {
+    echo 'paciente';
+}
                                                 ?>
                                             </h3>
                                         </div>
@@ -269,12 +416,14 @@ $qtdAtendiemento = $rowCount->qtd;
                                         <div class="col-10">
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <h1><?php echo $nome_usuario; ?></h1>
+                                                    <h1><?php echo $nome_usuario; ?>
+                                                    </h1>
                                                 </div>
                                             </div>
                                             <div class=" row">
                                                 <div class="col-12">
-                                                    <h2><?php echo $box_descricao; ?></h2>
+                                                    <h2><?php echo $box_descricao; ?>
+                                                    </h2>
                                                 </div>
                                             </div>
                                         </div>
@@ -288,9 +437,14 @@ $qtdAtendiemento = $rowCount->qtd;
                                         <div class="row mt-3">
                                             <div class="col-12">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control square" readonly name="paciente" value='<?php echo $nome; ?>'>
-                                                    <input type="hidden" class="form-control" readonly name="transacao" value='<?php echo $transacao; ?>'>
-                                                    <button type="button" class="btn btn-success" onclick='atende(<?php echo $transacao; ?>)'><i class="fas fa-briefcase-medical"></i></button>
+                                                    <input type="text" class="form-control square" readonly
+                                                        name="paciente"
+                                                        value='<?php echo $nome; ?>'>
+                                                    <input type="hidden" class="form-control" readonly name="transacao"
+                                                        value='<?php echo $transacao; ?>'>
+                                                    <button type="button" class="btn btn-success"
+                                                        onclick='atende(<?php echo $transacao; ?>)'><i
+                                                            class="fas fa-briefcase-medical"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -298,9 +452,13 @@ $qtdAtendiemento = $rowCount->qtd;
                                             <div class="col-sm-12" align="center">
                                                 <?php
                                                 if ($nome != '' and ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03')) {
-                                                    echo '<button type="button" name="nrchamada" onclick="chamada()" id="nrchamada" value="nrchamada" class="btn btn-primary">Não Respondeu Chamada</button>';
-                                                } else if ($destino_paciente) {
-                                                    echo '<button type="button" name="nrchamadalab" onclick="chamadalab()" id="nrchamadalab" value="nrchamadalab" class="btn btn-primary">Não Respondeu Retorno Resultado de Exames</button>';
+                                                    // echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+
+                                                    echo '<button type="button" name="nrchamada" onclick="chamada()" id="nrchamada" value="nrchamada" class="btn btn-warning">Não Respondeu Chamada</button>';
+                                                } elseif ($destino_paciente) {
+                                                    // echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+
+                                                    echo '<button type="button" name="nrchamadalab" onclick="chamadalab()" id="nrchamadalab" value="nrchamadalab" class="btn btn-warning">Não Respondeu Retorno Resultado de Exames</button>';
                                                 } else {
                                                     echo '<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>';
                                                 }
@@ -311,7 +469,8 @@ $qtdAtendiemento = $rowCount->qtd;
                                             </div>
                                         </div>
                                         <?php if ($erro != '') { ?>
-                                            <h1 id="erro"><?php echo $erro; ?></h1>
+                                        <h1 id="erro"><?php echo $erro; ?>
+                                        </h1>
                                         <?php } ?>
                                         <div class="row mt-3 mb-3">
                                             <div class="col-12">
@@ -327,7 +486,8 @@ $qtdAtendiemento = $rowCount->qtd;
                                             <div class="col-12">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control" name="pesquisa_paciente">
-                                                    <button type="submit" name='busca' class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                                    <button type="submit" name='busca' class="btn btn-primary"><i
+                                                            class="fas fa-search"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -351,7 +511,6 @@ $qtdAtendiemento = $rowCount->qtd;
 
                                                     $sth = pg_query($stmt) or die($stmt);
                                                     while ($row = pg_fetch_object($sth)) {
-
                                                         echo "<tr>";
                                                         echo "<td>" . date('d/m/Y', strtotime($row->cadastro)) . "</td>";
                                                         echo "<td>" . $row->nome . "</td>";
@@ -391,7 +550,8 @@ $qtdAtendiemento = $rowCount->qtd;
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script src="app-assets/js/popover.js" type="text/javascript"></script>
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
@@ -479,13 +639,23 @@ $qtdAtendiemento = $rowCount->qtd;
             }
 
             <?php if ($observacao_triagem) { ?>
-                Swal.fire({
-                    title: 'ATENÇÃO!!!',
-                    text: "<?= $observacao_triagem ?>",
-                    icon: 'warning',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Ok'
-                })
+            Swal.fire({
+                title: 'ATENÇÃO!!!',
+                text: "<?= $observacao_triagem ?>",
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            })
+            <?php } ?>
+
+            <?php if ($controle_reavaliação) { ?>
+            Swal.fire({
+                title: 'ATENÇÃO!!!',
+                text: "Paciente aguardando reavaliação",
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok'
+            })
             <?php } ?>
         </script>
 </body>

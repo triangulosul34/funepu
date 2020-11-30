@@ -28,14 +28,15 @@ $modalidade = "";
 $exame         = "";
 $marca        = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     $codigo         = $_POST['codigo'];
     $transacao         = $_POST['transacao'];
     $pesquisa_paciente = $_POST['pesquisa_paciente'];
     $item            = $_POST['item'];
     $prontuario        = $_POST['prontuario'];
-    $descricao      = $_POST['descricao'];;
-    $classificacao    = $_POST['classificacao'];;
+    $descricao      = $_POST['descricao'];
+    ;
+    $classificacao    = $_POST['classificacao'];
+    ;
 
     if (isset($_POST['proximo'])) {
         include('conexao.php');
@@ -60,9 +61,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nome         = $row->nome;
         }
         if ($transacao != "") {
-            include('conexao.php');
-            $stmt   = "Update Atendimentos set status='Em Triagem' where transacao = $transacao ";
-            $sth         = pg_query($stmt) or die($stmt);
+            // include('conexao.php');
+            // $sql = "select * from painel_atendimento where transacao = $row->transacao";
+            // $result = pg_query($sql) or die($sql);
+            // $rowt = pg_fetch_object($result);
+            // if ($rowt->transacao == '') {
+            //     include('conexao.php');
+            //     $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "')";
+            //     $result = pg_query($sql) or die($sql);
+
+            //     $data = date('Y-m-d');
+            //     $hora = date('H:i');
+            //     include('conexao.php');
+            //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+            // 	values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+            //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            // } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+            //     include('conexao.php');
+            //     $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null where transacao = $row->transacao";
+            //     $result = pg_query($sql) or die($sql);
+
+            //     $data = date('Y-m-d');
+            //     $hora = date('H:i');
+            //     include('conexao.php');
+            //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+            // 	values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+            //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            // } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+            //     include('conexao.php');
+            //     $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+            //     $result = pg_query($sql) or die($sql);
+
+            //     $data = date('Y-m-d');
+            //     $hora = date('H:i');
+            //     include('conexao.php');
+            //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+            // 	values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+            //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            // } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+            //     $erro = "Paciente ainda esta sendo chamado";
+            // } else {
+            //     $erro = "Paciente chamado por outro consultorio";
+            //     $nome = '';
+            //     $transacao = '';
+            // }
         } else {
             $erro = "Nenhum paciente aguardando triagem";
         }
@@ -73,6 +115,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         include('conexao.php');
         $stmt   = "Update Atendimentos set status='Não Respondeu Chamado', destino_paciente='09', data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = $transacao ";
         $sth         = pg_query($stmt) or die($stmt);
+    }
+
+    if (isset($_POST['chamar_novamente'])) {
+        include('conexao.php');
+        $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
+			k.origem, f.descricao as clinica,c.nome_social
+			from atendimentos a 
+			left join pessoas c on a.paciente_id=c.pessoa_id  
+			left join especialidade f on a.especialidade = f.descricao 
+			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
+			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
+            cast(tipo as integer) != '6' and cast(tipo as integer) != '11'
+            and transacao = $transacao
+			order by 3, 1 asc limit 1
+			";
+        $sth         = pg_query($stmt) or die($stmt);
+        $row         = pg_fetch_object($sth);
+        $nome         = $row->nome;
+        $transacao     =  $row->transacao;
+
+        if ($row->nome_social != '') {
+            $nome         = $row->nome_social . '(' . $row->nome . ')';
+        } else {
+            $nome         = $row->nome;
+        }
+        if ($transacao != "") {
+            include('conexao.php');
+            $sql = "select * from painel_atendimento where transacao = $row->transacao";
+            $result = pg_query($sql) or die($sql);
+            $rowt = pg_fetch_object($result);
+            if ($rowt->transacao == '') {
+                include('conexao.php');
+                $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "')";
+                $result = pg_query($sql) or die($sql);
+
+                $data = date('Y-m-d');
+                $hora = date('H:i');
+                include('conexao.php');
+                $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+                $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+                include('conexao.php');
+                $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null where transacao = $row->transacao";
+                $result = pg_query($sql) or die($sql);
+
+                $data = date('Y-m-d');
+                $hora = date('H:i');
+                include('conexao.php');
+                $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+                $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+                include('conexao.php');
+                $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+                $result = pg_query($sql) or die($sql);
+
+                $data = date('Y-m-d');
+                $hora = date('H:i');
+                include('conexao.php');
+                $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+                $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+            } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+                $erro = "Paciente ainda esta sendo chamado";
+            } else {
+                $erro = "Paciente sendo chamado por outro consultorio";
+                $nome = '';
+                $transacao = '';
+            }
+        } else {
+            $erro = "Nenhum paciente aguardando triagem";
+        }
     }
 }
 
@@ -96,7 +211,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -127,7 +244,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
-    <div class="modal fade text-left" id="modalConteudo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+    <div class="modal fade text-left" id="modalConteudo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary white">
@@ -139,8 +257,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="modal-body" id="conteudoModal">
                 </div>
                 <div class="modal-footer">
-                    <input type='button' name='confTriagem' id="confTriagem" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1" value='Confirmar Triagem' onclick="salvar_triagem()">
-                    <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal" class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1" value='Cancelar'>
+                    <input type='button' name='confTriagem' id="confTriagem"
+                        class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1" value='Confirmar Triagem'
+                        onclick="salvar_triagem()">
+                    <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal"
+                        class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1" value='Cancelar'>
                 </div>
             </div>
         </div>
@@ -169,7 +290,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Página Padrão
                                                 </h4>
                                             </div>
@@ -199,12 +321,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="col-10">
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <h1><?php echo $nome_usuario; ?></h1>
+                                                    <h1><?php echo $nome_usuario; ?>
+                                                    </h1>
                                                 </div>
                                             </div>
                                             <div class=" row">
                                                 <div class="col-12">
-                                                    <h2><?php echo $box_descricao; ?></h2>
+                                                    <h2><?php echo $box_descricao; ?>
+                                                    </h2>
                                                 </div>
                                             </div>
                                         </div>
@@ -218,9 +342,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row mt-3">
                                             <div class="col-12">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control square" readonly name="paciente" value='<?php echo $nome; ?>'>
-                                                    <input type="hidden" class="form-control" readonly name="transacao" value='<?php echo $transacao; ?>'>
-                                                    <button type="button" id="triagemmanual" data-id="<?php echo $transacao; ?>" class="btn btn-success" data-target="#modalConteudo" data-toggle="modal" data-original-title="Triagem Manual" onClick="valorTriagem(this);"><i class="fas fa-band-aid"></i></button>
+                                                    <input type="text" class="form-control square" readonly
+                                                        name="paciente"
+                                                        value='<?php echo $nome; ?>'>
+                                                    <input type="hidden" class="form-control" readonly name="transacao"
+                                                        value='<?php echo $transacao; ?>'>
+                                                    <button type="button" id="triagemmanual"
+                                                        data-id="<?php echo $transacao; ?>"
+                                                        class="btn btn-success" data-target="#modalConteudo"
+                                                        data-toggle="modal" data-original-title="Triagem Manual"
+                                                        onClick="valorTriagem(this);"><i
+                                                            class="fas fa-band-aid"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -228,7 +360,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-sm-12" align="center">
                                                 <?php
                                                 if ($nome != '') {
-                                                    echo '<button type="submit" name="nrchamada" id="nrchamada" value="nrchamada" class="btn btn-primary">Não Respondeu Chamada</button>';
+                                                    echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+
+                                                    echo '<button type="submit" name="nrchamada" id="nrchamada" value="nrchamada" class="btn btn-warning">Não Respondeu Chamada</button>';
                                                 } else {
                                                     echo '<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>';
                                                 }
@@ -239,7 +373,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                         </div>
                                         <?php if ($erro != '') { ?>
-                                            <h1 id="erro"><?php echo $erro; ?></h1>
+                                        <h1 id="erro"><?php echo $erro; ?>
+                                        </h1>
                                         <?php } ?>
                                         <div class="row mt-3 mb-3">
                                             <div class="col-12">
@@ -255,7 +390,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-12">
                                                 <div class="input-group">
                                                     <input type="text" class="form-control" name="pesquisa_paciente">
-                                                    <button type="submit" name='busca' class="btn btn-primary"><i class="fas fa-search"></i></button>
+                                                    <button type="submit" name='busca' class="btn btn-primary"><i
+                                                            class="fas fa-search"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -408,7 +544,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 function(dataReturn) {
                     alert(dataReturn);
                     $('#modalConteudo').modal('hide');
-                    $('#botaoChamar').html('<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>');
+                    $('#botaoChamar').html(
+                        '<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>'
+                    );
                     $("#nrchamada").css("display", "none");
                 });
         }

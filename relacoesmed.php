@@ -81,7 +81,7 @@ class PDF extends FPDF
         $this->SetFont('Arial', 'BI', 12);
         $this->Cell(185, 7, utf8_decode('RELATÓRIO DE ACOES MÉDICA'), 1, 0, 'C');
         $this->Ln(7);
-        $this->Cell(185, 7, utf8_decode('Período:   ' . $_GET['start'].' a '.$_GET['end']), 1, 0, 'C');
+        $this->Cell(185, 7, utf8_decode('Período:   ' . invertedata($_GET['start']).' a '.invertedata($_GET['end'])), 1, 0, 'C');
         $this->Ln(7);
     }
 }
@@ -104,8 +104,8 @@ $pdf->Ln(8);
 $totalAT = 0;
 $pdf->SetFont('Arial', 'B', 7);
 $pdf->Cell(20, 8, utf8_decode('Data'), 1, 0, 'C');
-$pdf->Cell(15, 8, utf8_decode('Hora'), 1, 0, 'C');
-$pdf->Cell(50, 8, utf8_decode('Profissional'), 1, 0, 'C');
+$pdf->Cell(10, 8, utf8_decode('Hora'), 1, 0, 'C');
+$pdf->Cell(55, 8, utf8_decode('Profissional'), 1, 0, 'L');
 $pdf->Cell(20, 8, utf8_decode('Atendimento'), 1, 0, 'C');
 $pdf->Cell(80, 8, utf8_decode('Ação'), 1, 0, 'C');
 
@@ -129,10 +129,10 @@ while ($stmt1 = pg_fetch_object($sth1)) {
 
     if ($stmt1->nome <> '') {
         $pdf->Cell(20, 8, date('d/m/Y', strtotime($stmt1->data)), 1, 0, 'C');
-        $pdf->Cell(15, 8, utf8_decode(substr($stmt1->hora, 0, 35)), 1, 0, 'L');
-        $pdf->Cell(50, 8, utf8_decode($stmt1->nome), 1, 0, 'C');
+        $pdf->Cell(10, 8, utf8_decode(substr($stmt1->hora, 0, 35)), 1, 0, 'L');
+        $pdf->Cell(55, 8, substr(utf8_decode($stmt1->nome),0,35), 1, 0, 'L');
         $pdf->Cell(20, 8, utf8_decode($stmt1->atendimento_id), 1, 0, 'C');
-        $pdf->Cell(80, 8, utf8_decode($stmt1->tipo_acao), 1, 0, 'C');
+        $pdf->Cell(80, 8, substr(utf8_decode($stmt1->tipo_acao),0,45), 1, 0, 'L');
 
         $pdf->Ln(8);
     }

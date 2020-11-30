@@ -1,4 +1,5 @@
 <?php
+require("../vendor/autoload.php");
 function inverteData($data)
 {
     if (count(explode("/", $data)) > 1) {
@@ -25,14 +26,12 @@ function validaCPF($cpf = null)
         return false;
     }  // Verifica se nenhuma das sequências invalidas abaixo
     // foi digitada. Caso afirmativo, retorna falso
-    else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
+    elseif ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
         return false;
-        // Calcula os digitos verificadores para verificar se o
+    // Calcula os digitos verificadores para verificar se o
         // CPF é válido
     } else {
-
         for ($t = 9; $t < 11; $t++) {
-
             for ($d = 0, $c = 0; $c < $t; $c++) {
                 $d += $cpf{
                     $c} * (($t + 1) - $c);
@@ -68,8 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
-		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
+        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.hora_destino, z.data, z.hora, d.nome as medico, d.num_conselho_reg as crm, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.nome_mae, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade
 		from atendimentos a 
@@ -77,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
         left join classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao' 
         LEFT JOIN destino_paciente z on a.transacao = z.atendimento_id
+        LEFT JOIN pessoas d on z.usuario = d.username
 		where a.transacao=$transacao";
         $sth = pg_query($stmt) or die($stmt);
         $row = pg_fetch_object($sth);
@@ -86,9 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         $status = $row->status;
         $data_destino = $row->data_destino;
-
+        $data_alta = $row->data;
+        $hora_alta = $row->hora;
         $sexo = $row->sexo;
         $nome = $row->nome;
+        $medico = $row->medico;
+        $crm = $row->num_conselho_reg;
+        $nome_mae = $row->nome_mae;
         $email = $row->email;
         $dt_nascimento = inverteData($row->dt_nasc);
         $sexo = $row->sexo;
@@ -119,12 +123,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $deficiencia = $_POST['deficiencia'];
         $origem = $row->origem;
         $deficiencia = $row->nec_especiais;
+        $data_inicial = $data_destino;
+        $data_final = $data_alta;
+        $diferenca = strtotime($data_final) - strtotime($data_inicial);
+        $dias = floor($diferenca / (60 * 60 * 24));
+        $permanencia = $dias;
         $observacao  = $row->relato . PHP_EOL;
         if ($pressaodiastolica != '') {
-            $observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . ' PA SIST.:' . $pressaosistolica . PHP_EOL;;
+            $observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . ' PA SIST.:' . $pressaosistolica . PHP_EOL;
+            ;
         }
         if ($peso != '') {
-            $observacao = $observacao . 'PESO:' . $peso . ' Temperatura:' . $temperatura . PHP_EOL;;
+            $observacao = $observacao . 'PESO:' . $peso . ' Temperatura:' . $temperatura . PHP_EOL;
+            ;
         }
 
         $oque_faz      = $row->oque_faz;
@@ -140,11 +151,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $diag_pri     = $row->diagnostico_principal;
         $queixa       = $row->queixa;
         $exame_fisico   = $row->exame_fisico;
-        $hora_dest    = $row->hora_destino;
+        $hora_destino    = $row->hora_destino;
     } else {
         $data_transacao = date('Y-m-d');
         $hora_transacao = date('H:i');
         $usuario_transacao = $usuario;
+    }
+
+    $sqls = "SELECT * FROM sumario_alta WHERE atendimento_id = $transacao";
+    $results = pg_query($sqls) or die($sqls);
+    $rows = pg_fetch_object($results);
+
+    if ($rows->sumario_alta_id) {
+        $sumario_alta_id = $rows->sumario_alta_id;
+        $especialidade_sumario = $rows->especialidade_sumario;
+        $modalidade_assistencial_sumario = $rows->modalidade_assistencial_sumario;
+        $diagnostico = $rows->diagnostico;
+        $procedimento_terapeutico = $rows->procedimento_terapeutico;
+        $evolucap = $rows->evolucap;
+        $pos_alta = $rows->pos_alta;
+        $segmento_atendimento = $rows->segmento_atendimento;
+        $estado_paciente = $rows->estado_paciente;
+        $carater_internacao_sumario = $rows->carater_internacao_sumario;
     }
 }
 
@@ -154,7 +182,7 @@ $stmtCns = "select *
 	from controle_epidemiologico
 	where cns = '$cns' order by notificacao_id desc limit 1
 ";
-$sthCns = pg_query($stmtCns) or die(stmtCns);
+$sthCns = pg_query($stmtCns) or die($stmtCns);
 $rowcns = pg_fetch_object($sthCns);
 
 
@@ -177,27 +205,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($row->qtd == 0) {
             include('conexao.php');
             if ($destino == '05') {
-                $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, hospital, clinica) 
-					values ($atendimento, $destino, '$motivoalta', '$data', '$hora', '$hospital', '$clinica')";
+                $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, hospital, clinica, usuario) 
+					values ($atendimento, $destino, '$motivoalta', '$data', '$hora', '$hospital', '$clinica', '$usuario')";
             } elseif ($destino == '13') {
-                $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, setor) 
-					values ($atendimento, $destino, '$motivoalta', '$data', '$hora', '$setor')";
+                $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, setor, usuario) 
+					values ($atendimento, $destino, '$motivoalta', '$data', '$hora', '$setor', '$usuario')";
             } else {
-                $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora) 
-					values ($atendimento, $destino, '$motivoalta', '$data', '$hora')";
+                $stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, usuario) 
+					values ($atendimento, $destino, '$motivoalta', '$data', '$hora', '$usuario')";
             }
             $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 			values ('$usuario','DEU DESTINO AO PACIENTE NA EVOLUÇÃO','$atendimento','$data','$hora')";
             $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
         } else {
             if ($destino == '05') {
-                $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', hospital = '$hospital', clinica = '$clinica', setor = null
+                $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', hospital = '$hospital', clinica = '$clinica', setor = null, usuario='$usuario'
 				where atendimento_id = '$atendimento'";
             } elseif ($destino == '13') {
-                $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = '$setor', hospital = null, clinica = null
+                $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = '$setor', hospital = null, clinica = null, usuario='$usuario'
 				where atendimento_id = '$atendimento'";
             } else {
-                $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null
+                $stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, usuario='$usuario'
 				where atendimento_id = '$atendimento'";
             }
             $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
@@ -238,7 +266,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -277,7 +307,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
-    <div class="modal fade" id="exampleTabs" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+    <div class="modal fade" id="exampleTabs" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog"
+        tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -297,21 +328,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Data do atendimento</label>
-                                    <input type="text" name="data_atendimento" id="data_atendimento" class="form-control" value="<?php echo inverteData($data_transacao); ?>" onKeyPress="formata(this,'##/##/####')" maxlength="10">
+                                    <input type="text" name="data_atendimento" id="data_atendimento"
+                                        class="form-control"
+                                        value="<?php echo inverteData($data_transacao); ?>"
+                                        onKeyPress="formata(this,'##/##/####')" maxlength="10">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Hora do atendimento</label>
-                                    <input type="text" name="hora_atendimento" id="hora_atendimento" class="form-control" value="<?php echo $hora_transacao; ?>" onKeyPress="formata(this,'##:##')" maxlength="5">
+                                    <input type="text" name="hora_atendimento" id="hora_atendimento"
+                                        class="form-control"
+                                        value="<?php echo $hora_transacao; ?>"
+                                        onKeyPress="formata(this,'##:##')" maxlength="5">
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Dias de atestado</label>
-                                    <input type="text" name="dias_atestado" id="dias_atestado" class="form-control" value="">
+                                    <input type="text" name="dias_atestado" id="dias_atestado" class="form-control"
+                                        value="">
                                 </div>
                             </div>
 
@@ -319,7 +357,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">CID</label>
-                                    <input type="text" name="cidAtestado" id="cidAtestado" class="form-control" value="<?php echo $CID; ?>" onkeyup="maiuscula(this)">
+                                    <input type="text" name="cidAtestado" id="cidAtestado" class="form-control"
+                                        value="<?php echo $CID; ?>"
+                                        onkeyup="maiuscula(this)">
                                 </div>
                             </div>
 
@@ -328,9 +368,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     </div>
                     <div class="modal-footer">
-                        <input type="hidden" name="atendimento" id="atendimento" value="<?= $_GET['id'] ?>">
-                        <input type="hidden" name="profissional" id="profissional" value="<?php echo $usuario ?>">
-                        <input type="hidden" name="paciente" id="paciente" value="<?php echo $prontuario ?>">
+                        <input type="hidden" name="atendimento" id="atendimento"
+                            value="<?= $_GET['id'] ?>">
+                        <input type="hidden" name="profissional" id="profissional"
+                            value="<?php echo $usuario ?>">
+                        <input type="hidden" name="paciente" id="paciente"
+                            value="<?php echo $prontuario ?>">
 
                         <button type="submit" name="enviar" class="btn btn-default">Imprimir</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
@@ -342,7 +385,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modalSolicitaReceituario" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+    <div class="modal fade" id="modalSolicitaReceituario" aria-hidden="true" aria-labelledby="exampleModalTabs"
+        role="dialog" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -358,33 +402,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="col-4">
                                 <div class="form-group">
                                     <label>Item/Medicamento</label>
-                                    <input id="medicamento-1" maxlength="100" name="medicamento-1" class="form-control" value="" onkeyup="maiuscula(this)">
+                                    <input id="medicamento-1" maxlength="100" name="medicamento-1" class="form-control"
+                                        value="" onkeyup="maiuscula(this)">
                                 </div>
                             </div>
 
                             <div class="col-2">
                                 <div class="form-group">
                                     <label>Quantidade</label>
-                                    <input id="quantidade-1" maxlength="50" name="quantidade-1" class="form-control" value="" onkeyup="maiuscula(this)">
+                                    <input id="quantidade-1" maxlength="50" name="quantidade-1" class="form-control"
+                                        value="" onkeyup="maiuscula(this)">
                                 </div>
                             </div>
 
                             <div class="col-5">
                                 <div class="form-group">
                                     <label>Modo de usar</label>
-                                    <input id="usar-1" name="usar-1" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)">
+                                    <input id="usar-1" name="usar-1" maxlength="50" class="form-control" value=""
+                                        onkeyup="maiuscula(this)">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div id="botao">
                         <div class="col-12" style="text-aling: center">
-                            <input type='button' style="margin: 0 auto;" id="novo_receituario" class="btn btn-success" value="Adicionar Item">
+                            <input type='button' style="margin: 0 auto;" id="novo_receituario" class="btn btn-success"
+                                value="Adicionar Item">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="salvar_receituario" value="" class="btn btn-default" onclick="salvar_prescricao(this)">Salvar</button>
+                    <button type="button" id="salvar_receituario" value="" class="btn btn-default"
+                        onclick="salvar_prescricao(this)">Salvar</button>
                     <button type="button" id="closemodal" class="btn btn-default" data-dismiss="modal">Fechar</button>
                 </div>
 
@@ -393,7 +442,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <div class="modal fade text-left" id="modalEv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+    <div class="modal fade text-left" id="modalEv" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary white">
@@ -409,7 +459,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <div class="modal fade text-left" id="modalFimEvolucao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8" aria-hidden="true">
+    <div class="modal fade text-left" id="modalFimEvolucao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header bg-primary white">
@@ -424,14 +475,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             <div class="col-sm-12">
                                 <label class="control-label  margin-top-10">Destino dado ao Paciente</label>
-                                <select class="form-control" name="destino" id="destino" onchange="seleciona_setor(this)">
+                                <select class="form-control" name="destino" id="destino"
+                                    onchange="seleciona_setor(this)">
                                     <option value=""></option>;
-                                    <option value="01" <?php if ($rowFim->destino_encaminhamento == 1) echo "selected"; ?>>ALTA</option>
-                                    <option value="01" <?php if ($rowFim->destino_encaminhamento == 25) echo "selected"; ?>>ALTA APOS MEDICAÇÃO</option>
-                                    <option value="04" <?php if ($rowFim->destino_encaminhamento == 4) echo "selected"; ?>>TRANSF. OUTRA UPA</option>
-                                    <option value="05" <?php if ($rowFim->destino_encaminhamento == 5) echo "selected"; ?>>TRANSFERENCIA HOSPITALAR</option>
-                                    <option value="03" <?php if ($rowFim->destino_encaminhamento == 3) echo "selected"; ?>>PERMANÊCIA.</option>
-                                    <option value="06" <?php if ($rowFim->destino_encaminhamento == 6) echo "selected"; ?>>ÓBITO</option>
+                                    <option value="01" <?php if ($rowFim->destino_encaminhamento == 1) {
+    echo "selected";
+} ?>>ALTA
+                                    </option>
+                                    <option value="16" <?php if ($rowFim->destino_encaminhamento == 25) {
+    echo "selected";
+} ?>>ALTA
+                                        APOS
+                                        MEDICAÇÃO
+                                    </option>
+                                    <option value="04" <?php if ($rowFim->destino_encaminhamento == 4) {
+    echo "selected";
+} ?>>TRANSF.
+                                        OUTRA UPA
+                                    </option>
+                                    <option value="05" <?php if ($rowFim->destino_encaminhamento == 5) {
+    echo "selected";
+} ?>>
+                                        TRANSFERENCIA HOSPITALAR
+                                    </option>
+                                    <option value="11" <?php if ($rowFim->destino_encaminhamento == 5) {
+    echo "selected";
+} ?>>
+                                        ALTA EVASÃO
+                                    </option>
+                                    <option value="03" <?php if ($rowFim->destino_encaminhamento == 3) {
+    echo "selected";
+} ?>>PERMANÊCIA.
+                                    </option>
+                                    <option value="06" <?php if ($rowFim->destino_encaminhamento == 6) {
+    echo "selected";
+} ?>>ÓBITO
+                                    </option>
                                 </select>
                             </div>
 
@@ -441,18 +520,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             <div class="col-sm-12 margin-top-20">
                                 <label class="control-label">Motivo do destino</label>
-                                <textarea name="motivoalta" rows="5" class="form-control" onkeyup="maiuscula(this)"><?php echo $rowFim->motivo; ?></textarea>
-                                <input type="hidden" name="atendimento" value="<?php echo $transacao; ?>">
+                                <textarea name="motivoalta" rows="5" class="form-control"
+                                    onkeyup="maiuscula(this)"><?php echo $rowFim->motivo; ?></textarea>
+                                <input type="hidden" name="atendimento"
+                                    value="<?php echo $transacao; ?>">
                             </div>
                         </div>
 
                         <div class="col-md-12 margin-top-10 padding-0">
 
                             <div class="col-md-6">
-                                <input type='submit' name='finaliza_atendimento' id="finaliza_atendimento" class="btn btn-success width-full" value='Salvar'>
+                                <input type='submit' name='finaliza_atendimento' id="finaliza_atendimento"
+                                    class="btn btn-success width-full" value='Salvar'>
                             </div>
                             <div class="col-md-6">
-                                <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal" class="btn btn-danger width-full" value='Cancelar'>
+                                <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal"
+                                    class="btn btn-danger width-full" value='Cancelar'>
                             </div>
                         </div>
 
@@ -462,6 +545,241 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
+    </div>
+
+    <div class="modal fade text-left" id="modal_sumario_alta" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel8" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary white">
+                    <h4 class="modal-title" id="myModalLabel8">Sumario de Alta</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="sumario_alta.php">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>IDENTIFICAÇÃO</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="">Nome</label>
+                                    <input type="hidden" name="atendimento_sumario" id="atendimento_sumario"
+                                        value="<?= $transacao; ?>">
+                                    <input type="text" class="form-control" name="nome_sumario" id="nome_sumario"
+                                        value="<?= $nome; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">CNS</label><input type="text" class="form-control" name="cns_sumario"
+                                        id="cns_sumario"
+                                        value="<?= $cns; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Prontuário</label><input type="text" class="form-control"
+                                        name="prontuario_sumario" id="prontuario_sumario"
+                                        value="<?= $prontuario; ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="">Idade</label><input type="text" class="form-control"
+                                        name="idade_sumario" id="idade_sumario"
+                                        value="<?= $idade; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Data Nascimento</label><input type="text" class="form-control"
+                                        name="data_nascimento_sumario" id="data_nascimento_sumario"
+                                        value="<?= inverteData($dt_nasc); ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Sexo</label><input type="text" class="form-control"
+                                        name="sexo_sumario" id="sexo_sumario"
+                                        value="<?= ($sexo == 'M' ? "MASCULINO" : "FEMININO"); ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Unidade</label><input type="text" class="form-control"
+                                        name="unidade_sumario" id="unidade_sumario"
+                                        value="<?= UNIDADE_CONFIG; ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="">Nome da Mãe</label><input type="text" class="form-control"
+                                        name="nome_mae_sumario" id="nome_mae_sumario"
+                                        value="<?= $nome_mae; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Especialidade</label><input type="text" class="form-control"
+                                        style="border-color:red" name="especialidade_sumario" id="especialidade_sumario"
+                                        value="<?= $especialidade_sumario; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Modalidade Assistencial</label><input type="text" class="form-control"
+                                        style="border-color:red" name="modalidade_assistencial_sumario"
+                                        id="modalidade_assistencial_sumario"
+                                        value="<?= $modalidade_assistencial_sumario; ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Procedência</label><input type="text" class="form-control"
+                                        name="procedencia_sumario" id="procedencia_sumario"
+                                        value="<?= $origem; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Data/Hora Internação</label><input type="text" class="form-control"
+                                        style="border-color:red" name="internacao_sumario" id="internacao_sumario"
+                                        value="<?= inverteData($data_destino) . " " . $hora_destino; ?>"
+                                        placeholder="99/99/9999 99:99">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Data/Hora Alta</label><input type="text" class="form-control"
+                                        style="border-color:red" name="alta_sumario" id="alta_sumario"
+                                        value="<?= inverteData($data_alta) . " " . $hora_alta; ?>"
+                                        placeholder="99/99/9999 99:99">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Caráter Internação</label><input type="text" class="form-control"
+                                        style="border-color:red" name="carater_internacao_sumario"
+                                        id="carater_internacao_sumario"
+                                        value="<?= $carater_internacao_sumario; ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">Permanência</label><input type="text" class="form-control"
+                                        name="permanencia_sumario" id="permanencia_sumario"
+                                        value="<?= $permanencia; ?>"
+                                        readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="">Medico Responsável Alta</label><input type="text" class="form-control"
+                                        name="responsavel_sumario" id="responsavel_sumario" readonly
+                                        value="<?= $medico ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="">CRM</label><input type="text" class="form-control" name="crm_sumario"
+                                        id="crm_sumario"
+                                        value="<?= $crm ?>" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h5>DIAGNÓSTICOS</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea name="diagnostico" id="diagnostico"
+                                    class="form-control"><?= $diagnostico ?></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-12">
+                                <h5>PROCEDIMENTOS TERAPÊUTICOS</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea name="procedimento_terapeutico" id="procedimento_terapeutico" rows="2"
+                                    class="form-control"><?= $procedimento_terapeutico ?></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-5">
+                                <h5>EVOLUÇÃO</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea name="evolucap" id="evolucao" rows="2"
+                                    class="form-control"><?= $evolucap ?></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-5">
+                                <h5>PLANO PÓS-ALTA</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea name="pos_alta" id="pos_alta" rows="2"
+                                    class="form-control"><?= $pos_alta ?></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-5">
+                                <h5>SEGUIMENTO DO ATENDIMENTO</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea name="segmento_atendimento" id="segmento_atendimento" rows="2"
+                                    class="form-control"><?= $segmento_atendimento ?></textarea>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-5">
+                                <h5>ESTADO DO PACIENTE NA ALTA</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea name="estado_paciente" id="estado_paciente" rows="2"
+                                    class="form-control"><?= $estado_paciente ?></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-3">
+                            <input type='button' name='cancelarModal' id="cancelarModal" data-dismiss="modal"
+                                class="btn btn-danger width-full" value='Cancelar'>
+                            <input type='submit' name='sumario_alta' id="sumario_alta"
+                                class="btn btn-success width-full" value='Salvar'>
+                        </div>
+                </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
     </div>
     <!-- <div class="pace pace-inactive">
         <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
@@ -487,7 +805,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Evolução Paciente
                                                 </h4>
                                             </div>
@@ -517,36 +836,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		  </div>';
                             } ?>
                             <div class="card-content">
-                                <div class="card-body"><input type="hidden" name="transacao" id="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly><input type="hidden" name="data_transacao" class="form-control" value="<?php echo date('d/m/Y', strtotime($data_transacao)); ?>" readonly>
-                                    <input type="hidden" name="hora_transacao" class="form-control" value="<?php
+                                <div class="card-body"><input type="hidden" name="transacao" id="transacao"
+                                        class="form-control"
+                                        value="<?php echo $transacao; ?>"
+                                        readonly><input type="hidden" name="data_transacao" class="form-control"
+                                        value="<?php echo date('d/m/Y', strtotime($data_transacao)); ?>"
+                                        readonly>
+                                    <input type="hidden" name="hora_transacao" class="form-control"
+                                        value="<?php
 
                                                                                                             if (empty($transacao)) {
                                                                                                                 echo date('H:i');
                                                                                                             } else {
                                                                                                                 echo $hora_transacao;
                                                                                                             }
-                                                                                                            ?>" readonly><input type="hidden" name="usuario_transacao" id="usuario_transacao" class="form-control" value="<?php echo $usuario; ?>" readonly>
+                                                                                                            ?>" readonly><input type="hidden"
+                                        name="usuario_transacao" id="usuario_transacao" class="form-control"
+                                        value="<?php echo $usuario; ?>"
+                                        readonly>
                                     <div class="row">
                                         <div class="col-6">
-                                            <label>Nome </label> <input type="text" name="nome" id="nome" class="form-control square" style="font-weight: bold;" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" readOnly>
+                                            <label>Nome </label> <input type="text" name="nome" id="nome"
+                                                class="form-control square" style="font-weight: bold;"
+                                                value="<?php echo $nome; ?>"
+                                                onkeyup="maiuscula(this)" readOnly>
                                         </div>
                                         <div class="col-2">
-                                            <label>Sexo</label> <input type="text" name="sexo" id="sexo" class="form-control square" value="<?php echo $sexo; ?>" readonly>
+                                            <label>Sexo</label> <input type="text" name="sexo" id="sexo"
+                                                class="form-control square"
+                                                value="<?php echo $sexo; ?>"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-2">
-                                            <label>Nascimento</label> <input type="text" name="dt_nascimento" id="dt_nascimento" class="form-control square" value="<?php echo $dt_nascimento; ?>" OnKeyPress="formatar('##/##/####', this)" readOnly>
+                                            <label>Nascimento</label> <input type="text" name="dt_nascimento"
+                                                id="dt_nascimento" class="form-control square"
+                                                value="<?php echo $dt_nascimento; ?>"
+                                                OnKeyPress="formatar('##/##/####', this)" readOnly>
                                         </div>
                                         <div class="col-sm-2">
-                                            <label>Idade</label> <input type="text" name="idade" id="idade" class="form-control square" value="<?php echo $idade; ?>" readonly>
+                                            <label>Idade</label> <input type="text" name="idade" id="idade"
+                                                class="form-control square"
+                                                value="<?php echo $idade; ?>"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-3">
-                                            <label>CNS</label> <input type="text" name="cns" id="cns" class="form-control square" value="<?php echo $cns; ?>" onkeypress='return SomenteNumero(event)' readOnly>
+                                            <label>CNS</label> <input type="text" name="cns" id="cns"
+                                                class="form-control square"
+                                                value="<?php echo $cns; ?>"
+                                                onkeypress='return SomenteNumero(event)' readOnly>
                                         </div>
                                         <div class="col-sm-6">
                                             <label>Origem</label>
-                                            <input type="text" name="origem" id="origem" class="form-control square" value="<?php echo $origem; ?>" readonly>
+                                            <input type="text" name="origem" id="origem" class="form-control square"
+                                                value="<?php echo $origem; ?>"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="row mt-3">
@@ -558,30 +903,88 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="row mt-3">
                                         <div class="col-12">
                                             <label>Queixa</label>
-                                            <input type="text" name="queixa" id="queixa" class="form-control square" value="<?php echo $queixa; ?>" maxlength="80" onkeyup="maiuscula(this)" <?php if ($status == 'Atendimento Finalizado') {
-                                                                                                                                                                                                    echo 'readonly';
-                                                                                                                                                                                                } ?>>
+                                            <input type="text" name="queixa" id="queixa" class="form-control square"
+                                                value="<?php echo $queixa; ?>"
+                                                maxlength="80" onkeyup="maiuscula(this)" <?php if ($status == 'Atendimento Finalizado') {
+                                                                                                                echo 'readonly';
+                                                                                                            } ?>>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12">
                                             <label>Exame Físico</label>
-                                            <textarea name="exame_fisico" class="form-control square" rows="50" cols="10" style="resize: none" <?php if ($status == 'Atendimento Finalizado') {
-                                                                                                                                                    echo 'readonly';
-                                                                                                                                                } ?>><?php echo $exame_fisico; ?></textarea> </br>
+                                            <textarea name="exame_fisico" class="form-control square" rows="50"
+                                                cols="10" style="resize: none"
+                                                <?php if ($status == 'Atendimento Finalizado') {
+                                                                                                                echo 'readonly';
+                                                                                                            } ?>><?php echo $exame_fisico; ?></textarea>
+                                            </br>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-12 text-center mt-2">
                                             <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') { ?>
-                                                <a href="nova_evolucao.php?id=<?php echo $transacao; ?>" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Nova Evolução</a>
+                                            <a href="nova_evolucao.php?id=<?php echo $transacao; ?>"
+                                                class="btn btn-raised btn-secondary square btn-min-width mr-1 mb-1">Nova
+                                                Evolução</a>
                                             <?php } ?>
-                                            <a class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" target="_blank" href="relSUSFacil.php?id=<?php echo $_GET['id']; ?>">Solicitação de Internação</a>
-                                            <button data-target="#modalFimEvolucao" data-toggle="modal" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Destino Paciente</button>
-                                            <input type='button' id="atestado" href="#" data-id="<?= $_GET['id'] ?>" data-target="#exampleTabs" onclick="return validar()" value='Atestados' class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1" data-toggle="modal">
-                                            <?php echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1" data-toggle="modal">'; ?>
+                                            <a class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1"
+                                                target="_blank"
+                                                href="relSUSFacil.php?id=<?php echo $_GET['id']; ?>">Solicitação
+                                                de
+                                                Internação</a>
+                                            <?php if ($sumario_alta_id == '') { ?>
+                                            <button data-target="#modalFimEvolucao" data-toggle="modal"
+                                                class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Destino
+                                                Paciente</button>
+                                            <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '16' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '01' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '04' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '05' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '06' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '11') { ?>
+                                            <button data-target="#modal_sumario_alta" data-toggle="modal"
+                                                class="btn btn-raised btn-info square btn-min-width mr-1 mb-1">Sumario
+                                                de Alta</button>
+                                            <?php }  } ?>
+                                            <input type='button' id="atestado" href="#"
+                                                data-id="<?= $_GET['id'] ?>"
+                                                data-target="#exampleTabs" onclick="return validar()" value='Atestados'
+                                                class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1"
+                                                data-toggle="modal">
+                                            <?php echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1" data-toggle="modal">'; ?>
                                         </div>
                                     </div>
+                                    <?php if ($sumario_alta_id != '') { ?>
+                                    <div class="row mt-4">
+                                        <div class="col-12">
+                                            <h3 align="center">Sumario de Alta</h3>
+                                            <hr style="width: 100%;" />
+                                        </div>
+                                        <div class="col-12">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Data</th>
+                                                        <th>Profissional</th>
+                                                        <th>Ação</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><?= inverteData($data_alta); ?>
+                                                        </td>
+                                                        <td><?= $medico; ?>
+                                                        </td>
+                                                        <td><button data-target="#modal_sumario_alta"
+                                                                data-toggle="modal"
+                                                                class="btn btn-sm btn-raised btn-success square btn-min-width"><i
+                                                                    class="fas fa-notes-medical"></i></button>
+                                                            <a class="btn btn-sm btn-primary"
+                                                                href="sumario_alta_pdf.php?atendimento_id=<?= $transacao; ?>"
+                                                                role="button"><i class="fas fa-file-medical"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <?php } ?>
                                     <div class="row mt-4">
                                         <?php
                                         $stmtEvolucao = "SELECT count(*) as qtd from evolucoes where atendimento_id	= $transacao";
@@ -590,74 +993,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
                                         if ($rowEv->qtd > 0) {
-                                        ?>
-                                            <div class="col-12"><br>
-                                                <h3 align="center">Evoluções</h3>
-                                                <hr style="width: 100%;" />
-                                                <div class="col-sm-12" style="height: 255px; overflow-y: auto; overflow-x: hidden;" id="conteudoPrescricao"><br>
+                                            ?>
+                                        <div class="col-12"><br>
+                                            <h3 align="center">Evoluções</h3>
+                                            <hr style="width: 100%;" />
+                                            <div class="col-sm-12"
+                                                style="height: 255px; overflow-y: auto; overflow-x: hidden;"
+                                                id="conteudoPrescricao"><br>
 
-                                                    <table class="table">
-                                                        <thead>
-                                                            <tr>
-                                                                <th width="10%">Nº da Evolução</th>
-                                                                <th width="12%">Nº do Atendimento</th>
-                                                                <th width="10%">Data</th>
-                                                                <th width="10%">Hora</th>
-                                                                <th>Profissional</th>
-                                                                <th width="9%">Ação</th>
-                                                            </tr>
-                                                        </thead>
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th width="10%">Nº da Evolução</th>
+                                                            <th width="12%">Nº do Atendimento</th>
+                                                            <th width="10%">Data</th>
+                                                            <th width="10%">Hora</th>
+                                                            <th>Profissional</th>
+                                                            <th width="9%">Ação</th>
+                                                        </tr>
+                                                    </thead>
 
-                                                        <body>
-                                                            <?php
+                                                    <body>
+                                                        <?php
                                                             $stmt = "SELECT a.evolucao_id,a.atendimento_id,a.tipo,a.data,a.hora,b.nome,a.evolucao 
                                                             FROM evolucoes a
                                                                 left join pessoas b ON b.username = a.usuario
                                                             WHERE a.atendimento_id =" . $transacao . " order by 1 desc";
-                                                            $sth = pg_query($stmt) or die($stmt);
+                                            $sth = pg_query($stmt) or die($stmt);
 
-                                                            while ($row = pg_fetch_object($sth)) {
-                                                                echo "<tr>";
-                                                                echo "<td>" . str_pad($row->evolucao_id, 7, "0", STR_PAD_LEFT) . "</td>";
-                                                                echo "<td>" . str_pad($row->atendimento_id, 7, "0", STR_PAD_LEFT) . "</td>";
-                                                                echo "<td>" . date('d/m/Y', strtotime($row->data)) . "</td>";
-                                                                echo "<td>" . $row->hora . "</td>";
-                                                            ?>
+                                            while ($row = pg_fetch_object($sth)) {
+                                                echo "<tr>";
+                                                echo "<td>" . str_pad($row->evolucao_id, 7, "0", STR_PAD_LEFT) . "</td>";
+                                                echo "<td>" . str_pad($row->atendimento_id, 7, "0", STR_PAD_LEFT) . "</td>";
+                                                echo "<td>" . date('d/m/Y', strtotime($row->data)) . "</td>";
+                                                echo "<td>" . $row->hora . "</td>"; ?>
 
-                                                                <td><?php
+                                                        <td><?php
 
                                                                     if ($row->tipo == 6) {
                                                                         echo 'Super Usuário - ';
                                                                     }
-                                                                    if ($row->tipo == 3) {
-                                                                        echo 'Medico - ';
-                                                                    }
-                                                                    if ($row->tipo == 8) {
-                                                                        echo 'Enfermagem - ';
-                                                                    }
+                                                if ($row->tipo == 3) {
+                                                    echo 'Medico - ';
+                                                }
+                                                if ($row->tipo == 8) {
+                                                    echo 'Enfermagem - ';
+                                                }
 
-                                                                    echo $row->nome ?></td>
+                                                echo $row->nome ?>
+                                                        </td>
 
-                                                            <?php
+                                                        <?php
 
 
                                                                 echo "<td><a data-id='" . $row->evolucao_id . "' data-target=\"#modalEv\" data-toggle=\"modal\" onclick=\"vlev(this)\" target='_blank' class=\"btn btn-sm btn-danger\"><i style=\"color: white;\" class=\"far fa-eye\"></i></a>";
 
-                                                                echo "<a href=\"relevolucao.php?id=$row->evolucao_id\" target=\"_blank\" class=\"btn btn-sm btn-info\" data-toggle=\"tooltip\" data-original-title=\"Ficha de Evolução\"><i class=\"fas fa-print\"></i></a></td>";
+                                                echo "<a href=\"relevolucao.php?id=$row->evolucao_id\" target=\"_blank\" class=\"btn btn-sm btn-info\" data-toggle=\"tooltip\" data-original-title=\"Ficha de Evolução\"><i class=\"fas fa-print\"></i></a></td>";
 
-                                                                echo "<tr>";
-                                                            }
-                                                            ?>
+                                                echo "<tr>";
+                                            } ?>
 
-                                                        </body>
+                                                    </body>
 
-                                                    </table>
-
-                                                </div>
-
+                                                </table>
 
                                             </div>
-                                        <?php } ?>
+
+
+                                        </div>
+                                        <?php
+                                        } ?>
                                     </div>
                                 </div>
                             </div>
@@ -690,6 +1095,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" type="text/javascript">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" type="text/javascript">
+    </script>
     <script>
         function limpa_formulário_cep() {
             //Limpa valores do formulário de cep.
@@ -987,7 +1396,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 return false;
             }
 
-            if ((document.pedido.destino.value != '09' && document.pedido.destino.value != '10') && document.pedido.CID.value == '') {
+            if ((document.pedido.destino.value != '09' && document.pedido.destino.value != '10') && document.pedido.CID
+                .value == '') {
                 sweetAlert("Informe o CID!", "", "warning");
                 return false;
             }
@@ -1029,12 +1439,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        window.location = "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
+                        window.location =
+                            "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
                         window.location.reload()
                     }
                 }
 
-                xmlhttp.open("GET", "apagaagendatemp.php?id=<?php echo $transacao; ?>");
+                xmlhttp.open("GET",
+                    "apagaagendatemp.php?id=<?php echo $transacao; ?>");
                 xmlhttp.send();
             }
         }
@@ -1185,7 +1597,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-5"><div class="form-group"><label class="control-label">Modo de usar</label><input id="usar-' +
                 contador +
                 '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-1"><div class="form-group"><button onclick="apagar_item_receituario(this)" value="' +
-                contador + '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>');
+                contador +
+                '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>'
+            );
             $("#salvar_receituario").attr("value", contador);
             contador++;
         });
@@ -1193,6 +1607,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         function apagar_item_receituario(indice) {
             $("#item-" + indice.value).remove();
         }
+
+        $("#internacao_sumario").mask("00/00/0000 00:00:00");
+
+        $('#diagnostico').each(function() {
+            this.setAttribute('style', 'height:' + 5 + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        }).on('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        $('#procedimento_terapeutico').each(function() {
+            this.setAttribute('style', 'height:' + 5 + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        }).on('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        $('#evolucao').each(function() {
+            this.setAttribute('style', 'height:' + 5 + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        }).on('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        $('#pos_alta').each(function() {
+            this.setAttribute('style', 'height:' + 5 + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        }).on('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        $('#segmento_atendimento').each(function() {
+            this.setAttribute('style', 'height:' + 5 + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        }).on('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        $('#estado_paciente').each(function() {
+            this.setAttribute('style', 'height:' + 5 + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        }).on('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
     </script>
 </body>
 

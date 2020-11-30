@@ -201,7 +201,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($transfere != "") {
         if (isset($_POST["transferir"])) {
-
             include('conexao.php');
             $stmty = "Select username from pessoas where pessoa_id = $profissional";
 
@@ -222,7 +221,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
         if (isset($_POST["transfconf"])) {
-
             include('conexao.php');
             $stmty = "Select username from pessoas where pessoa_id = $profissional";
 
@@ -246,7 +244,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "<script>alert('Imprimir')</script>";
         }
         if (isset($_POST["enviar"])) {
-
             include('conexao.php');
             $stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
                 where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Finalizado' or situacao='Impresso')";
@@ -263,7 +260,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if (isset($_POST["excel"])) {
-
     $arquivo = 'Relatorio Atendimento.xls';
     // Criamos uma tabela HTML com o formato da planilha
     $html = '';
@@ -307,7 +303,6 @@ if (isset($_POST["excel"])) {
     //echo $stmt;
     $qtde = 0;
     while ($row = pg_fetch_object($sth)) {
-
         $html .= '<tr>';
         $html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
         $html .= '<td>' . $row->nome . '</td>';
@@ -365,7 +360,9 @@ if (isset($_POST["excel"])) {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -453,7 +450,8 @@ if (isset($_POST["excel"])) {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
-    <div class="modal fade" id="modalConteudoSitu" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog" tabindex="-1">
+    <div class="modal fade" id="modalConteudoSitu" aria-hidden="true" aria-labelledby="exampleModalTabs" role="dialog"
+        tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -467,10 +465,12 @@ if (isset($_POST["excel"])) {
                     <div class="col-md-12 margin-top-10 padding-0">
                         <div class="row">
                             <div class="col-md-6">
-                                <input type='button' name='confSit' id="confSit" onclick="situacao()" class="btn btn-success width-full" value='Confirmar Situação'>
+                                <input type='button' name='confSit' id="confSit" onclick="situacao()"
+                                    class="btn btn-success width-full" value='Confirmar Situação'>
                             </div>
                             <div class="col-md-6">
-                                <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal" class="btn btn-danger width-full" value='Cancelar'>
+                                <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal"
+                                    class="btn btn-danger width-full" value='Cancelar'>
                             </div>
                         </div>
                     </div>
@@ -486,7 +486,8 @@ if (isset($_POST["excel"])) {
     </div> -->
 
     <!-- Modal -->
-    <div class="modal" style='position: absolute;' id="modalConteudo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
+    <div class="modal" style='position: absolute;' id="modalConteudo" tabindex="-1" role="dialog"
+        aria-labelledby="myModalLabel1">
         <div class="modal-dialog" role="document" style="max-width: 600px">
             <div class="modal-content">
                 <div class="modal-header" style="padding: 0.5rem 1rem;">
@@ -498,10 +499,12 @@ if (isset($_POST["excel"])) {
                 <div class="modal-body" id="conteudoModal"></div>
                 <div class="modal-footer">
                     <div class="col-md-6">
-                        <input type='button' name='confTriagem' id="confTriagem" class="btn btn-success width-full" value='Confirmar Triagem'>
+                        <input type='button' name='confTriagem' id="confTriagem" class="btn btn-success width-full"
+                            value='Confirmar Triagem'>
                     </div>
                     <div class="col-md-6">
-                        <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal" class="btn btn-danger width-full" value='Cancelar'>
+                        <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal"
+                            class="btn btn-danger width-full" value='Cancelar'>
                     </div>
                 </div>
             </div>
@@ -526,7 +529,8 @@ if (isset($_POST["excel"])) {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Página Padrão
                                                 </h4>
                                             </div>
@@ -556,17 +560,24 @@ if (isset($_POST["excel"])) {
                                                 <div class="row">
 
                                                     <div class="col-md-2">
-                                                        <label class="control-label" for="inputBasicFirstName">Atendimento</label>
-                                                        <input type="text" class="form-control" id="trs" name="trs" value="<?php echo $trs; ?>" />
+                                                        <label class="control-label"
+                                                            for="inputBasicFirstName">Atendimento</label>
+                                                        <input type="text" class="form-control" id="trs" name="trs"
+                                                            value="<?php echo $trs; ?>" />
                                                     </div>
                                                     <div class="col col-lg-3">
-                                                        <label class="control-label" for="inputBasicFirstName">Data Ínicial</label>
-                                                        <input type="date" class="form-control text-center" name="start" id="start" value="<?php echo $start; ?>" />
+                                                        <label class="control-label" for="inputBasicFirstName">Data
+                                                            Ínicial</label>
+                                                        <input type="date" class="form-control text-center" name="start"
+                                                            id="start"
+                                                            value="<?php echo $start; ?>" />
                                                     </div>
 
                                                     <div class="col col-lg-3 text-center">
-                                                        <label class="control-label" for="inputBasicFirstName">Data Final</label>
-                                                        <input type="date" class="form-control text-center" name="end" value="<?php echo $end; ?>">
+                                                        <label class="control-label" for="inputBasicFirstName">Data
+                                                            Final</label>
+                                                        <input type="date" class="form-control text-center" name="end"
+                                                            value="<?php echo $end; ?>">
                                                     </div>
 
 
@@ -574,8 +585,12 @@ if (isset($_POST["excel"])) {
 
 
                                                     <div class="col-md-4">
-                                                        <label class="control-label" for="inputBasicFirstName">Paciente</label>
-                                                        <input type="text" class="form-control" id="inputBasicFirstName" name="nome" placeholder="Parte do Nome" autocomplete="off" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" />
+                                                        <label class="control-label"
+                                                            for="inputBasicFirstName">Paciente</label>
+                                                        <input type="text" class="form-control" id="inputBasicFirstName"
+                                                            name="nome" placeholder="Parte do Nome" autocomplete="off"
+                                                            value="<?php echo $nome; ?>"
+                                                            onkeyup="maiuscula(this)" />
                                                     </div>
 
                                                     <div class="col-md-2">
@@ -583,20 +598,30 @@ if (isset($_POST["excel"])) {
                                                         <select class="form-control" name="situacao" id="situacao">
                                                             <option value="">Todos</option>
                                                             <option value="Aguardando Triagem" <?php if ($situacao == 'Aguardando Triagem') {
-                                                                                                    echo "selected";
-                                                                                                } ?>>Aguardando Triagem</option>
+    echo "selected";
+} ?>>Aguardando
+                                                                Triagem
+                                                            </option>
                                                             <option value="Aguardando Atendimento" <?php if ($situacao == 'Aguardando Atendimento') {
-                                                                                                        echo "selected";
-                                                                                                    } ?>>Aguardando Atendimento</option>
+    echo "selected";
+} ?>>Aguardando
+                                                                Atendimento
+                                                            </option>
                                                             <option value="Em Atendimento" <?php if ($situacao == 'Em Atendimento') {
-                                                                                                echo "selected";
-                                                                                            } ?>>Em Atendimento</option>
+    echo "selected";
+} ?>>Em
+                                                                Atendimento
+                                                            </option>
                                                             <option value="Atendimento Finalizado" <?php if ($situacao == 'Atendimento Finalizado') {
-                                                                                                        echo "selected";
-                                                                                                    } ?>>Atendimento Finalizado</option>
+    echo "selected";
+} ?>>Atendimento
+                                                                Finalizado
+                                                            </option>
                                                             <option value="Não Resp. Chamado" <?php if ($situacao == 'Não Resp. Chamado') {
-                                                                                                    echo "selected";
-                                                                                                } ?>>Não Resp. Chamado</option>
+    echo "selected";
+} ?>>Não
+                                                                Resp. Chamado
+                                                            </option>
 
 
                                                         </select>
@@ -607,15 +632,23 @@ if (isset($_POST["excel"])) {
                                                         <label class="control-label">Especialidades:</label>
 
                                                         <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="cb_cm" name="cb_cm" value='CM' <?php if ($CM == 'CM') echo "checked"; ?>>
-                                                            <label class="custom-control-label" for="cb_cm">Clinica Médica</label>
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="cb_cm" name="cb_cm" value='CM' <?php if ($CM == 'CM') {
+    echo "checked";
+} ?>>
+                                                            <label class="custom-control-label" for="cb_cm">Clinica
+                                                                Médica</label>
                                                         </div>
 
 
 
                                                         <div class="custom-control custom-checkbox">
-                                                            <input type="checkbox" class="custom-control-input" id="cb_or" name="cb_or" value='OR' <?php if ($OR == 'OR') echo "checked"; ?>>
-                                                            <label class="custom-control-label" for="cb_or">Ortopedia</label>
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                id="cb_or" name="cb_or" value='OR' <?php if ($OR == 'OR') {
+    echo "checked";
+} ?>>
+                                                            <label class="custom-control-label"
+                                                                for="cb_or">Ortopedia</label>
                                                         </div>
 
 
@@ -628,13 +661,24 @@ if (isset($_POST["excel"])) {
                                                     <div class="col-8 text-center">
                                                         <label class="control-label">Ação</label><br>
 
-                                                        <button type="submit" name="pesquisa" value="semana" class="btn btn-primary">Pesquisar</button>
-                                                        <button type="submit" name="semana" value="semana" class="btn btn-custom">Semana</button>
-                                                        <button type="submit" name="ontem" value="ontem" class="btn btn-warning">Ontem</button>
-                                                        <button type="reset" name="limpar" value="limpar" class="btn btn-danger">Limpar</button>
-                                                        <button type="button" class="btn btn-success" onclick="location.href='novoatendimento.php'"><i class="icon-stack2 position-left"></i> Adicionar novo Atendimento</button>
+                                                        <button type="submit" name="pesquisa" value="semana"
+                                                            class="btn btn-primary">Pesquisar</button>
+                                                        <button type="submit" name="semana" value="semana"
+                                                            class="btn btn-custom">Semana</button>
+                                                        <button type="submit" name="ontem" value="ontem"
+                                                            class="btn btn-warning">Ontem</button>
+                                                        <button type="reset" name="limpar" value="limpar"
+                                                            class="btn btn-danger">Limpar</button>
+                                                        <button type="button" class="btn btn-success"
+                                                            onclick="location.href='novoatendimento.php'"><i
+                                                                class="icon-stack2 position-left"></i> Adicionar novo
+                                                            Atendimento</button>
                                                         <?php if ($perfil == '04' or $perfil == '06') { ?>
-                                                            <button type="button" class="btn btn-success" style="margin-top: 2px" onclick="location.href='novoatendimentoretroativo.php'"><i class="icon-stack2 position-left"></i> Atendimento Retroativo</button>
+                                                        <button type="button" class="btn btn-success"
+                                                            style="margin-top: 2px"
+                                                            onclick="location.href='novoatendimentoretroativo.php'"><i
+                                                                class="icon-stack2 position-left"></i> Atendimento
+                                                            Retroativo</button>
                                                         <?php } ?>
                                                     </div>
 
@@ -645,7 +689,10 @@ if (isset($_POST["excel"])) {
                                                     <thead>
                                                         <tr>
                                                             <th style="display:none;">
-                                                                <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
+                                                                <div class="checkbox-custom checkbox-primary"><input
+                                                                        type="checkbox" name="todos" id='todos'
+                                                                        onclick='marcardesmarcar();'
+                                                                        value="T"><label></label></div>
                                                             </th>
                                                             <th width="10%">Data/Hora</th>
                                                             <th width="20%">Paciente</th>
@@ -687,9 +734,8 @@ if (isset($_POST["excel"])) {
                                                         }
                                                         $stmt = $stmt . " order by a.dat_cad desc,a.hora_cad desc ";
                                                         $sth = pg_query($stmt) or die($stmt);
-                                                        //echo $stmt; 
+                                                        //echo $stmt;
                                                         while ($row = pg_fetch_object($sth)) {
-
                                                             if ($row->prioridade   == 'AMARELO') {
                                                                 $classe = "style=\"background-color:#FFEE58\"";
                                                                 $color = "black";
@@ -728,7 +774,7 @@ if (isset($_POST["excel"])) {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
                                                                 echo "<td class='blink' style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . "</td>";
                                                                 echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank'>" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
-                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";							
+                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";
                                                                 echo "<td class='blink' style=\"color:$color\">" . $row->hora_triagem . "</td>";
                                                                 echo "<td class='blink' style=\"color:$color\">" . $row->hora_destino . "</td>";
 
@@ -742,7 +788,7 @@ if (isset($_POST["excel"])) {
                                                                 echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
                                                                 echo "<td style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad .  '<br>' . $row->paciente_id . "</td>";
                                                                 echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank' style=\"color:$color\">" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
-                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";							
+                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";
                                                                 echo "<td style=\"color:$color\">" . $row->hora_triagem . "</td>";
                                                                 echo "<td style=\"color:$color\">" . $row->hora_destino . "</td>";
 
@@ -805,21 +851,34 @@ if (isset($_POST["excel"])) {
                                                             } else {
                                                                 echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
                                                             }
-                                                            // if ($perfil == '06' or $perfil == '04') { 
+                                                            // if ($perfil == '06' or $perfil == '04') {
                                                         ?>
-                                                            <?php if ($row->status != 'Atendimento Finalizado') { ?>
-                                                                <a id="triagemmanual" data-id="<?php echo $row->transacao; ?>" class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn" data-target="#modalConteudo" data-toggle="modal" data-original-title="Triagem" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white" <?php } ?> onClick="valorTriagem(this);">
-                                                                    <i class="fas fa-check-circle" aria-hidden="true" onclick=""></i>
-                                                                </a>
+                                                        <?php if ($row->status != 'Atendimento Finalizado') { ?>
+                                                        <a id="triagemmanual"
+                                                            data-id="<?php echo $row->transacao; ?>"
+                                                            class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn"
+                                                            data-target="#modalConteudo" data-toggle="modal"
+                                                            data-original-title="Triagem" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white"
                                                             <?php } ?>
-                                                            <?php //}
+                                                            onClick="valorTriagem(this);">
+                                                            <i class="fas fa-check-circle" aria-hidden="true"
+                                                                onclick=""></i>
+                                                        </a>
+                                                        <?php } ?>
+                                                        <?php //}
 
-                                                            //if ($perfil == '06' or $perfil == '04' or $perfil == '01') { 
+                                                            //if ($perfil == '06' or $perfil == '04' or $perfil == '01') {
                                                             ?>
-                                                            <a id="mudasituacao" data-id="<?php echo $row->transacao; ?>" class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn" data-target="#modalConteudoSitu" data-toggle="modal" data-original-title="Mudar Situação" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white" <?php } ?> onClick="valorSituacao(this);">
-                                                                <i class="fa fa-user" aria-hidden="true" onclick=""></i>
-                                                            </a>
-                                                            <?php //} 
+                                                        <a id="mudasituacao"
+                                                            data-id="<?php echo $row->transacao; ?>"
+                                                            class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn"
+                                                            data-target="#modalConteudoSitu" data-toggle="modal"
+                                                            data-original-title="Mudar Situação" <?php if ($row->prioridade != '' and $row->prioridade != 'AMARELO') { ?>style="color:white"
+                                                            <?php } ?>
+                                                            onClick="valorSituacao(this);">
+                                                            <i class="fa fa-user" aria-hidden="true" onclick=""></i>
+                                                        </a>
+                                                        <?php //}
                                                             ?>
 
                                                         <?php echo "</tr>";
@@ -1058,7 +1117,8 @@ if (isset($_POST["excel"])) {
             var transacaoModal = $("#transacaoMod").val();
             var situacaoMod = $("#situacaoMod").val();
 
-            $.get('salvarsituacao.php?transacaoMod=' + transacaoModal + "&situacaoMod=" + situacaoMod, function(dataReturn) {
+            $.get('salvarsituacao.php?transacaoMod=' + transacaoModal + "&situacaoMod=" + situacaoMod, function(
+                dataReturn) {
                 alert(dataReturn);
                 $('#modalConteudoSitu').modal('hide');
             });
