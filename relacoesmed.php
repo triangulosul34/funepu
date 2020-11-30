@@ -16,7 +16,6 @@ $end   = $_GET['end'];
 $medico   = $_GET['medico'];
 
 if ($medico) {
-
     $where = " and usuario ='$medico' ";
 }
 
@@ -130,9 +129,9 @@ while ($stmt1 = pg_fetch_object($sth1)) {
     if ($stmt1->nome <> '') {
         $pdf->Cell(20, 8, date('d/m/Y', strtotime($stmt1->data)), 1, 0, 'C');
         $pdf->Cell(10, 8, utf8_decode(substr($stmt1->hora, 0, 35)), 1, 0, 'L');
-        $pdf->Cell(55, 8, substr(utf8_decode($stmt1->nome),0,35), 1, 0, 'L');
+        $pdf->Cell(55, 8, substr(utf8_decode($stmt1->nome), 0, 35), 1, 0, 'L');
         $pdf->Cell(20, 8, utf8_decode($stmt1->atendimento_id), 1, 0, 'C');
-        $pdf->Cell(80, 8, substr(utf8_decode($stmt1->tipo_acao),0,45), 1, 0, 'L');
+        $pdf->Cell(80, 8, substr(utf8_decode($stmt1->tipo_acao), 0, 45), 1, 0, 'L');
 
         $pdf->Ln(8);
     }
