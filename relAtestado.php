@@ -29,7 +29,11 @@ $sth = pg_query($stmt) or die($stmt);
 
 $row = pg_fetch_object($sth);
 
-$nome = $row->nome;
+if ($row->nome_social != '') {
+    $nome = $row->nome_social;
+} else {
+    $nome = $row->nome;
+}
 $pessoa_id = $row->pessoa_id;
 $med_atendimento = $row->med_atendimento;
 
