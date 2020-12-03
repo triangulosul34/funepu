@@ -108,6 +108,9 @@
                             <a href="relatoriosintomaticos.php" class="menu-item">ATEND. SINTOMATICOS</a>
                         </li>
                         <li class="is-shown">
+                            <a href="excel_notificacao.php" class="menu-item">IMPORT. NOTIFICACAO</a>
+                        </li>
+                        <li class="is-shown">
                             <a href="relatorioatendimentodemanda.php" class="menu-item">REL. DE DEMANDA</a>
                         </li>
                         <li class="is-shown">

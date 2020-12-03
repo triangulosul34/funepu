@@ -206,8 +206,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt = $stmt . "'$dtn',";
         }
         $stmt = $stmt . " '$endereco', '$numero', '$complemento', '$bairro', '$cep', '$cidade', '$uf', '$telefone', '$telefone2', '$celular', '$celular2', '$imagem', '$facebook', '$twitter',
-				'$email', '$whatsup', '$conselho', '$num_conselho', '$especialidade', '$convenio', '$num_carteira_convenio', '$perfil', '$lotacao', '$grupo_user', '$sgrupo_user', '$usuario', '$datacad', '$p_username', md5('$p_password'), '0','$nome_social')";
+				'$email', '$whatsup', '$conselho', '$num_conselho', '$especialidade', '$convenio', '$num_carteira_convenio', '$perfil', '$lotacao', '$grupo_user', '$sgrupo_user', '$usuario', '$datacad', '$p_username', md5('$p_password'), '0','$nome_social') RETURNING pessoa_id";
         $sth = pg_query($stmt) or die($stmt);
+        $row = pg_fetch_object($sth);
         if ($imagem != "") {
             $target_dir = "C:/inetpub/wwwroot/dcenter/html/imagens/clientes";
             $target_file = $target_dir . '/' . basename($_FILES["fileToUpload"]["name"]);
@@ -235,43 +236,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         //header("location: poppac.php");
         // }
 
-        $sql = "select * from pessoas where pessoa_id = (select max(pessoa_id) from pessoas where data_cad is not null)";
+        $sql = "select * from pessoas where pessoa_id = $row->pessoa_id";
         $result = pg_query($sql) or die($sql);
         $row = pg_fetch_object($result);
         $dt_nasc = $row->dt_nasc;
         $date = new DateTime($dt_nasc); // data de nascimento
         $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
 
-        $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
-?>
-        <script>
-            window.opener.document.pedido.prontuario.value = '<?= $row->pessoa_id; ?>';
-            window.opener.document.pedido.nome.value = '<?= $row->nome; ?>';
-            window.opener.document.pedido.sexo.value = '<?= $row->sexo; ?>';
-            window.opener.document.pedido.dt_nascimento.value = '<?= inverteData($row->dt_nasc); ?>';
-            window.opener.document.pedido.idade.value = '<?= $idade; ?>';
-            window.opener.document.pedido.endereco.value = '<?= $row->endereco; ?>';
-            window.opener.document.pedido.end_num.value = ' <?= $row->numero; ?>';
-            window.opener.document.pedido.end_comp.value = '<?= $row->complemento; ?>';
-            window.opener.document.pedido.end_bairro.value = '<?= $row->bairro; ?>';
-            window.opener.document.pedido.end_cidade.value = '<?= $row->cidade; ?>';
-            window.opener.document.pedido.end_uf.value = '<?= $row->estado; ?>';
-            window.opener.document.pedido.telefone.value = '<?= $row->telefone; ?>';
-            window.opener.document.pedido.celular.value = '<?= $row->celular; ?>';
-            window.opener.document.pedido.cpf.value = '<?= $row->cpf; ?>';
-            window.opener.document.pedido.cns.value = '<?= $row->num_carteira_convenio; ?>';
-            window.opener.document.pedido.nome_mae.value = '<?= $row->nome_mae; ?>';
-            window.opener.document.pedido.rg.value = '<?= $row->identidade; ?>';
-            window.opener.document.pedido.org_expeditor.value = '<?= inverteData($row->org_expeditor); ?>';
-            var cep = '<?= $row->cep; ?>';
-            if (cep.length == 9) {
-                window.opener.document.pedido.end_cep.value = '<?= $row->cep; ?>';
-            } else {
-                window.opener.document.pedido.end_cep.value = cep.substr(0, 5) + "-" + cep.substr(5, 3);
-            }
-            // window.opener.document.pedido.nomeMae.value = teste;
-            window.close();
-        </script>
+        $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias?>
+<script>
+    window.opener.document.pedido.prontuario.value = '<?= $row->pessoa_id; ?>';
+    window.opener.document.pedido.nome.value = '<?= $row->nome; ?>';
+    window.opener.document.pedido.sexo.value = '<?= $row->sexo; ?>';
+    window.opener.document.pedido.dt_nascimento.value =
+        '<?= inverteData($row->dt_nasc); ?>';
+    window.opener.document.pedido.idade.value = '<?= $idade; ?>';
+    window.opener.document.pedido.endereco.value = '<?= $row->endereco; ?>';
+    window.opener.document.pedido.end_num.value = ' <?= $row->numero; ?>';
+    window.opener.document.pedido.end_comp.value = '<?= $row->complemento; ?>';
+    window.opener.document.pedido.end_bairro.value = '<?= $row->bairro; ?>';
+    window.opener.document.pedido.end_cidade.value = '<?= $row->cidade; ?>';
+    window.opener.document.pedido.end_uf.value = '<?= $row->estado; ?>';
+    window.opener.document.pedido.telefone.value = '<?= $row->telefone; ?>';
+    window.opener.document.pedido.celular.value = '<?= $row->celular; ?>';
+    window.opener.document.pedido.cpf.value = '<?= $row->cpf; ?>';
+    window.opener.document.pedido.cns.value =
+        '<?= $row->num_carteira_convenio; ?>';
+    window.opener.document.pedido.nome_mae.value = '<?= $row->nome_mae; ?>';
+    window.opener.document.pedido.rg.value = '<?= $row->identidade; ?>';
+    window.opener.document.pedido.org_expeditor.value =
+        '<?= inverteData($row->org_expeditor); ?>';
+    var cep = '<?= $row->cep; ?>';
+    if (cep.length == 9) {
+        window.opener.document.pedido.end_cep.value = '<?= $row->cep; ?>';
+    } else {
+        window.opener.document.pedido.end_cep.value = cep.substr(0, 5) + "-" + cep.substr(5, 3);
+    }
+    // window.opener.document.pedido.nomeMae.value = teste;
+    window.close();
+</script>
 <?php
     }
 }
@@ -288,11 +291,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="keywords" content="tsul">
     <meta name="author" content="TSUL">
     <?php if ($tipo == 'C') { ?>
-        <title>FUNEPU | Altera Paciente</title>
-    <?php } else if ($tipo == 'M') { ?>
-        <title>FUNEPU | Altera Medico</title>
-    <?php } else if ($tipo == 'A') { ?>
-        <title>FUNEPU | Altera Colaborador</title>
+    <title>FUNEPU | Altera Paciente</title>
+    <?php } elseif ($tipo == 'M') { ?>
+    <title>FUNEPU | Altera Medico</title>
+    <?php } elseif ($tipo == 'A') { ?>
+    <title>FUNEPU | Altera Colaborador</title>
     <?php } ?>
     <link rel="apple-touch-icon" sizes="60x60" href="app-assets/img/ico/apple-icon-60.png">
     <link rel="apple-touch-icon" sizes="76x76" href="app-assets/img/ico/apple-icon-76.png">
@@ -302,7 +305,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -342,10 +347,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h4 class="card-title">
-                                                        <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
-                                                            » </p><?php if ($tipo == 'C') { ?>Alterar Paciente
-                                                        <?php } else if ($tipo == 'M') { ?>Alterar
-                                                        Medico<?php } else if ($tipo == 'A') { ?>Alterar
+                                                        <p
+                                                            style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                            » </p><?php if ($tipo == 'C') { ?>Alterar
+                                                        Paciente
+                                                        <?php } elseif ($tipo == 'M') { ?>Alterar
+                                                        Medico<?php } elseif ($tipo == 'A') { ?>Alterar
                                                         Colaborador<?php } ?>
                                                     </h4>
                                                 </div>
@@ -358,23 +365,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="float-right">
                                                 <ol class="breadcrumb">
                                                     <?php if ($tipo == 'C') { ?>
-                                                        <li><a href="index.php">Home</a></li>
-                                                        <li><a href="clientes.php">Pacientes</a></li>
-                                                        <li class="active">Alterar Paciente</li>
-                                                    <?php } else if ($tipo == 'M') { ?>
-                                                        <li><a href="index.php">Home</a></li>
-                                                        <li><a href="medicos.php">Medicos</a></li>
-                                                        <li class="active">Alterar Medicos</li>
-                                                    <?php } else if ($tipo == 'A') { ?>
-                                                        <li><a href="index.php">Home</a></li>
-                                                        <li><a href="medicos.php">Colaboradores</a></li>
-                                                        <li class="active">Alterar Colaborador</li>
-                                                    <?php } ?>
-                                                </ol>
-                                            </div>
-                                        </div> -->
+                                        <li><a href="index.php">Home</a></li>
+                                        <li><a href="clientes.php">Pacientes</a></li>
+                                        <li class="active">Alterar Paciente</li>
+                                        <?php } elseif ($tipo == 'M') { ?>
+                                        <li><a href="index.php">Home</a></li>
+                                        <li><a href="medicos.php">Medicos</a></li>
+                                        <li class="active">Alterar Medicos</li>
+                                        <?php } elseif ($tipo == 'A') { ?>
+                                        <li><a href="index.php">Home</a></li>
+                                        <li><a href="medicos.php">Colaboradores</a></li>
+                                        <li class="active">Alterar Colaborador</li>
+                                        <?php } ?>
+                                        </ol>
                                     </div>
-                                    <?php
+                                </div> -->
+                            </div>
+                            <?php
                                     if ($erro != "") {
                                         echo '<div class="row">
 		        <div class="col-sm-12">
@@ -382,219 +389,302 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				</div>		
 		  </div>';
                                     } ?>
-                                </div>
-                                <!-- CORPO DA PAGINA -->
-                                <div class="card-content">
-                                    <div class="card-body">
-                                        <form action="#" id="form" method="post" class="form">
-                                            <div class="form-body">
-                                                <h4 class="form-section"><i class="ft-user"></i> Dados do Paciente</h4>
-                                                <div class="row">
-                                                    <div class="col-md-5">
-                                                        <div class="form-group">
-                                                            <label>Nome</label>
-                                                            <input type="hidden" class="form-control square" id="codigo" name="codigo" value="<?php echo $codigo; ?>">
-                                                            <input type="text" class="form-control square" id="nome" name="nome" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>Nome Social</label>
-                                                            <input type="text" class="form-control square" id="nome_social" name="nome_social" onkeyup="maiuscula(this)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label>Tipo</label>
-                                                            <input type="hidden" class="form-control square" id="tipo" name="tipo" value="<?php echo $tipo; ?>" onkeyup="maiuscula(this)" readonly>
-                                                            <input type="text" class="form-control square" id="tipo_pessoa" name="tipo_pessoa" value="<?php echo $tipo_pessoa; ?>" readonly>
-                                                        </div>
+                        </div>
+                        <!-- CORPO DA PAGINA -->
+                        <div class="card-content">
+                            <div class="card-body">
+                                <form action="#" id="form" method="post" class="form">
+                                    <div class="form-body">
+                                        <h4 class="form-section"><i class="ft-user"></i> Dados do Paciente</h4>
+                                        <div class="row">
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label>Nome</label>
+                                                    <input type="hidden" class="form-control square" id="codigo"
+                                                        name="codigo"
+                                                        value="<?php echo $codigo; ?>">
+                                                    <input type="text" class="form-control square" id="nome" name="nome"
+                                                        value="<?php echo $nome; ?>"
+                                                        onkeyup="maiuscula(this)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Nome Social</label>
+                                                    <input type="text" class="form-control square" id="nome_social"
+                                                        name="nome_social" onkeyup="maiuscula(this)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Tipo</label>
+                                                    <input type="hidden" class="form-control square" id="tipo"
+                                                        name="tipo"
+                                                        value="<?php echo $tipo; ?>"
+                                                        onkeyup="maiuscula(this)" readonly>
+                                                    <input type="text" class="form-control square" id="tipo_pessoa"
+                                                        name="tipo_pessoa"
+                                                        value="<?php echo $tipo_pessoa; ?>"
+                                                        readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Nome da Mae</label>
+                                                    <input type="text" class="form-control square" id="nome_mae"
+                                                        name="nome_mae"
+                                                        value="<?php echo $nome_mae; ?>"
+                                                        onkeyup="maiuscula(this)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label>Nome da Pai</label>
+                                                    <input type="text" class="form-control square" id="nome_pai"
+                                                        name="nome_pai"
+                                                        value="<?php echo $nome_pai; ?>"
+                                                        onkeyup="maiuscula(this)">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Dt.Nasc</label>
+                                                    <input type="text" placeholder="99/99/9999"
+                                                        value="<?php echo $dtnasc; ?>"
+                                                        OnKeyPress="formatar('##/##/####', this)"
+                                                        class="form-control square" id="dtnasc" maxlength="10"
+                                                        name="dtnasc">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label> CPF</label>
+                                                    <input type="text" placeholder="99999999999"
+                                                        value="<?php echo $cpf; ?>"
+                                                        onkeypress='return SomenteNumero(event)'
+                                                        onblur='verifica_cpf(this.value)' maxlength="11"
+                                                        class="form-control square" id="cpf" name="cpf">
+                                                    <div id="cpf_exists"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label">Sexo</label>
+                                                    <select name="sexo" id="sexo" class="form-control square">
+                                                        <option></option>
+                                                        <option value="M" <?php if ($sexo == "M") {
+                                        echo "selected";
+                                    } ?>>
+                                                            Masculino
+                                                        </option>
+                                                        <option value="F" <?php if ($sexo == "F") {
+                                        echo "selected";
+                                    } ?>>
+                                                            Feminino
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label>Identidade</label>
+                                                    <input type="text" class="form-control square" id="identidade"
+                                                        name="identidade"
+                                                        value="<?php echo $identidade; ?>"
+                                                        onkeyup="maiuscula(this)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label class="control-label">Expedição</label>
+                                                    <input type="text" class="form-control square" id="org_exped"
+                                                        OnKeyPress="formatar('##/##/####', this)" name="org_exped"
+                                                        value="<?php echo $org_exped; ?>"
+                                                        onkeyup="maiuscula(this)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label">Raca/Cor</label>
+                                                    <select name="raca_cor" id="raca_cor" class="form-control  square">
+                                                        <option></option>
+                                                        <option value="Branca" <?php if ($raca_cor == "Branca") {
+                                        echo "selected";
+                                    } ?>>
+                                                            Branca
+                                                        </option>
+                                                        <option value="Preta" <?php if ($raca_cor == "Preta") {
+                                        echo "selected";
+                                    } ?>>
+                                                            Preta
+                                                        </option>
+                                                        <option value="Parda" <?php if ($raca_cor == "Parda") {
+                                        echo "selected";
+                                    } ?>>
+                                                            Parda
+                                                        </option>
+                                                        <option value="Amarela" <?php if ($raca_cor == "Amarela") {
+                                        echo "selected";
+                                    } ?>>
+                                                            Amarela
+                                                        </option>
+                                                        <option value="Indigena" <?php if ($raca_cor == "Indigena") {
+                                        echo "selected";
+                                    } ?>>
+                                                            Indigena
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h4 class="form-section"><i class="fas fa-phone-volume"></i> Contato
+                                        </h4>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 label-control"
+                                                        style="text-align: right;">Telefone</label>
+                                                    <div class="col-md-9">
+                                                        <input class="form-control square" type="text" name="telefone"
+                                                            id="telefone" OnKeyPress="formatar('##-#########', this)"
+                                                            value="<?php echo $telefone; ?>"
+                                                            maxlength="11">
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Nome da Mae</label>
-                                                            <input type="text" class="form-control square" id="nome_mae" name="nome_mae" value="<?php echo $nome_mae; ?>" onkeyup="maiuscula(this)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Nome da Pai</label>
-                                                            <input type="text" class="form-control square" id="nome_pai" name="nome_pai" value="<?php echo $nome_pai; ?>" onkeyup="maiuscula(this)">
-                                                        </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 label-control"
+                                                        style="text-align: right;">Celular</label>
+                                                    <div class="col-md-9">
+                                                        <input class="form-control square" type="text" name="celular"
+                                                            id="celular" OnKeyPress="formatar('##-#########', this)"
+                                                            value="<?php echo $celular; ?>"
+                                                            maxlength="12">
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label>Dt.Nasc</label>
-                                                            <input type="text" placeholder="99/99/9999" value="<?php echo $dtnasc; ?>" OnKeyPress="formatar('##/##/####', this)" class="form-control square" id="dtnasc" maxlength="10" name="dtnasc">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label> CPF</label>
-                                                            <input type="text" placeholder="99999999999" value="<?php echo $cpf; ?>" onkeypress='return SomenteNumero(event)' onblur='verifica_cpf(this.value)' maxlength="11" class="form-control square" id="cpf" name="cpf">
-                                                            <div id="cpf_exists"></div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Sexo</label>
-                                                            <select name="sexo" id="sexo" class="form-control square">
-                                                                <option></option>
-                                                                <option value="M" <?php if ($sexo == "M")   echo "selected"; ?>>
-                                                                    Masculino</option>
-                                                                <option value="F" <?php if ($sexo == "F")    echo "selected"; ?>>
-                                                                    Feminino</option>
-                                                            </select>
-                                                        </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="form-group row">
+                                                    <label class="col-md-3 label-control"
+                                                        style="text-align: right;">Email</label>
+                                                    <div class="col-md-9">
+                                                        <input class="form-control square" type="text" name="email"
+                                                            id="email"
+                                                            value="<?php echo $email; ?>">
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group">
-                                                            <label>Identidade</label>
-                                                            <input type="text" class="form-control square" id="identidade" name="identidade" value="<?php echo $identidade; ?>" onkeyup="maiuscula(this)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Expedição</label>
-                                                            <input type="text" class="form-control square" id="org_exped" OnKeyPress="formatar('##/##/####', this)" name="org_exped" value="<?php echo $org_exped; ?>" onkeyup="maiuscula(this)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label class="control-label">Raca/Cor</label>
-                                                            <select name="raca_cor" id="raca_cor" class="form-control  square">
-                                                                <option></option>
-                                                                <option value="Branca" <?php if ($raca_cor == "Branca")   echo "selected"; ?>>
-                                                                    Branca</option>
-                                                                <option value="Preta" <?php if ($raca_cor == "Preta")    echo "selected"; ?>>
-                                                                    Preta</option>
-                                                                <option value="Parda" <?php if ($raca_cor == "Parda")    echo "selected"; ?>>
-                                                                    Parda</option>
-                                                                <option value="Amarela" <?php if ($raca_cor == "Amarela")  echo "selected"; ?>>
-                                                                    Amarela</option>
-                                                                <option value="Indigena" <?php if ($raca_cor == "Indigena") echo "selected"; ?>>
-                                                                    Indigena</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                        </div>
+                                        <h4 class="form-section"><i class="fas fa-location-arrow"></i> Endereço
+                                        </h4>
+                                        <div class="row">
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>CEP</label>
+                                                    <input class="form-control square" placeholder="99999-999"
+                                                        type="text" name="cep" maxlength="9" id="cep"
+                                                        value="<?php echo $cep; ?>"
+                                                        OnKeyPress="formatar('#####-###', this)"
+                                                        onblur="pesquisacep(this.value);">
                                                 </div>
-                                                <h4 class="form-section"><i class="fas fa-phone-volume"></i> Contato
-                                                </h4>
-                                                <div class="row">
-                                                    <div class="col-6">
-                                                        <div class="form-group row">
-                                                            <label class="col-md-3 label-control" style="text-align: right;">Telefone</label>
-                                                            <div class="col-md-9">
-                                                                <input class="form-control square" type="text" name="telefone" id="telefone" OnKeyPress="formatar('##-#########', this)" value="<?php echo $telefone; ?>" maxlength="11">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-6">
-                                                        <div class="form-group row">
-                                                            <label class="col-md-3 label-control" style="text-align: right;">Celular</label>
-                                                            <div class="col-md-9">
-                                                                <input class="form-control square" type="text" name="celular" id="celular" OnKeyPress="formatar('##-#########', this)" value="<?php echo $celular; ?>" maxlength="12">
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                            <div class="col-md-5">
+                                                <div class="form-group">
+                                                    <label>Endereço</label>
+                                                    <input class="form-control square" type="text" name="endereco"
+                                                        id="endereco"
+                                                        value="<?php echo $endereco; ?>">
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-12">
-                                                        <div class="form-group row">
-                                                            <label class="col-md-3 label-control" style="text-align: right;">Email</label>
-                                                            <div class="col-md-9">
-                                                                <input class="form-control square" type="text" name="email" id="email" value="<?php echo $email; ?>">
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>Numero</label>
+                                                    <input class="form-control square" type="text" name="numero"
+                                                        id="numero"
+                                                        value="<?php echo $numero; ?>">
                                                 </div>
-                                                <h4 class="form-section"><i class="fas fa-location-arrow"></i> Endereço
-                                                </h4>
-                                                <div class="row">
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <label>CEP</label>
-                                                            <input class="form-control square" placeholder="99999-999" type="text" name="cep" maxlength="9" id="cep" value="<?php echo $cep; ?>" OnKeyPress="formatar('#####-###', this)" onblur="pesquisacep(this.value);">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        <div class="form-group">
-                                                            <label>Endereço</label>
-                                                            <input class="form-control square" type="text" name="endereco" id="endereco" value="<?php echo $endereco; ?>">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <label>Numero</label>
-                                                            <input class="form-control square" type="text" name="numero" id="numero" value="<?php echo $numero; ?>">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label>Complemento</label>
-                                                            <input class="form-control square" type="text" name="complemento" id="complemento" value="<?php echo $complemento; ?>">
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Complemento</label>
+                                                    <input class="form-control square" type="text" name="complemento"
+                                                        id="complemento"
+                                                        value="<?php echo $complemento; ?>">
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-3">
-                                                        <div class="form-group">
-                                                            <label>Bairro</label>
-                                                            <input class="form-control square" type="text" name="bairro" id="bairro" value="<?php echo $bairro; ?>" onkeyup="maiuscula(this)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-7">
-                                                        <div class="form-group">
-                                                            <label>Cidade</label>
-                                                            <input class="form-control square" type="text" name="cidade" id="cidade" value="<?php echo $cidade; ?>" onkeyup="maiuscula(this)">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <label>UF</label>
-                                                            <input class="form-control square" type="text" name="uf" id="uf" value="<?php echo $uf; ?>" onkeyup="maiuscula(this)" maxlength="2">
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <label>Bairro</label>
+                                                    <input class="form-control square" type="text" name="bairro"
+                                                        id="bairro"
+                                                        value="<?php echo $bairro; ?>"
+                                                        onkeyup="maiuscula(this)">
                                                 </div>
-                                                <?php if ($tipo == 'M') { ?>
-                                                    <h4 class="form-section"><i class="fas fa-id-card-alt"></i> Dados
-                                                        Medicos</h4>
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class='form-group'>
-                                                                <label class="control-label">Conselho Regional</label>
-                                                                <select name="conselho" id="conselho" class="form-control">
-                                                                    <option></option>
-                                                                    <option value='CRA'>CRA</option>
-                                                                    <option value='CRBIO'>CRBIO</option>
-                                                                    <option value='CRBM'>CRBM</option>
-                                                                    <option value='CREFITO'>CREFITO</option>
-                                                                    <option value='CRM'>CRM</option>
-                                                                    <option value='CRO'>CRO</option>
-                                                                    <option value='COREN'>COREN</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group">
-                                                                <label class="control-label">
-                                                                    Numero Conselho
-                                                                </label>
-                                                                <input class="form-control" type="text" name="num_conselho" value="<?php echo $num_conselho; ?>">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class='form-group'>
-                                                                <label class="control-label">Especialidade</label>
-                                                                <select name="especialidade" id="especialidade" class="form-control">
-                                                                    <option></option>
-                                                                    <?php
+                                            </div>
+                                            <div class="col-md-7">
+                                                <div class="form-group">
+                                                    <label>Cidade</label>
+                                                    <input class="form-control square" type="text" name="cidade"
+                                                        id="cidade"
+                                                        value="<?php echo $cidade; ?>"
+                                                        onkeyup="maiuscula(this)">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label>UF</label>
+                                                    <input class="form-control square" type="text" name="uf" id="uf"
+                                                        value="<?php echo $uf; ?>"
+                                                        onkeyup="maiuscula(this)" maxlength="2">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php if ($tipo == 'M') { ?>
+                                        <h4 class="form-section"><i class="fas fa-id-card-alt"></i> Dados
+                                            Medicos</h4>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class='form-group'>
+                                                    <label class="control-label">Conselho Regional</label>
+                                                    <select name="conselho" id="conselho" class="form-control">
+                                                        <option></option>
+                                                        <option value='CRA'>CRA</option>
+                                                        <option value='CRBIO'>CRBIO</option>
+                                                        <option value='CRBM'>CRBM</option>
+                                                        <option value='CREFITO'>CREFITO</option>
+                                                        <option value='CRM'>CRM</option>
+                                                        <option value='CRO'>CRO</option>
+                                                        <option value='COREN'>COREN</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label class="control-label">
+                                                        Numero Conselho
+                                                    </label>
+                                                    <input class="form-control" type="text" name="num_conselho"
+                                                        value="<?php echo $num_conselho; ?>">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class='form-group'>
+                                                    <label class="control-label">Especialidade</label>
+                                                    <select name="especialidade" id="especialidade"
+                                                        class="form-control">
+                                                        <option></option>
+                                                        <?php
                                                                     include('conexao.php');
                                                                     $stmt = "SELECT * FROM especialidade order by descricao";
                                                                     $sth = pg_query($stmt) or die($stmt);
@@ -602,50 +692,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                         echo "<option value=\"" . $row->especialidade_id . "\" >" . $row->descricao . "</option>";
                                                                     }
                                                                     ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                <?php }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php }
                                                 if ($tipo != 'C') { ?>
-                                                    <h4 class="form-section"><i class="fas fa-sign-in-alt"></i> Controle de
-                                                        Usuario</h4>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class='form-group'>
-                                                                <label class="control-label">Perfil de Usuario</label>
-                                                                <select name="perfil" id="perfil" class="form-control">
-                                                                    <option></option>
-                                                                    <option value='01'>Usuário</option>
-                                                                    <option value='02'>Gerente</option>
+                                        <h4 class="form-section"><i class="fas fa-sign-in-alt"></i> Controle de
+                                            Usuario</h4>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class='form-group'>
+                                                    <label class="control-label">Perfil de Usuario</label>
+                                                    <select name="perfil" id="perfil" class="form-control">
+                                                        <option></option>
+                                                        <option value='01'>Usuário</option>
+                                                        <option value='02'>Gerente</option>
 
-                                                                    <option value='07'>Laudador</option>
+                                                        <option value='07'>Laudador</option>
 
-                                                                    <option value='03'>Médico</option>
-                                                                    <option value='08'>Enfermagem</option>
-                                                                    <option value='05'>Tecnico</option>
-                                                                    <option value='04'>Administrativo</option>
-                                                                    <?php if ($perfil == '06') { ?>
-                                                                        <option value='06'>Super Usuário</option>
-                                                                    <?php } ?>
-                                                                    <option value='09'>Monitoramento</option>
+                                                        <option value='03'>Médico</option>
+                                                        <option value='08'>Enfermagem</option>
+                                                        <option value='05'>Tecnico</option>
+                                                        <option value='04'>Administrativo</option>
+                                                        <?php if ($perfil == '06') { ?>
+                                                        <option value='06'>Super Usuário</option>
+                                                        <?php } ?>
+                                                        <option value='09'>Monitoramento</option>
 
-                                                                    <option value='10'>Biomedico</option>
-                                                                    <option value='11'>Técnico em Análises Clinicas</option>
+                                                        <option value='10'>Biomedico</option>
+                                                        <option value='11'>Técnico em Análises Clinicas</option>
 
-                                                                    <option value='12'>Adm. Laboratorio</option>
-                                                                    <option value='13'>Sus Fácil</option>
-                                                                    <option value='14'>Médico do Trabalho</option>
+                                                        <option value='12'>Adm. Laboratorio</option>
+                                                        <option value='13'>Sus Fácil</option>
+                                                        <option value='14'>Médico do Trabalho</option>
 
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class='form-group'>
-                                                                <label class="control-label">Grupo de Usuários</label>
-                                                                <select name="grupo_user" id="grupo_user" class="form-control">
-                                                                    <option></option>
-                                                                    <?php
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class='form-group'>
+                                                    <label class="control-label">Grupo de Usuários</label>
+                                                    <select name="grupo_user" id="grupo_user" class="form-control">
+                                                        <option></option>
+                                                        <?php
                                                                     include('conexao.php');
                                                                     $stmt = "SELECT * FROM usuarios_grupos order by descricao";
                                                                     $sth = pg_query($stmt) or die($stmt);
@@ -653,41 +743,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                         echo "<option value=\"" . $row->grupo_user_id . "\" >" . $row->descricao . "</option>";
                                                                     }
                                                                     ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class='form-group'>
-                                                                <label class="control-label">Nome de Usuario</label>
-                                                                <input class="form-control" onkeyup="procurauser(this)" type="text" name="username" value="<?php echo $username; ?>">
-                                                                <div id="user_exists" style="color:#FF0000; font-weight: bold;" class="col-md-12 margin-top-5"></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class='form-group'>
-                                                                <label class="control-label">Senha de Usuário</label>
-                                                                <input class="form-control" type="password" name="password" value="<?php echo $password; ?>">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                <?php } ?>
-                                                <div class="row">
-                                                    <div align="center" class="col-md-12 margin-bottom-30">
-                                                        <button type="submit" class="btn btn-wide btn-primary">Gravar</button>
-                                                    </div>
+                                                    </select>
                                                 </div>
                                             </div>
-                                        </form>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class='form-group'>
+                                                    <label class="control-label">Nome de Usuario</label>
+                                                    <input class="form-control" onkeyup="procurauser(this)" type="text"
+                                                        name="username"
+                                                        value="<?php echo $username; ?>">
+                                                    <div id="user_exists" style="color:#FF0000; font-weight: bold;"
+                                                        class="col-md-12 margin-top-5"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class='form-group'>
+                                                    <label class="control-label">Senha de Usuário</label>
+                                                    <input class="form-control" type="password" name="password"
+                                                        value="<?php echo $password; ?>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php } ?>
+                                        <div class="row">
+                                            <div align="center" class="col-md-12 margin-bottom-30">
+                                                <button type="submit" class="btn btn-wide btn-primary">Gravar</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
     </div>
     <?php include('footer.php'); ?>
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>

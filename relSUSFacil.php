@@ -309,15 +309,15 @@ class PDF extends FPDF
 
 
         //$this->SetFont('Arial','B',9);
-        $this->SetXY(10, 185);
+        $this->SetXY(10, 225);
         $this->Cell(185, 5, utf8_decode('SINAIS VITAIS         | Pulsos: '.$pulso.'            Glicemia: '.$glicemia.'           PA: '.$pa_sitolica.'x'.$pa_distolica.'       FR:'. $frequencia_respiratoria.'      dor: '.$dor.'      SpO2: '.$oxigenio.'        T.axiliar: '.$temperatura.'        Glasgow: '.$ecg.'          '), 1, 0, 'L');
         $this->Ln(7);
         $this->Cell(185, 5, utf8_decode(' MEDICAMENTOS EM USO'), 0, 0, 'L');
-        $this->Line(50, 190, 50, 205);
+        $this->Line(50, 247, 50, 230);
 
 
         //$this->SetFont('Arial','',9);
-        $this->SetXY(10, 205);
+        $this->SetXY(10, 247);
 
         //$this->Cell(90, 9, utf8_decode(' CLINICA :   ' . $destino), 1, 0, 'L');
         $this->Cell(90, 9, utf8_decode(' CLINICA :   '), 1, 0, 'L');
@@ -331,21 +331,21 @@ class PDF extends FPDF
         $this->Ln(9);
         $this->SetFont('Arial', '', 9);
         $this->Cell(185, 5, utf8_decode(' Carater de Internação:     (   ) Urgência          (   ) Sofrimento Intenso         (   ) Eletiva            (   ) Risco de Morte'), 1, 0, 'L');
-        $this->Ln(7);
-        $this->Cell(185, 5, utf8_decode(' Condições que justifiquem'), 0, 0, 'L');
-        $this->Ln(7);
-        $this->Cell(185, 5, utf8_decode(' a internação'), 0, 0, 'L');
-        $this->Line(50, 228, 50, 245);
-        $this->Line(10, 242, 195, 242);
-        $this->Ln(7);
-        $this->Cell(185, 5, utf8_decode(' Principais Resultados de'), 0, 0, 'L');
-        $this->Ln(7);
-        $this->Cell(185, 5, utf8_decode(' Provas Diagnósticas'), 0, 0, 'L');
-        $this->Line(50, 245, 50, 270);
-        $this->Line(50, 251, 195, 251);
-        $this->Line(50, 260, 195, 260);
-        $this->Line(10, 270, 195, 270);
-        $this->Ln(20);
+        $this->Ln(5);
+        // $this->Cell(185, 5, utf8_decode(' Condições que justifiquem'), 0, 0, 'L');
+        // $this->Ln(7);
+        // $this->Cell(185, 5, utf8_decode(' a internação'), 0, 0, 'L');
+        // $this->Line(50, 228, 50, 245);
+        // $this->Line(10, 242, 195, 242);
+        // $this->Ln(7);
+        // $this->Cell(185, 5, utf8_decode(' Principais Resultados de'), 0, 0, 'L');
+        // $this->Ln(7);
+        // $this->Cell(185, 5, utf8_decode(' Provas Diagnósticas'), 0, 0, 'L');
+        // $this->Line(50, 245, 50, 270);
+        // $this->Line(50, 251, 195, 251);
+        // $this->Line(50, 260, 195, 260);
+        //$this->Line(10, 270, 195, 270);
+        // $this->Ln(20);
         $this->SetFont('Arial', '', 9);
         $this->Cell(146, 5, utf8_decode(' Assinatura e Carimbo:'), 0, 0, 'L');
         $this->Cell(25, 5, utf8_decode(' Data:_____/_____/_____'), 0, 0, 'L');
