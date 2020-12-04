@@ -19,7 +19,7 @@ include('verifica.php');
 class PDF extends FPDF
 {
     // Page header
-    function Header()
+    public function Header()
     {
 
         // Logo
@@ -46,7 +46,7 @@ class PDF extends FPDF
         $this->SetFont('Arial', 'B', 7);
         $this->Cell(300, 5, $senha, 0, 0, 'C');
         $this->Ln(1);
-        $this->Line(10,  25, 195, 25);
+        $this->Line(10, 25, 195, 25);
 
 
 
@@ -54,7 +54,7 @@ class PDF extends FPDF
 
         $this->Line(10, 275.8, 195, 275.8);
 
-        $this->Line(10, 25,  10, 275.8);
+        $this->Line(10, 25, 10, 275.8);
         $this->Line(195, 25, 195, 275.8);
 
         $this->SetFont('Arial', 'B', 9);
@@ -77,9 +77,6 @@ class PDF extends FPDF
         $especialidade = $_GET['especialidade'];
 
         if ($tipo_relatorio == 'ESPECIALIDADE') {
-
-
-
             $where = '';
             if ($especialidade == '' or $especialidade == 'todos') {
                 $where = "where especialidade != '' and dat_cad between '$start' and '$end'";
@@ -103,7 +100,6 @@ class PDF extends FPDF
 
 
         if ($tipo_relatorio == 'TRANSFERENCIA') {
-
             include('conexao.php');
             $stmtRelCont = "select count(*) as qtde from destino_paciente d
 				  where d.hospital is not null and data between '$start' and '$end'";
@@ -120,7 +116,6 @@ class PDF extends FPDF
 
 
         if ($tipo_relatorio == 'PRIORIDADE') {
-
             $where = '';
             if ($especialidade == '' or $especialidade == 'todos') {
                 $where = "where especialidade != '' and dat_cad between  '" . inverteData($start) . "' and '" . inverteData($end) . "'";
@@ -155,7 +150,6 @@ class PDF extends FPDF
 
 
         if ($tipo_relatorio == 'CLASSIFICACAO') {
-
             include('conexao.php');
             $stmtRelCont = "SELECT count(*) as qtde
 					from atendimentos a where a.dat_cad between '$start' and '$end'";
@@ -169,7 +163,6 @@ class PDF extends FPDF
             $this->Cell(105, 7, utf8_decode('Período:   ' . $_GET['start'] . '   ATÉ   ' . $_GET['end']), 1, 0, 'C');
         }
         if ($tipo_relatorio == 'DEMANDA') {
-
             include('conexao.php');
             $stmtRelCont = "SELECT count(*) as qtde
 					from atendimentos a where a.dat_cad between '$start' and '$end'";
@@ -188,7 +181,7 @@ class PDF extends FPDF
         // 	$where ='';
 
         // 	if($modalidade != '') {
-        // 		if ($modalidade == 5) { 
+        // 		if ($modalidade == 5) {
         // 			$where = ' and modalidade_id > '.$modalidade;
         // 		}else {
         // 			$where = ' and modalidade_id = '.$modalidade;
@@ -200,7 +193,7 @@ class PDF extends FPDF
         //                               from itenspedidos a
         //                               left join atendimentos b on a.atendimento_id = b.transacao
         //                               left join procedimentos p on p.procedimento_id = a.exame_id
-        //                               where b.dat_cad between  '".inverteData($start)."' and '".inverteData($end)."' $where 
+        //                               where b.dat_cad between  '".inverteData($start)."' and '".inverteData($end)."' $where
         // 							  and a.situacao = 'Finalizado'";
 
 
@@ -209,7 +202,7 @@ class PDF extends FPDF
         // 	$qtde_atendimentos=$rowCount->qtde;
 
         // 	$modalidade = $_GET['modalidade'];
-        // 	include('conexao.php'); 
+        // 	include('conexao.php');
         // 	$stmtTitulo="select descricao as modalidade from modalidades where modalidade_id = $modalidade";
         // 	$sthTitulo = pg_query($stmtTitulo);
         // 	$rowTitulo = pg_fetch_object($sthTitulo);
@@ -222,14 +215,13 @@ class PDF extends FPDF
         // 	}
 
         // 	$this->Ln(7);
-        // 	$this->Cell(80,7,utf8_decode('Quantidade:   '.$qtde_atendimentos),1,0,'C');	
-        // 	$this->Cell(105,7,utf8_decode('Período:   '.$_GET['start'].'   ATÉ   '.$_GET['end']),1,0,'C');		
+        // 	$this->Cell(80,7,utf8_decode('Quantidade:   '.$qtde_atendimentos),1,0,'C');
+        // 	$this->Cell(105,7,utf8_decode('Período:   '.$_GET['start'].'   ATÉ   '.$_GET['end']),1,0,'C');
         // }
 
 
 
         if ($tipo_relatorio == '') {
-
             include('conexao.php');
             $stmtRelCont = "SELECT count(*) as qtde from atendimentos a
 				where destino_paciente in ('01','11', '02', '12','14','15','06', '03', '07') and dat_cad between '$start' and '$end'";
@@ -521,127 +513,49 @@ if ($tipo_relatorio == '') {
     $start          = $_GET['start'];
     $end          = $_GET['end'];
 
-    include('conexao.php');
-    $stmtRel = "SELECT count(*) as qtde, 
-				CASE
-				WHEN destino_paciente= '01' or destino_paciente= '02' or destino_paciente= '11' or destino_paciente= '12' or destino_paciente= '15' or destino_paciente= '14' THEN 'ALTA'		
-				WHEN destino_paciente= '06' THEN 'ÓBITO'
-				WHEN destino_paciente= '03' THEN 'PERMANÊNCIA'
-				WHEN destino_paciente= '07' THEN 'EM OBSERVAÇÃO / MEDICAÇÃO'
-				END AS destino,
-				CASE
-				WHEN destino_paciente= '01' or destino_paciente= '02' or destino_paciente= '11' or destino_paciente= '12' or destino_paciente= '14' or destino_paciente= '15' THEN '01,02,11,12,14,15'
-				WHEN destino_paciente= '03' THEN '03'
-				END AS vlr_destino
-				from atendimentos a
-				left join destino_paciente d on d.atendimento_id = a.transacao
-				where destino_paciente in ('01','11', '02', '12','14','15','06', '03', '07') and dat_cad between '$start' and '$end'
-				group by 2,3 
-				order by 2 ASC, 1 DESC";
-    $sthRel = pg_query($stmtRel);
-
-
-    while ($rowRel = pg_fetch_object($sthRel)) {
-        $pdf->SetFont('Arial', 'B', 9);
-        $pdf->Cell(120, 7, utf8_decode($rowRel->destino), 1, 0, 'C');
-        $pdf->Cell(65, 7, utf8_decode($rowRel->qtde), 1, 0, 'C');
-        $pdf->Ln(7);
-        $totalAT = $totalAT + $rowRel->qtde;
-        $valoresDestino = explode(",", $rowRel->vlr_destino);
-
-        $valoresDestino = "'$valoresDestino[0]', '$valoresDestino[1]', '$valoresDestino[2]', '$valoresDestino[3]','$valoresDestino[4]','$valoresDestino[5]'";
-        $pdf->SetFont('Arial', 'I', 9);
-
-
-
-        include('conexao.php');
-        if ($rowRel->destino == 'ALTA') {
-            $stmtRel2 = "SELECT count(*) as qtde, 
-					CASE
-						WHEN destino_paciente= '01' THEN 'ALTA'
-						WHEN destino_paciente= '02' THEN 'ALTA / ENCAM. AMBUL.'
-						WHEN destino_paciente= '11' THEN 'ALTA EVASÃO' 
-						WHEN destino_paciente= '12' THEN 'ALTA PEDIDO' 
-						WHEN destino_paciente= '06' THEN 'ÓBITO'
-						WHEN destino_paciente= '14' THEN 'ALTA / PM' 
-						WHEN destino_paciente= '15' THEN 'ALTA / PENITENCIÁRIA' 
-						END AS destino
-					from atendimentos a
-					left join destino_paciente d on d.atendimento_id = a.transacao
-					where destino_paciente in (" . $valoresDestino . ") and destino_paciente != '' and dat_cad between '$start' and '$end'
-					group by 2 
-					order by 2 ASC, 1 DESC";
-            $sthRel2 = pg_query($stmtRel2);
-            while ($rowRel2 = pg_fetch_object($sthRel2)) {
-                $destino = '';
-                if ($rowRel2->destino == 'ALTA') {
-                    $destino = 'ALTA DOMICÍLIO';
-                } else {
-                    $destino = $rowRel2->destino;
-                }
-
-                $pdf->Cell(120, 7, utf8_decode($destino), 0, 0, 'C');
-                $pdf->Cell(65, 7, utf8_decode($rowRel2->qtde), 0, 0, 'C');
-                $pdf->Ln(7);
-            }
-        } elseif ($rowRel->destino == 'PERMANÊNCIA') {
-            $stmtRel2 = "SELECT count(*) as qtde, 
-					CASE
-						WHEN destino_encaminhamento = '01' THEN 'ALTA'
-						WHEN destino_encaminhamento = '02' THEN 'ALTA / ENCAM. AMBUL.'
-						WHEN destino_encaminhamento = '11' THEN 'ALTA EVASÃO' 
-						WHEN destino_encaminhamento = '12' THEN 'ALTA PEDIDO' 
-						WHEN destino_encaminhamento = '15' THEN 'ALTA / PENITENCIÁRIA'
-						WHEN destino_encaminhamento = '14' THEN 'ALTA / PM' 
-						WHEN destino_encaminhamento = '04' THEN 'TRANSF. OUTRA UPA'
-						WHEN destino_encaminhamento = '05' THEN 'TRANSFERENCIA HOSPITALAR'
-						WHEN destino_encaminhamento = '13' THEN 'TRANSFERENCIA INTERNA'
-						WHEN destino_encaminhamento = '03' THEN 'PERMANÊCIA.' 
-						WHEN destino_encaminhamento = '06' THEN 'ÓBITO' 
-						ELSE 'NÃO SE APLICA'
-						END AS destino
-					from atendimentos a
-					left join destino_paciente d on d.atendimento_id = a.transacao
-					where destino_paciente in (" . $valoresDestino . ") and destino_paciente != '' and dat_cad between '$start' and '$end'
-					group by 2 
-					order by 2 ASC, 1 DESC";
-            $sthRel2 = pg_query($stmtRel2);
-            while ($rowRel2 = pg_fetch_object($sthRel2)) {
-                $destino = $rowRel2->destino;
-                $pdf->Cell(120, 7, utf8_decode($destino), 0, 0, 'C');
-                $pdf->Cell(65, 7, utf8_decode($rowRel2->qtde), 0, 0, 'C');
-                $pdf->Ln(7);
-            }
-        } elseif ($rowRel->destino == 'EM OBSERVAÇÃO / MEDICAÇÃO') {
-            $stmtRel2 = "SELECT count(*) as qtde, 
-					CASE
-						WHEN destino_encaminhamento = '01' THEN 'ALTA'
-						WHEN destino_encaminhamento = '02' THEN 'ALTA / ENCAM. AMBUL.'
-						WHEN destino_encaminhamento = '11' THEN 'ALTA EVASÃO' 
-						WHEN destino_encaminhamento = '12' THEN 'ALTA PEDIDO' 
-						WHEN destino_encaminhamento = '15' THEN 'ALTA / PENITENCIÁRIA'
-						WHEN destino_encaminhamento = '14' THEN 'ALTA / PM' 
-						WHEN destino_encaminhamento = '04' THEN 'TRANSF. OUTRA UPA'
-						WHEN destino_encaminhamento = '05' THEN 'TRANSFERENCIA HOSPITALAR'
-						WHEN destino_encaminhamento = '13' THEN 'TRANSFERENCIA INTERNA'
-						WHEN destino_encaminhamento = '03' THEN 'PERMANÊCIA.' 
-						WHEN destino_encaminhamento = '06' THEN 'ÓBITO' 
-						ELSE 'NÃO SE APLICA'
-						END AS destino
-					from atendimentos a
-					left join destino_paciente d on d.atendimento_id = a.transacao
-					where destino_paciente in ('07') and destino_paciente != '' and dat_cad between '$start' and '$end'
-					group by 2 
-					order by 2 ASC, 1 DESC";
-            $sthRel2 = pg_query($stmtRel2);
-            while ($rowRel2 = pg_fetch_object($sthRel2)) {
-                $destino = $rowRel2->destino;
-                $pdf->Cell(120, 7, utf8_decode($destino), 0, 0, 'C');
-                $pdf->Cell(65, 7, utf8_decode($rowRel2->qtde), 0, 0, 'C');
-                $pdf->Ln(7);
-            }
+    $sql = "SELECT case when z.destino_encaminhamento::varchar is null then ltrim(a.destino_paciente,'0') else ltrim(z.destino_encaminhamento::varchar,'0') end as destino_paciente, count(*) as quantidade from atendimentos a left join destino_paciente z on z.atendimento_id = a.transacao where dat_cad between '$start' and '$end' group by 1";
+    $result = pg_query($sql) or die($sql);
+    while ($row = pg_fetch_object($result)) {
+        if ($row->destino_paciente == '01') {
+            $df = 'ALTA';
+        } elseif ($row->destino_paciente == '02') {
+            $df = 'ALTA / ENCAM. AMBUL.';
+        } elseif ($row->destino_paciente == '07') {
+            $df = 'EM OBSERVAÇÃO / MEDICAÇÃO';
+        } elseif ($row->destino_paciente == '10') {
+            $df = 'EXAMES / REAVALIACAO';
+        } elseif ($row->destino_paciente == '03') {
+            $df = 'PERMANÊCIA.';
+        } elseif ($row->destino_paciente == '04') {
+            $df = 'TRANSF. OUTRA UPA';
+        } elseif ($row->destino_paciente == '05') {
+            $df = 'TRANSF. INTERN. HOSPITALAR';
+        } elseif ($row->destino_paciente == '06') {
+            $df = 'ÓBITO';
+        } elseif ($row->destino_paciente == '09') {
+            $df = 'NAO RESPONDEU CHAMADO';
+        } elseif ($row->destino_paciente == '11') {
+            $df = 'ALTA EVASÃO';
+        } elseif ($row->destino_paciente == '12') {
+            $df = 'ALTA PEDIDO';
+        } elseif ($row->destino_paciente == '14') {
+            $df = 'ALTA / POLICIA';
+        } elseif ($row->destino_paciente == '15') {
+            $df = 'ALTA / PENITENCIÁRIA';
+        } elseif ($row->destino_paciente == '16') {
+            $df = 'ALTA / PÓS MEDICAMENTO';
+        } elseif ($row->destino_paciente == '20') {
+            $df = 'ALTA VIA SISTEMA';
+        } elseif ($row->destino_paciente == '21') {
+            $df = 'TRANSFERENCIA';
+        } else {
+            $df = 'NAO SE APLICA';
         }
+        $pdf->Cell(120, 7, utf8_decode($df), 0, 0, 'C');
+        $pdf->Cell(65, 7, utf8_decode($row->quantidade), 0, 0, 'C');
+        $pdf->Ln(7);
     }
+    
 
 
 

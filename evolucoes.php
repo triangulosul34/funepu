@@ -119,7 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if ($destino != "") {
-
         if ($where != "") {
             $where = $where . " and a.destino_paciente = '$destino' ";
         } else {
@@ -146,7 +145,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($transfere != "") {
         if (isset($_POST["transferir"])) {
-
             include('conexao.php');
             $stmty = "Select username from pessoas where pessoa_id = $profissional";
 
@@ -167,7 +165,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
         if (isset($_POST["transfconf"])) {
-
             include('conexao.php');
             $stmty = "Select username from pessoas where pessoa_id = $profissional";
 
@@ -191,7 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo "<script>alert('Imprimir')</script>";
         }
         if (isset($_POST["enviar"])) {
-
             include('conexao.php');
             $stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
                 where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Finalizado' or situacao='Impresso')";
@@ -226,7 +222,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -281,7 +279,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Evoluções
                                                 </h4>
                                             </div>
@@ -307,43 +306,75 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-3">
                                                 <label>Paciente</label>
-                                                <input type="text" class="form-control square" id="inputBasicFirstName" name="nome" placeholder="Parte do Nome" autocomplete="off" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" />
+                                                <input type="text" class="form-control square" id="inputBasicFirstName"
+                                                    name="nome" placeholder="Parte do Nome" autocomplete="off"
+                                                    value="<?php echo $nome; ?>"
+                                                    onkeyup="maiuscula(this)" />
                                             </div>
                                             <div class="col-3">
                                                 <label>Encaminhamento</label>
-                                                <select class="form-control square" name="encaminhamento" id="encaminhamento">
+                                                <select class="form-control square" name="encaminhamento"
+                                                    id="encaminhamento">
                                                     <option value="">Todos</option>
-                                                    <option value="07" <?php if ($destino == '07') echo "selected"; ?>>EM OBSERVAÇÃO / MEDICAÇÃO</option>;
-                                                    <option value="03" <?php if ($destino == '03') echo "selected"; ?>>PERMANÊCIA.</option>;
-                                                    <option value="10" <?php if ($destino == '10') echo "selected"; ?>>EXAMES / REAVALIACAO</option>;
+                                                    <option value="07" <?php if ($destino == '07') {
+    echo "selected";
+} ?>>EM
+                                                        OBSERVAÇÃO / MEDICAÇÃO
+                                                    </option>;
+                                                    <option value="03" <?php if ($destino == '03') {
+    echo "selected";
+} ?>>PERMANÊCIA.
+                                                    </option>;
+                                                    <option value="10" <?php if ($destino == '10') {
+    echo "selected";
+} ?>>EXAMES
+                                                        / REAVALIACAO
+                                                    </option>;
                                                 </select>
                                             </div>
                                             <div class="col col-lg-3">
-                                                <label class="control-label" for="inputBasicFirstName">Data Ínicial</label>
-                                                <input type="date" class="form-control text-center" name="start" id="start" OnKeyPress="formatar('##/##/####', this)" value="<?php echo $start; ?>" />
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Ínicial</label>
+                                                <input type="date" class="form-control text-center" name="start"
+                                                    id="start" OnKeyPress="formatar('##/##/####', this)"
+                                                    value="<?php echo $start; ?>" />
                                             </div>
                                             <div class="col col-lg-3 text-center">
-                                                <label class="control-label" for="inputBasicFirstName">Data Final</label>
-                                                <input type="date" class="form-control text-center" name="end" OnKeyPress="formatar('##/##/####', this)"/ value="<?php echo $end; ?>">
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Final</label>
+                                                <input type="date" class="form-control text-center" name="end"
+                                                    OnKeyPress="formatar('##/##/####', this)" /
+                                                    value="<?php echo $end; ?>">
                                             </div>
                                         </div>
                                         <div class="row align-items-end">
                                             <div class="col-md-4">
                                                 <label class="control-label">Especialidades</label>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="cb_cm" name="cb_cm" value='CM' <?php if ($CM == 'CM') echo "checked"; ?>>
-                                                    <label class="custom-control-label" for="cb_cm">Clinica Médica</label>
+                                                    <input type="checkbox" class="custom-control-input" id="cb_cm"
+                                                        name="cb_cm" value='CM' <?php if ($CM == 'CM') {
+    echo "checked";
+} ?>>
+                                                    <label class="custom-control-label" for="cb_cm">Clinica
+                                                        Médica</label>
                                                 </div>
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="cb_or" name="cb_or" value='OR' <?php if ($OR == 'OR') echo "checked"; ?>>
+                                                    <input type="checkbox" class="custom-control-input" id="cb_or"
+                                                        name="cb_or" value='OR' <?php if ($OR == 'OR') {
+    echo "checked";
+} ?>>
                                                     <label class="custom-control-label" for="cb_or">Ortopedia</label>
                                                 </div>
                                             </div>
                                             <div class="offset-3 col-5">
-                                                <button type="submit" name="pesquisa" value="semana" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
-                                                <button type="submit" name="hoje" value="hoje" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Hoje</button>
-                                                <button type="submit" name="ontem" value="ontem" class="btn btn-raised btn-info square btn-min-width mr-1 mb-1">Ontem</button>
-                                                <button type="submit" name="semana" value="semana" class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1">Semana</button>
+                                                <button type="submit" name="pesquisa" value="semana"
+                                                    class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
+                                                <button type="submit" name="hoje" value="hoje"
+                                                    class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Hoje</button>
+                                                <button type="submit" name="ontem" value="ontem"
+                                                    class="btn btn-raised btn-info square btn-min-width mr-1 mb-1">Ontem</button>
+                                                <button type="submit" name="semana" value="semana"
+                                                    class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1">Semana</button>
                                             </div>
                                         </div>
                                         <div class="row mt-5">
@@ -351,30 +382,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <table id="data_table" class="table">
                                                     <thead>
                                                         <tr>
-                                                            <th width='3%' style="font-size: 8.5pt;">
-                                                                <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
-                                                            </th>
                                                             <th width='8%' style="font-size: 8.5pt;">Solicitação</th>
-                                                            <th width='25%' style="font-size: 8.5pt;">Paciente</th>
+                                                            <th width='28%' style="font-size: 8.5pt;">Paciente</th>
                                                             <th width='18%' style="font-size: 8.5pt;">Origem</th>
                                                             <th width='5%' style="font-size: 8.5pt;">Atendim.</th>
-                                                            <th width='15%' style="font-size: 8.5pt;">Encaminhamento</th>
-                                                            <th width='15%' style="font-size: 8.5pt;">Destino</th>
-                                                            <th width='26%' style="font-size: 8.5pt;">Ação</th>
+                                                            <th width='15%' style="font-size: 8.5pt;">
+                                                                Encaminhamento/Destino
+                                                            </th>
+                                                            <th width='20%' style="font-size: 8.5pt;">Ação</th>
                                                         </tr>
                                                     </thead>
                                                     <tfoot>
                                                         <tr>
-                                                            <th width='3%' style="font-size: 8.5pt;">
-                                                                <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
-                                                            </th>
                                                             <th width='8%' style="font-size: 8.5pt;">Solicitação</th>
-                                                            <th width='25%' style="font-size: 8.5pt;">Paciente</th>
+                                                            <th width='28%' style="font-size: 8.5pt;">Paciente</th>
                                                             <th width='18%' style="font-size: 8.5pt;">Origem</th>
                                                             <th width='5%' style="font-size: 8.5pt;">Atendim.</th>
-                                                            <th width='15%' style="font-size: 8.5pt;">Encaminhamento</th>
-                                                            <th width='15%' style="font-size: 8.5pt;">Destino</th>
-                                                            <th width='26%' style="font-size: 8.5pt;">Ação</th>
+                                                            <th width='15%' style="font-size: 8.5pt;">
+                                                                Encaminhamento/Destino
+                                                            </th>
+                                                            <th width='20%' style="font-size: 8.5pt;">Ação</th>
                                                         </tr>
                                                     </tfoot>
                                                     <tbody>
@@ -423,9 +450,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                         $stmt = $stmt . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') order by a.dat_cad desc,a.hora_cad desc ";
                                                         $sth = pg_query($stmt) or die($stmt);
-                                                        //echo $stmt; 
+                                                        //echo $stmt;
                                                         while ($row = pg_fetch_object($sth)) {
-
                                                             if ($row->prioridade   == 'AMARELO') {
                                                                 $classe = "style=\"background-color:gold\"";
                                                             }
@@ -449,34 +475,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             $ip = getenv("REMOTE_ADDR");
                                                             echo "<tr " . $classe . ">";
                                                             if ($row->coronavirus == 1) {
-                                                                echo "<td align='center'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td class='blink'>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
-                                                                echo "<td class='blink'>" . $row->nome . "</td>";
-                                                                echo "<td class='blink'>" . $row->origem . "</td>";
+                                                                echo "<td class='blink' style='border-bottom:3px solid #eee;'>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
+                                                                echo "<td class='blink' style='border-bottom:3px solid #eee;'>" . $row->nome . "</td>";
+                                                                echo "<td class='blink' style='border-bottom:3px solid #eee;'>" . $row->origem . "</td>";
                                                                 //echo "<td class='blink'>" . $row->hora_cad . "</td>";
                                                                 //echo "<td class='blink'>" . $row->hora_triagem . "</td>";
-                                                                echo "<td class='blink'>" . $row->hora_destino . "</td>";
+                                                                echo "<td class='blink' style='border-bottom:3px solid #eee;'>" . $row->hora_destino . "</td>";
 
 
-                                                                echo "<td class=\"small\">" . $row->destino . "</td>";
-                                                                echo "<td class=\"small\">" . $row->destinoalta . "</td>";
+                                                                echo "<td class=\"small\" style='border-bottom:3px solid #eee;'>" . $row->destino . " - ".$row->destinoalta."</td>";
                                                             } else {
-                                                                echo "<td align='center'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
-                                                                echo "<td>" . $row->nome . "</td>";
-                                                                echo "<td>" . $row->origem . "</td>";
+                                                                echo "<td style='border-bottom:3px solid #eee;'>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
+                                                                echo "<td style='border-bottom:3px solid #eee;'>" . $row->nome . "</td>";
+                                                                echo "<td style='border-bottom:3px solid #eee;'>" . $row->origem . "</td>";
                                                                 // echo "<td>" . $row->hora_cad . "</td>";
                                                                 // echo "<td>" . $row->hora_triagem . "</td>";
-                                                                echo "<td>" . $row->hora_destino . "</td>";
+                                                                echo "<td style='border-bottom:3px solid #eee;'>" . $row->hora_destino . "</td>";
 
 
-                                                                echo "<td class=\"small\">" . $row->destino . "</td>";
-                                                                echo "<td class=\"small\">" . $row->destinoalta . "</td>";
+                                                                echo "<td class=\"small\" style='border-bottom:3px solid #eee;'>" . $row->destino . " - ".$row->destinoalta."</td>";
                                                             }
 
 
 
-                                                            echo "<td>";
+                                                            echo "<td style='border-bottom:3px solid #eee;'>";
 
                                                             if ($perfil == '03' or $perfil == '06') {
                                                                 echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\"><i class=\"fas fa-eye\"></i></a>";
@@ -677,7 +699,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             var transacaoModal = $("#transacaoMod").val();
             var situacaoMod = $("#situacaoMod").val();
 
-            $.get('salvarsituacao.php?transacaoMod=' + transacaoModal + "&situacaoMod=" + situacaoMod, function(dataReturn) {
+            $.get('salvarsituacao.php?transacaoMod=' + transacaoModal + "&situacaoMod=" + situacaoMod, function(
+                dataReturn) {
                 alert(dataReturn);
                 $('#modalConteudoSitu').modal('hide');
             });

@@ -14,35 +14,13 @@ function inverteData($data)
 include('verifica.php');
 $qtde_atendimentos = '';
 $dias = '';
-$start          = '';
-$end          = '';
+$start          = date('Y-m-d');
+$end          = date('Y-m-d');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
     if (isset($_POST['gerarrelatorio'])) {
         $start          = $_POST['start'];
         $end          = $_POST['end'];
-
-        include('conexao.php');
-        $stmtRel = "SELECT count(*) as qtde, 
-				CASE
-				WHEN destino_paciente= '01' or destino_paciente= '02' 
-				or destino_paciente= '11' or destino_paciente= '12' 
-				or destino_paciente= '15' 
-				or destino_paciente= '14' THEN 'ALTA'		
-				WHEN destino_paciente= '06' THEN 'ÓBITO'
-				WHEN destino_paciente= '03' THEN 'PERMANÊNCIA'
-				WHEN destino_paciente= '07' THEN 'EM OBSERVAÇÃO / MEDICAÇÃO'
-				END AS destino,
-				CASE
-				WHEN destino_paciente= '01' or destino_paciente= '02' or destino_paciente= '11' or destino_paciente= '12' or destino_paciente= '14' or destino_paciente= '15' THEN '01,02,11,12,14,15'
-				END AS vlr_destino
-				from atendimentos a
-				left join destino_paciente d on d.atendimento_id = a.transacao
-				where destino_paciente in ('01','11', '02', '12','14','15','06', '03', '07') and dat_cad between '$start' and '$end'
-				group by 2,3 
-				order by 2 ASC, 1 DESC";
-        $sthRel = pg_query($stmtRel);
 
         include('conexao.php');
         $stmtRelCont = "SELECT count(*) as qtde
@@ -74,7 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -128,7 +108,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>relatorio atendimento
                                                 </h4>
                                             </div>
@@ -154,149 +135,107 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Data Inicial</label>
-                                                    <input type="date" class="form-control square" id="start" name="start" value="<?php echo $_POST['start']; ?>" onkeydown="mascaraData(this)">
+                                                    <input type="date" class="form-control square" id="start"
+                                                        name="start"
+                                                        value="<?php echo $_POST['start']; ?>"
+                                                        onkeydown="mascaraData(this)">
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Data Final</label>
-                                                    <input type="date" class="form-control square" id="end" name="end" value="<?php echo $_POST['end']; ?>" onkeydown="mascaraData(this)">
+                                                    <input type="date" class="form-control square" id="end" name="end"
+                                                        value="<?php echo $_POST['end']; ?>"
+                                                        onkeydown="mascaraData(this)">
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <label class="control-label">Ação</label><br>
-                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary" style="width:100%">Gerar Relatório</button>
+                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary"
+                                                    style="width:100%">Gerar Relatório</button>
                                             </div>
                                         </div>
                                     </form>
                                     <?php if (isset($_POST['gerarrelatorio']) and $qtde_atendimentos > 0) { ?>
-                                        <div class="row mt-3">
-                                            <div class="col-6">
-                                                <h4>Atendimentos de</h4>
-                                                <p class="font-size-20 blue-grey-700"><?php echo inverteData($start); ?> até <?php echo inverteData($end); ?></p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h4>Atendimentos</h4>
-                                                <p><?php echo $qtde_atendimentos; ?> Atendimentos</p>
-                                            </div>
+                                    <div class="row mt-3">
+                                        <div class="col-6">
+                                            <h4>Atendimentos de</h4>
+                                            <p class="font-size-20 blue-grey-700"><?php echo inverteData($start); ?>
+                                                até <?php echo inverteData($end); ?>
+                                            </p>
                                         </div>
-                                        <div class="row mt-3">
-                                            <table class="table">
-                                                <thead align="left">
-                                                    <tr>
-                                                        <th>Destino</th>
-                                                        <th>Quantidade</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                        <div class="col-6">
+                                            <h4>Atendimentos</h4>
+                                            <p><?php echo $qtde_atendimentos; ?>
+                                                Atendimentos</p>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <table class="table">
+                                            <thead align="left">
+                                                <tr>
+                                                    <th>Destino</th>
+                                                    <th>Quantidade</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
 
+                                                <?php
+                                                $sql = "SELECT case when z.destino_encaminhamento::varchar is null then ltrim(a.destino_paciente,'0') else ltrim(z.destino_encaminhamento::varchar,'0') end as destino_paciente, count(*) as quantidade from atendimentos a left join destino_paciente z on z.atendimento_id = a.transacao where dat_cad between '$start' and '$end' group by 1";
+                                                $result = pg_query($sql) or die($sql);
+                                                while ($row = pg_fetch_object($result)) {
+                                                    ?>
+                                                <tr>
                                                     <?php
-                                                    while ($rowRel = pg_fetch_object($sthRel)) {
-
-                                                        $valoresDestino = explode(",", $rowRel->vlr_destino);
-                                                        $valoresDestino = "'$valoresDestino[0]', '$valoresDestino[1]', '$valoresDestino[2]', '$valoresDestino[3]','$valoresDestino[4]','$valoresDestino[5]'";
-
-                                                        echo '<tr>';
-                                                        echo '<td style="font-weight: bold">' . $rowRel->destino . '</td>';
-                                                        echo '<td style="font-weight: bold">' . $rowRel->qtde . '</td>';
-                                                        echo '</tr>';
-                                                        include('conexao.php');
-                                                        if ($rowRel->destino == 'ALTA') {
-                                                            $stmtRel2 = "SELECTx count(*) as qtde, 
-												CASE
-													WHEN destino_paciente= '01' THEN 'ALTA'
-													WHEN destino_paciente= '02' THEN 'ALTA / ENCAM. AMBUL.'
-													WHEN destino_paciente= '11' THEN 'ALTA EVASÃO' 
-													WHEN destino_paciente= '12' THEN 'ALTA PEDIDO' 
-													WHEN destino_paciente= '06' THEN 'ÓBITO'
-													WHEN destino_paciente= '14' THEN 'ALTA / PM' 
-													WHEN destino_paciente= '15' THEN 'ALTA / PENITENCIÁRIA' 
-													END AS destino
-												from atendimentos a
-												left join destino_paciente d on d.atendimento_id = a.transacao
-												where destino_paciente in (" . $valoresDestino . ") and destino_paciente != '' and dat_cad between '$start' and '$end'
-												group by 2 
-												order by 2 ASC, 1 DESC";
-                                                            $sthRel2 = pg_query($stmtRel2);
-                                                            while ($rowRel2 = pg_fetch_object($sthRel2)) {
-                                                                echo '<tr>';
-                                                                $destino = '';
-                                                                if ($rowRel2->destino == 'ALTA') {
-                                                                    $destino = 'ALTA DOMICÍLIO';
-                                                                } else {
-                                                                    $destino = $rowRel2->destino;
-                                                                }
-                                                                echo '<td>' . $destino . '</td>';
-                                                                echo '<td>' . $rowRel2->qtde . '</td>';
-                                                                echo '</tr>';
-                                                            }
-                                                        } elseif ($rowRel->destino == 'EM OBSERVAÇÃO / MEDICAÇÃO') {
-                                                            $stmtRel2 = "SELECT count(*) as qtde, 
-													CASE
-														WHEN destino_encaminhamento = '01' THEN 'ALTA'
-														WHEN destino_encaminhamento = '02' THEN 'ALTA / ENCAM. AMBUL.'
-														WHEN destino_encaminhamento = '11' THEN 'ALTA EVASÃO' 
-														WHEN destino_encaminhamento = '12' THEN 'ALTA PEDIDO' 
-														WHEN destino_encaminhamento = '15' THEN 'ALTA / PENITENCIÁRIA'
-														WHEN destino_encaminhamento = '14' THEN 'ALTA / PM' 
-														WHEN destino_encaminhamento = '04' THEN 'TRANSF. OUTRA UPA'
-														WHEN destino_encaminhamento = '05' THEN 'TRANSFERENCIA HOSPITALAR'
-														WHEN destino_encaminhamento = '13' THEN 'TRANSFERENCIA INTERNA'
-														WHEN destino_encaminhamento = '03' THEN 'PERMANÊCIA.' 
-														WHEN destino_encaminhamento = '06' THEN 'ÓBITO' 
-														ELSE 'NÃO SE APLICA'
-														END AS destino
-													from atendimentos a
-													left join destino_paciente d on d.atendimento_id = a.transacao
-													where destino_paciente in ('07') and destino_paciente != '' and dat_cad between '$start' and '$end'
-													group by 2 
-													order by 2 ASC, 1 DESC";
-                                                            $sthRel2 = pg_query($stmtRel2);
-                                                            while ($rowRel2 = pg_fetch_object($sthRel2)) {
-                                                                echo '<tr>';
-                                                                $destino = $rowRel2->destino;
-                                                                echo '<td>' . $destino . '</td>';
-                                                                echo '<td>' . $rowRel2->qtde . '</td>';
-                                                                echo '</tr>';
-                                                            }
-                                                        } elseif ($rowRel->destino == 'PERMANÊNCIA') {
-                                                            $stmtRel2 = "SELECT count(*) as qtde, 
-														CASE
-															WHEN destino_encaminhamento = '01' THEN 'ALTA'
-															WHEN destino_encaminhamento = '02' THEN 'ALTA / ENCAM. AMBUL.'
-															WHEN destino_encaminhamento = '11' THEN 'ALTA EVASÃO' 
-															WHEN destino_encaminhamento = '12' THEN 'ALTA PEDIDO' 
-															WHEN destino_encaminhamento = '15' THEN 'ALTA / PENITENCIÁRIA'
-															WHEN destino_encaminhamento = '14' THEN 'ALTA / PM' 
-															WHEN destino_encaminhamento = '04' THEN 'TRANSF. OUTRA UPA'
-															WHEN destino_encaminhamento = '05' THEN 'TRANSFERENCIA HOSPITALAR'
-															WHEN destino_encaminhamento = '13' THEN 'TRANSFERENCIA INTERNA'
-															WHEN destino_encaminhamento = '03' THEN 'PERMANÊCIA' 
-															WHEN destino_encaminhamento = '06' THEN 'ÓBITO' 
-															ELSE 'NÃO SE APLICA'
-															END AS destino
-														from atendimentos a
-														left join destino_paciente d on d.atendimento_id = a.transacao
-														where destino_paciente in ('03') and destino_paciente != '' and dat_cad between '$start' and '$end'
-														group by 2 
-														order by 2 ASC, 1 DESC";
-                                                            $sthRel2 = pg_query($stmtRel2);
-                                                            while ($rowRel2 = pg_fetch_object($sthRel2)) {
-                                                                echo '<tr>';
-                                                                $destino = $rowRel2->destino;
-                                                                echo '<td>' . $destino . '</td>';
-                                                                echo '<td>' . $rowRel2->qtde . '</td>';
-                                                                echo '</tr>';
-                                                            }
-                                                        }
+                                                    if ($row->destino_paciente == '01') {
+                                                        $df = 'ALTA';
+                                                    } elseif ($row->destino_paciente == '02') {
+                                                        $df = 'ALTA / ENCAM. AMBUL.';
+                                                    } elseif ($row->destino_paciente == '07') {
+                                                        $df = 'EM OBSERVAÇÃO / MEDICAÇÃO';
+                                                    } elseif ($row->destino_paciente == '10') {
+                                                        $df = 'EXAMES / REAVALIACAO';
+                                                    } elseif ($row->destino_paciente == '03') {
+                                                        $df = 'PERMANÊCIA.';
+                                                    } elseif ($row->destino_paciente == '04') {
+                                                        $df = 'TRANSF. OUTRA UPA';
+                                                    } elseif ($row->destino_paciente == '05') {
+                                                        $df = 'TRANSF. INTERN. HOSPITALAR';
+                                                    } elseif ($row->destino_paciente == '06') {
+                                                        $df = 'ÓBITO';
+                                                    } elseif ($row->destino_paciente == '09') {
+                                                        $df = 'NAO RESPONDEU CHAMADO';
+                                                    } elseif ($row->destino_paciente == '11') {
+                                                        $df = 'ALTA EVASÃO';
+                                                    } elseif ($row->destino_paciente == '12') {
+                                                        $df = 'ALTA PEDIDO';
+                                                    } elseif ($row->destino_paciente == '14') {
+                                                        $df = 'ALTA / POLICIA';
+                                                    } elseif ($row->destino_paciente == '15') {
+                                                        $df = 'ALTA / PENITENCIÁRIA';
+                                                    } elseif ($row->destino_paciente == '16') {
+                                                        $df = 'ALTA / PÓS MEDICAMENTO';
+                                                    } elseif ($row->destino_paciente == '20') {
+                                                        $df = 'ALTA VIA SISTEMA';
+                                                    } elseif ($row->destino_paciente == '21') {
+                                                        $df = 'TRANSFERENCIA';
+                                                    } else {
+                                                        $df = 'NAO SE APLICA';
                                                     } ?>
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12" align="center"><button id="imprimirelatorio" class="btn btn-raised btn-success square">Imprimir</button></div>
-                                        </div>
+                                                    <td><?= $df; ?>
+                                                    </td>
+                                                    <td><?= $row->quantidade; ?>
+                                                    </td>
+                                                </tr>
+                                                <?php
+                                                } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12" align="center"><button id="imprimirelatorio"
+                                                class="btn btn-raised btn-success square">Imprimir</button></div>
+                                    </div>
                                     <?php } ?>
                                 </div>
                             </div>
