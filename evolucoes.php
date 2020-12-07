@@ -379,7 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </div>
                                         <div class="row mt-5">
                                             <div class="col-12">
-                                                <table id="data_table" class="table">
+                                                <table id="dttable" class="table">
                                                     <thead>
                                                         <tr>
                                                             <th width='8%' style="font-size: 8.5pt;">Solicitação</th>
@@ -448,7 +448,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             $stmt = $stmt . " where a.dat_cad='" . date('Y-m-d') . "'";
                                                         }
 
-                                                        $stmt = $stmt . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') order by a.dat_cad desc,a.hora_cad desc ";
+                                                        $stmt = $stmt . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') order by a.dat_cad desc";
                                                         $sth = pg_query($stmt) or die($stmt);
                                                         //echo $stmt;
                                                         while ($row = pg_fetch_object($sth)) {
@@ -551,8 +551,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
-        $('#dados').dataTable({
-            "iDisplayLength": 100
+        $('#dttable').DataTable({
+            "order": []
         });
 
         function buscar_cidades() {
