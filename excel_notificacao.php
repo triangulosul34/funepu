@@ -44,13 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $getHighestRow = $sheet->getHighestRow();
             for ($i = 3; $i <= $getHighestRow; $i++) {
                 $nome = $sheet->getCellByColumnAndRow(0, $i)->getValue();
-                $data_nascimento = date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(1, $i)->getValue()));
+                ($sheet->getCellByColumnAndRow(1, $i)->getValue()) ?$data_nascimento = date('d/m/Y', strtotime('+1 days', strtotime(date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(1, $i)->getValue()))))) : $data_nascimento = '';
                 $nome_mae = $sheet->getCellByColumnAndRow(2, $i)->getValue();
                 $cpf = $sheet->getCellByColumnAndRow(3, $i)->getValue();
                 $tipo = $sheet->getCellByColumnAndRow(4, $i)->getValue();
-                $data_notificacao = date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(5, $i)->getValue()));
+                ($sheet->getCellByColumnAndRow(5, $i)->getValue()) ? $data_notificacao = date('d/m/Y', strtotime('+1 days', strtotime(date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(5, $i)->getValue()))))) : $data_notificacao = '';
                 $resultados = $sheet->getCellByColumnAndRow(6, $i)->getValue();
-                $data_secretaria = date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(7, $i)->getValue()));
+                ($sheet->getCellByColumnAndRow(7, $i)->getValue()) ? $data_secretaria = date('d/m/Y', strtotime('+1 days', strtotime(date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(7, $i)->getValue()))))) : $data_secretaria = '';
                 $assinatura_recebimento = $sheet->getCellByColumnAndRow(8, $i)->getValue();
 
                 include('conexao.php');
