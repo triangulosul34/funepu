@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     require_once 'PHPexcel/PHPExcel/IOFactory.php';
 
     $erro = [];
+    $qt_notificacao = [];
 
     $file = $_FILES['excel']['tmp_name'];
 
@@ -73,6 +74,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 include('conexao.php');
                 $sql = "insert into excel_notificacao(nome,data_nascimento,nome_mae,cpf,tipo,data_notificacao,resultados,data_secretaria,assinatura_recebimento,arquivo,controle) values('$nome','$data_nascimento','$nome_mae', '$cpf', '$tipo', '$data_notificacao', '$resultados', '$data_secretaria', '$assinatura_recebimento', '".basename($_FILES['excel']['name'])."', 1)";
                 $result = pg_query($sql) or die($sql);
+
+                $qt_notificacao[$tipo] = $qt_notificacao[$tipo] + 1;
             }
         }
     }
@@ -187,7 +190,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </div>
                                             </div>
                                             <div class="row mt-3">
-                                                <div class="col-mr-12">
+                                                <div class="col-md-12">
                                                     <?php if ($enviado) {?>
                                                     <h3>Arquivo enviado com sucesso!!!</h3>
                                                     <?php } elseif (isset($enviado)) { ?>
@@ -196,14 +199,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </div>
                                             </div>
                                             <div class="row mt-3">
-                                                <div class="col-mr-12">
+                                                <div class="col-md-12">
+                                                    <?php
+foreach ($qt_notificacao as $key => $value) {
+    echo "<h3>$key -> $value</h3>";
+    $qt += $value;
+}
+echo "<br><h3>Total: $qt</h3>";
+                                                    ?>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-md-12">
                                                     <?php if ($erro) {
-    echo "<h3>Possiveis duplicidades</h3>";
-    foreach ($erro as $nome) {?>
+                                                        echo "<h3>Possiveis duplicidades</h3>";
+                                                        foreach ($erro as $nome) {?>
                                                     <h4><?= $nome; ?>
                                                     </h4>
                                                     <?php }
-} ?>
+                                                    } ?>
                                                 </div>
                                             </div>
                                         </form>
