@@ -19,7 +19,7 @@ include('verifica.php');
 class PDF extends FPDF
 {
     // Page header
-    function Header()
+    public function Header()
     {
 
         // Logo
@@ -46,7 +46,7 @@ class PDF extends FPDF
         $this->SetFont('Arial', 'B', 7);
         $this->Cell(300, 5, $senha, 0, 0, 'C');
         $this->Ln(1);
-        $this->Line(10,  25, 195, 25);
+        $this->Line(10, 25, 195, 25);
 
 
 
@@ -54,7 +54,7 @@ class PDF extends FPDF
 
         $this->Line(10, 275.8, 195, 275.8);
 
-        $this->Line(10, 25,  10, 275.8);
+        $this->Line(10, 25, 10, 275.8);
         $this->Line(195, 25, 195, 275.8);
 
         $this->SetFont('Arial', 'B', 9);
@@ -62,7 +62,7 @@ class PDF extends FPDF
         $this->SetFont('Arial', '', 9);
 
 
-        $this->Cell(120, 5, 'UNIDADE DE PRONTO ATENDIMENTO '. utf8(UNIDADE_CONFIG) , 0, 0, 'L');
+        $this->Cell(120, 5, 'UNIDADE DE PRONTO ATENDIMENTO '. utf8_decode(UNIDADE_CONFIG), 0, 0, 'L');
         $this->SetFont('Arial', '', 9);
         $this->Cell(15, 5, ' CNES:', 0, 'L');
         $this->Cell(40, 5, '2164817', 0, 0, 'L');
@@ -75,7 +75,6 @@ class PDF extends FPDF
 
 
         if ($tipo_relatorio == '') {
-
             include('conexao.php');
             $stmtRelCont = "SELECT count(*) as qtde from atendimentos a
 				where destino_paciente in ('01','11', '02', '12','14','15','06', '03', '07') and dat_cad between '$start' and '$end'";
@@ -136,7 +135,6 @@ $pdf->SetFont('Arial', '', 7);
 
 $data = '';
 while ($rowRel = pg_fetch_object($sthRel)) {
-
     if ($rowRel->nome <> '') {
         if ($data == '' or strtotime($data) != strtotime(date('d/m/Y', strtotime($rowRel->dat_cad)))) {
             if ($data != '') {

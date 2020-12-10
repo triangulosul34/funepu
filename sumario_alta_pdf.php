@@ -101,7 +101,7 @@ $pdf->Cell(33, 5, $row->alta_sumario, 0, 1, 'L');
 $pdf->SetFont('Arial', 'B', 11);
 $pdf->Cell(36, 5, utf8_decode('Caráter Internação:'), 0, 0, 'L');
 $pdf->SetFont('Arial', '', 11);
-$pdf->Cell(35, 5, $row->carater_internacao_sumario, 0, 0, 'L');
+$pdf->Cell(35, 5, utf8_decode($row->carater_internacao_sumario), 0, 0, 'L');
 $pdf->SetFont('Arial', 'B', 11);
 $pdf->Cell(26, 5, utf8_decode('Permanência:'), 0, 0, 'L');
 $pdf->SetFont('Arial', '', 11);

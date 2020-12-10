@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if ($transacao != "") {
         include('conexao.php');
-        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.hora_destino, z.data, z.hora, d.nome as medico, d.num_conselho_reg as crm, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.hora_destino, a.especialidade, z.data, z.hora, d.nome as medico, d.num_conselho_reg as crm, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.nome_mae, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade
@@ -123,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $deficiencia = $_POST['deficiencia'];
         $origem = $row->origem;
         $deficiencia = $row->nec_especiais;
+        $especialidade = $row->especialidade;
         $data_inicial = $data_destino;
         $data_final = $data_alta;
         $diferenca = strtotime($data_final) - strtotime($data_inicial);
@@ -165,7 +166,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ($rows->sumario_alta_id) {
         $sumario_alta_id = $rows->sumario_alta_id;
         $especialidade_sumario = $rows->especialidade_sumario;
-        $modalidade_assistencial_sumario = $rows->modalidade_assistencial_sumario;
         $diagnostico = $rows->diagnostico;
         $procedimento_terapeutico = $rows->procedimento_terapeutico;
         $evolucap = $rows->evolucap;
@@ -629,17 +629,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="">Especialidade</label><input type="text" class="form-control"
-                                        style="border-color:red" name="especialidade_sumario" id="especialidade_sumario"
-                                        value="<?= $especialidade_sumario; ?>">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="">Modalidade Assistencial</label><input type="text" class="form-control"
-                                        style="border-color:red" name="modalidade_assistencial_sumario"
-                                        id="modalidade_assistencial_sumario"
-                                        value="<?= $modalidade_assistencial_sumario; ?>">
+                                    <label for="">Especialidade</label>
+                                    <?php if ($especialidade == 'Ortopedia') { ?>
+                                    <input type="text" class="form-control" style="border-color:red"
+                                        name="especialidade_sumario" id="especialidade_sumario"
+                                        value="<?= ($especialidade_sumario != '') ? $especialidade_sumario : "Ortopedia"; ?>">
+                                    <?php } else { ?>
+                                    <input type="text" class="form-control" style="border-color:red"
+                                        name="especialidade_sumario" id="especialidade_sumario"
+                                        value="<?= ($especialidade_sumario != '') ? $especialidade_sumario : "Clinica Medica"; ?>">
+                                    <?php } ?>
                                 </div>
                             </div>
                         </div>
@@ -674,7 +673,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <label for="">Caráter Internação</label><input type="text" class="form-control"
                                         style="border-color:red" name="carater_internacao_sumario"
                                         id="carater_internacao_sumario"
-                                        value="<?= $carater_internacao_sumario; ?>">
+                                        value="<?= ($carater_internacao_sumario) ? $carater_internacao_sumario : 'Urgência/Emergência'; ?>">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -700,6 +699,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                         </div>
+                        <div class="row mb-2">
+                            <div class="col-md-3 ml-3">
+                                <label class="control-label">CID</label>
+                                <input type="text" name="CID_permanencia" id="CID_permanencia" class="form-control"
+                                    value="<?= $cid_internacao; ?>"
+                                    onkeyup="maiuscula(this)" onblur="buscaCidpermanencia(this)" maxlength='5'>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="control-label">Diagnóstico Principal</label>
+                                <input type="text" name="diag_pri_permanencia" id="diag_pri_permanencia"
+                                    onkeyup="retornaCidpermanencia(this)" class="form-control"
+                                    value="<?= $diag_pri_permanencia; ?>">
+
+                                <!-- Está parte do codigo é referente a busca do CID -->
+
+                                <style>
+                                    table #cidTable {
+                                        border-collapse: collapse;
+                                        width: 100%;
+                                    }
+
+                                    #cidTable th,
+                                    #cidTable td {
+                                        text-align: left;
+                                        padding: 8px;
+                                    }
+
+                                    #cidTable tr:nth-child(even) {
+                                        background-color: #f0f0f0;
+                                    }
+
+                                    #lista_diagnostico {
+                                        height: 150px;
+                                        overflow: scroll;
+                                        display: none;
+                                        overflow-x: hidden;
+
+                                    }
+
+                                    #cidTable a {
+                                        text-decoration: none;
+                                    }
+
+                                    .linha {
+                                        padding: 10px;
+                                        border-top: 1px solid #999999;
+                                    }
+                                </style>
+                                <div id="lista_diagnostico_permanencia">
+                                    <table id="cidTablepermanencia" class="table table-hover table-striped width-full">
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <h5>DIAGNÓSTICOS</h5>
@@ -707,8 +761,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <textarea name="diagnostico" id="diagnostico"
-                                    class="form-control"><?= $diagnostico ?></textarea>
+                                <textarea name="diagnostico" id="diagnostico" class="form-control"
+                                    required><?= $diagnostico ?></textarea>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -729,8 +783,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <textarea name="evolucap" id="evolucao" rows="2"
-                                    class="form-control"><?= $evolucap ?></textarea>
+                                <?php if ($evolucap != '') { ?>
+                                <textarea name="evolucap" id="evolucao" rows="2" class="form-control"
+                                    required><?= $evolucap ?></textarea>
+                                <?php } else {
+    $sql = "SELECT max(a.evolucao_id), a.evolucao FROM evolucoes a left join pessoas b ON b.username = a.usuario WHERE a.atendimento_id =343647 group by 2 order by 1 desc";
+    $result = pg_query($sql) or die($sql);
+    $row = pg_fetch_object($result); ?>
+                                <textarea name="evolucap" id="evolucao" rows="2" class="form-control"
+                                    required><?= $row->evolucao; ?></textarea>
+                                <?php
+} ?>
                             </div>
                         </div>
                         <div class="row mt-2">
@@ -762,8 +825,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="row">
                             <div class="col-md-12">
-                                <textarea name="estado_paciente" id="estado_paciente" rows="2"
-                                    class="form-control"><?= $estado_paciente ?></textarea>
+                                <textarea name="estado_paciente" id="estado_paciente" rows="2" class="form-control"
+                                    required><?= $estado_paciente ?></textarea>
                             </div>
                         </div>
                         <div class="col-md-12 mt-3">
@@ -1646,6 +1709,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             this.style.height = 'auto';
             this.style.height = (this.scrollHeight) + 'px';
         });
+
+        function buscaCidpermanencia(a) {
+            var url = 'ajax_buscar_cid_permanencia.php?cid=' + a.value;
+            $.get(url, function(dataReturn) {
+                $('#diag_pri_permanencia').val(dataReturn);
+            });
+        }
+
+        function retornaCidpermanencia(valor) { //A fun褯 顰ara retorno do CID 10
+            var cid = valor.value;
+            $("#lista_diagnostico_permanencia").css("display", "block");
+            $.get('retorno_cid_permanencia.php?cid=' + cid, function(dataReturn) {
+                $('#cidTablepermanencia').html(dataReturn);
+            });
+
+            //Ocultar a caixa de sugest䯠do CID
+            if (cid == "") {
+                $("#lista_diagnostico_permanencia").slideUp(100);
+            }
+
+        }
+
+        function preencheCidpermanencia(cid, descricao) {
+            $("#CID_permanencia").val(cid);
+            $("#diag_pri_permanencia").val(descricao);
+            $('#cidTablepermanencia').empty();
+            $("#lista_diagnostico_permanencia").slideUp(100);
+
+            document.getElementById('diagnostico').value += $("#diag_pri_permanencia").val() + '\n';
+
+            document.getElementById('diagnostico').css('height', alturaScroll);
+        }
     </script>
 </body>
 

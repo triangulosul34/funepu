@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $unidade = $_POST['unidade_sumario'];
     $nome_mae = $_POST['nome_mae_sumario'];
     $especialidade = $_POST['especialidade_sumario'];
-    $modalidade_assistencial = $_POST['modalidade_assistencial_sumario'];
     $procedencia = $_POST['procedencia_sumario'];
     $internacao = $_POST['internacao_sumario'];
     $alta = $_POST['alta_sumario'];
@@ -42,11 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     if ($row->atendimento_id == '') {
         include('conexao.php');
-        $sql = "INSERT INTO sumario_alta(atendimento_id,nome_sumario,cns_sumario,prontuario_sumario,idade_sumario,data_nascimento_sumario,sexo_sumario,unidade_sumario,nome_mae_sumario,especialidade_sumario,modalidade_assistencial_sumario,procedencia_sumario,internacao_sumario,alta_sumario,carater_internacao_sumario,responsavel_sumario,crm_sumario,diagnostico,procedimento_terapeutico,evolucap,pos_alta,segmento_atendimento,estado_paciente, permanencia_sumario) VALUES($atendimento_id,'$nome','$cns',$paciente_id,'$idade','$data_nascimento','$sexo','$unidade','$nome_mae','$especialidade','$modalidade_assistencial','$procedencia','$internacao','$alta','$carater_internacao','$responsavel','$crm','$diagnostico','$procedimento_terapeutico','$evolucap','$pos_alta','$segmento_atendimento','$estado_paciente','$permanencia')";
+        $sql = "INSERT INTO sumario_alta(atendimento_id,nome_sumario,cns_sumario,prontuario_sumario,idade_sumario,data_nascimento_sumario,sexo_sumario,unidade_sumario,nome_mae_sumario,especialidade_sumario,procedencia_sumario,internacao_sumario,alta_sumario,carater_internacao_sumario,responsavel_sumario,crm_sumario,diagnostico,procedimento_terapeutico,evolucap,pos_alta,segmento_atendimento,estado_paciente, permanencia_sumario) VALUES($atendimento_id,'$nome','$cns',$paciente_id,'$idade','$data_nascimento','$sexo','$unidade','$nome_mae','$especialidade','$procedencia','$internacao','$alta','$carater_internacao','$responsavel','$crm','$diagnostico','$procedimento_terapeutico','$evolucap','$pos_alta','$segmento_atendimento','$estado_paciente','$permanencia')";
         $result = pg_query($sql) or die($sql);
     } else {
         include('conexao.php');
-        $sql = "UPDATE sumario_alta SET atendimento_id=$atendimento_id,nome_sumario='$nome',cns_sumario='$cns',prontuario_sumario=$paciente_id,idade_sumario='$idade',data_nascimento_sumario='$data_nascimento',sexo_sumario='$sexo',unidade_sumario='$unidade',nome_mae_sumario='$nome_mae',especialidade_sumario='$especialidade',modalidade_assistencial_sumario='$modalidade_assistencial',procedencia_sumario='$procedencia',internacao_sumario='$internacao',alta_sumario='$alta',carater_internacao_sumario='$carater_internacao',responsavel_sumario='$responsavel',permanencia_sumario='$permanencia',crm_sumario='$crm',diagnostico='$diagnostico',procedimento_terapeutico='$procedimento_terapeutico',evolucap='$evolucap',pos_alta='$pos_alta',segmento_atendimento='$segmento_atendimento',estado_paciente='$estado_paciente' WHERE atendimento_id=$atendimento_id";
+        $sql = "UPDATE sumario_alta SET atendimento_id=$atendimento_id,nome_sumario='$nome',cns_sumario='$cns',prontuario_sumario=$paciente_id,idade_sumario='$idade',data_nascimento_sumario='$data_nascimento',sexo_sumario='$sexo',unidade_sumario='$unidade',nome_mae_sumario='$nome_mae',especialidade_sumario='$especialidade',procedencia_sumario='$procedencia',internacao_sumario='$internacao',alta_sumario='$alta',carater_internacao_sumario='$carater_internacao',responsavel_sumario='$responsavel',permanencia_sumario='$permanencia',crm_sumario='$crm',diagnostico='$diagnostico',procedimento_terapeutico='$procedimento_terapeutico',evolucap='$evolucap',pos_alta='$pos_alta',segmento_atendimento='$segmento_atendimento',estado_paciente='$estado_paciente' WHERE atendimento_id=$atendimento_id";
         $result = pg_query($sql) or die($sql);
     }
 
