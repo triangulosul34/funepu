@@ -1,6 +1,6 @@
 <?php
 
-require 'tsul_ssl.php';
+//require 'tsul_ssl.php';
 
 function inverteData($data)
 {
