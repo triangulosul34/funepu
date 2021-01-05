@@ -839,8 +839,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													echo '<td>' . ts_decodifica($row->nome) . '</td>';
 													echo '<td>' . $row->desc_exames . '-' . $row->exame_nro . '</td>';
 													//echo "<td>".utf8_encode($row->convenio)."</td>";
-													echo '<td>' . utf8_encode(substr($row->medresp, 0, 8)) . '</td>';
-													echo '<td>' . utf8_encode(substr($row->medconf, 0, 8)) . '</td>';
+													echo '<td>' . substr(ts_decodifica(utf8_encode($row->medresp)), 0, 8) . '</td>';
+													echo '<td>' . substr(ts_decodifica(utf8_encode($row->medconf)), 0, 8) . '</td>';
 													echo '<td>' . $hora_rea . '</td>';
 													echo '<td>' . $row->situacao . '</td>';
 													echo "<td><button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Laudar\"><i class=\"fas fa-search\" aria-hidden=\"true\" onclick=\"openInNewTab('emitelaudos.php?id=$row->exame_nro')\"></i></button>";
