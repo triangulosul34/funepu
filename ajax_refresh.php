@@ -34,5 +34,5 @@ foreach ($list as $rs) {
 	// put in bold the written text
 	$country_name = str_replace($_POST['keyword'], '<b>' . $_POST['keyword'] . '</b>', ts_decodifica($rs['nome'])) . ' - ' . inverteData($rs['dt_nasc']) . ' - ' . $cpf;
 	// add new option
-	echo '<li onclick="set_item(\'' . str_replace("'", "\'", ts_decodifica($rs['nome'])) . '\',\'' . $rs['pessoa_id'] . '\',\'' . inverteData($rs['dt_nasc']) . '\',\'' . $sexo . '\',\'' . $rs['telefone'] . '\',\'' . $rs['celular'] . '\',\'' . $rs['cep'] . '\',\'' . utf8_decode($rs['rua']) . '\',\'' . $rs['numero'] . '\',\'' . utf8_decode($rs['bairro']) . '\',\'' . $rs['cidade'] . '\',\'' . $rs['estado'] . '\',\'' . $cpf . '\',\'' . $rs['nome_mae'] . '\')">' . $country_name . '</li>';
+	echo '<li onclick="set_item(\'' . str_replace("'", "\'", ts_decodifica($rs['nome'])) . '\',\'' . $rs['pessoa_id'] . '\',\'' . inverteData($rs['dt_nasc']) . '\',\'' . $sexo . '\',\'' . $rs['telefone'] . '\',\'' . $rs['celular'] . '\',\'' . $rs['cep'] . '\',\'' . utf8_decode($rs['rua']) . '\',\'' . $rs['numero'] . '\',\'' . utf8_decode($rs['bairro']) . '\',\'' . $rs['cidade'] . '\',\'' . $rs['estado'] . '\',\'' . $cpf . '\',\'' . ts_decodifica($rs['nome_mae']) . '\')">' . $country_name . '</li>';
 }

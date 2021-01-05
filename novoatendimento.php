@@ -939,8 +939,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <div>
                                                                 <?php
 																if ($imagem == '') {
-																	echo "<img id=\"blah\" src=\"assets/photos/senhora.jpg\"  alt=\"\" height=\"120\" width=\"130\" ondblclick=\" window.open('popcam/index.html', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=600, height=700'); return false;\"
-                                                                    style=\"border-radius: 50%;\">";
+																	echo "<img id=\"blah\" src=\"app-assets/img/gallery/user-transp.png\"  alt=\"\" height=\"120\" width=\"130\" ondblclick=\" window.open('popcam/index.html', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=600, height=700'); return false;\">";
 																} else {
 																	echo "<img id=\"blah\" src=\"app-assets/img/gallery/user-transp.png\"         alt=\"\" height=\"120\" width=\"130\" ondblclick=\" window.open('popcam/index.html', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=600, height=700'); return false;\">";
 																}
