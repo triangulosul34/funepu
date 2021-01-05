@@ -1,43 +1,40 @@
 <?php
 error_reporting(0);
-include('verifica.php');
-include('funcoes.php');
-include('conexao.php');
-$edita  = false;
+include 'verifica.php';
+include 'funcoes.php';
+include 'conexao.php';
+require 'tsul_ssl.php';
+$edita = false;
 $editor = false;
 date_default_timezone_set('America/Sao_Paulo');
 
 function busca_comments($exame_nro)
 {
-
-	return "";
+	return '';
 }
 function busca_tecnico($exame_nro)
 {
-
-	return "";
+	return '';
 }
-
 
 $query = 'SELECT atalho, frase FROM frases';
 $result = pg_query($query) or die('Query failed: ' . pg_last_error());
 
-$arrWords = array();
-$arrWordsSub = array();
+$arrWords = [];
+$arrWordsSub = [];
 
 while ($row = pg_fetch_row($result)) {
 	array_push($arrWords, $row[0]);
 	array_push($arrWordsSub, $row[1]);
 }
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
 	$id = $_GET['id'];
-	include('conexao.php');
-	$stmt = "select b.transacao, b.idade, b.dat_cad,  b.hora_cad, b.status, b.cad_user, a.pessoa_id, a.exame_id, a.observacoes, a.exame_nro, a.digitador_hora,a.resultado, a.digitador_data, a.digitador, a.situacao,
+	include 'conexao.php';
+	$stmt = 'select b.transacao, b.idade, b.dat_cad,  b.hora_cad, b.status, b.cad_user, a.pessoa_id, a.exame_id, a.observacoes, a.exame_nro, a.digitador_hora,a.resultado, a.digitador_data, a.digitador, a.situacao,
 			 a.med_analise, a.data_analise, a.hora_analise, c.nome, c.dt_nasc, c.imagem, c.sexo, d.modalidade_id, d.descricao, e.nome as solicitante, e.celular as sol_celular, e.email as sol_email, laudo_padrao, a.laudo_sel,
 			 a.contraste, a.contraste_ml, a.med_confere, a.data_confere, a.hora_confere, a.hora_impressao, a.data_impressao, a.usuario_impressao from itenspedidos a left join
 			 pedidos   b  on a.transacao   =b.transacao left join pessoas c  on b.paciente_id =c.pessoa_id left join procedimentos d
-			 on a.exame_id=d.procedimento_id left join solicitantes e on b.solicitante_id=e.solicitante_id where a.exame_nro=" . $id;
+			 on a.exame_id=d.procedimento_id left join solicitantes e on b.solicitante_id=e.solicitante_id where a.exame_nro=' . $id;
 	$sth = pg_query($stmt) or die($stmt);
 	$row = pg_fetch_object($sth);
 	$transacao = $row->transacao;
@@ -49,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	$exame_nro = $row->exame_nro;
 	$exame_nro = $row->exame_nro;
 	$exame_desc = $row->descricao;
-	$nome = $row->nome;
+	$nome = ts_decodifica($row->nome);
 	$imagem = $row->imagem;
 	$dt_nasc = $row->dt_nasc;
 	$sexo = $row->sexo;
@@ -67,36 +64,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	$digitador = $row->digitador;
 	$digitador_data = $row->digitador_data;
 	$digitador_hora = $row->digitador_hora;
-	$med_analise =  $row->med_analise;
+	$med_analise = $row->med_analise;
 	$data_analise = $row->data_analise;
 	$hora_analise = $row->hora_analise;
-	$med_confere =  $row->med_confere;
+	$med_confere = $row->med_confere;
 	$data_confere = $row->data_confere;
 	$hora_confere = $row->hora_confere;
-	$usuario_impressao =  $row->usuario_impressao;
+	$usuario_impressao = $row->usuario_impressao;
 	$data_impressao = $row->data_impressao;
 	$hora_impressao = $row->hora_impressao;
 	$situacao = $row->situacao;
 	$pessoa_id = $row->pessoa_id;
 	$contraste = $row->contraste;
 	$contraste_ml = $row->contraste_ml;
-	$laudo_sel    = $row->laudo_sel;
-	$modalidade   = $row->modalidade_id;
-	$idade        = $row->idade;
+	$laudo_sel = $row->laudo_sel;
+	$modalidade = $row->modalidade_id;
+	$idade = $row->idade;
 	if ($sexo == 'F') {
 		$sexod = 'Feminino';
 	} else {
 		$sexod = 'Masculino';
 	}
-	if ($observacoes == "" and ($modalidade == 3 or $modalidade == 9)) {
+	if ($observacoes == '' and ($modalidade == 3 or $modalidade == 9)) {
 		$observacoes = 'Tecnico:' . busca_tecnico($exame_nro) . PHP_EOL . busca_comments($exame_nro);
 	}
 	if ($med_analise != '') {
-		include('conexao.php');
+		include 'conexao.php';
 		$stmt = "select nome from pessoas where username = '$med_analise'";
 		$sth = pg_query($stmt) or die($stmt);
 		$row = pg_fetch_object($sth);
-		$medico_analise = $row->nome;
+		$medico_analise = ts_decodifica($row->nome);
 		if ($usuario != $med_analise) {
 			$editor = false;
 		} else {
@@ -104,11 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		}
 	}
 	if ($med_confere != '') {
-		include('conexao.php');
+		include 'conexao.php';
 		$stmt = "select nome from pessoas where username = '$med_confere'";
 		$sth = pg_query($stmt) or die($stmt);
 		$row = pg_fetch_object($sth);
-		$medico_confere = $row->nome;
+		$medico_confere = ts_decodifica($row->nome);
 		if ($usuario != $med_confere) {
 			$editor = false;
 		} else {
@@ -123,7 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		}
 	}
 
-	include('conexao.php');
+	include 'conexao.php';
 	$stmtLab = "select perfil from pessoas where username = '$usuario'";
 	$sthLab = pg_query($stmtLab) or die($stmtLab);
 	$rowLab = pg_fetch_object($sthLab);
@@ -140,180 +137,170 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-	$exame_nro  = $_POST['exame_nro'];
-	$digitador  = $_POST['digitador'];
+	$exame_nro = $_POST['exame_nro'];
+	$digitador = $_POST['digitador'];
 	$med_analise = $_POST['laudador'];
-	$situacao   = $_POST['situacao'];
+	$situacao = $_POST['situacao'];
 	$med_confere = $_POST['conferente'];
-	$contraste  = $_POST['contraste'];
+	$contraste = $_POST['contraste'];
 	$contraste_ml = $_POST['contraste_ml'];
-	$laudo      = $_POST['content'];
-	$data       = date('Y-m-d');
-	$hora       = date('H:i');
+	$laudo = $_POST['content'];
+	$data = date('Y-m-d');
+	$hora = date('H:i');
 	$observacoes = $_POST['coments'];
-	if ($contraste == "") {
+	if ($contraste == '') {
 		$contraste = 'N';
 	}
-	if ($contraste_ml == "") {
+	if ($contraste_ml == '') {
 		$contraste_ml = '0';
 	}
-	if (isset($_POST["gravar"])) {
-
-		include('conexao.php');
+	if (isset($_POST['gravar'])) {
+		include 'conexao.php';
 		$stmt = "update itenspedidos set observacoes='$observacoes', resultado = '" . pg_escape_string($laudo) . "' where exame_nro=" . $exame_nro;
 		$sth = pg_query($stmt) or die($stmt);
 
-
 		if ($tipopessoa == 'Administrativo') {
-			include('conexao.php');
+			include 'conexao.php';
 			if ($situacao == 'Cadastrado' or $situacao == 'Editado') {
 				$stmt = "update itenspedidos set resultado = '$laudo', digitador='$usuario', digitador_data='$data', digitador_hora='$hora', situacao='Editado', contraste='$contraste', contraste_ml='$contraste_ml', observacoes='$observacoes' where exame_nro=" . $exame_nro;
 				$sth = pg_query($stmt) or die($stmt);
-				include('conexao.php');
-				$datalog  = date('Y-m-d H:i:s');
+				include 'conexao.php';
+				$datalog = date('Y-m-d H:i:s');
 				$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Editou', '$usuario', '$datalog' )";
-				$sth   = pg_query($stmtx) or die($stmtx);
+				$sth = pg_query($stmtx) or die($stmtx);
 			}
 		}
 
 		if ($tipopessoa == 'Medico Laudador') {
-			if ($med_analise == "" or $med_analise == $usuario) {
-
-				include('conexao.php');
+			if ($med_analise == '' or $med_analise == $usuario) {
+				include 'conexao.php';
 				$stmt = "update itenspedidos set resultado = '" . pg_escape_string($laudo) . "', med_analise='$usuario', data_analise='$data', hora_analise='$hora',  observacoes='$observacoes' where exame_nro=" . $exame_nro;
 				$sth = pg_query($stmt) or die($stmt);
-				include('conexao.php');
-				$datalog  = date('Y-m-d H:i:s');
+				include 'conexao.php';
+				$datalog = date('Y-m-d H:i:s');
 				$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Laudou', '$usuario', '$datalog' )";
-				$sth   = pg_query($stmtx) or die($stmtx);
+				$sth = pg_query($stmtx) or die($stmtx);
 				$med_analise = $usuario;
 			}
 
 			if ($modalidade == '6' or $modalidade == '8') {
-				if (($med_confere == "" or $med_confere == $usuario) and ($med_analise != $usuario)) {
-					include('conexao.php');
+				if (($med_confere == '' or $med_confere == $usuario) and ($med_analise != $usuario)) {
+					include 'conexao.php';
 					$stmt = "update itenspedidos set resultado = '" . pg_escape_string($laudo) . "', med_confere='$usuario', data_confere='$data', hora_confere='$hora', observacoes='$observacoes' where exame_nro=" . $exame_nro;
 					$sth = pg_query($stmt) or die($stmt);
-					include('conexao.php');
-					$datalog  = date('Y-m-d H:i:s');
+					include 'conexao.php';
+					$datalog = date('Y-m-d H:i:s');
 					$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Conferiu', '$usuario', '$datalog' )";
-					$sth   = pg_query($stmtx) or die($stmtx);
+					$sth = pg_query($stmtx) or die($stmtx);
 				}
 			}
 		}
 	}
-	if (isset($_POST["gravarlaudo"])) {
-
-		include('conexao.php');
+	if (isset($_POST['gravarlaudo'])) {
+		include 'conexao.php';
 		$stmt = "update itenspedidos set observacoes='$observacoes', resultado = '" . pg_escape_string($laudo) . "' where exame_nro=" . $exame_nro;
 		$sth = pg_query($stmt) or die($stmt);
 
-
 		if ($tipopessoa == 'Administrativo') {
-			include('conexao.php');
+			include 'conexao.php';
 			if ($situacao == 'Cadastrado' or $situacao == 'Editado') {
 				$stmt = "update itenspedidos set resultado = '$laudo', digitador='$usuario', digitador_data='$data', digitador_hora='$hora', situacao='Editado', contraste='$contraste', contraste_ml='$contraste_ml', observacoes='$observacoes' where exame_nro=" . $exame_nro;
 				$sth = pg_query($stmt) or die($stmt);
-				include('conexao.php');
-				$datalog  = date('Y-m-d H:i:s');
+				include 'conexao.php';
+				$datalog = date('Y-m-d H:i:s');
 				$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Editou', '$usuario', '$datalog' )";
-				$sth   = pg_query($stmtx) or die($stmtx);
+				$sth = pg_query($stmtx) or die($stmtx);
 			}
 		}
 
 		if ($tipopessoa == 'Medico Laudador') {
-			if ($med_analise == "" or $med_analise == $usuario) {
-
-				include('conexao.php');
+			if ($med_analise == '' or $med_analise == $usuario) {
+				include 'conexao.php';
 				$stmt = "update itenspedidos set resultado = '" . pg_escape_string($laudo) . "', med_analise='$usuario', data_analise='$data', hora_analise='$hora', situacao='Laudado',  observacoes='$observacoes' where exame_nro=" . $exame_nro;
 				$sth = pg_query($stmt) or die($stmt);
-				include('conexao.php');
-				$datalog  = date('Y-m-d H:i:s');
+				include 'conexao.php';
+				$datalog = date('Y-m-d H:i:s');
 				$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Laudou', '$usuario', '$datalog' )";
-				$sth   = pg_query($stmtx) or die($stmtx);
+				$sth = pg_query($stmtx) or die($stmtx);
 				$med_analise = $usuario;
 			}
 
 			if ($modalidade == '6' or $modalidade == '8') {
-				if (($med_confere == "" or $med_confere == $usuario) and ($med_analise != $usuario)) {
-					include('conexao.php');
+				if (($med_confere == '' or $med_confere == $usuario) and ($med_analise != $usuario)) {
+					include 'conexao.php';
 					$stmt = "update itenspedidos set resultado = '" . pg_escape_string($laudo) . "', med_confere='$usuario', data_confere='$data', hora_confere='$hora', situacao='Conferido',  observacoes='$observacoes' where exame_nro=" . $exame_nro;
 					$sth = pg_query($stmt) or die($stmt);
-					include('conexao.php');
-					$datalog  = date('Y-m-d H:i:s');
+					include 'conexao.php';
+					$datalog = date('Y-m-d H:i:s');
 					$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Conferiu', '$usuario', '$datalog' )";
-					$sth   = pg_query($stmtx) or die($stmtx);
+					$sth = pg_query($stmtx) or die($stmtx);
 				}
 			}
 		}
 	}
-	if (isset($_POST["finalizar"])) {
-
-
+	if (isset($_POST['finalizar'])) {
 		if ($tipopessoa == 'Medico Laudador') {
-
-			include('conexao.php');
-			$stmt = "select med_analise from itenspedidos where exame_nro=" . $exame_nro;
+			include 'conexao.php';
+			$stmt = 'select med_analise from itenspedidos where exame_nro=' . $exame_nro;
 			$sth = pg_query($stmt) or die($stmt);
 			$row = pg_fetch_object($sth);
 			$med_laudador = $row->med_analise;
 
 			if ($med_laudador == $usuario or $med_analise == '') {
-				include('conexao.php');
+				include 'conexao.php';
 				$stmt = "update itenspedidos set resultado = '" . pg_escape_string($laudo) . "', med_analise='$usuario', data_analise='$data', hora_analise='$hora', situacao='Finalizado',  observacoes='$observacoes' where exame_nro=" . $exame_nro;
 				$sth = pg_query($stmt) or die($stmt);
 			}
 			if ($med_laudador != $usuario) {
-				include('conexao.php');
+				include 'conexao.php';
 				$stmt = "update itenspedidos set resultado = '" . pg_escape_string($laudo) . "', med_confere='$usuario', data_confere='$data', hora_confere='$hora', situacao='Finalizado',  observacoes='$observacoes' where exame_nro=" . $exame_nro;
 				$sth = pg_query($stmt) or die($stmt);
 			}
 
-			include('conexao.php');
-			$datalog  = date('Y-m-d H:i:s');
+			include 'conexao.php';
+			$datalog = date('Y-m-d H:i:s');
 			$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Finalizou', '$usuario', '$datalog' )";
-			$sth   = pg_query($stmtx) or die($stmtx);
+			$sth = pg_query($stmtx) or die($stmtx);
 
 			$editor = false;
 		}
 	}
-	if (isset($_POST["imprimir"])) {
+	if (isset($_POST['imprimir'])) {
 		if ($situacao != 'Env.Recepção' and $situacao != 'Entregue') {
-			include('conexao.php');
+			include 'conexao.php';
 			$stmt = "update itenspedidos set  data_impressao='$data', hora_impressao='$hora', usuario_impressao='$usuario', situacao='Impresso' where exame_nro=" . $exame_nro;
 			$sth = pg_query($stmt) or die($stmt);
 		}
 
-		include('conexao.php');
-		$datalog  = date('Y-m-d H:i:s');
+		include 'conexao.php';
+		$datalog = date('Y-m-d H:i:s');
 		$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($exame_nro, 'Impressao', '$usuario', '$datalog' )";
-		$sth   = pg_query($stmtx) or die($stmtx);
+		$sth = pg_query($stmtx) or die($stmtx);
 
 		echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('rellaudo.php?id=" . $exame_nro . "','_blank');</script>";
 	}
-	include('conexao.php');
-	$stmt = "select b.transacao, b.idade, b.dat_cad,  b.hora_cad, b.status, b.cad_user, a.exame_id, a.observacoes, a.exame_nro, a.digitador_hora,a.resultado, a.digitador_data, a.digitador, a.situacao,
+	include 'conexao.php';
+	$stmt = 'select b.transacao, b.idade, b.dat_cad,  b.hora_cad, b.status, b.cad_user, a.exame_id, a.observacoes, a.exame_nro, a.digitador_hora,a.resultado, a.digitador_data, a.digitador, a.situacao,
 			 a.med_analise, a.data_analise, a.pessoa_id, a.hora_analise, c.nome, c.dt_nasc, c.imagem, c.sexo, d.descricao, e.nome as solicitante, e.celular as sol_celular, e.email as sol_email, laudo_padrao,
 			 a.med_confere, a.data_confere, a.hora_confere, a.hora_impressao, a.data_impressao, a.usuario_impressao from itenspedidos a left join
 			 pedidos   b  on a.transacao   =b.transacao left join pessoas c  on b.paciente_id =c.pessoa_id left join procedimentos d
-			 on a.exame_id=d.procedimento_id left join solicitantes e on b.solicitante_id=e.solicitante_id where a.exame_nro=" . $exame_nro;
+			 on a.exame_id=d.procedimento_id left join solicitantes e on b.solicitante_id=e.solicitante_id where a.exame_nro=' . $exame_nro;
 	$sth = pg_query($stmt) or die($stmt);
 	$row = pg_fetch_object($sth);
-	if (isset($_POST["carregar"])) {
+	if (isset($_POST['carregar'])) {
 		$laudo = $row->laudo_padrao;
 	}
 	$transacao = $row->transacao;
 	$dat_cad = inverteData(substr($row->dat_cad, 0, 10));
 	$status = $row->status;
 	$cad_user = $row->cad_user;
-	$dat_cad  = $row->dat_cad;
+	$dat_cad = $row->dat_cad;
 	$dtcadastro = $row->dat_cad . ' ' . $row->hora_cad;
 	$hora_cad = $row->hora_cad;
 	$exame_id = $row->exame_id;
 	$exame_nro = $row->exame_nro;
 	$exame_desc = $row->descricao;
-	$nome = $row->nome;
+	$nome = ts_decodifica($row->nome);
 	$imagem = $row->imagem;
 	$dt_nasc = $row->dt_nasc;
 	$sexo = $row->sexo;
@@ -327,35 +314,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$digitador = $row->digitador;
 	$digitador_data = $row->digitador_data;
 	$digitador_hora = $row->digitador_hora;
-	$med_analise =  $row->med_analise;
+	$med_analise = $row->med_analise;
 	$data_analise = $row->data_analise;
 	$hora_analise = $row->hora_analise;
-	$usuario_impressao =  $row->usuario_impressao;
+	$usuario_impressao = $row->usuario_impressao;
 	$data_impressao = $row->data_impressao;
 	$hora_impressao = $row->hora_impressao;
-	$med_confere =  $row->med_confere;
+	$med_confere = $row->med_confere;
 	$data_confere = $row->data_confere;
 	$hora_confere = $row->hora_confere;
 	$situacao = $row->situacao;
 	$pessoa_id = $row->pessoa_id;
-	if ($med_analise != "") {
-		include('conexao.php');
+	if ($med_analise != '') {
+		include 'conexao.php';
 		$stmt = "select nome from pessoas where username = '$med_analise'";
 		$sth = pg_query($stmt) or die($stmt);
 		$row = pg_fetch_object($sth);
-		$medico_analise = $row->nome;
+		$medico_analise = ts_decodifica($row->nome);
 		if ($usuario != $med_analise) {
 			$editor = false;
 		} else {
 			$editor = true;
 		}
 	}
-	if ($med_confere != "") {
-		include('conexao.php');
+	if ($med_confere != '') {
+		include 'conexao.php';
 		$stmt = "select nome from pessoas where username = '$med_confere'";
 		$sth = pg_query($stmt) or die($stmt);
 		$row = pg_fetch_object($sth);
-		$medico_confere = $row->nome;
+		$medico_confere = ts_decodifica($row->nome);
 		if ($usuario != $med_confere) {
 			$editor = false;
 		} else {
@@ -374,7 +361,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$editor = true;
 	}
 
-	include('conexao.php');
+	include 'conexao.php';
 	$stmtLab = "select perfil from pessoas where username = '$usuario'";
 	$sthLab = pg_query($stmtLab) or die($stmtLab);
 	$rowLab = pg_fetch_object($sthLab);
@@ -556,7 +543,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <![endif]-->
 
 	<?php
-	include('header2.php');
+	include 'header2.php';
 	?>
 
 	<?php
@@ -588,7 +575,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							<label class="control-label">Identificação</label>
 							<div class="widget-header white bg-cyan-600 padding-30 clearfix">
 								<div class="pull-left">
-									<div class="font-size-15 margin-bottom-15"><?php echo $nome; ?><br> Idade:<?php echo $idade . ' -  ' . 'Sexo:' . $sexod; ?></div>
+									<div class="font-size-15 margin-bottom-15"><?php echo $nome; ?><br>
+										Idade:<?php echo $idade . ' -  ' . 'Sexo:' . $sexod; ?>
+									</div>
 									<p class="margin-bottom-5 text-nowrap">
 										<i class="icon wb-list margin-right-10" aria-hidden="true"></i>
 										<span class="text-break"><?php echo $exame_desc; ?></span>
@@ -627,33 +616,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										<div class="col-md-12" align="right">
 											<?php
 											if (HABILITAR_PACS) {
-												include('conexao_pacs.php');
+												include 'conexao_pacs.php';
 												$stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$exame_nro' ";
 												$sthx = pg_query($stmt) or die($stmt);
 											}
 											//echo $stmt;
 											$rowst = pg_fetch_object($sthx);
 											$studyid = $rowst->study_iuid;
-											if ($studyid != "") {
+											if ($studyid != '') {
 												$hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
 											}
 											if ($studyid != '') {
-												if (substr($ip, 0, 3) == "192") {
-													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"> Imagens</i></button>";
+												if (substr($ip, 0, 3) == '192') {
+													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://" . URL_PACS . '/oviyam2/viewer.html?studyUID=' . $studyid . '&serverName=' . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"> Imagens</i></button>";
 												} else {
-													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"> Imagens</i></button>";
+													echo "<button type=\"button\" class=\"btn btn-primary\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://" . URL_PACS . '/oviyam2/viewer.html?studyUID=' . $studyid . '&serverName=' . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"> Imagens</i></button>";
 												}
 											}
 
 											?>
-											<button type="button" id='f4' name='f4' class='btn btn-default'>F4 - Variáveis</button>
-											<input type='button' name='carregar' class="btn btn-default" value='Carregar Documentos' onclick="window.open('webcam/indexlaudodocs.php?transacao=<?php echo $transacao; ?>', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;">
+											<button type="button" id='f4' name='f4' class='btn btn-default'>F4 -
+												Variáveis</button>
+											<input type='button' name='carregar' class="btn btn-default"
+												value='Carregar Documentos'
+												onclick="window.open('webcam/indexlaudodocs.php?transacao=<?php echo $transacao; ?>', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;">
 
 										</div>
 									</h4>
 									<div align="center">
 
-										<button type="submit" name='gravar' value='gravar' class="btn btn-primary">Gravar</button>
+										<button type="submit" name='gravar' value='gravar'
+											class="btn btn-primary">Gravar</button>
 
 										<?php
 										if ($tipopessoa != 'Administrativo') {
@@ -661,23 +654,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 											echo "<button type=\"submit\" name='finalizar' value='finalizar'     class=\"btn btn-info\"   >Gravar e Finalizar     </button>";
 										}
 
-										if ($situacao == 'Finalizado' or  $situacao == 'Impresso' or  $situacao == 'Env.Recepção' or $situacao == 'Entregue') {
-
+										if ($situacao == 'Finalizado' or $situacao == 'Impresso' or $situacao == 'Env.Recepção' or $situacao == 'Entregue') {
 											echo "<button type=\"submit\" name='imprimir' value='imprimir'      class=\"btn btn-success\">Imprimir</button>";
 										}
 										?>
 
-										<button type="submit" name='xcancela' value='xcancelar' class="btn btn-danger" onclick='javascript:window.opener.location.reload();window.close();'>Fechar</button>
+										<button type="submit" name='xcancela' value='xcancelar' class="btn btn-danger"
+											onclick='javascript:window.opener.location.reload();window.close();'>Fechar</button>
 									</div>
 
 								</div>
 								<div class="panel-body">
-									<input type="hidden" name="exame_nro" id="exame_nro" value="<?php echo $exame_nro; ?>">
-									<input type="hidden" name="usuariox" id="usuariox" value="<?php echo $usuario; ?>">
+									<input type="hidden" name="exame_nro" id="exame_nro"
+										value="<?php echo $exame_nro; ?>">
+									<input type="hidden" name="usuariox" id="usuariox"
+										value="<?php echo $usuario; ?>">
 									<input type="hidden" name="laudotemp" id="laudotemp" value="">
-									<textarea id="tinymce" class="input-block-level" name="content" rows="18"><?php echo $laudo; ?></textarea>
+									<textarea id="tinymce" class="input-block-level" name="content"
+										rows="18"><?php echo $laudo; ?></textarea>
 									<?php
-									include('conexao.php');
+									include 'conexao.php';
 									$stmt = "SELECT count(*) as qtde FROM arquivos_documentos where transacao=$transacao";
 									$sth = pg_query($stmt) or die($stmt);
 									$row = pg_fetch_object($sth);
@@ -693,40 +689,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										echo "<th width='15%'>Data</th><th width='30%'>Tipo</th><th width='20%'>Descricao</th><th width='25%'>Usuario</th><th width='10%'>Açao<th>";
 										echo '</tr></thead><tbody>';
 										$x = 0;
-										include('conexao.php');
+										include 'conexao.php';
 										$stmt = "SELECT a.tipo_doc_id, a.descricao, a.data_arquivo, a.usuario, a.arquivo, b.descricao as tipo 
 											FROM arquivos_documentos a, tipo_documentos b where a.tipo_doc_id=b.tipo_doc_id and transacao=$transacao and arquivo is not null 
 											order by data_arquivo ";
 										$sth = pg_query($stmt) or die($stmt);
 										while ($row = pg_fetch_object($sth)) {
 											$x = $x + 1;
-											echo "<tr>";
-											echo "<td>" . inverteData($row->data_arquivo) . "</td>";
-											echo "<td>" . $row->tipo . "</td>";
-											echo "<td>" . $row->descricao . "</td>";
-											echo "<td>" . $row->usuario . "</td>";
+											echo '<tr>';
+											echo '<td>' . inverteData($row->data_arquivo) . '</td>';
+											echo '<td>' . $row->tipo . '</td>';
+											echo '<td>' . $row->descricao . '</td>';
+											echo '<td>' . $row->usuario . '</td>';
 											echo "<td><a href='imagens/documentos/" . $row->arquivo . "' target='_blank' class=\"btn-pure icon wb-search\"></a></td>";
-											echo "</tr>";
+											echo '</tr>';
 											$total_recebido = $total_recebido + $row->valor;
 										}
-										echo "</tbody></table>";
-										echo "</div>";
-										echo "</div>";
-										echo "<br>";
-										echo "</div>";
-										echo "</div>";
+										echo '</tbody></table>';
+										echo '</div>';
+										echo '</div>';
+										echo '<br>';
+										echo '</div>';
+										echo '</div>';
 									}
 									?>
-									<input type="hidden" name="modalidade" value="<?php echo $modalidade; ?>">
+									<input type="hidden" name="modalidade"
+										value="<?php echo $modalidade; ?>">
 								</div>
 								<div class="panel-footer">
 
 								</div>
 							</div>
-							<input type="hidden" name="situacao" value="<?php echo $situacao; ?>">
-							<input type="hidden" name="digitador" value="<?php echo $digitador; ?>">
-							<input type="hidden" name="laudador" value="<?php echo $med_analise; ?>">
-							<input type="hidden" name="conferente" value="<?php echo $med_confere; ?>">
+							<input type="hidden" name="situacao"
+								value="<?php echo $situacao; ?>">
+							<input type="hidden" name="digitador"
+								value="<?php echo $digitador; ?>">
+							<input type="hidden" name="laudador"
+								value="<?php echo $med_analise; ?>">
+							<input type="hidden" name="conferente"
+								value="<?php echo $med_confere; ?>">
 						</form>
 
 					</div>
@@ -756,29 +757,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										<tbody>
 											<?php
 											if ($editor != false) {
-
-												include('conexao.php');
+												include 'conexao.php';
 												$stmt = "SELECT a.frase_id, a.atalho, a.frase, b.sigla FROM frases a, modalidades b where a.modalidade_id=b.modalidade_id and a.procedimento_detalhes like '%" . $exame_id . "%' order by frase";
 												$sth = pg_query($stmt) or die($stmt);
 												while ($row = pg_fetch_object($sth)) {
-
-													echo "<tr>";
-													echo "<td>" . $row->atalho . "</td>";
-													echo "<td><span class='frase-span'>" . $row->frase . "</span></td>";
+													echo '<tr>';
+													echo '<td>' . $row->atalho . '</td>';
+													echo "<td><span class='frase-span'>" . $row->frase . '</span></td>';
 													echo "<td><a class='frase-add-a' href=\"#\">+</a></td>";
-													echo "</tr>";
+													echo '</tr>';
 												}
 
-												include('conexao.php');
+												include 'conexao.php';
 												$stmt = "SELECT a.frase_id, a.frase, a.atalho, b.sigla FROM frases a, modalidades b where a.modalidade_id=b.modalidade_id and a.procedimento_detalhes not like '%" . $exame_id . "%' order by frase";
 												$sth = pg_query($stmt) or die($stmt);
 												while ($row = pg_fetch_object($sth)) {
-
-													echo "<tr>";
-													echo "<td>" . $row->atalho . "</td>";
-													echo "<td><span class='frase-span'>" . $row->frase . "</span></td>";
+													echo '<tr>';
+													echo '<td>' . $row->atalho . '</td>';
+													echo "<td><span class='frase-span'>" . $row->frase . '</span></td>';
 													echo "<td><a class='frase-add-a' href=\"#\">+</a></td>";
-													echo "</tr>";
+													echo '</tr>';
 												}
 											}
 											?>
@@ -803,8 +801,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								<div class="col-md-12">
 
 									<?php
-									include('conexao.php');
-									if ($laudo_sel == "") {
+									include 'conexao.php';
+									if ($laudo_sel == '') {
 										$stmt = "SELECT * from procedimentos_laudos_detalhes where procedimento_id=$exame_id order by identificador";
 									} else {
 										$stmt = "SELECT * from procedimentos_laudos_detalhes where procedimento_id=$laudo_sel order by identificador";
@@ -812,30 +810,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 									$sth = pg_query($stmt) or die($stmt);
 									$xy = 1;
 									while ($row = pg_fetch_object($sth)) {
-
 										if ($row->tipo == '1') {
-											echo "<div class=\"form-group\">";
-											echo "<label class=\"control-label\">" . $row->campo . "</label>";
+											echo '<div class="form-group">';
+											echo '<label class="control-label">' . $row->campo . '</label>';
 											echo "<input type=\"text\" class=\"form-control\" id=\"$row->campo\" tabIndex=\"" . $xy . "\" name=\"$row->campo\" 	value=\"\"";
 											if ($editor == false) {
-												echo "readonly";
+												echo 'readonly';
 											}
-											echo " onkeydown=\"return tab(this, event)\" >";
-											echo "</div>";
+											echo ' onkeydown="return tab(this, event)" >';
+											echo '</div>';
 										}
 										if ($row->tipo == '2') {
-											echo "<div class=\"form-group\">";
-											echo "<label class=\"control-label\">" . $row->campo . "</label>";
+											echo '<div class="form-group">';
+											echo '<label class="control-label">' . $row->campo . '</label>';
 											echo "<input type=\"text\" class=\"form-control\" id=\"$row->campo\" tabIndex=\"" . $xy . "\" name=\"$row->campo\" 	value=\"\"";
 											if ($editor == false) {
-												echo "readonly";
+												echo 'readonly';
 											}
-											echo " onkeydown=\"return tab(this, event)\">";
-											echo "</div>";
+											echo ' onkeydown="return tab(this, event)">';
+											echo '</div>';
 										}
 										if ($row->tipo == '3') {
-											echo "<div class=\"form-group\">";
-											echo "<label class=\"control-label\">" . $row->campo . "</label>";
+											echo '<div class="form-group">';
+											echo '<label class="control-label">' . $row->campo . '</label>';
 
 											if ($editor != false) {
 												echo "<select class=\"form-control\"   id=\"$row->campo\" tabIndex=\"" . $xy . "\" name=\"$row->campo\">";
@@ -843,11 +840,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 												$str = explode(';', $row->complemento);
 												$qtd = count($str);
 												for ($i = 0; $i < $qtd; $i++) {
-													echo "<option value=\"" . $str[$i] . "\">" . $str[$i] . "</option>";
+													echo '<option value="' . $str[$i] . '">' . $str[$i] . '</option>';
 												}
-												echo "</select>";
+												echo '</select>';
 											}
-											echo "</div>";
+											echo '</div>';
 										}
 									}
 									?>
@@ -866,7 +863,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							<div class="panel-body">
 								<div class="col-sm-12" id="div-tlaudos" name="div-tlaudos" style="height: 480px;
 								overflow: scroll;">
-									<table id="laudos-table" class="table table-hover dataTable table-striped width-full" data-plugin="dataTable">
+									<table id="laudos-table"
+										class="table table-hover dataTable table-striped width-full"
+										data-plugin="dataTable">
 										<thead>
 											<tr>
 												<th>Mod.</th>
@@ -877,15 +876,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										<tbody>
 											<?php
 											if ($editor != false) {
-												include('conexao.php');
-												$stmt = "SELECT a.procedimento_id, a.descricao, b.sigla FROM procedimentos a, modalidades b where a.modalidade_id=b.modalidade_id order by 3,2";
+												include 'conexao.php';
+												$stmt = 'SELECT a.procedimento_id, a.descricao, b.sigla FROM procedimentos a, modalidades b where a.modalidade_id=b.modalidade_id order by 3,2';
 												$sth = pg_query($stmt) or die($stmt);
 												while ($row = pg_fetch_object($sth)) {
-
-													echo "<tr>";
-													echo "<td>" . $row->sigla . "</td>";
-													echo "<td><a href=\"javascript:func()\" onclick=\"confirmacao('" . $row->procedimento_id . "," . $exame_nro . "')\"'>" . $row->descricao . "</a></td>";
-													echo "</tr>";
+													echo '<tr>';
+													echo '<td>' . $row->sigla . '</td>';
+													echo "<td><a href=\"javascript:func()\" onclick=\"confirmacao('" . $row->procedimento_id . ',' . $exame_nro . "')\"'>" . $row->descricao . '</a></td>';
+													echo '</tr>';
 												}
 											}
 											?>
@@ -903,7 +901,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 								<h3 class="panel-title">Exames Anteriores</h3>
 							</div>
 							<div class="panel-body">
-								<textarea class="input-block-level" id="summernote1" name="content1" rows="48" readonly><?php echo $laudo; ?></textarea>
+								<textarea class="input-block-level" id="summernote1" name="content1" rows="48"
+									readonly><?php echo $laudo; ?></textarea>
 							</div>
 						</div>
 						<!-- End Example Panel With Heading -->
@@ -919,34 +918,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 						<div class="widget">
 							<div class="widget-header white bg-blue-600 padding-30 clearfix">
 
-								<?php if ($digitador != "") {
-									echo "<p class=\"margin-bottom-5 text-nowrap\">";
-									echo "<i class=\"icon wb-check margin-right-10\" aria-hidden=\"true\"></i>";
-									echo "<span class=\"text-break\">Digitado por " . $digitador . " - " . inverteData($digitador_data) . ' as ' . $digitador_hora . "</span>";
-									echo "</p>";
-								}
+								<?php if ($digitador != '') {
+												echo '<p class="margin-bottom-5 text-nowrap">';
+												echo '<i class="icon wb-check margin-right-10" aria-hidden="true"></i>';
+												echo '<span class="text-break">Digitado por ' . $digitador . ' - ' . inverteData($digitador_data) . ' as ' . $digitador_hora . '</span>';
+												echo '</p>';
+											}
 								?>
-								<?php if ($medico_analise != "") {
-									echo "<p class=\"margin-bottom-5 text-nowrap\">";
-									echo "<i class=\"icon wb-check margin-right-10\" aria-hidden=\"true\"></i>";
+								<?php if ($medico_analise != '') {
+									echo '<p class="margin-bottom-5 text-nowrap">';
+									echo '<i class="icon wb-check margin-right-10" aria-hidden="true"></i>';
 									echo "<span class=\"text-break\"> Laudado  por $medico_analise  - " . inverteData($data_analise) . " as $hora_analise></span></p>";
 								}
 								?>
-								<?php if ($medico_confere != "") {
-									echo "<p class=\"margin-bottom-5 text-nowrap\">";
-									echo "<i class=\"icon wb-check margin-right-10\" aria-hidden=\"true\"></i>";
+								<?php if ($medico_confere != '') {
+									echo '<p class="margin-bottom-5 text-nowrap">';
+									echo '<i class="icon wb-check margin-right-10" aria-hidden="true"></i>';
 									echo "<span class=\"text-break\"> Conferido  por $medico_confere  - " . inverteData($data_confere) . " as $hora_confere></span></p>";
 								}
 								?>
-								<?php if ($usuario_impressao != "") {
-									echo "<p class=\"margin-bottom-5 text-nowrap\">";
-									echo "<i class=\"icon wb-print margin-right-10\" aria-hidden=\"true\"></i>";
+								<?php if ($usuario_impressao != '') {
+									echo '<p class="margin-bottom-5 text-nowrap">';
+									echo '<i class="icon wb-print margin-right-10" aria-hidden="true"></i>';
 									echo "<span class=\"text-break\"> Impresso  por $usuario_impressao  - " . inverteData($data_impressao) . " as $hora_impressao></span></p>";
 								}
 								?>
-								<?php if ($usuario_entrega != "") {
-									echo "<p class=\"margin-bottom-5 text-nowrap\">";
-									echo "<i class=\"icon wb-envelope margin-right-10\" aria-hidden=\"true\"></i>";
+								<?php if ($usuario_entrega != '') {
+									echo '<p class="margin-bottom-5 text-nowrap">';
+									echo '<i class="icon wb-envelope margin-right-10" aria-hidden="true"></i>';
 									echo "<span class=\"text-break\"> Entregue  por $usuario_entrega  - " . inverteData($data_entrega) . " as $hora_entrega></span></p>";
 								}
 								?>
@@ -959,15 +958,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							<div class="widget-header white bg-blue-600 padding-30 clearfix">
 
 								<?php
-								echo "<p class=\"margin-bottom-5 text-nowrap\">";
-								echo "<i class=\"icon wb-check margin-right-10\" aria-hidden=\"true\"></i>";
+								echo '<p class="margin-bottom-5 text-nowrap">';
+								echo '<i class="icon wb-check margin-right-10" aria-hidden="true"></i>';
 								echo "<span class=\"text-break\"> $dat_cad - $hora_cad = $cad_user - Cadastrou Pedido></span></p>";
-								include('conexao.php');
-								$sql = "select * from log_exames where exame_nro=" . $exame_nro . " order by data_hora";
+								include 'conexao.php';
+								$sql = 'select * from log_exames where exame_nro=' . $exame_nro . ' order by data_hora';
 								$sth = pg_query($sql) or die($sql);
 								while ($row = pg_fetch_object($sth)) {
-									echo "<p class=\"margin-bottom-5 text-nowrap\">";
-									echo "<i class=\"icon wb-check margin-right-10\" aria-hidden=\"true\"></i>";
+									echo '<p class="margin-bottom-5 text-nowrap">';
+									echo '<i class="icon wb-check margin-right-10" aria-hidden="true"></i>';
 									echo "<span class=\"text-break\"> $row->data_hora - $row->usuario - $row->acao - $row->observacoes></span></p>";
 								}
 								?>
@@ -989,7 +988,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 	<!-- Footer -->
-	<?php include('footer.php'); ?>
+	<?php include 'footer.php'; ?>
 
 	<!-- Core  -->
 	<script src="assets/vendor/jquery/jquery.js"></script>
@@ -1244,10 +1243,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			<?php
 			$js_arrWords = json_encode($arrWords);
-			echo "var arrayWords = " . $js_arrWords . ";\n";
+			echo 'var arrayWords = ' . $js_arrWords . ";\n";
 
 			$js_arrWordsSub = json_encode($arrWordsSub);
-			echo "var arrayWordsSub = " . $js_arrWordsSub . ";\n";
+			echo 'var arrayWordsSub = ' . $js_arrWordsSub . ";\n";
 			?>
 
 			//TALVEZ ESTA CLASS '.note-editable' ABAIXO possa ser outra
@@ -1333,7 +1332,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			fontsize_formats: "8pt 10pt 12pt 14pt 18pt 24pt 36pt"
 			<?php
 			if ($editor == false) {
-				echo ",readonly : 1";
+				echo ',readonly : 1';
 			}
 			?>
 

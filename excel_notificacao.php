@@ -4,81 +4,78 @@ include 'Config.php';
 
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    require_once 'PHPexcel/PHPExcel.php';
-    require_once 'PHPexcel/PHPExcel/IOFactory.php';
+	require_once 'PHPexcel/PHPExcel.php';
+	require_once 'PHPexcel/PHPExcel/IOFactory.php';
 
-    $erro = [];
-    $qt_notificacao = [];
+	$erro = [];
 
-    $file = $_FILES['excel']['tmp_name'];
+	$file = $_FILES['excel']['tmp_name'];
 
-    if (move_uploaded_file($file, "/var/www/html/".UPLOAD_EXCEL."/funepu/excelnotificacao/".basename($_FILES['excel']['name']))) {
-        $enviado = true;
-    } else {
-        $enviado = false;
-    }
+	if (move_uploaded_file($file, '/var/www/html/' . UPLOAD_EXCEL . '/funepu/excelnotificacao/' . basename($_FILES['excel']['name']))) {
+		$enviado = true;
+	} else {
+		$enviado = false;
+	}
 
-    include('conexao.php');
-    $sql = "select * from excel_notificacao where arquivo = '".basename($_FILES['excel']['name'])."'";
-    $result = pg_query($sql) or die($sql);
-    $row = pg_fetch_object($result);
+	include 'conexao.php';
+	$sql = "select * from excel_notificacao where arquivo = '" . basename($_FILES['excel']['name']) . "'";
+	$result = pg_query($sql) or die($sql);
+	$row = pg_fetch_object($result);
 
-    if ($row->arquivo) {
-        echo "<script>alert('arquivo ".$row->arquivo." já enviado ao sistema. O mesmo será excluído para evitar duplicidades');</script>";
-        include('conexao.php');
-        $sql = "update excel_notificacao set controle = 0 where arquivo = '".basename($_FILES['excel']['name'])."'";
-        $result = pg_query($sql) or die($sql);
-    }
+	if ($row->arquivo) {
+		echo "<script>alert('arquivo " . $row->arquivo . " já enviado ao sistema. O mesmo será excluído para evitar duplicidades');</script>";
+		include 'conexao.php';
+		$sql = "update excel_notificacao set controle = 0 where arquivo = '" . basename($_FILES['excel']['name']) . "'";
+		$result = pg_query($sql) or die($sql);
+	}
 
-    if ($enviado) {
-        $obj = PHPExcel_IOFactory::load("excelnotificacao/".basename($_FILES['excel']['name']));
-        foreach ($obj->getWorksheetIterator() as $sheet) {
-            $getHighestRow = $sheet->getHighestRow();
-            for ($i = 3; $i <= $getHighestRow; $i++) {
-                $nome = $sheet->getCellByColumnAndRow(0, $i)->getValue();
-                ($sheet->getCellByColumnAndRow(1, $i)->getValue()) ?$data_nascimento = date('d/m/Y', strtotime('+1 days', strtotime(date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(1, $i)->getValue()))))) : $data_nascimento = '';
-                $nome_mae = $sheet->getCellByColumnAndRow(2, $i)->getValue();
-                $cpf = $sheet->getCellByColumnAndRow(3, $i)->getValue();
-                $tipo = $sheet->getCellByColumnAndRow(4, $i)->getValue();
-                ($sheet->getCellByColumnAndRow(5, $i)->getValue()) ? $data_notificacao = date('d/m/Y', strtotime('+1 days', strtotime(date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(5, $i)->getValue()))))) : $data_notificacao = '';
-                $resultados = $sheet->getCellByColumnAndRow(6, $i)->getValue();
-                ($sheet->getCellByColumnAndRow(7, $i)->getValue()) ? $data_secretaria = date('d/m/Y', strtotime('+1 days', strtotime(date($format = "Y-m-d", PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(7, $i)->getValue()))))) : $data_secretaria = '';
-                $assinatura_recebimento = $sheet->getCellByColumnAndRow(8, $i)->getValue();
+	if ($enviado) {
+		$obj = PHPExcel_IOFactory::load('excelnotificacao/' . basename($_FILES['excel']['name']));
+		foreach ($obj->getWorksheetIterator() as $sheet) {
+			$getHighestRow = $sheet->getHighestRow();
+			for ($i = 3; $i <= $getHighestRow; $i++) {
+				$nome = $sheet->getCellByColumnAndRow(0, $i)->getValue();
+				($sheet->getCellByColumnAndRow(1, $i)->getValue()) ? $data_nascimento = date('d/m/Y', strtotime('+1 days', strtotime(date($format = 'Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(1, $i)->getValue()))))) : $data_nascimento = '';
+				$nome_mae = $sheet->getCellByColumnAndRow(2, $i)->getValue();
+				$cpf = $sheet->getCellByColumnAndRow(3, $i)->getValue();
+				$tipo = $sheet->getCellByColumnAndRow(4, $i)->getValue();
+				($sheet->getCellByColumnAndRow(5, $i)->getValue()) ? $data_notificacao = date('d/m/Y', strtotime('+1 days', strtotime(date($format = 'Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(5, $i)->getValue()))))) : $data_notificacao = '';
+				$resultados = $sheet->getCellByColumnAndRow(6, $i)->getValue();
+				($sheet->getCellByColumnAndRow(7, $i)->getValue()) ? $data_secretaria = date('d/m/Y', strtotime('+1 days', strtotime(date($format = 'Y-m-d', PHPExcel_Shared_Date::ExcelToPHP($sheet->getCellByColumnAndRow(7, $i)->getValue()))))) : $data_secretaria = '';
+				$assinatura_recebimento = $sheet->getCellByColumnAndRow(8, $i)->getValue();
 
-                include('conexao.php');
-                $sql = "select * from excel_notificacao where nome = '$nome' and data_nascimento = '$data_nascimento' and nome_mae = '$nome_mae' and data_notificacao =  '$data_notificacao' and controle = 1";
-                $result = pg_query($sql) or die($sql);
-                $row = pg_fetch_object($result);
+				include 'conexao.php';
+				$sql = "select * from excel_notificacao where nome = '$nome' and data_nascimento = '$data_nascimento' and nome_mae = '$nome_mae' and data_notificacao =  '$data_notificacao' and tipo = '$tipo' and controle = 1";
+				$result = pg_query($sql) or die($sql);
+				$row = pg_fetch_object($result);
 
-                include('conexao.php');
-                $sql2 = "select * from excel_notificacao where cpf = '$cpf' and data_notificacao =  '$data_notificacao' and controle = 1";
-                $result2 = pg_query($sql2) or die($sql2);
-                $row2 = pg_fetch_object($result2);
+				include 'conexao.php';
+				$sql2 = "select * from excel_notificacao where cpf = '$cpf' and data_notificacao =  '$data_notificacao' and tipo = '$tipo' and controle = 1";
+				$result2 = pg_query($sql2) or die($sql2);
+				$row2 = pg_fetch_object($result2);
 
-                if ($row->nome) {
-                    array_push($erro, $row->nome);
-                }
+				if ($row->nome) {
+					array_push($erro, $row->nome);
+				}
 
-                if ($row2->nome && $row->nome != $row2->nome) {
-                    array_push($erro, $row->nome2);
-                }
+				if ($row2->nome && $row->nome != $row2->nome) {
+					array_push($erro, $row->nome2);
+				}
 
-                include('conexao.php');
-                $sql = "insert into excel_notificacao(nome,data_nascimento,nome_mae,cpf,tipo,data_notificacao,resultados,data_secretaria,assinatura_recebimento,arquivo,controle) values('$nome','$data_nascimento','$nome_mae', '$cpf', '$tipo', '$data_notificacao', '$resultados', '$data_secretaria', '$assinatura_recebimento', '".basename($_FILES['excel']['name'])."', 1)";
-                $result = pg_query($sql) or die($sql);
-
-                $qt_notificacao[$tipo] = $qt_notificacao[$tipo] + 1;
-            }
-        }
-    }
+				include 'conexao.php';
+				$sql = "insert into excel_notificacao(nome,data_nascimento,nome_mae,cpf,tipo,data_notificacao,resultados,data_secretaria,assinatura_recebimento,arquivo,controle) values('$nome','$data_nascimento','$nome_mae', '$cpf', '$tipo', '$data_notificacao', '$resultados', '$data_secretaria', '$assinatura_recebimento', '" . basename($_FILES['excel']['name']) . "', 1)";
+				$result = pg_query($sql) or die($sql);
+			}
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -140,8 +137,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <div class="wrapper">
-        <?php include('menu.php'); ?>
-        <?php include('header.php'); ?>
+        <?php include 'menu.php'; ?>
+        <?php include 'header.php'; ?>
         <div class="main-panel">
             <div class="main-content">
                 <div class="content-wrapper">
@@ -189,6 +186,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <input type="submit" value="submit" class="btn btn-primary">
                                                 </div>
                                             </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <a type="button" class="btn btn-primary"
+                                                        href="relatorio_notificacao.php">Gerar
+                                                        Relatorio</a>
+                                                    <a type="button" class="btn btn-warning"
+                                                        href="anduplicidade_notificacao.php">Analise de
+                                                        Duplicidades</a>
+                                                </div>
+                                            </div>
                                             <div class="row mt-3">
                                                 <div class="col-md-12">
                                                     <?php if ($enviado) {?>
@@ -200,24 +207,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                             <div class="row mt-3">
                                                 <div class="col-md-12">
-                                                    <?php
-foreach ($qt_notificacao as $key => $value) {
-    echo "<h3>$key -> $value</h3>";
-    $qt += $value;
-}
-echo "<br><h3>Total: $qt</h3>";
-                                                    ?>
-                                                </div>
-                                            </div>
-                                            <div class="row mt-3">
-                                                <div class="col-md-12">
                                                     <?php if ($erro) {
-                                                        echo "<h3>Possiveis duplicidades</h3>";
-                                                        foreach ($erro as $nome) {?>
+	echo '<h3>Possiveis duplicidades no arquivo</h3>';
+	foreach ($erro as $nome) {?>
                                                     <h4><?= $nome; ?>
                                                     </h4>
                                                     <?php }
-                                                    } ?>
+} ?>
                                                 </div>
                                             </div>
                                         </form>

@@ -1,5 +1,6 @@
 <?php
-include('verifica.php');
+include 'verifica.php';
+require 'tsul_ssl.php';
 ?>
 <link rel="stylesheet" href="assets/vendor/sweetalert/dist/sweetalert.css">
 <script src="assets/vendor/sweetalert/dist/sweetalert.min.js"></script>
@@ -15,93 +16,93 @@ include('verifica.php');
 $transacao = $_GET['transacao'];
 
 if ($_GET['triagem_manual'] == 1) {
-    function inverteData($data)
-    {
-        if (count(explode("/", $data)) > 1) {
-            return implode("-", array_reverse(explode("/", $data)));
-        } elseif (count(explode("-", $data)) > 1) {
-            return implode("/", array_reverse(explode("-", $data)));
-        }
-    }
+	function inverteData($data)
+	{
+		if (count(explode('/', $data)) > 1) {
+			return implode('-', array_reverse(explode('/', $data)));
+		} elseif (count(explode('-', $data)) > 1) {
+			return implode('/', array_reverse(explode('-', $data)));
+		}
+	}
 
-    include('conexao.php');
-    $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
+	include 'conexao.php';
+	$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
 			k.origem, f.descricao as clinica,c.nome_social,c.dt_nasc
 			from atendimentos a 
 			left join pessoas c on a.paciente_id=c.pessoa_id  
 			left join especialidade f on a.especialidade = f.descricao 
 			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
-			WHERE status in ('Aguardando Triagem', 'Em Triagem') and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
+			WHERE status in ('Aguardando Triagem', 'Em Triagem') and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
             cast(tipo as integer) != '6' and cast(tipo as integer) != '11'
             and transacao = $transacao
 			order by 3, 1 asc limit 1
 			";
-    $sth         = pg_query($stmt) or die($stmt);
-    $row         = pg_fetch_object($sth);
-    $nome         = $row->nome;
-    $data_nascimento         = inverteData($row->dt_nasc);
-    $transacao     =  $row->transacao;
+	$sth = pg_query($stmt) or die($stmt);
+	$row = pg_fetch_object($sth);
+	$nome = ts_decodifica($row->nome);
+	$data_nascimento = inverteData($row->dt_nasc);
+	$transacao = $row->transacao;
 
-    if ($row->nome_social != '') {
-        $nome         = $row->nome_social . '(' . $row->nome . ')';
-    } else {
-        $nome         = $row->nome;
-    }
-    if ($transacao != "") {
-        // include('conexao.php');
-        // $sql = "select * from painel_atendimento where transacao = $row->transacao";
-        // $result = pg_query($sql) or die($sql);
-        // $rowt = pg_fetch_object($result);
-        // if ($rowt->transacao == '') {
-        //     include('conexao.php');
-        //     $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "')";
-        //     $result = pg_query($sql) or die($sql);
+	if ($row->nome_social != '') {
+		$nome = $row->nome_social . '(' . ts_decodifica($row->nome) . ')';
+	} else {
+		$nome = ts_decodifica($row->nome);
+	}
+	if ($transacao != '') {
+		include 'conexao.php';
+		$sql = "select * from painel_atendimento where transacao = $row->transacao";
+		$result = pg_query($sql) or die($sql);
+		$rowt = pg_fetch_object($result);
+		if ($rowt->transacao == '') {
+			include 'conexao.php';
+			$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora,profissional) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "','$usuario')";
+			$result = pg_query($sql) or die($sql);
 
-        //     $data = date('Y-m-d');
-        //     $hora = date('H:i');
-        //     include('conexao.php');
-        //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-        // 		values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-        //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-        // } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
-        //     include('conexao.php');
-        //     $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null where transacao = $row->transacao";
-        //     $result = pg_query($sql) or die($sql);
+			$data = date('Y-m-d');
+			$hora = date('H:i');
+			include 'conexao.php';
+			$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+			$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+		} elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+			include 'conexao.php';
+			$sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, profissional='$usuario' where transacao = $row->transacao";
+			$result = pg_query($sql) or die($sql);
 
-        //     $data = date('Y-m-d');
-        //     $hora = date('H:i');
-        //     include('conexao.php');
-        //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-        // 		values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-        //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-        // } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
-        //     include('conexao.php');
-        //     $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
-        //     $result = pg_query($sql) or die($sql);
+			$data = date('Y-m-d');
+			$hora = date('H:i');
+			include 'conexao.php';
+			$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+			$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+		} elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+			include 'conexao.php';
+			$sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala', profissional='$usuario' where transacao = $row->transacao";
+			$result = pg_query($sql) or die($sql);
 
-        //     $data = date('Y-m-d');
-        //     $hora = date('H:i');
-        //     include('conexao.php');
-        //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-        //     values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-        //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-        // } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
-        //     $erro = "Paciente ainda esta sendo chamado";
-        // } else {
-        //     $erro = "Paciente sendo chamado por outro consultorio";
-        //     $nome = '';
-        //     $transacao = '';
-        // }
-    }
+			$data = date('Y-m-d');
+			$hora = date('H:i');
+			include 'conexao.php';
+			$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+		    values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+			$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+		} elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+			$erro = 'Paciente ainda esta sendo chamado';
+		} else {
+			$erro = 'Paciente sendo chamado por outro consultorio';
+			$nome = '';
+			$transacao = '';
+		}
+	}
 }
 
-include('conexao.php');
+include 'conexao.php';
 $stmtRetorno = "Select * from classificacao c where cast(atendimento_id as integer) = '$transacao'";
 $sthRetorno = pg_query($stmtRetorno) or die($stmtRetorno);
 $rowRetorno = pg_fetch_object($sthRetorno);
 
 $hoje = date('Y-m-d');
-include('conexao.php');
+include 'conexao.php';
 $stmtNome = "select nome,idade,dt_nasc,extract(year from age(dt_nasc)) as idadenormal,num_carteira_convenio,p.nome_social, paciente_id, a.nec_especiais
 	from atendimentos a
 					left join pessoas p on p.pessoa_id=a.paciente_id
@@ -110,8 +111,7 @@ $sthNome = pg_query($stmtNome) or die($stmtNome);
 $rowNome = pg_fetch_object($sthNome);
 $cns = $rowNome->num_carteira_convenio;
 
-
-include('conexao.php');
+include 'conexao.php';
 $stmtCns = "
 	select *
 		from controle_epidemiologico
@@ -124,12 +124,12 @@ $date = new DateTime($rowNome->dt_nasc); // data de nascimento
 $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
 $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
 
-include('conexao.php');
-$stmt   = "Update Atendimentos set status='Em Triagem' where transacao = $transacao ";
-$sth         = pg_query($stmt) or die($stmt);
+include 'conexao.php';
+$stmt = "Update Atendimentos set status='Em Triagem' where transacao = $transacao ";
+$sth = pg_query($stmt) or die($stmt);
 
 if ($rowcns->descricao != '') {
-    ?>
+	?>
 <script>
     sweetAlert(
         "<?php echo utf8_encode('Aten��o, paciente com notifica��o epidemiologica'); ?>",
@@ -185,15 +185,15 @@ if ($rowcns->descricao != '') {
             <h4 style="font-size: 100%; padding:0;margin:0; margin-bottom: 10px;">
                 Nome: <span style="font-weight: bold;">
                     <?php if ($rowNome->nome_social == '') { ?>
-                    <?php echo $rowNome->nome; ?>
+                    <?php echo ts_decodifica($rowNome->nome); ?>
                     <?php } else { ?>
-                    <?php echo $rowNome->nome_social; ?> (<?php echo $rowNome->nome; ?>)
+                    <?php echo $rowNome->nome_social; ?> (<?php echo ts_decodifica($rowNome->nome); ?>)
                     <?php } ?>
                     <?php if ($rowNome->nec_especiais != 'Nenhuma') {
-        ?>
+		?>
                     <br>Paciente com deficiência <?= $rowNome->nec_especiais; ?>
                     <?php
-    } ?>
+	} ?>
                 </span>
             </h4>
         </div>
@@ -224,17 +224,17 @@ if ($rowcns->descricao != '') {
                 onchange='carrega_discriminador()'>
                 <option value="">Selecione o Fluxograma</option>
                 <?php
-                include('conexao.php');
-                $stmt = 'Select * from fluxo_class_risco order by fluxograma_id';
-                $sth = pg_query($stmt) or die($stmt);
-                while ($row = pg_fetch_object($sth)) {
-                    if ($rowRetorno->fluxograma == $row->descricao) {
-                        echo '<option value="' . $row->fluxograma_id . '" selected>' . $row->descricao . '</option>';
-                    } else {
-                        echo '<option value="' . $row->fluxograma_id . '">' . $row->descricao . '</option>';
-                    }
-                }
-                ?>
+				include 'conexao.php';
+				$stmt = 'Select * from fluxo_class_risco order by fluxograma_id';
+				$sth = pg_query($stmt) or die($stmt);
+				while ($row = pg_fetch_object($sth)) {
+					if ($rowRetorno->fluxograma == $row->descricao) {
+						echo '<option value="' . $row->fluxograma_id . '" selected>' . $row->descricao . '</option>';
+					} else {
+						echo '<option value="' . $row->fluxograma_id . '">' . $row->descricao . '</option>';
+					}
+				}
+				?>
             </select>
         </div>
         <div class="col-6" id='load_discriminador'>
@@ -372,15 +372,15 @@ if ($rowcns->descricao != '') {
     </div>
 </div>
 <?php
-$prioridades = array(
-    'VERMELHO' => utf8_decode('EMERGÊNCIA - VERMELHO'),
-    'LARANJA' => utf8_decode('MUITO URGENTE - LARANJA'),
-    'AMARELO' => utf8_decode('URGENTE - AMARELO'),
-    'VERDE'  => utf8_decode('POUCO URGENTE - VERDE'),
-    'AZUL'   => utf8_decode('NÃO URGENTE - AZUL'),
-    'BRANCO' => utf8_decode('NÃO RESPONDEU'),
-    'ORIENTACOESVACINAS' => utf8_decode('ORIENTACOES/VACINAS'),
-);
+$prioridades = [
+	'VERMELHO' => utf8_decode('EMERGÊNCIA - VERMELHO'),
+	'LARANJA' => utf8_decode('MUITO URGENTE - LARANJA'),
+	'AMARELO' => utf8_decode('URGENTE - AMARELO'),
+	'VERDE' => utf8_decode('POUCO URGENTE - VERDE'),
+	'AZUL' => utf8_decode('NÃO URGENTE - AZUL'),
+	'BRANCO' => utf8_decode('NÃO RESPONDEU'),
+	'ORIENTACOESVACINAS' => utf8_decode('ORIENTACOES/VACINAS'),
+];
 ?>
 <div class="row">
     <div class="col-md-6">
@@ -388,13 +388,13 @@ $prioridades = array(
         <select class="form-control" style='font-size:small;' name="prioridadeModal" id="prioridadeModal">
             <option value="">Selecione a Prioridade</option>
             <?php
-            foreach ($prioridades as $key => $value) {
-                if ($rowRetorno->prioridade == $key) {
-                    echo '<option value="' . $key . '" selected>' . utf8_encode($value) . '</option>';
-                } else {
-                    echo '<option value="' . $key . '">' . utf8_encode($value) . '</option>';
-                }
-            } ?>
+			foreach ($prioridades as $key => $value) {
+				if ($rowRetorno->prioridade == $key) {
+					echo '<option value="' . $key . '" selected>' . utf8_encode($value) . '</option>';
+				} else {
+					echo '<option value="' . $key . '">' . utf8_encode($value) . '</option>';
+				}
+			} ?>
         </select>
     </div>
     <div class="col-md-6">
@@ -403,34 +403,33 @@ $prioridades = array(
             <option value="">Selecione o Consultorio</option>
             <?php
 
-
-            if ($rowRetorno->encaminhamentos == utf8_encode('Ortopedia')) {
-                echo '<option value="' . utf8_encode('Ortopedia') . '" selected >' . utf8_encode('Ortopedia') . '</option>';
-                echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
-                echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
-                echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
-            } elseif ($rowRetorno->encaminhamentos == utf8_encode('Consultorio Adulto')) {
-                echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
-                echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '" selected >' . utf8_encode('Consultorio Adulto') . '</option>';
-                echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
-                echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
-            } elseif ($rowRetorno->encaminhamentos == utf8_encode('Ala Vermelha')) {
-                echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
-                echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
-                echo '<option value="' . utf8_encode('Ala Vermelha') . '" selected>' . utf8_encode('Ala Vermelha') . '</option>';
-                echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
-            } elseif ($rowRetorno->encaminhamentos == utf8_encode('Troca de Sonda')) {
-                echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
-                echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
-                echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
-                echo '<option value="' . utf8_encode('Troca de Sonda') . '" selected>' . utf8_encode('Troca de Sonda') . '</option>';
-            } else {
-                echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
-                echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
-                echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
-                echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
-            }
-            ?>
+			if ($rowRetorno->encaminhamentos == utf8_encode('Ortopedia')) {
+				echo '<option value="' . utf8_encode('Ortopedia') . '" selected >' . utf8_encode('Ortopedia') . '</option>';
+				echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
+				echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
+				echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
+			} elseif ($rowRetorno->encaminhamentos == utf8_encode('Consultorio Adulto')) {
+				echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
+				echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '" selected >' . utf8_encode('Consultorio Adulto') . '</option>';
+				echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
+				echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
+			} elseif ($rowRetorno->encaminhamentos == utf8_encode('Ala Vermelha')) {
+				echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
+				echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
+				echo '<option value="' . utf8_encode('Ala Vermelha') . '" selected>' . utf8_encode('Ala Vermelha') . '</option>';
+				echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
+			} elseif ($rowRetorno->encaminhamentos == utf8_encode('Troca de Sonda')) {
+				echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
+				echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
+				echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
+				echo '<option value="' . utf8_encode('Troca de Sonda') . '" selected>' . utf8_encode('Troca de Sonda') . '</option>';
+			} else {
+				echo '<option value="' . utf8_encode('Ortopedia') . '">' . utf8_encode('Ortopedia') . '</option>';
+				echo '<option selected value="' . utf8_encode('Consultorio Adulto') . '">' . utf8_encode('Consultorio Adulto') . '</option>';
+				echo '<option value="' . utf8_encode('Ala Vermelha') . '">' . utf8_encode('Ala Vermelha') . '</option>';
+				echo '<option value="' . utf8_encode('Troca de Sonda') . '">' . utf8_encode('Troca de Sonda') . '</option>';
+			}
+			?>
             <option value="Realizado/Encaminhado">Realizado/Encaminhado</option>
         </select>
     </div>

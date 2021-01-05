@@ -1,51 +1,51 @@
 <?php
-include('verifica.php');
+include 'verifica.php';
+require 'tsul_ssl.php';
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 $hora_transacao = '';
 function validaCPF($cpf = null)
 {
-    // Verifica se um número foi informado
-    if (empty($cpf)) {
-        return false;
-    }
+	// Verifica se um número foi informado
+	if (empty($cpf)) {
+		return false;
+	}
 
-    // Elimina possivel mascara
-    $cpf = preg_replace('[^0-9]', '', $cpf);
-    $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+	// Elimina possivel mascara
+	$cpf = preg_replace('[^0-9]', '', $cpf);
+	$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
 
-    // Verifica se o numero de digitos informados é igual a 11
-    if (strlen($cpf) != 11) {
-        return false;
-    }  // Verifica se nenhuma das sequências invalidas abaixo
-    // foi digitada. Caso afirmativo, retorna falso
-    elseif ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
-        return false;
-    // Calcula os digitos verificadores para verificar se o
-        // CPF é válido
-    } else {
-        for ($t = 9; $t < 11; $t++) {
-            for ($d = 0, $c = 0; $c < $t; $c++) {
-                $d += $cpf{
-                    $c} * (($t + 1) - $c);
-            }
-            $d = ((10 * $d) % 11) % 10;
-            if ($cpf{
-                $c} != $d) {
-                return false;
-            }
-        }
+	// Verifica se o numero de digitos informados é igual a 11
+	if (strlen($cpf) != 11) {
+		return false;
+	}  // Verifica se nenhuma das sequências invalidas abaixo
+	// foi digitada. Caso afirmativo, retorna falso
+	elseif ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
+		return false;
+	// Calcula os digitos verificadores para verificar se o
+		// CPF é válido
+	} else {
+		for ($t = 9; $t < 11; $t++) {
+			for ($d = 0, $c = 0; $c < $t; $c++) {
+				$d += $cpf{
+					$c} * (($t + 1) - $c);
+			}
+			$d = ((10 * $d) % 11) % 10;
+			if ($cpf{
+				$c} != $d) {
+				return false;
+			}
+		}
 
-        return true;
-    }
+		return true;
+	}
 }
-
 
 //include('verifica.php');
 
@@ -63,48 +63,48 @@ $mae = '';
 $where = 'nome is null';
 $tipoConv = '3';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $transacao         = $_GET['id'];
-    $senha             = $_GET['senha'];
-    $agendamento     = $_GET['ag'];
-    $med = $_GET['med'];
-    $texto = "";
-    $data = date('Y-m-d');
-    $hora = date('H:i');
-    include('conexao.php');
-    $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+	$transacao = $_GET['id'];
+	$senha = $_GET['senha'];
+	$agendamento = $_GET['ag'];
+	$med = $_GET['med'];
+	$texto = '';
+	$data = date('Y-m-d');
+	$hora = date('H:i');
+	include 'conexao.php';
+	$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 			values ('$usuario','FEZ ACESSO AO ATENDIMENTO','$transacao','$data','$hora')";
-    $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+	$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
-    include('conexao.php');
-    $bloqueiaAt = "SELECT transacao,STATUS, count(*) AS total,nome
+	include 'conexao.php';
+	$bloqueiaAt = "SELECT transacao,STATUS, count(*) AS total,nome
 					FROM atendimentos a
 					LEFT JOIN pessoas p ON p.pessoa_id = a.paciente_id
 					WHERE med_atendimento = '$usuario' AND transacao != $transacao AND STATUS = 'Em Atendimento' AND dat_cad = '" . date('Y-m-d') . "'
 					GROUP BY 1,2,4";
-    $sthBlock = pg_query($bloqueiaAt) or die($bloqueiaAt);
-    $valBlock = pg_fetch_object($sthBlock);
-    if ($valBlock->total > 0 && isset($_GET['continue'])) {
-        if (!isset($_GET['estadia'])) {
-            echo "
+	$sthBlock = pg_query($bloqueiaAt) or die($bloqueiaAt);
+	$valBlock = pg_fetch_object($sthBlock);
+	if ($valBlock->total > 0 && isset($_GET['continue'])) {
+		if (!isset($_GET['estadia'])) {
+			echo "
 			<script>
-				alert('Finalize o atendimento de " . $valBlock->nome . " que esta em aberto. Você será redirecionado para o paciente em questão.');
+				alert('Finalize o atendimento de " . ts_decodifica($valBlock->nome) . " que esta em aberto. Você será redirecionado para o paciente em questão.');
 				location.href='atendimentoclinico.php?id=" . $valBlock->transacao . "&continue=1';
 			</script>";
-        }
-    } else {
-        include('conexao.php');
-        $validaAtendimento = "select a.status from atendimentos a where a.transacao=$transacao";
-        $sthAt = pg_query($validaAtendimento) or die($validaAtendimento);
-        $valAt = pg_fetch_object($sthAt);
-        if ($valAt->status == 'Aguardando Atendimento' && $perfil == '03') {
-            $stmt = "update atendimentos set status='Em Atendimento', med_atendimento='$usuario' WHERE transacao = $transacao";
-            $sth = pg_query($stmt) or die($stmt);
-        }
-    }
+		}
+	} else {
+		include 'conexao.php';
+		$validaAtendimento = "select a.status from atendimentos a where a.transacao=$transacao";
+		$sthAt = pg_query($validaAtendimento) or die($validaAtendimento);
+		$valAt = pg_fetch_object($sthAt);
+		if ($valAt->status == 'Aguardando Atendimento' && $perfil == '03') {
+			$stmt = "update atendimentos set status='Em Atendimento', med_atendimento='$usuario' WHERE transacao = $transacao";
+			$sth = pg_query($stmt) or die($stmt);
+		}
+	}
 
-    if ($transacao != "") {
-        include('conexao.php');
-        $stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+	if ($transacao != '') {
+		include 'conexao.php';
+		$stmt = "SELECT a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad AS cadastro, a.obs_modal, c.nome, c.nome_social, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.usuario, x.fimclassificacao, x.pressaosistolica, x.queixa AS relato, x.pulso, x.temperatura, x.discriminador, x.prioridade AS atendprioridade, x.glicose, x.dor, x.oxigenio, a.coronavirus, a.pa_sis_internacao,a.pa_dist_internacao,a.temperatura_internacao,a.dor_internacao,a.oxigenio_internacao,a.pulso_internacao,a.pulso_internacao,a.glicose_internacao,a.ecg_internacao,a.frequencia_respiratoria, a.cid_internacao, a.tipo_leito
@@ -114,502 +114,499 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		LEFT JOIN classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao' 
         LEFT JOIN destino_paciente z on a.transacao = z.atendimento_id
 		WHERE a.transacao=$transacao";
-        $sth = pg_query($stmt) or die($stmt);
-        $row = pg_fetch_object($sth);
-        $data_transacao = substr($row->cadastro, 0, 10);
-        $hora_transacao = $row->hora_cad;
-        $prontuario = $row->paciente_id;
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		$data_transacao = substr($row->cadastro, 0, 10);
+		$hora_transacao = $row->hora_cad;
+		$prontuario = $row->paciente_id;
 
-        $destino     = $row->destino_paciente;
-        $destinox     = $row->destino_paciente;
-        $status = $row->status;
+		$destino = $row->destino_paciente;
+		$destinox = $row->destino_paciente;
+		$status = $row->status;
 
-        if (($status == "Atendimento Finalizado") && ($destino != "07" && $destino != "10" && $destino != "09")) {
-            $liberacao = "readonly";
-            $liberacaox = "disabled";
-        } else {
-            $liberacao = "";
-            $liberacaox = "";
-        }
-        $usuario_enf = $row->usuario;
-        $datahora = $row->fimclassificacao;
-        $data_destino = $row->data_destino;
-        $prioridade = $row->prioridade;
-        $sexo = $row->sexo;
-        $nome = $row->nome;
-        $nome_social = $row->nome_social;
-        $paciente_id = $row->paciente_id;
-        $email = $row->email;
-        $dt_nascimento = inverteData($row->dt_nasc);
-        $sexo = $row->sexo;
-        $enderecox = $row->endereco;
-        $end_numero = $row->numero;
-        $complemento = $row->complemento;
-        $bairro = $row->bairro;
-        $cidade = $row->cidade;
-        $estado = $row->estado;
-        $atendprioridade = $row->atendprioridade;
-        $peso = $row->peso;
-        $oxigenio = $row->oxigenio;
-        $dor     = $row->dor;
-        $glicose = $row->glicose;
-        $pressaodiastolica = $row->pressaodiastolica;
-        $pressaosistolica = $row->pressaosistolica;
-        $relato = $row->relato;
-        $pulso = $row->pulso;
-        $temperatura = $row->temperatura;
-        $cns    = $row->num_carteira_convenio;
-        $cep = $row->cep;
-        $cpf = $row->cpf;
-        $telefone = $row->telefone;
-        $celular = $row->celular;
-        $dt_nasc = $row->dt_nasc;
-        $date = new DateTime($dt_nasc); // data de nascimento
-        $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
-        $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
-        $procedimento = $row->procedimento_id;
-        $senha = $row->num_senha;
-        $deficiencia = $_POST['deficiencia'];
-        $origem = $row->origem;
-        $deficiencia = $row->nec_especiais;
-        $observacao  = $row->relato . PHP_EOL;
-        $observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . PHP_EOL . 'PA SIST.:' . $pressaosistolica . PHP_EOL;
-        $observacao = $observacao . 'PESO:' . $peso . PHP_EOL . 'Temperatura:' . $temperatura . PHP_EOL;
-        $observacao = $observacao . 'GLICEMIA:' . $glicose . PHP_EOL . 'Dor:' . $dor . PHP_EOL;
+		if (($status == 'Atendimento Finalizado') && ($destino != '07' && $destino != '10' && $destino != '09')) {
+			$liberacao = 'readonly';
+			$liberacaox = 'disabled';
+		} else {
+			$liberacao = '';
+			$liberacaox = '';
+		}
+		$usuario_enf = $row->usuario;
+		$datahora = $row->fimclassificacao;
+		$data_destino = $row->data_destino;
+		$prioridade = $row->prioridade;
+		$sexo = $row->sexo;
+		$nome = ts_decodifica($row->nome);
+		$nome_social = $row->nome_social;
+		$paciente_id = $row->paciente_id;
+		$email = $row->email;
+		$dt_nascimento = inverteData($row->dt_nasc);
+		$sexo = $row->sexo;
+		$enderecox = $row->endereco;
+		$end_numero = $row->numero;
+		$complemento = $row->complemento;
+		$bairro = $row->bairro;
+		$cidade = $row->cidade;
+		$estado = $row->estado;
+		$atendprioridade = $row->atendprioridade;
+		$peso = $row->peso;
+		$oxigenio = $row->oxigenio;
+		$dor = $row->dor;
+		$glicose = $row->glicose;
+		$pressaodiastolica = $row->pressaodiastolica;
+		$pressaosistolica = $row->pressaosistolica;
+		$relato = $row->relato;
+		$pulso = $row->pulso;
+		$temperatura = $row->temperatura;
+		$cns = $row->num_carteira_convenio;
+		$cep = $row->cep;
+		$cpf = ts_decodifica($row->cpf);
+		$telefone = $row->telefone;
+		$celular = $row->celular;
+		$dt_nasc = $row->dt_nasc;
+		$date = new DateTime($dt_nasc); // data de nascimento
+		$interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
+		$idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
+		$procedimento = $row->procedimento_id;
+		$senha = $row->num_senha;
+		$deficiencia = $_POST['deficiencia'];
+		$origem = $row->origem;
+		$deficiencia = $row->nec_especiais;
+		$observacao = $row->relato . PHP_EOL;
+		$observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . PHP_EOL . 'PA SIST.:' . $pressaosistolica . PHP_EOL;
+		$observacao = $observacao . 'PESO:' . $peso . PHP_EOL . 'Temperatura:' . $temperatura . PHP_EOL;
+		$observacao = $observacao . 'GLICEMIA:' . $glicose . PHP_EOL . 'Dor:' . $dor . PHP_EOL;
 
-        $oque_faz      = $row->oque_faz;
-        $com_oqfaz     = $row->com_oqfaz;
-        $tempo_faz     = $row->tempo_faz;
-        $como_faz      = $row->como_faz;
-        $enfermaria = $row->enfermaria;
-        $leito         = $row->leito;
-        $imagem     = $row->imagem;
-        $origem     = $row->tipo;
-        $alta         = inverteData($row->data_destino);
-        $CID         = $row->cid_principal;
-        $diag_pri     = $row->diagnostico_principal;
-        $queixa       = $row->queixa;
-        $exame_fisico   = $row->exame_fisico;
-        $hora_dest    = $row->hora_destino;
-        $obs_modal  = $row->obs_modal;
-        $coronavirus  = $row->coronavirus;
-        $pressaosistolicai = $row->pa_sis_internacao;
-        $pressaodiastolicai = $row->pa_dist_internacao;
-        $oxigenioi = $row->oxigenio_internacao;
-        $frequencia_respiratoriai = $row->frequencia_respiratoria;
-        $pulsoi = $row->pulso_internacao;
-        $temperaturai = $row->temperatura_internacao;
-        $glicosei = $row->glicose_internacao;
-        $ecgi = $row->ecg_internacao;
-        $cid_internacaoi = $row->cid_internacao;
-        $tipo_leitoi = $row->tipo_leito;
-    } else {
-        $data_transacao = date('Y-m-d');
-        $hora_transacao = date('H:i');
-        $usuario_transacao = $usuario;
-    }
+		$oque_faz = $row->oque_faz;
+		$com_oqfaz = $row->com_oqfaz;
+		$tempo_faz = $row->tempo_faz;
+		$como_faz = $row->como_faz;
+		$enfermaria = $row->enfermaria;
+		$leito = $row->leito;
+		$imagem = $row->imagem;
+		$origem = $row->tipo;
+		$alta = inverteData($row->data_destino);
+		$CID = $row->cid_principal;
+		$diag_pri = $row->diagnostico_principal;
+		$queixa = $row->queixa;
+		$exame_fisico = $row->exame_fisico;
+		$hora_dest = $row->hora_destino;
+		$obs_modal = $row->obs_modal;
+		$coronavirus = $row->coronavirus;
+		$pressaosistolicai = $row->pa_sis_internacao;
+		$pressaodiastolicai = $row->pa_dist_internacao;
+		$oxigenioi = $row->oxigenio_internacao;
+		$frequencia_respiratoriai = $row->frequencia_respiratoria;
+		$pulsoi = $row->pulso_internacao;
+		$temperaturai = $row->temperatura_internacao;
+		$glicosei = $row->glicose_internacao;
+		$ecgi = $row->ecg_internacao;
+		$cid_internacaoi = $row->cid_internacao;
+		$tipo_leitoi = $row->tipo_leito;
+	} else {
+		$data_transacao = date('Y-m-d');
+		$hora_transacao = date('H:i');
+		$usuario_transacao = $usuario;
+	}
 
-    $sql = "SELECT * FROM atendimentos WHERE paciente_id = $paciente_id AND destino_paciente IN ('01','02','11','12','14','15') AND NOW() - data_destino < '8'";
-    $res = pg_query($sql) or die($sql);
+	$sql = "SELECT * FROM atendimentos WHERE paciente_id = $paciente_id AND destino_paciente IN ('01','02','11','12','14','15') AND NOW() - data_destino < '8'";
+	$res = pg_query($sql) or die($sql);
 
-    include('conexao.php');
-    $sqlc = "select * from presintomas_covid where atendimento_id = $transacao";
-    $resultc = pg_query($sqlc) or die($sqlc);
-    $rowc = pg_fetch_object($resultc);
-    $febre_alta = $rowc->febre_alta;
-    $fadiga = $rowc->fadiga;
-    $dificuldade_respirar = $rowc->dificuldade_respirar;
-    $tosse_secracao = $rowc->tosse_secracao;
-    $congestao_nasal = $rowc->congestao_nasal;
-    $cefaleia = $rowc->cefaleia;
-    $dor_garganta = $rowc->dor_garganta;
-    $diarreia = $rowc->diarreia;
-    $nausea_vomito = $rowc->nausea_vomito;
-    $mialgia_artralgia = $rowc->mialgia_artralgia;
-    $calafrios = $rowc->calafrios;
-    $anosmia_hiposmia = $rowc->anosmia_hiposmia;
-    $diabetes = $rowc->diabetes;
-    $has = $rowc->has;
-    $obesidade = $rowc->obesidade;
-    $doenca_coronariana = $rowc->doenca_coronariana;
-    $dpoc_asma = $rowc->dpoc_asma;
-    $cancer = $rowc->cancer;
-    $drc = $rowc->drc;
-    $imunodeficiencia = $rowc->imunodeficiencia;
+	include 'conexao.php';
+	$sqlc = "select * from presintomas_covid where atendimento_id = $transacao";
+	$resultc = pg_query($sqlc) or die($sqlc);
+	$rowc = pg_fetch_object($resultc);
+	$febre_alta = $rowc->febre_alta;
+	$fadiga = $rowc->fadiga;
+	$dificuldade_respirar = $rowc->dificuldade_respirar;
+	$tosse_secracao = $rowc->tosse_secracao;
+	$congestao_nasal = $rowc->congestao_nasal;
+	$cefaleia = $rowc->cefaleia;
+	$dor_garganta = $rowc->dor_garganta;
+	$diarreia = $rowc->diarreia;
+	$nausea_vomito = $rowc->nausea_vomito;
+	$mialgia_artralgia = $rowc->mialgia_artralgia;
+	$calafrios = $rowc->calafrios;
+	$anosmia_hiposmia = $rowc->anosmia_hiposmia;
+	$diabetes = $rowc->diabetes;
+	$has = $rowc->has;
+	$obesidade = $rowc->obesidade;
+	$doenca_coronariana = $rowc->doenca_coronariana;
+	$dpoc_asma = $rowc->dpoc_asma;
+	$cancer = $rowc->cancer;
+	$drc = $rowc->drc;
+	$imunodeficiencia = $rowc->imunodeficiencia;
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['extornar_alta'])) {
-        $destino = $_POST['destino'];
-        $motivo_extorno = $_POST['motivo_extorno'];
-        $atendimento = $_POST['atendimento'];
-        $data = date('Y-m-d');
-        $hora = date('H:i');
+	if (isset($_POST['extornar_alta'])) {
+		$destino = $_POST['destino'];
+		$motivo_extorno = $_POST['motivo_extorno'];
+		$atendimento = $_POST['atendimento'];
+		$data = date('Y-m-d');
+		$hora = date('H:i');
 
-        include('conexao.php');
-        $stmtLogs = "INSERT INTO logs (usuario, tipo_acao,atendimento_id, data, hora) 
+		include 'conexao.php';
+		$stmtLogs = "INSERT INTO logs (usuario, tipo_acao,atendimento_id, data, hora) 
 					 VALUES ('$usuario','Extornou a Alta do atendimento para o destino $destino pelo motivo $motivo_extorno','$atendimento','$data','$hora')";
-        $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+		$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
-        include('conexao.php');
-        $sqlv = "SELECT * FROM destino_paciente WHERE atendimento_id = $atendimento";
-        $resultv = pg_query($sqlv) or die($sqlv);
-        $rowv = pg_fetch_object($resultv);
-        if ($rowv) {
-            include('conexao.php');
-            $sql = "UPDATE destino_paciente SET destino_encaminhamento = $destino WHERE atendimento_id = $atendimento";
-            $result = pg_query($sql) or die($sql);
-        } else {
-            include('conexao.php');
-            $sql = "UPDATE atendimentos SET destino_paciente = '$destino', status='Atendimento Finalizado' WHERE transacao = $atendimento";
-            $result = pg_query($sql) or die($sql);
-        }
+		include 'conexao.php';
+		$sqlv = "SELECT * FROM destino_paciente WHERE atendimento_id = $atendimento";
+		$resultv = pg_query($sqlv) or die($sqlv);
+		$rowv = pg_fetch_object($resultv);
+		if ($rowv) {
+			include 'conexao.php';
+			$sql = "UPDATE destino_paciente SET destino_encaminhamento = $destino WHERE atendimento_id = $atendimento";
+			$result = pg_query($sql) or die($sql);
+		} else {
+			include 'conexao.php';
+			$sql = "UPDATE atendimentos SET destino_paciente = '$destino', status='Atendimento Finalizado' WHERE transacao = $atendimento";
+			$result = pg_query($sql) or die($sql);
+		}
 
-        header('Location: atendimentoclinico.php?id=' . $atendimento);
-    } else {
-        $transacao =        stripslashes(pg_escape_string($_POST['transacao']));
-        $senha =            stripslashes(pg_escape_string($_POST['senha']));
-        $data_transacao =   stripslashes(pg_escape_string($_POST['data_transacao']));
-        $hora_transacao =   stripslashes(pg_escape_string($_POST['hora_transacao']));
-        $usuario_transacao = stripslashes(pg_escape_string($_POST['usuario_transacao']));
-        $acao =             stripslashes(pg_escape_string($_POST['acao']));
-        $idade =            stripslashes(pg_escape_string($_POST['idade']));
-        $prontuario = stripslashes(pg_escape_string($_POST['prontuario']));
-        $nome = stripslashes(pg_escape_string($_POST['nome']));
-        $dt_nascimento = stripslashes(pg_escape_string($_POST['dt_nascimento']));
-        $enderecox = stripslashes(pg_escape_string($_POST['endereco']));
-        $end_numero = stripslashes(pg_escape_string($_POST['end_num']));
-        $complemento = stripslashes(pg_escape_string($_POST['end_comp']));
-        $bairro = stripslashes(pg_escape_string($_POST['end_bairro']));
-        $cidade = stripslashes(pg_escape_string($_POST['end_cidade']));
-        $estado = stripslashes(pg_escape_string($_POST['end_uf']));
-        $cep = stripslashes(pg_escape_string($_POST['end_cep']));
-        $cpf = stripslashes(pg_escape_string($_POST['cpf']));
-        $cns = stripslashes(pg_escape_string($_POST['cns']));
-        $telefone = stripslashes(pg_escape_string($_POST['telefone']));
-        $celular = stripslashes(pg_escape_string($_POST['celular']));
-        $deficiencia = stripslashes(pg_escape_string($_POST['deficiencia']));
-        $observacao = stripslashes(pg_escape_string($_POST['observacao']));
-        $origem = $_POST['origem'];
-        $evolucao = stripslashes(pg_escape_string($_POST['evolucao']));
+		header('Location: atendimentoclinico.php?id=' . $atendimento);
+	} else {
+		$transacao = stripslashes(pg_escape_string($_POST['transacao']));
+		$senha = stripslashes(pg_escape_string($_POST['senha']));
+		$data_transacao = stripslashes(pg_escape_string($_POST['data_transacao']));
+		$hora_transacao = stripslashes(pg_escape_string($_POST['hora_transacao']));
+		$usuario_transacao = stripslashes(pg_escape_string($_POST['usuario_transacao']));
+		$acao = stripslashes(pg_escape_string($_POST['acao']));
+		$idade = stripslashes(pg_escape_string($_POST['idade']));
+		$prontuario = stripslashes(pg_escape_string($_POST['prontuario']));
+		$nome = ts_codifica(stripslashes(pg_escape_string($_POST['nome'])));
+		$dt_nascimento = stripslashes(pg_escape_string($_POST['dt_nascimento']));
+		$enderecox = stripslashes(pg_escape_string($_POST['endereco']));
+		$end_numero = stripslashes(pg_escape_string($_POST['end_num']));
+		$complemento = stripslashes(pg_escape_string($_POST['end_comp']));
+		$bairro = stripslashes(pg_escape_string($_POST['end_bairro']));
+		$cidade = stripslashes(pg_escape_string($_POST['end_cidade']));
+		$estado = stripslashes(pg_escape_string($_POST['end_uf']));
+		$cep = stripslashes(pg_escape_string($_POST['end_cep']));
+		$cpf = ts_codifica(stripslashes(pg_escape_string($_POST['cpf'])));
+		$cns = stripslashes(pg_escape_string($_POST['cns']));
+		$telefone = stripslashes(pg_escape_string($_POST['telefone']));
+		$celular = stripslashes(pg_escape_string($_POST['celular']));
+		$deficiencia = stripslashes(pg_escape_string($_POST['deficiencia']));
+		$observacao = stripslashes(pg_escape_string($_POST['observacao']));
+		$origem = $_POST['origem'];
+		$evolucao = stripslashes(pg_escape_string($_POST['evolucao']));
 
-        $enfermaria = stripslashes(pg_escape_string($_POST['enfermaria']));
-        $leito = stripslashes(pg_escape_string($_POST['leito']));
-        $oque_faz = stripslashes(pg_escape_string($_POST['oque_faz']));
-        $com_oqfaz = stripslashes(pg_escape_string($_POST['com_oqfaz']));
-        $tempo_faz = stripslashes(pg_escape_string($_POST['tempo_faz']));
-        $como_faz = stripslashes(pg_escape_string($_POST['como_faz']));
-        $destino = stripslashes(pg_escape_string($_POST['destino']));
-        $destinox = stripslashes(pg_escape_string($_POST['destinox']));
+		$enfermaria = stripslashes(pg_escape_string($_POST['enfermaria']));
+		$leito = stripslashes(pg_escape_string($_POST['leito']));
+		$oque_faz = stripslashes(pg_escape_string($_POST['oque_faz']));
+		$com_oqfaz = stripslashes(pg_escape_string($_POST['com_oqfaz']));
+		$tempo_faz = stripslashes(pg_escape_string($_POST['tempo_faz']));
+		$como_faz = stripslashes(pg_escape_string($_POST['como_faz']));
+		$destino = stripslashes(pg_escape_string($_POST['destino']));
+		$destinox = stripslashes(pg_escape_string($_POST['destinox']));
 
-        $alta = date('Y-m-d');
-        $hora_destino = date('H:i');
-        $CID = stripslashes(pg_escape_string($_POST['CID']));
-        $diag_pri = stripslashes(pg_escape_string($_POST['diag_pri']));
-        $situacao = stripslashes(pg_escape_string($_POST['situacao']));
-        $queixa = stripslashes(pg_escape_string($_POST['queixa']));
-        $exame_fisico = stripslashes(pg_escape_string($_POST['exame_fisico']));
-        $procedimento = stripslashes(pg_escape_string($_POST['procedimento']));
-        $transfere = $_POST['cb_exame'];
-        $obs_modal = stripslashes(pg_escape_string($_POST['obs_modal']));
-        $coronavirus = $_POST['coronavirus'];
+		$alta = date('Y-m-d');
+		$hora_destino = date('H:i');
+		$CID = stripslashes(pg_escape_string($_POST['CID']));
+		$diag_pri = stripslashes(pg_escape_string($_POST['diag_pri']));
+		$situacao = stripslashes(pg_escape_string($_POST['situacao']));
+		$queixa = stripslashes(pg_escape_string($_POST['queixa']));
+		$exame_fisico = stripslashes(pg_escape_string($_POST['exame_fisico']));
+		$procedimento = stripslashes(pg_escape_string($_POST['procedimento']));
+		$transfere = $_POST['cb_exame'];
+		$obs_modal = stripslashes(pg_escape_string($_POST['obs_modal']));
+		$coronavirus = $_POST['coronavirus'];
 
-        if ($coronavirus == 1 or $coronavirus == 10) {
-            if ($_POST['febre_alta']) {
-                $febre_alta = 1;
-            } else {
-                $febre_alta = 0;
-            }
-            if ($_POST['fadiga']) {
-                $fadiga = 1;
-            } else {
-                $fadiga = 0;
-            }
-            if ($_POST['dificuldade_respirar']) {
-                $dificuldade_respirar = 1;
-            } else {
-                $dificuldade_respirar = 0;
-            }
-            if ($_POST['tosse_secracao']) {
-                $tosse_secracao = 1;
-            } else {
-                $tosse_secracao = 0;
-            }
-            if ($_POST['congestao_nasal']) {
-                $congestao_nasal = 1;
-            } else {
-                $congestao_nasal = 0;
-            }
-            if ($_POST['cefaleia']) {
-                $cefaleia = 1;
-            } else {
-                $cefaleia = 0;
-            }
-            if ($_POST['dor_garganta']) {
-                $dor_garganta = 1;
-            } else {
-                $dor_garganta = 0;
-            }
-            if ($_POST['diarreia']) {
-                $diarreia = 1;
-            } else {
-                $diarreia = 0;
-            }
-            if ($_POST['nausea_vomito']) {
-                $nausea_vomito = 1;
-            } else {
-                $nausea_vomito = 0;
-            }
-            if ($_POST['mialgia_artralgia']) {
-                $mialgia_artralgia = 1;
-            } else {
-                $mialgia_artralgia = 0;
-            }
-            if ($_POST['calafrios']) {
-                $calafrios = 1;
-            } else {
-                $calafrios = 0;
-            }
-            if ($_POST['anosmia_hiposmia']) {
-                $anosmia_hiposmia = 1;
-            } else {
-                $anosmia_hiposmia = 0;
-            }
-            if ($_POST['diabetes']) {
-                $diabetes = 1;
-            } else {
-                $diabetes = 0;
-            }
-            if ($_POST['has']) {
-                $has = 1;
-            } else {
-                $has = 0;
-            }
-            if ($_POST['obesidade']) {
-                $obesidade = 1;
-            } else {
-                $obesidade = 0;
-            }
-            if ($_POST['doenca_coronariana']) {
-                $doenca_coronariana = 1;
-            } else {
-                $doenca_coronariana = 0;
-            }
-            if ($_POST['dpoc_asma']) {
-                $dpoc_asma = 1;
-            } else {
-                $dpoc_asma = 0;
-            }
-            if ($_POST['cancer']) {
-                $cancer = 1;
-            } else {
-                $cancer = 0;
-            }
-            if ($_POST['drc']) {
-                $drc = 1;
-            } else {
-                $drc = 0;
-            }
-            if ($_POST['imunodeficiencia']) {
-                $imunodeficiencia = 1;
-            } else {
-                $imunodeficiencia = 0;
-            }
+		if ($coronavirus == 1 or $coronavirus == 10) {
+			if ($_POST['febre_alta']) {
+				$febre_alta = 1;
+			} else {
+				$febre_alta = 0;
+			}
+			if ($_POST['fadiga']) {
+				$fadiga = 1;
+			} else {
+				$fadiga = 0;
+			}
+			if ($_POST['dificuldade_respirar']) {
+				$dificuldade_respirar = 1;
+			} else {
+				$dificuldade_respirar = 0;
+			}
+			if ($_POST['tosse_secracao']) {
+				$tosse_secracao = 1;
+			} else {
+				$tosse_secracao = 0;
+			}
+			if ($_POST['congestao_nasal']) {
+				$congestao_nasal = 1;
+			} else {
+				$congestao_nasal = 0;
+			}
+			if ($_POST['cefaleia']) {
+				$cefaleia = 1;
+			} else {
+				$cefaleia = 0;
+			}
+			if ($_POST['dor_garganta']) {
+				$dor_garganta = 1;
+			} else {
+				$dor_garganta = 0;
+			}
+			if ($_POST['diarreia']) {
+				$diarreia = 1;
+			} else {
+				$diarreia = 0;
+			}
+			if ($_POST['nausea_vomito']) {
+				$nausea_vomito = 1;
+			} else {
+				$nausea_vomito = 0;
+			}
+			if ($_POST['mialgia_artralgia']) {
+				$mialgia_artralgia = 1;
+			} else {
+				$mialgia_artralgia = 0;
+			}
+			if ($_POST['calafrios']) {
+				$calafrios = 1;
+			} else {
+				$calafrios = 0;
+			}
+			if ($_POST['anosmia_hiposmia']) {
+				$anosmia_hiposmia = 1;
+			} else {
+				$anosmia_hiposmia = 0;
+			}
+			if ($_POST['diabetes']) {
+				$diabetes = 1;
+			} else {
+				$diabetes = 0;
+			}
+			if ($_POST['has']) {
+				$has = 1;
+			} else {
+				$has = 0;
+			}
+			if ($_POST['obesidade']) {
+				$obesidade = 1;
+			} else {
+				$obesidade = 0;
+			}
+			if ($_POST['doenca_coronariana']) {
+				$doenca_coronariana = 1;
+			} else {
+				$doenca_coronariana = 0;
+			}
+			if ($_POST['dpoc_asma']) {
+				$dpoc_asma = 1;
+			} else {
+				$dpoc_asma = 0;
+			}
+			if ($_POST['cancer']) {
+				$cancer = 1;
+			} else {
+				$cancer = 0;
+			}
+			if ($_POST['drc']) {
+				$drc = 1;
+			} else {
+				$drc = 0;
+			}
+			if ($_POST['imunodeficiencia']) {
+				$imunodeficiencia = 1;
+			} else {
+				$imunodeficiencia = 0;
+			}
 
-            include('conexao.php');
-            $sql = "select * from presintomas_covid where atendimento_id = $transacao";
-            $result = pg_query($sql) or die($sql);
-            $row = pg_fetch_object($result);
+			include 'conexao.php';
+			$sql = "select * from presintomas_covid where atendimento_id = $transacao";
+			$result = pg_query($sql) or die($sql);
+			$row = pg_fetch_object($result);
 
-            if ($row) {
-                include('conexao.php');
-                $sql = "update presintomas_covid set febre_alta=$febre_alta,fadiga=$fadiga,dificuldade_respirar=$dificuldade_respirar,tosse_secracao=$tosse_secracao,congestao_nasal=$congestao_nasal,cefaleia=$cefaleia,dor_garganta=$dor_garganta,diarreia=$diarreia,nausea_vomito=$nausea_vomito,mialgia_artralgia=$mialgia_artralgia,calafrios=$calafrios,anosmia_hiposmia=$anosmia_hiposmia,diabetes=$diabetes,has=$has,obesidade=$obesidade,doenca_coronariana=$doenca_coronariana,dpoc_asma=$dpoc_asma,cancer=$cancer,drc=$drc,imunodeficiencia=$imunodeficiencia where atendimento_id = $transacao";
-                $result = pg_query($sql) or die($sql);
-            } else {
-                include('conexao.php');
-                $sql = "insert into presintomas_covid(atendimento_id, febre_alta,fadiga,dificuldade_respirar,tosse_secracao,congestao_nasal,cefaleia,dor_garganta,diarreia,nausea_vomito,mialgia_artralgia,calafrios,anosmia_hiposmia,diabetes,has,obesidade,doenca_coronariana,dpoc_asma,cancer,drc,imunodeficiencia) values($transacao,$febre_alta,$fadiga,$dificuldade_respirar,$tosse_secracao,$congestao_nasal,$cefaleia,$dor_garganta,$diarreia,$nausea_vomito,$mialgia_artralgia,$calafrios,$anosmia_hiposmia,$diabetes,$has,$obesidade,$doenca_coronariana,$dpoc_asma,$cancer,$drc,$imunodeficiencia)";
-                $result = pg_query($sql) or die($sql);
-            }
-        }
+			if ($row) {
+				include 'conexao.php';
+				$sql = "update presintomas_covid set febre_alta=$febre_alta,fadiga=$fadiga,dificuldade_respirar=$dificuldade_respirar,tosse_secracao=$tosse_secracao,congestao_nasal=$congestao_nasal,cefaleia=$cefaleia,dor_garganta=$dor_garganta,diarreia=$diarreia,nausea_vomito=$nausea_vomito,mialgia_artralgia=$mialgia_artralgia,calafrios=$calafrios,anosmia_hiposmia=$anosmia_hiposmia,diabetes=$diabetes,has=$has,obesidade=$obesidade,doenca_coronariana=$doenca_coronariana,dpoc_asma=$dpoc_asma,cancer=$cancer,drc=$drc,imunodeficiencia=$imunodeficiencia where atendimento_id = $transacao";
+				$result = pg_query($sql) or die($sql);
+			} else {
+				include 'conexao.php';
+				$sql = "insert into presintomas_covid(atendimento_id, febre_alta,fadiga,dificuldade_respirar,tosse_secracao,congestao_nasal,cefaleia,dor_garganta,diarreia,nausea_vomito,mialgia_artralgia,calafrios,anosmia_hiposmia,diabetes,has,obesidade,doenca_coronariana,dpoc_asma,cancer,drc,imunodeficiencia) values($transacao,$febre_alta,$fadiga,$dificuldade_respirar,$tosse_secracao,$congestao_nasal,$cefaleia,$dor_garganta,$diarreia,$nausea_vomito,$mialgia_artralgia,$calafrios,$anosmia_hiposmia,$diabetes,$has,$obesidade,$doenca_coronariana,$dpoc_asma,$cancer,$drc,$imunodeficiencia)";
+				$result = pg_query($sql) or die($sql);
+			}
+		}
 
-        if ($erro == "") {
-            $xdum = "";
+		if ($erro == '') {
+			$xdum = '';
 
-            include('conexao.php');
-            $stmt = "SELECT * FROM atendimentos WHERE transacao=$transacao and (destino_paciente = '09' or destino_paciente is null)";
-            $result = pg_query($stmt) or die($stmt);
-            $row = pg_fetch_object($result);
-            $atendimento = $row->transacao;
+			include 'conexao.php';
+			$stmt = "SELECT * FROM atendimentos WHERE transacao=$transacao and (destino_paciente = '09' or destino_paciente is null)";
+			$result = pg_query($stmt) or die($stmt);
+			$row = pg_fetch_object($result);
+			$atendimento = $row->transacao;
 
-            include('conexao.php');
-            $dt_transacao = inverteData($data_transacao);
-            $alta = inverteData($alta);
-            $dt_solicitacao = inverteData($dt_nsolicitacao);
-            $horacad = date('H:i');
-            $stmt = "UPDATE atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
+			include 'conexao.php';
+			$dt_transacao = inverteData($data_transacao);
+			$alta = inverteData($alta);
+			$dt_solicitacao = inverteData($dt_nsolicitacao);
+			$horacad = date('H:i');
+			$stmt = "UPDATE atendimentos SET transacao=$transacao, observacao='$observacao', box='1', local='1', 
 				oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', com_oqfaz='$com_oqfaz', queixa='$queixa', exame_fisico='$exame_fisico', 
 				diagnostico_principal='$diag_pri', cid_principal='$CID',";
-            if (str_replace(' ', '', $destino) != '') {
-                $stmt = $stmt . " destino_paciente='$destino',";
-                // if (($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') && $coronavirus == '1') {
-                //     $stmt = $stmt . " coronavirus=10,";
-                // }
-                if ($destino != '09') {
-                    $stmt = $stmt . " med_finalizador = (case when med_finalizador is null then '$usuario' else med_finalizador end),";
-                }
-            }
-            if ($alta != '') {
-                if (!$atendimento) {
-                    $stmt = $stmt . " status='Atendimento Finalizado' ";
-                } else {
-                    $stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
-                }
-            } else {
-                $stmt = $stmt . " data_destino=null, hora_destino=null, status='Em Atendimento' ";
-            }
+			if (str_replace(' ', '', $destino) != '') {
+				$stmt = $stmt . " destino_paciente='$destino',";
+				// if (($destino == '01' or $destino == '02' or $destino == '11' or $destino == '12' or $destino == '14' or $destino == '15') && $coronavirus == '1') {
+				//     $stmt = $stmt . " coronavirus=10,";
+				// }
+				if ($destino != '09') {
+					$stmt = $stmt . " med_finalizador = (case when med_finalizador is null then '$usuario' else med_finalizador end),";
+				}
+			}
+			if ($alta != '') {
+				if (!$atendimento) {
+					$stmt = $stmt . " status='Atendimento Finalizado' ";
+				} else {
+					$stmt = $stmt . " data_destino='$alta', hora_destino='$hora_destino', status='Atendimento Finalizado' ";
+				}
+			} else {
+				$stmt = $stmt . " data_destino=null, hora_destino=null, status='Em Atendimento' ";
+			}
 
-            $stmt = $stmt . " where transacao=$transacao ";
-            $sth = pg_query($stmt) or die($stmt);
+			$stmt = $stmt . " where transacao=$transacao ";
+			$sth = pg_query($stmt) or die($stmt);
 
-            if ($evolucao != '') {
-                $sql = "select nextval('evolucoes_evolucao_id_seq'::regclass)";
-                $result = pg_query($sql) or die($sql);
-                $row = pg_fetch_object($result);
+			if ($evolucao != '') {
+				$sql = "select nextval('evolucoes_evolucao_id_seq'::regclass)";
+				$result = pg_query($sql) or die($sql);
+				$row = pg_fetch_object($result);
 
-                $horacad = date('H:i');
-                $datacad = date('Y-m-d');
+				$horacad = date('H:i');
+				$datacad = date('Y-m-d');
 
-                $stmt = "INSERT INTO evolucoes (evolucao_id, atendimento_id, tipo, data, hora, usuario,evolucao)
+				$stmt = "INSERT INTO evolucoes (evolucao_id, atendimento_id, tipo, data, hora, usuario,evolucao)
 						VALUES ($row->nextval, $transacao,'$perfil','$datacad','$horacad','$usuario','$evolucao')";
-                $sth = pg_query($stmt) or die($stmt);
-                header("location: relevolucao.php?id=" . $row->nextval);
-            }
+				$sth = pg_query($stmt) or die($stmt);
+				header('location: relevolucao.php?id=' . $row->nextval);
+			}
 
-            $df = '';
-            if ($destino == '01') {
-                $df = 'ALTA';
-            } elseif ($destino == '02') {
-                $df = 'ALTA / ENCAM. AMBUL.';
-            } elseif ($destino == '07') {
-                $df = 'EM OBSERVAÇÃO / MEDICAÇÃO';
-            } elseif ($destino == '10') {
-                $df = 'EXAMES / REAVALIACAO';
-            } elseif ($destino == '03') {
-                $df = 'PERMANÊCIA.';
-            } elseif ($destino == '04') {
-                $df = 'TRANSF. OUTRA UPA';
-            } elseif ($destino == '05') {
-                $df = 'TRANSF. INTERN. HOSPITALAR';
-            } elseif ($destino == '06') {
-                $df = 'ÓBITO';
-            } elseif ($destino == '09') {
-                $df = 'NAO RESPONDEU CHAMADO';
-            } elseif ($destino == '11') {
-                $df = 'ALTA EVASÃO';
-            } elseif ($destino == '12') {
-                $df = 'ALTA PEDIDO';
-            } elseif ($destino == '14') {
-                $df = 'ALTA / POLICIA';
-            } elseif ($destino == '15') {
-                $df = 'ALTA / PENITENCIÁRIA';
-            } elseif ($destino == '16') {
-                $df = 'ALTA / PÓS MEDICAMENTO';
-            } elseif ($destino == '20') {
-                $df = 'ALTA VIA SISTEMA';
-            } elseif ($destino == '21') {
-                $df = 'TRANSFERENCIA';
-            }
+			$df = '';
+			if ($destino == '01') {
+				$df = 'ALTA';
+			} elseif ($destino == '02') {
+				$df = 'ALTA / ENCAM. AMBUL.';
+			} elseif ($destino == '07') {
+				$df = 'EM OBSERVAÇÃO / MEDICAÇÃO';
+			} elseif ($destino == '10') {
+				$df = 'EXAMES / REAVALIACAO';
+			} elseif ($destino == '03') {
+				$df = 'PERMANÊCIA.';
+			} elseif ($destino == '04') {
+				$df = 'TRANSF. OUTRA UPA';
+			} elseif ($destino == '05') {
+				$df = 'TRANSF. INTERN. HOSPITALAR';
+			} elseif ($destino == '06') {
+				$df = 'ÓBITO';
+			} elseif ($destino == '09') {
+				$df = 'NAO RESPONDEU CHAMADO';
+			} elseif ($destino == '11') {
+				$df = 'ALTA EVASÃO';
+			} elseif ($destino == '12') {
+				$df = 'ALTA PEDIDO';
+			} elseif ($destino == '14') {
+				$df = 'ALTA / POLICIA';
+			} elseif ($destino == '15') {
+				$df = 'ALTA / PENITENCIÁRIA';
+			} elseif ($destino == '16') {
+				$df = 'ALTA / PÓS MEDICAMENTO';
+			} elseif ($destino == '20') {
+				$df = 'ALTA VIA SISTEMA';
+			} elseif ($destino == '21') {
+				$df = 'TRANSFERENCIA';
+			}
 
-            $data = date('Y-m-d');
-            $hora = date('H:i');
-            include('conexao.php');
-            $stmtLogs = "INSERT INTO logs (usuario, tipo_acao,atendimento_id, data, hora) 
+			$data = date('Y-m-d');
+			$hora = date('H:i');
+			include 'conexao.php';
+			$stmtLogs = "INSERT INTO logs (usuario, tipo_acao,atendimento_id, data, hora) 
 					 VALUES ('$usuario','FINALIZOU O ATENDIMENTO - DESTINO $df','$transacao','$data','$hora')";
-            $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-        }
+			$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+		}
 
-        if (isset($_POST['encerrar']) != '') {
-            include('conexao.php');
-            $dt_transacao = inverteData(substr($data_transacao, 0, 10));
-            $dt_solicitacao = inverteData($dt_nsolicitacao);
-            $horacad = date('H:i');
-            $stmt = "UPDATE pedidos SET STATUS='Cadastrado' WHERE transacao=$transacao ";
-            $sth = pg_query($stmt) or die($stmt);
+		if (isset($_POST['encerrar']) != '') {
+			include 'conexao.php';
+			$dt_transacao = inverteData(substr($data_transacao, 0, 10));
+			$dt_solicitacao = inverteData($dt_nsolicitacao);
+			$horacad = date('H:i');
+			$stmt = "UPDATE pedidos SET STATUS='Cadastrado' WHERE transacao=$transacao ";
+			$sth = pg_query($stmt) or die($stmt);
 
-            include('conexao.php');
-            $dt_transacao = inverteData(substr($data_transacao, 0, 10));
-            $dt_solicitacao = inverteData($dt_nsolicitacao);
-            $horacad = date('H:i');
-            $stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
-            $sth = pg_query($stmt) or die($stmt);
+			include 'conexao.php';
+			$dt_transacao = inverteData(substr($data_transacao, 0, 10));
+			$dt_solicitacao = inverteData($dt_nsolicitacao);
+			$horacad = date('H:i');
+			$stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
+			$sth = pg_query($stmt) or die($stmt);
 
+			header('location: atendimentos.php');
+		}
 
-            header("location: atendimentos.php");
-        }
+		if (isset($_POST['novo_exame']) != '') {
+			include 'conexao.php';
+			$dataTransacao = date('Y-m-d');
+			$horacad = date('H:i');
+			$stmt = 'INSERT INTO pedidos ';
+			$sth = pg_query($stmt) or die($stmt);
 
-        if (isset($_POST['novo_exame']) != '') {
-            include('conexao.php');
-            $dataTransacao = date('Y-m-d');
-            $horacad = date('H:i');
-            $stmt = "INSERT INTO pedidos ";
-            $sth = pg_query($stmt) or die($stmt);
+			include 'conexao.php';
+			$dt_transacao = inverteData(substr($data_transacao, 0, 10));
+			$dt_solicitacao = inverteData($dt_nsolicitacao);
+			$horacad = date('H:i');
+			$stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
+			$sth = pg_query($stmt) or die($stmt);
 
-            include('conexao.php');
-            $dt_transacao = inverteData(substr($data_transacao, 0, 10));
-            $dt_solicitacao = inverteData($dt_nsolicitacao);
-            $horacad = date('H:i');
-            $stmt = "UPDATE itenspedidos SET situacao='Cadastrado' WHERE transacao=$transacao ";
-            $sth = pg_query($stmt) or die($stmt);
+			header('location: atendimentos.php');
+		}
 
+		if (isset($_POST['req_exame'])) {
+			$exames = '';
+			foreach ($transfere as $item) {
+				$exames = $exames . $item . ',';
+			}
+			$exames = rtrim($exames, ',');
 
-            header("location: atendimentos.php");
-        }
+			if ($exames != '') {
+				echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexame.php?id=$exames');</script>";
+			}
+		}
 
-        if (isset($_POST["req_exame"])) {
-            $exames = '';
-            foreach ($transfere as $item) {
-                $exames = $exames . $item . ',';
-            }
-            $exames =  rtrim($exames, ',');
+		if (isset($_POST['req_exame_lab'])) {
+			$exames = '';
+			foreach ($transfere as $item) {
+				$exames = $exames . $item . ',';
+			}
+			$exames = rtrim($exames, ',');
 
-            if ($exames != '') {
-                echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexame.php?id=$exames');</script>";
-            }
-        }
+			if ($exames != '') {
+				echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexamelab.php?id=$exames');</script>";
+			}
+		}
 
-        if (isset($_POST["req_exame_lab"])) {
-            $exames = '';
-            foreach ($transfere as $item) {
-                $exames = $exames . $item . ',';
-            }
-            $exames =  rtrim($exames, ',');
+		if (isset($_POST['imprimir']) != '') {
+			echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('relFAA.php?id=$transacao');</script>";
+		}
 
-            if ($exames != '') {
-                echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('impexamelab.php?id=$exames');</script>";
-            }
-        }
-
-        if (isset($_POST['imprimir']) != '') {
-            echo "<script type=\"text/javascript\" language=\"Javascript\">window.open('relFAA.php?id=$transacao');</script>";
-        }
-
-        echo "<script type=\"text/javascript\" language=\"Javascript\">location.href = 'atendimentoclinico.php?id=$transacao';</script>";
-    }
+		echo "<script type=\"text/javascript\" language=\"Javascript\">location.href = 'atendimentoclinico.php?id=$transacao';</script>";
+	}
 }
 
-
-include('conexao.php');
+include 'conexao.php';
 $stmtCns = "SELECT * FROM controle_epidemiologico
 		    WHERE cns = '$cns' ORDER BY notificacao_id DESC LIMIT 1";
 $sthCns = pg_query($stmtCns) or die($stmtCns);
 $rowcns = pg_fetch_object($sthCns);
 
-$rdonly = "";
-$disable = "";
+$rdonly = '';
+$disable = '';
 $hidden = false;
 if ($destino != '') {
-    $rdonly = " readonly ";
-    $disable = " disabled ";
-    $hidden = "hidden";
+	$rdonly = ' readonly ';
+	$disable = ' disabled ';
+	$hidden = 'hidden';
 }
 ?>
 <!DOCTYPE html>
@@ -1007,23 +1004,23 @@ if ($destino != '') {
                     <select class="" id="procedimento_laboratorio" multiple>
                         <?php
 
-                        include('conexao_laboratorio.php');
-                        if ($prioridade == 'AZUL' or $prioridade == 'VERDE') {
-                            $sql = "select a.procedimentos_id as procedimento_id, a.descricao, a.codigo from procedimentos a
+						include 'conexao_laboratorio.php';
+						if ($prioridade == 'AZUL' or $prioridade == 'VERDE') {
+							$sql = 'select a.procedimentos_id as procedimento_id, a.descricao, a.codigo from procedimentos a
                 inner join modalidades b on a.setor = b.modalidade_id
-                inner join tabela_precos c on a.procedimentos_id = c.procedimento_id where modalidade_id not in (32 , 22) and a.procedimentos_id in (746, 769) and c.convenio_id = 1 ORDER BY a.descricao";
-                        } else {
-                            $sql = "select a.procedimentos_id as procedimento_id, a.descricao, a.codigo from procedimentos a
+                inner join tabela_precos c on a.procedimentos_id = c.procedimento_id where modalidade_id not in (32 , 22) and a.procedimentos_id in (746, 769) and c.convenio_id = 1 ORDER BY a.descricao';
+						} else {
+							$sql = "select a.procedimentos_id as procedimento_id, a.descricao, a.codigo from procedimentos a
                 inner join modalidades b on a.setor = b.modalidade_id where modalidade_id not in (32 , 22) and a.descricao not in('GLICOSE', 'PROTEINA C REATIVA - [ULTRA-SENSIVEL]') ORDER BY a.descricao";
-                        }
-                        $sth = pg_query($sql) or die($sql);
-                        echo "<option value=\"\">Selecione o Procedimento</option>";
-                        while ($row = pg_fetch_object($sth)) {
-                            echo "<option value=\"" . $row->procedimento_id . "\"";
-                            echo ">" . $row->descricao . "</option>";
-                        }
+						}
+						$sth = pg_query($sql) or die($sql);
+						echo '<option value="">Selecione o Procedimento</option>';
+						while ($row = pg_fetch_object($sth)) {
+							echo '<option value="' . $row->procedimento_id . '"';
+							echo '>' . $row->descricao . '</option>';
+						}
 
-                        ?>
+						?>
                     </select>
                 </div>
 
@@ -1308,11 +1305,11 @@ if ($destino != '') {
 
                 </div>
                 <?php
-                include('conexao.php');
-                $sql = "SELECT * FROM relatorio_pmmg WHERE atendimento_id = $transacao";
-                $result = pg_query($sql) or die($sql);
-                $row = pg_fetch_object($result);
-                ?>
+				include 'conexao.php';
+				$sql = "SELECT * FROM relatorio_pmmg WHERE atendimento_id = $transacao";
+				$result = pg_query($sql) or die($sql);
+				$row = pg_fetch_object($result);
+				?>
                 <form action="relatorio_pmmg.php" id="form_pmmg" target="_blank" method="post">
                     <div class="modal-body">
                         <input type="hidden" name="atendimento_id_pmmg"
@@ -1350,11 +1347,11 @@ if ($destino != '') {
 
                 </div>
                 <?php
-                include('conexao.php');
-                $sql = "SELECT * FROM contra_referencia WHERE atendimento_id = $transacao";
-                $result = pg_query($sql) or die($sql);
-                $row = pg_fetch_object($result);
-                ?>
+				include 'conexao.php';
+				$sql = "SELECT * FROM contra_referencia WHERE atendimento_id = $transacao";
+				$result = pg_query($sql) or die($sql);
+				$row = pg_fetch_object($result);
+				?>
                 <form action="referenciaecontra.php" id="form_referencia" target="_blank" method="post">
                     <div class="modal-body">
                         <input type="hidden" name="atendimento_id_referencia"
@@ -1400,8 +1397,8 @@ if ($destino != '') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <!-- <?php include('menu.php'); ?> -->
-    <?php include('header2.php'); ?>
+    <!-- <?php include 'menu.php'; ?> -->
+    <?php include 'header2.php'; ?>
     <div class="main-panel">
         <div class="">
             <div class="content-wrapper">
@@ -1456,13 +1453,13 @@ if ($destino != '') {
                                         style="background-color: #12a1a6;border-radius: 20px; margin-right: 20px; padding:15px; max-width: 170px; justify-content: space-evenly;">
                                         <div class="col-12 d-flex flex-column align-items-center"
                                             style="justify-content: space-between; padding: 0">
-                                            <img src="app-assets/img/gallery/user-circle.png" alt="\" height="70"
-                                                width="70">
+                                            <img src="assets/photos/senhora.jpg" alt="\" height="70" width="70"
+                                                style="border-radius: 50%;">
                                             <h6 style="color: white"><b id="nome"><?php if ($nome_social == '') {
-                    echo $nome;
-                } else {
-                    echo $nome_social;
-                } ?>
+					echo $nome;
+				} else {
+					echo $nome_social;
+				} ?>
                                                 </b></h6>
                                             <h6 style="color: white"><b id="sexo"><?php echo $sexo; ?></b>
                                             </h6>
@@ -1531,7 +1528,7 @@ if ($destino != '') {
                                                     <img src="app-assets/img/svg/nano.png" alt="\" height="25"
                                                         width="25">
                                                     <h2 style="font-weight: 700;margin: 0 10px;color: #12a1a6; ">
-                                                        <?php echo $pressaosistolica . "X" . $pressaodiastolica; ?>
+                                                        <?php echo $pressaosistolica . 'X' . $pressaodiastolica; ?>
                                                     </h2>
                                                 </div>
                                                 <div class="d-flex">
@@ -1539,19 +1536,19 @@ if ($destino != '') {
                                                         width="20">
 
                                                     <?php
-                                                    $data_finalizado = substr($datahora, 0, -8);
-                                                    $hora_finalizada = substr($datahora, -9);
-                                                    $cor = '#FFC107';
-                                                    if ($prioridade == "AZUL") {
-                                                        $cor = '#2196F3';
-                                                    } elseif ($prioridade == "LARANJA") {
-                                                        $cor = '#FF9800';
-                                                    } elseif ($prioridade == 'VERMELHO') {
-                                                        $cor = '#B71C1C';
-                                                    } elseif ($prioridade == 'VERDE') {
-                                                        $cor = '#4CAF50';
-                                                    }
-                                                    ?>
+													$data_finalizado = substr($datahora, 0, -8);
+													$hora_finalizada = substr($datahora, -9);
+													$cor = '#FFC107';
+													if ($prioridade == 'AZUL') {
+														$cor = '#2196F3';
+													} elseif ($prioridade == 'LARANJA') {
+														$cor = '#FF9800';
+													} elseif ($prioridade == 'VERMELHO') {
+														$cor = '#B71C1C';
+													} elseif ($prioridade == 'VERDE') {
+														$cor = '#4CAF50';
+													}
+													?>
                                                     <h2
                                                         style="font-weight: 700;margin: 0 10px;color: <?php echo $cor; ?> ">
                                                         <?php echo $prioridade; ?>
@@ -1574,14 +1571,14 @@ if ($destino != '') {
                                             <div class="d-flex flex-column justify-content-center align-items-center"
                                                 style="background-color: #12a1a6; height: 20px;border-radius: 0 0 17px 17px;">
                                                 <h8 style="color: white;margin-bottom: 0px;">
-                                                    <?php echo "Realizado na data: <b>" . inverteData(trim($data_finalizado)) . "</b> no horário: <b>" . $hora_finalizada . "</b>  pelo username: <b>" . $usuario_enf . "</b>" ?>
+                                                    <?php echo 'Realizado na data: <b>' . inverteData(trim($data_finalizado)) . '</b> no horário: <b>' . $hora_finalizada . '</b>  pelo username: <b>' . $usuario_enf . '</b>' ?>
                                                 </h8>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <?php if ($coronavirus == 1 or $coronavirus == 10) {
-                                                        ?>
+														?>
                                 <div class="row mt-3">
                                     <div class="col-md-2">
                                         <h4 class="form-section-center"><img src="virus-home.png"> CheckList Covid</h4>
@@ -1591,46 +1588,46 @@ if ($destino != '') {
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="tosse_secracao" name="tosse_secracao" <?php if ($tosse_secracao == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="tosse_secracao">Tosse/Secreção
                                                     Catarral</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="dificuldade_respirar" name="dificuldade_respirar" <?php if ($dificuldade_respirar == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label"
                                                     for="dificuldade_respirar">Dificuldade de Respirar</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="fadiga" name="fadiga" <?php if ($fadiga == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="fadiga">Fadiga</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="febre_alta" name="febre_alta" <?php if ($febre_alta == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="febre_alta">Febre Alta</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="congestao_nasal" name="congestao_nasal" <?php if ($congestao_nasal == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="congestao_nasal">Congestão
                                                     Nasal</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="cefaleia" name="cefaleia" <?php if ($cefaleia == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="cefaleia">Cefaléia</label>
                                             </div>
                                         </div>
@@ -1641,8 +1638,8 @@ if ($destino != '') {
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="dor_garganta" name="dor_garganta" <?php if ($dor_garganta == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="dor_garganta">Dor de
                                                     Garganta</label>
                                             </div>
@@ -1652,38 +1649,38 @@ if ($destino != '') {
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="diarreia" name="diarreia" <?php if ($diarreia == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="diarreia">Diarréia</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="nausea_vomito" name="nausea_vomito" <?php if ($nausea_vomito == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label"
                                                     for="nausea_vomito">Nausea/Vomitos</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="mialgia_artralgia" name="mialgia_artralgia" <?php if ($mialgia_artralgia == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="mialgia_artralgia">Mialgia ou
                                                     Artralgia</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="calafrios" name="calafrios" <?php if ($calafrios == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="calafrios">Calafrios</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="anosmia_hiposmia" name="anosmia_hiposmia" <?php if ($anosmia_hiposmia == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label"
                                                     for="anosmia_hiposmia">Anosmia/Hiposmia/Digeusia</label>
                                             </div>
@@ -1695,58 +1692,58 @@ if ($destino != '') {
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="diabetes" name="diabetes" <?php if ($diabetes == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="diabetes">Diabetes</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="has" name="has" <?php if ($has == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="has">HAS</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="obesidade" name="obesidade" <?php if ($obesidade == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="obesidade">Obesidade</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="doenca_coronariana" name="doenca_coronariana" <?php if ($doenca_coronariana == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="doenca_coronariana">Doenca
                                                     Coronariana</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="dpoc_asma" name="dpoc_asma" <?php if ($dpoc_asma == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="dpoc_asma">DPOC ou Asma</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="cancer" name="cancer" <?php if ($cancer == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="cancer">Cancer</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="drc" name="drc" <?php if ($drc == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label" for="drc">DRC</label>
                                             </div>
                                             <div class="custom-control custom-checkbox">
                                                 <input type="checkbox" <?php echo $rdonly ?>class="custom-control-input"
                                                 id="imunodeficiencia" name="imunodeficiencia" <?php if ($imunodeficiencia == '1') {
-                                                            echo "checked";
-                                                        } ?>>
+															echo 'checked';
+														} ?>>
                                                 <label class="custom-control-label"
                                                     for="imunodeficiencia">Imunodeficiência</label>
                                             </div>
@@ -1754,7 +1751,7 @@ if ($destino != '') {
                                     </div>
                                 </div>
                                 <?php
-                                                    } ?>
+													} ?>
                                 <div class="card-body row">
                                     <!-- iniciando tabs -->
                                     <ul class="nav nav-tabs nav-justified col-12" style="padding-right: 0px;">
@@ -1822,43 +1819,43 @@ if ($destino != '') {
                                             <input id="usuario-autorizado" name="usuario-autorizado" type="hidden" />
 
                                             <?php
-                                            if ($transacao != "") {
-                                                include('conexao.php');
-                                                $stmt = "SELECT count(*) as qtde FROM arquivos_documentos where transacao=$transacao";
-                                                $sth = pg_query($stmt) or die($stmt);
-                                                $row = pg_fetch_object($sth);
-                                                if ($row->qtde > 0) {
-                                                    echo '<div class="col-sm-12">';
-                                                    echo '<h3 class="page-title" align="center">Anexos</h3>';
-                                                    echo '<hr style="width: 100%; color: #FF0000; height: 1px; background-color: #FF0000;" />';
-                                                    echo '<div class="col-sm-12" id="anexos"';
-                                                    echo '<div class="col-md-12">';
-                                                    echo '<div class="form-group">';
-                                                    echo '<table class="table table-hover table-striped width-full">';
-                                                    echo '<thead><tr>';
-                                                    echo "<th width='15%'>Data</th><th width='30%'>Tipo</th><th width='20%'>Descricao</th><th width='25%'>Usuario</th><th width='10%'>Açao<th>";
-                                                    echo '</tr></thead><tbody>';
-                                                    $x = 0;
-                                                    include('conexao.php');
-                                                    $stmt = "select a.pessoa_id, b.dat_cad, a.situacao, a.exame_id, c.descricao from itenspedidos a left join pedidos b on a.transacao=b.transacao left join procedimentos c on a.exame_id=c.procedimento_id where a.pessoa_id=" . $prontuario;
-                                                    $sth = pg_query($stmt) or die($stmt);
-                                                    while ($row = pg_fetch_object($sth)) {
-                                                        echo "<tr>";
-                                                        echo "<td>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
-                                                        echo "<td>UPA " . utf8_decode(UNIDADE_CONFIG) . "</td>";
-                                                        echo "<td><a href='atendimentoclinico.php?id=" . $row->transacao . "' target='_blank' class=\"fas fa-search\"></a></td>";
-                                                        echo "</tr>";
-                                                    }
+											if ($transacao != '') {
+												include 'conexao.php';
+												$stmt = "SELECT count(*) as qtde FROM arquivos_documentos where transacao=$transacao";
+												$sth = pg_query($stmt) or die($stmt);
+												$row = pg_fetch_object($sth);
+												if ($row->qtde > 0) {
+													echo '<div class="col-sm-12">';
+													echo '<h3 class="page-title" align="center">Anexos</h3>';
+													echo '<hr style="width: 100%; color: #FF0000; height: 1px; background-color: #FF0000;" />';
+													echo '<div class="col-sm-12" id="anexos"';
+													echo '<div class="col-md-12">';
+													echo '<div class="form-group">';
+													echo '<table class="table table-hover table-striped width-full">';
+													echo '<thead><tr>';
+													echo "<th width='15%'>Data</th><th width='30%'>Tipo</th><th width='20%'>Descricao</th><th width='25%'>Usuario</th><th width='10%'>Açao<th>";
+													echo '</tr></thead><tbody>';
+													$x = 0;
+													include 'conexao.php';
+													$stmt = 'select a.pessoa_id, b.dat_cad, a.situacao, a.exame_id, c.descricao from itenspedidos a left join pedidos b on a.transacao=b.transacao left join procedimentos c on a.exame_id=c.procedimento_id where a.pessoa_id=' . $prontuario;
+													$sth = pg_query($stmt) or die($stmt);
+													while ($row = pg_fetch_object($sth)) {
+														echo '<tr>';
+														echo '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . '</td>';
+														echo '<td>UPA ' . utf8_decode(UNIDADE_CONFIG) . '</td>';
+														echo "<td><a href='atendimentoclinico.php?id=" . $row->transacao . "' target='_blank' class=\"fas fa-search\"></a></td>";
+														echo '</tr>';
+													}
 
-                                                    echo "</tbody></table>";
-                                                    echo "</div>";
-                                                    echo "</div>";
-                                                    echo "<br>";
-                                                    echo "</div>";
-                                                    echo "</div>";
-                                                }
-                                            }
-                                            ?>
+													echo '</tbody></table>';
+													echo '</div>';
+													echo '</div>';
+													echo '<br>';
+													echo '</div>';
+													echo '</div>';
+												}
+											}
+											?>
                                         </div>
 
                                         <!-- EXAMES -->
@@ -1903,115 +1900,113 @@ if ($destino != '') {
 
                                                             <body>
                                                                 <?php
-                                                                include('conexao.php');
-                                                                $stmt = "select b.dat_cad,c.formulario, a.exame_nro,a.arquivo_upload, a.pessoa_id,a.transacao, c.descricao, a.situacao, a.versao, c.exames_laboratoriais, c.procedimento_id from itenspedidos a 
+																include 'conexao.php';
+																$stmt = 'select b.dat_cad,c.formulario, a.exame_nro,a.arquivo_upload, a.pessoa_id,a.transacao, c.descricao, a.situacao, a.versao, c.exames_laboratoriais, c.procedimento_id from itenspedidos a 
 													left join pedidos b on a.transacao=b.transacao 
-													left join procedimentos c on a.exame_id=c.procedimento_id where a.pessoa_id=" . $paciente_id . " and c.exames_laboratoriais is null order by dat_cad desc, a.exame_id";
-                                                                $sth = pg_query($stmt) or die($stmt);
-                                                                //echo $stmt;
-                                                                $x = 0;
-                                                                $data = '';
-                                                                $procedimento_lab = '';
-                                                                while ($row = pg_fetch_object($sth)) {
-                                                                    if ($row->exames_laboratoriais == 1 and substr($row->dat_cad, 0, 10) >= '2019-01-08') {
-                                                                        //if(($data != substr($row->dat_cad, 0, 10) or $data != date('Y-m-d', strtotime("+1 days",strtotime(substr($row->dat_cad, 0, 10))))) and $procedimento_lab != $row->procedimento_id){
-                                                                        include('conexao_laboratorio.php');
-                                                                        $sql = "SELECT distinct d.exame_id, a.pedido_id, b.nome, a.data, a.horario, d.coletado, d.recoleta, d.pendente, b.celular, d.liberado, e.descricao 
+													left join procedimentos c on a.exame_id=c.procedimento_id where a.pessoa_id=' . $paciente_id . ' and c.exames_laboratoriais is null order by dat_cad desc, a.exame_id';
+																$sth = pg_query($stmt) or die($stmt);
+																//echo $stmt;
+																$x = 0;
+																$data = '';
+																$procedimento_lab = '';
+																while ($row = pg_fetch_object($sth)) {
+																	if ($row->exames_laboratoriais == 1 and substr($row->dat_cad, 0, 10) >= '2019-01-08') {
+																		//if(($data != substr($row->dat_cad, 0, 10) or $data != date('Y-m-d', strtotime("+1 days",strtotime(substr($row->dat_cad, 0, 10))))) and $procedimento_lab != $row->procedimento_id){
+																		include 'conexao_laboratorio.php';
+																		$sql = 'SELECT distinct d.exame_id, a.pedido_id, b.nome, a.data, a.horario, d.coletado, d.recoleta, d.pendente, b.celular, d.liberado, e.descricao 
 																FROM pedidos a
 																INNER JOIN pessoas b ON a.pessoa_id = b.pessoa_id
 																INNER JOIN pedido_guia c ON a.pedido_id = c.pedido_id
 																INNER JOIN pedido_item d ON d.pedido_guia_id = c.pedido_guia_id
 																LEFT JOIN procedimentos e ON e.procedimentos_id = d.exame_id
-																LEFT JOIN modalidades f ON f.modalidade_id = e.setor where d.exame_id = " . $row->procedimento_id . " and a.data = '" . substr($row->dat_cad, 0, 10) . "' and c.origem = '01' and b.origem = 1 and pessoa_id_origem = $prontuario order by a.data, a.horario";
-                                                                        $result = pg_query($sql) or die($sql);
-                                                                        while ($rows = pg_fetch_object($result)) {
-                                                                            if ($rows->exame_id == $row->procedimento_id) {
-                                                                                echo "<tr>";
-                                                                                echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                                echo "<td>" . inverteData($rows->data) . "</td>";
-                                                                                echo "<td>$row->descricao</td>";
-                                                                                if ($rows->liberado == 1) {
-                                                                                    echo "<td><a href='http://sgupa.com.br/mr/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"fas fa-search fas fa-search\"></a></td>";
-                                                                                }
-                                                                                echo "</tr>";
-                                                                            }
-                                                                        }
-                                                                        $data = $row->dat_cad;
-                                                                        $procedimento_lab = $row->procedimento_id;
-                                                                        $x = $x + 1;
-                                                                    //}
-                                                                    } else {
-                                                                        $x = $x + 1;
-                                                                        if ($row->situacao == 'Aut.Pendente') {
-                                                                            echo "<tr class='bg-danger' >";
-                                                                        } else {
-                                                                            echo "<tr>";
-                                                                        }
-                                                                        echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                        echo "<td>" . inverteData(substr($row->dat_cad, 0, 10)) . ' ' . $row->situacao . $row->versao . "</td>";
-                                                                        echo "<td>" . $row->descricao . "</td>";
-                                                                        include('conexao.php');
-                                                                        $sqlDetalhe = "SELECT * FROM arquivos_documentos WHERE transacao = " . $row->exame_nro;
-                                                                        $sthDet = pg_query($sqlDetalhe) or die($sqlDetalhe);
-                                                                        $rowDetalhe = pg_fetch_object($sthDet);
-                                                                        echo "<td>";
-                                                                        if ($rowDetalhe->arquivo != '') {
-                                                                            echo "<a href='imagens/documentos/$rowDetalhe->arquivo' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
-                                                                        }
+																LEFT JOIN modalidades f ON f.modalidade_id = e.setor where d.exame_id = ' . $row->procedimento_id . " and a.data = '" . substr($row->dat_cad, 0, 10) . "' and c.origem = '01' and b.origem = 1 and pessoa_id_origem = $prontuario order by a.data, a.horario";
+																		$result = pg_query($sql) or die($sql);
+																		while ($rows = pg_fetch_object($result)) {
+																			if ($rows->exame_id == $row->procedimento_id) {
+																				echo '<tr>';
+																				echo '<td><div><input type="checkbox" name="cb_exame[]" value="' . $row->exame_nro . '"><label></label></div></td>';
+																				echo '<td>' . inverteData($rows->data) . '</td>';
+																				echo "<td>$row->descricao</td>";
+																				if ($rows->liberado == 1) {
+																					echo "<td><a href='http://sgupa.com.br/mr/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"fas fa-search fas fa-search\"></a></td>";
+																				}
+																				echo '</tr>';
+																			}
+																		}
+																		$data = $row->dat_cad;
+																		$procedimento_lab = $row->procedimento_id;
+																		$x = $x + 1;
+																	//}
+																	} else {
+																		$x = $x + 1;
+																		if ($row->situacao == 'Aut.Pendente') {
+																			echo "<tr class='bg-danger' >";
+																		} else {
+																			echo '<tr>';
+																		}
+																		echo '<td><div><input type="checkbox" name="cb_exame[]"    value="' . $row->exame_nro . '"><label></label></div></td>';
+																		echo '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . ' ' . $row->situacao . $row->versao . '</td>';
+																		echo '<td>' . $row->descricao . '</td>';
+																		include 'conexao.php';
+																		$sqlDetalhe = 'SELECT * FROM arquivos_documentos WHERE transacao = ' . $row->exame_nro;
+																		$sthDet = pg_query($sqlDetalhe) or die($sqlDetalhe);
+																		$rowDetalhe = pg_fetch_object($sthDet);
+																		echo '<td>';
+																		if ($rowDetalhe->arquivo != '') {
+																			echo "<a href='imagens/documentos/$rowDetalhe->arquivo' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
+																		}
 
-                                                                        if ($row->arquivo_upload != '') {
-                                                                            echo "<a href='arquivos/exames/$row->arquivo_upload' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
-                                                                        }
+																		if ($row->arquivo_upload != '') {
+																			echo "<a href='arquivos/exames/$row->arquivo_upload' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
+																		}
 
+																		if ($row->formulario == 'A') {
+																			echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\"><i class=\"icon wb-print\" aria-hidden=\"true\" onclick=\"openInNewTab('relApac.php?id=$row->exame_nro')\"></i></button>";
+																		}
+																		if ($row->situacao == 'Finalizado') {
+																			if ($row->versao != '2') {
+																				echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
+																			} else {
+																				echo "<a href='http://sgupa.com.br/laboratorio/html/relExamemr.php?local=MR&transacao=$row->exame_nro'' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
+																			}
+																		}
 
+																		if ($row->situacao == 'Impresso') {
+																			echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
+																		}
+																		if (HABILITAR_PACS) {
+																			include 'conexao_pacs.php';
+																			$stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
+																			$sthx = pg_query($stmt) or die($stmt);
+																		}
+																		//echo $stmt;
+																		$rowst = pg_fetch_object($sthx);
+																		$studyid = $rowst->study_iuid;
+																		if ($studyid != '') {
+																			$hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
+																		}
+																		if ($studyid != '') {
+																			if (substr($ip, 0, 3) == '192') {
+																				echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . '/oviyam2/viewer.html?studyUID=' . $studyid . '&serverName=' . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
+																			} else {
+																				echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://" . URL_PACS . '/oviyam2/viewer.html?studyUID=' . $studyid . '&serverName=' . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
+																			}
+																		}
+																		echo '</td>';
 
-                                                                        if ($row->formulario == 'A') {
-                                                                            echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\"><i class=\"icon wb-print\" aria-hidden=\"true\" onclick=\"openInNewTab('relApac.php?id=$row->exame_nro')\"></i></button>";
-                                                                        }
-                                                                        if ($row->situacao == 'Finalizado') {
-                                                                            if ($row->versao != '2') {
-                                                                                echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
-                                                                            } else {
-                                                                                echo "<a href='http://sgupa.com.br/laboratorio/html/relExamemr.php?local=MR&transacao=$row->exame_nro'' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
-                                                                            }
-                                                                        }
+																		//echo"<td class='small'><a href=\"deletarexames.php?id=$row->transacao&atendimento=$transacao\" data-toggle=\"tooltip\" data-original-title=\"Deletar Pedido de Exame\"><i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i></a></td>";
 
-                                                                        if ($row->situacao == 'Impresso') {
-                                                                            echo "<a href='rellaudo.php?id=$row->exame_nro' target='_blank' class=\"fas fa-search fas fa-search\"></a>";
-                                                                        }
-                                                                        if (HABILITAR_PACS) {
-                                                                            include('conexao_pacs.php');
-                                                                            $stmt = "select a.pat_id, b.study_iuid, b.study_datetime from patient a, study b where b.patient_fk=a.pk and b.accession_no='$row->exame_nro' ";
-                                                                            $sthx = pg_query($stmt) or die($stmt);
-                                                                        }
-                                                                        //echo $stmt;
-                                                                        $rowst = pg_fetch_object($sthx);
-                                                                        $studyid = $rowst->study_iuid;
-                                                                        if ($studyid != "") {
-                                                                            $hora_rea = date('H:i:s', strtotime($rowst->study_datetime));
-                                                                        }
-                                                                        if ($studyid != '') {
-                                                                            if (substr($ip, 0, 3) == "192") {
-                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\"></i></button>";
-                                                                            } else {
-                                                                                echo "<button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Imagens\"><i class=\"fas fa-x-ray\" aria-hidden=\"true\" onclick=\"window.open('http://" . URL_PACS . "/oviyam2/viewer.html?studyUID=" . $studyid . "&serverName=" . SERVER_PACS . "', 'Visualizador', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;\")\"></i></button>";
-                                                                            }
-                                                                        }
-                                                                        echo "</td>";
+																		echo '</tr>';
+																	}
+																}
 
-                                                                        //echo"<td class='small'><a href=\"deletarexames.php?id=$row->transacao&atendimento=$transacao\" data-toggle=\"tooltip\" data-original-title=\"Deletar Pedido de Exame\"><i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i></a></td>";
-
-                                                                        echo "</tr>";
-                                                                    }
-                                                                }
-
-                                                                ?>
+																?>
                                                             </body>
                                                         </table>
                                                     </div>
 
                                                     <?php //if ($perfil == '06' or $perfil == '03') {
-                                                    ?>
+													?>
                                                     <div class="col-12">
                                                         <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '') { ?>
                                                         <table
@@ -2028,8 +2023,8 @@ if ($destino != '') {
                                                                     <select name="procedimento" id="procedimento"
                                                                         title="Selecione o Procedimento">
                                                                         <?php
-                                                                            include('conexao.php');
-                                                                            $sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
+																			include 'conexao.php';
+																			$sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
                                                                         WHERE descricao <> '%EXCLUIDO%' AND procedimento_id NOT IN (729,730,822,821,779) AND descricao NOT IN ('DOSAGEM DE FOLATO',
                                                                         'DOSAGEM DE PROTEINAS TOTAIS',
                                                                         'TROPONINA T',
@@ -2094,13 +2089,13 @@ if ($destino != '') {
                                                                         'SOROLOGIA ANTI-HIV I/II',
                                                                         'CLORO',
                                                                         'ROTINA ACIDENTE DE TRABALHO, [FUNEPU]') order by descricao";
-                                                                            $sth = pg_query($sql) or die($sql);
+																			$sth = pg_query($sql) or die($sql);
 
-                                                                            while ($row = pg_fetch_object($sth)) {
-                                                                                echo "<option value=\"" . $row->procedimento_id . "\"";
-                                                                                echo ">" . $row->descricao . "</option>";
-                                                                            }
-                                                                            ?>
+																			while ($row = pg_fetch_object($sth)) {
+																				echo '<option value="' . $row->procedimento_id . '"';
+																				echo '>' . $row->descricao . '</option>';
+																			}
+																			?>
                                                                     </select>
 
                                                                 </td>
@@ -2116,7 +2111,7 @@ if ($destino != '') {
                                                         <?php } ?>
                                                     </div>
                                                     <?php //}
-                                                    ?>
+													?>
                                                 </div>
                                                 <!-- Exames Laboratoriais -->
                                                 <div class="col-6">
@@ -2142,32 +2137,32 @@ if ($destino != '') {
 
                                                             <tbody>
                                                                 <?php
-                                                                include('conexao_laboratorio.php');
-                                                                $sql = "SELECT distinct d.exame_id, a.pedido_id, b.nome, a.data, a.horario, d.coletado, d.recoleta, d.pendente, b.celular, d.liberado, d.situacao, e.descricao, d.pedido_item_id 
+																include 'conexao_laboratorio.php';
+																$sql = "SELECT distinct d.exame_id, a.pedido_id, b.nome, a.data, a.horario, d.coletado, d.recoleta, d.pendente, b.celular, d.liberado, d.situacao, e.descricao, d.pedido_item_id 
                                                                 FROM pedidos a
                                                                 INNER JOIN pessoas b ON a.pessoa_id = b.pessoa_id
                                                                 INNER JOIN pedido_guia c ON a.pedido_id = c.pedido_id
                                                                 INNER JOIN pedido_item d ON d.pedido_guia_id = c.pedido_guia_id
                                                                 LEFT JOIN procedimentos e ON e.procedimentos_id = d.exame_id
                                                                 LEFT JOIN modalidades f ON f.modalidade_id = e.setor where c.origem = '" . ORIGEM_CONFIG . "' and b.origem = '" . PORIGEM_CONFIG . "' and pessoa_id_origem = $prontuario order by a.data desc, a.horario";
-                                                                $result = pg_query($sql) or die($sql);
-                                                                while ($rows = pg_fetch_object($result)) {
-                                                                    echo "<tr>";
-                                                                    if ($rows->situacao == '' or $rows->situacao == 'Coletado') {
-                                                                        echo "<td><div><input type=\"checkbox\" name=\"cb_exame[]\" value=\"" . $rows->pedido_item_id . "\"><label></label></div></td>";
-                                                                    } else {
-                                                                        echo "<td></td>";
-                                                                    }
-                                                                    echo "<td>" . inverteData($rows->data) . "</td>";
-                                                                    echo "<td>$rows->descricao</td>";
-                                                                    if ($rows->situacao == 'Liberado') {
-                                                                        echo "<td><a href='http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"fas fa-search\"></a></td>";
-                                                                    } elseif ($rows->situacao != 'Liberado') {
-                                                                        echo "<td>" . $rows->situacao . "</td>";
-                                                                    }
-                                                                    echo "</tr>";
-                                                                }
-                                                                ?>
+																$result = pg_query($sql) or die($sql);
+																while ($rows = pg_fetch_object($result)) {
+																	echo '<tr>';
+																	if ($rows->situacao == '' or $rows->situacao == 'Coletado') {
+																		echo '<td><div><input type="checkbox" name="cb_exame[]" value="' . $rows->pedido_item_id . '"><label></label></div></td>';
+																	} else {
+																		echo '<td></td>';
+																	}
+																	echo '<td>' . inverteData($rows->data) . '</td>';
+																	echo "<td>$rows->descricao</td>";
+																	if ($rows->situacao == 'Liberado') {
+																		echo "<td><a href='http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?gera=$rows->pedido_id&exame=$rows->exame_id' target='_blank' class=\"fas fa-search\"></a></td>";
+																	} elseif ($rows->situacao != 'Liberado') {
+																		echo '<td>' . $rows->situacao . '</td>';
+																	}
+																	echo '</tr>';
+																}
+																?>
                                                             </tbody>
                                                         </table>
 
@@ -2235,63 +2230,63 @@ if ($destino != '') {
                                                             </thead>
                                                             <tbody id="conteudoPrescricao">
                                                                 <?php
-                                                                include('conexao.php');
-                                                                $stmt = "SELECT a.prescricao_id,a.hora,a.data,a.descricao,b.nome, a.cuidados, a.componente1,a.componente2,a.componente3,a.administracao,a.tipo FROM prescricao_itens a
+																include 'conexao.php';
+																$stmt = 'SELECT a.prescricao_id,a.hora,a.data,a.descricao,b.nome, a.cuidados, a.componente1,a.componente2,a.componente3,a.administracao,a.tipo FROM prescricao_itens a
 															left join pessoas b ON b.username = a.medico
-															WHERE a.atendimento_id =" . $transacao . " and a.sequencia is null order by a.tipo,a.prescricao_id ASC";
-                                                                $sth = pg_query($stmt) or die($stmt);
+															WHERE a.atendimento_id =' . $transacao . ' and a.sequencia is null order by a.tipo,a.prescricao_id ASC';
+																$sth = pg_query($stmt) or die($stmt);
 
-                                                                while ($row = pg_fetch_object($sth)) {
-                                                                    echo "<tr>";
-                                                                    echo "<td><div><input type=\"checkbox\" class='marcar' name=\"cb_prescricao[]\"    value=\"" . $row->prescricao_id . "\"><label></label></div></td>";
-                                                                    echo "<td>" . inverteData(substr($row->data, 0, 10)) . '<br>' . $row->hora . "</td>";
+																while ($row = pg_fetch_object($sth)) {
+																	echo '<tr>';
+																	echo "<td><div><input type=\"checkbox\" class='marcar' name=\"cb_prescricao[]\"    value=\"" . $row->prescricao_id . '"><label></label></div></td>';
+																	echo '<td>' . inverteData(substr($row->data, 0, 10)) . '<br>' . $row->hora . '</td>';
 
-                                                                    if ($row->tipo == 10) {
-                                                                        echo "<td class='small'>" .  utf8_encode($row->cuidados) . "<br>" . $row->nome . "</td>";
-                                                                    }
+																	if ($row->tipo == 10) {
+																		echo "<td class='small'>" . utf8_encode($row->cuidados) . '<br>' . ts_decodifica($row->nome) . '</td>';
+																	}
 
-                                                                    if ($row->tipo == 1) {
-                                                                        echo "<td class='small'>" .  utf8_encode($row->cuidados) . "<br>" . $row->nome . "</td>";
-                                                                    }
+																	if ($row->tipo == 1) {
+																		echo "<td class='small'>" . utf8_encode($row->cuidados) . '<br>' . ts_decodifica($row->nome) . '</td>';
+																	}
 
-                                                                    if ($row->tipo == 3) {
-                                                                        echo "<td class='small'>" .
-                                                                            utf8_encode($row->descricao) . "<br>" .
-                                                                            utf8_encode($row->componente1) . ' - ' . utf8_encode($row->componente2) . ' - ' . utf8_encode($row->componente3) . '<br>' .
-                                                                            utf8_encode($row->administracao) .
-                                                                            '<br>' .
-                                                                            $row->nome .
-                                                                            "</td>";
-                                                                    }
+																	if ($row->tipo == 3) {
+																		echo "<td class='small'>" .
+																			utf8_encode($row->descricao) . '<br>' .
+																			utf8_encode($row->componente1) . ' - ' . utf8_encode($row->componente2) . ' - ' . utf8_encode($row->componente3) . '<br>' .
+																			utf8_encode($row->administracao) .
+																			'<br>' .
+																			ts_decodifica($row->nome) .
+																			'</td>';
+																	}
 
-                                                                    if ($row->tipo == 5) {
-                                                                        echo "<td class='small'>" . utf8_encode($row->descricao) . "<br>" . $row->nome . "</td>";
-                                                                    }
+																	if ($row->tipo == 5) {
+																		echo "<td class='small'>" . utf8_encode($row->descricao) . '<br>' . ts_decodifica($row->nome) . '</td>';
+																	}
 
-                                                                    //echo "<td class='small'><a href=\"deletarprescricao.php?id=$row->prescricao_id&atendimento=$transacao\" data-toggle=\"tooltip\" data-original-title=\"Deletar Prescrição\"><i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i></a></td>";
+																	//echo "<td class='small'><a href=\"deletarprescricao.php?id=$row->prescricao_id&atendimento=$transacao\" data-toggle=\"tooltip\" data-original-title=\"Deletar Prescrição\"><i class=\"fa fa-times text-danger\" aria-hidden=\"true\"></i></a></td>";
 
-                                                                    echo "<tr>";
-                                                                }
-                                                                ?>
-                                                                <?php include('conexao.php');
-                                                                $stmt = "select a.data, a.hora, c.nome, a.prescricao_id, d.nome as medico
+																	echo '<tr>';
+																}
+																?>
+                                                                <?php include 'conexao.php';
+																$stmt = "select a.data, a.hora, c.nome, a.prescricao_id, d.nome as medico
 																from prescricoes a
 																left join atendimentos b on a.atendimento_id = b.transacao
 																left join pessoas c on b.paciente_id = c.pessoa_id
 																left join pessoas d on d.pessoa_id = a.profissional_id
 																where a.atendimento_id = $transacao order by a.prescricao_id desc";
-                                                                $sth = pg_query($stmt) or die($stmt);
+																$sth = pg_query($stmt) or die($stmt);
 
-                                                                while ($row = pg_fetch_object($sth)) {
-                                                                    $seq = $row->sequencia + 1;
-                                                                    echo "<tr>";
-                                                                    echo "<td class='small'>" . $seq . "</td>";
-                                                                    echo "<td class='small'>" . date('d/m/Y', strtotime($row->data)) . "</td>";
-                                                                    echo "<td class='small'>" . $row->hora . "</td>";
-                                                                    echo "<td class='small'>" . $row->nome . "</td>";
-                                                                    echo "<td class='small'>" . $row->medico . "</td>";
-                                                                    if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') {
-                                                                        echo "<td class='small'>
+																while ($row = pg_fetch_object($sth)) {
+																	$seq = $row->sequencia + 1;
+																	echo '<tr>';
+																	echo "<td class='small'>" . $seq . '</td>';
+																	echo "<td class='small'>" . date('d/m/Y', strtotime($row->data)) . '</td>';
+																	echo "<td class='small'>" . $row->hora . '</td>';
+																	echo "<td class='small'>" . ts_decodifica($row->nome) . '</td>';
+																	echo "<td class='small'>" . ts_decodifica($row->medico) . '</td>';
+																	if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '10' or str_pad($destino, 2, '0', STR_PAD_LEFT) == '03' or $destino == '' or $perfil == '06' or $perfil == '04') {
+																		echo "<td class='small'>
 															<a href=\"prescricaoenfermagemy.php?id=$row->prescricao_id&p=$transacao\" target=\"_blank\" 
 															class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" 
 															data-original-title=\"Prescrição\">
@@ -2301,11 +2296,11 @@ if ($destino != '') {
 															class='btn btn-secondary btn-sm' data-toggle=\"tooltip\" data-original-title=\"Duplicar Prescrição\" value='+'>
 															
                                                         </td>";
-                                                                    }
+																	}
 
-                                                                    echo "<tr>";
-                                                                }
-                                                                ?>
+																	echo '<tr>';
+																}
+																?>
                                                             </tbody>
                                                             <tfoot>
 
@@ -2352,25 +2347,25 @@ if ($destino != '') {
                                                             <thead>
                                                                 <tr>
                                                                     <th>Data</th>
-                                                                    <th>Descrição</th>
+                                                                    <th>Unidade</th>
                                                                     <th style="text-align: center">Laudo</th>
                                                                 </tr>
                                                             </thead>
 
                                                             <tbody>
                                                                 <?php
-                                                                include('conexao.php');
-                                                                $stmt = "select dat_cad, paciente_id, sigla, transacao from atendimentos a left join unidade_atendimento b on a.local=b.unidade_id where paciente_id=" . $prontuario . " and a.transacao<>" . $transacao;
-                                                                $sth = pg_query($stmt) or die($stmt);
-                                                                //echo $stmt;
-                                                                while ($row = pg_fetch_object($sth)) {
-                                                                    echo "<tr>";
-                                                                    echo "<td>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
-                                                                    echo "<td>UPA SÃO BENEDITO</td>";
-                                                                    echo "<td align=\"center\" ><a href='atendimentoclinico.php?id=" . $row->transacao . "&estadia=1' target='_blank' class=\"fas fa-search\"></a></td>";
-                                                                    echo "</tr>";
-                                                                }
-                                                                ?>
+																include 'conexao.php';
+																$stmt = 'select dat_cad, paciente_id, sigla, transacao from atendimentos a left join unidade_atendimento b on a.local=b.unidade_id where paciente_id=' . $prontuario . ' and a.transacao<>' . $transacao . ' order by dat_cad desc';
+																$sth = pg_query($stmt) or die($stmt);
+																//echo $stmt;
+																while ($row = pg_fetch_object($sth)) {
+																	echo '<tr>';
+																	echo '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . '</td>';
+																	echo '<td>' . UNIDADE_CONFIG . '</td>';
+																	echo "<td align=\"center\" ><a href='atendimentoclinico.php?id=" . $row->transacao . "&estadia=1' target='_blank' class=\"fas fa-search\"></a></td>";
+																	echo '</tr>';
+																}
+																?>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -2397,33 +2392,33 @@ if ($destino != '') {
 
                                                                 <tbody>
                                                                     <?php
-                                                                    $stmt = "select medicamentos,quantidade,modo_usar 
+																	$stmt = "select medicamentos,quantidade,modo_usar 
 																from receituario_remedio 
 																where transacao = $transacao";
-                                                                    $sth = pg_query($stmt) or die($stmt);
-                                                                    //echo $stmt;
-                                                                    while ($row = pg_fetch_object($sth)) {
-                                                                        echo "<tr>";
-                                                                        echo "<td>" . $row->medicamentos . "</td>";
-                                                                        echo "<td>" . $row->quantidade . "</td>";
-                                                                        echo "<td>" . $row->modo_usar . "</td>";
-                                                                        echo "</tr>";
-                                                                    }
-                                                                    ?>
+																	$sth = pg_query($stmt) or die($stmt);
+																	//echo $stmt;
+																	while ($row = pg_fetch_object($sth)) {
+																		echo '<tr>';
+																		echo '<td>' . $row->medicamentos . '</td>';
+																		echo '<td>' . $row->quantidade . '</td>';
+																		echo '<td>' . $row->modo_usar . '</td>';
+																		echo '</tr>';
+																	}
+																	?>
                                                                 </tbody>
                                                             </table>
                                                         </div>
 
                                                         <div class="col-sm-12 text-center margin-top-10">
                                                             <?php
-                                                            include('conexao.php');
-                                                            $stmt = "select count(*) as qtd from receituario_remedio where transacao =" . $transacao;
-                                                            $sth = pg_query($stmt) or die($stmt);
-                                                            //echo $stmt;
-                                                            $row = pg_fetch_object($sth);
-                                                            echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-success mr-2" data-toggle="modal">';
-                                                            echo '<a href="relReceituario.php?transacao=' . $transacao . '" target="_blank" class="btn btn-success">Imprimir Receituário</a>';
-                                                            ?>
+															include 'conexao.php';
+															$stmt = 'select count(*) as qtd from receituario_remedio where transacao =' . $transacao;
+															$sth = pg_query($stmt) or die($stmt);
+															//echo $stmt;
+															$row = pg_fetch_object($sth);
+															echo '<input type="button" id="receituario" href="#" data-id="$_GET[\'id\']" data-target="#modalSolicitaReceituario" onclick="return validar()" value="Receituário" class="btn btn-success mr-2" data-toggle="modal">';
+															echo '<a href="relReceituario.php?transacao=' . $transacao . '" target="_blank" class="btn btn-success">Imprimir Receituário</a>';
+															?>
                                                         </div>
                                                     </div>
 
@@ -2454,17 +2449,17 @@ if ($destino != '') {
 
                                                             <tbody>
                                                                 <?php
-                                                                include('conexao.php');
-                                                                $stmt = "select distinct partir_dia, max(hora_atendimento) hora from atestados where pessoa_id =" . $prontuario . " group by 1 order by 1 desc";
-                                                                $sth = pg_query($stmt) or die($stmt);
-                                                                //echo $stmt;
-                                                                while ($row = pg_fetch_object($sth)) {
-                                                                    echo "<tr>";
-                                                                    echo "<td>" . inverteData(substr($row->partir_dia, 0, 10)) . "</td>";
-                                                                    echo "<td>$row->hora</td>";
-                                                                    echo "</tr>";
-                                                                }
-                                                                ?>
+																include 'conexao.php';
+																$stmt = 'select distinct partir_dia, max(hora_atendimento) hora from atestados where pessoa_id =' . $prontuario . ' group by 1 order by 1 desc';
+																$sth = pg_query($stmt) or die($stmt);
+																//echo $stmt;
+																while ($row = pg_fetch_object($sth)) {
+																	echo '<tr>';
+																	echo '<td>' . inverteData(substr($row->partir_dia, 0, 10)) . '</td>';
+																	echo "<td>$row->hora</td>";
+																	echo '</tr>';
+																}
+																?>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -2494,34 +2489,34 @@ if ($destino != '') {
                                 <textarea name="evolucao" class="form-control" style="height: 404px"
                                     id="evolucao"></textarea> </br>
                                 <?php } ?>
-                                <select class="form-control" name="destino" id="destino" <?php if ($destino != '19'  or $med != 1) {
-                                                                    echo $disable;
-                                                                } ?>>
+                                <select class="form-control" name="destino" id="destino" <?php if ($destino != '19' or $med != 1) {
+																	echo $disable;
+																} ?>>
                                     <option value=""></option>;
                                     <option value="01" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '01') {
-                                                                    echo "selected";
-                                                                } ?>>
+																	echo 'selected';
+																} ?>>
                                         ALTA
                                     </option>;
                                     <option value="07" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '07') {
-                                                                    echo "selected";
-                                                                } ?>>
+																	echo 'selected';
+																} ?>>
                                         EM
                                         OBSERVAÇÃO / MEDICAÇÃO
                                     </option>;
                                     <!-- <option value="19" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '19') {
-                                                                    echo "selected";
-                                                                } ?>>EXAMES
+																	echo 'selected';
+																} ?>>EXAMES
                                     LABORATORIAIS</option>; -->
                                     <option value="10" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '10') {
-                                                                    echo "selected";
-                                                                } ?>>
+																	echo 'selected';
+																} ?>>
                                         EXAMES /
                                         REAVALIACAO
                                     </option>;
                                     <option value="03" <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '03') {
-                                                                    echo "selected";
-                                                                } ?>>
+																	echo 'selected';
+																} ?>>
                                         PERMANÊNCIA.
                                     </option>;
                                     <?php if (str_pad($destino, 2, '0', STR_PAD_LEFT) == '20') { ?>
@@ -2529,8 +2524,8 @@ if ($destino != '') {
                                     </option>;
                                     <?php } ?>
                                     <option value="09" <?php if ($destino == '09') {
-                                                                    echo "selected";
-                                                                } ?>>NAO
+																	echo 'selected';
+																} ?>>NAO
                                         RESPONDEU CHAMADO
                                     </option>;
                                 </select>
@@ -2656,7 +2651,7 @@ if ($destino != '') {
     </div>
 
 
-    <!-- <?php include('footer.php'); ?> -->
+    <!-- <?php include 'footer.php'; ?> -->
     <!-- </div> -->
 
     <!-- <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script> -->
@@ -3501,7 +3496,7 @@ if ($destino != '') {
             var data = document.getElementById("data").value;
             if (data) {
                 window.open(
-                    "<?= "http://" . IP_CONFIG . "/desenvolvimento/laboratorio/gera_resultado.php?data="; ?>" +
+                    "<?= 'http://' . IP_CONFIG . '/desenvolvimento/laboratorio/gera_resultado.php?data='; ?>" +
                     data +
                     "<?= "&pessoa_id=$prontuario&origem=" . PORIGEM_CONFIG; ?>"
                 );

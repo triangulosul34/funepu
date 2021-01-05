@@ -1,11 +1,14 @@
 <?php
+
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 /**
  * HTML2PDF Library - example
@@ -22,11 +25,11 @@ function inverteData($data)
  */
 error_reporting(0);
 $id = $_GET['id'];
-include('conexao.php');
-$stmtx = "select b.transacao, b.idade, b.dat_cad,  b.status, b.cad_user, b.paciente_id, a.exame_id, a.observacoes, a.exame_nro, a.digitador_hora,a.resultado, a.digitador_data, a.digitador, a.situacao,
+include 'conexao.php';
+$stmtx = 'select b.transacao, b.idade, b.dat_cad,  b.status, b.cad_user, b.paciente_id, a.exame_id, a.observacoes, a.exame_nro, a.digitador_hora,a.resultado, a.digitador_data, a.digitador, a.situacao,
 			 a.med_analise, a.data_analise, a.hora_analise, c.nome, c.dt_nasc, c.imagem, c.sexo, d.descricao, e.nome as solicitante, laudo_padrao, med_confere,
 			 a.data_confere, a.hora_confere from itenspedidos a left join pedidos   b  on a.transacao   =b.transacao left join pessoas c  on b.paciente_id =c.pessoa_id left join procedimentos d 
-			 on a.exame_id=d.procedimento_id left join solicitantes e on b.solicitante_id=e.solicitante_id where a.exame_nro=" . $id;
+			 on a.exame_id=d.procedimento_id left join solicitantes e on b.solicitante_id=e.solicitante_id where a.exame_nro=' . $id;
 $sth = pg_query($stmtx) or die($stmtx);
 $row = pg_fetch_object($sth);
 $prontuario = $row->paciente_id;
@@ -37,7 +40,7 @@ $cad_user = $row->cad_user;
 $exame_id = $row->exame_id;
 $exame_nro = $row->exame_nro;
 $exame_desc = $row->descricao;
-$nome = $row->nome;
+$nome = ts_decodifica($row->nome);
 $dt_nasc = $row->dt_nasc;
 $date = new DateTime($dt_nasc); // data de nascimento
 $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
@@ -49,29 +52,28 @@ $sol_email = $row->sol_email;
 $sol_celular = $row->sol_celular;
 $resultado = $row->resultado;
 if ($resultado == '') {
-    $laudo = $row->laudo_padrao;
+	$laudo = $row->laudo_padrao;
 } else {
-    $laudo = $resultado;
+	$laudo = $resultado;
 }
 $observacoes = $row->observacoes;
 $digitador = $row->digitador;
 $digitador_data = $row->digitador_data;
 $digitador_hora = $row->digitador_hora;
-$med_analise =  $row->med_analise;
-$med_confere =  $row->med_confere;
-$data_confere =  $row->data_confere;
-$hora_confere =  $row->hora_confere;
+$med_analise = $row->med_analise;
+$med_confere = $row->med_confere;
+$data_confere = $row->data_confere;
+$hora_confere = $row->hora_confere;
 $situacao = $row->situacao;
 
-
 ob_start();
-include("conexao.php");
-$stmt = "Select * from configuracoes";
+include 'conexao.php';
+$stmt = 'Select * from configuracoes';
 $sth = pg_query($stmt) or die($stmt);
 $row = pg_fetch_object($sth);
 $cabecalho = $row->laudo_cabecalho;
 $identificacao = $row->laudo_identificacao;
-$qrcode    = $row->laudo_qrcode;
+$qrcode = $row->laudo_qrcode;
 $msg = "Diagnostic Center\r\nhttp://dcenter.ddns.net:8585/dcenter/html/prontuario=$prontuario";
 ?>
 <style type="text/css">
@@ -107,13 +109,15 @@ $msg = "Diagnostic Center\r\nhttp://dcenter.ddns.net:8585/dcenter/html/prontuari
     }
     -->
 </style>
-<page backtop="<?php echo $cabecalho . "mm"; ?>" backbottom="14mm" backleft="10mm" backright="10mm" style="font-size: 12pt">
+<page backtop="<?php echo $cabecalho . 'mm'; ?>"
+    backbottom="14mm" backleft="10mm" backright="10mm" style="font-size: 12pt">
     <page_header>
 
         <table class="page_header">
 
             <tr>
-                <td style="width: 25%; height: <?php echo $identificacao . "px"; ?>; text-align: center">
+                <td
+                    style="width: 25%; height: <?php echo $identificacao . 'px'; ?>; text-align: center">
                     <img src="app-assets/img/gallery/logo.jpg" width='150' height='60'>
                 </td>
                 <td colspan='2' style="text-align: right">
@@ -165,70 +169,68 @@ $msg = "Diagnostic Center\r\nhttp://dcenter.ddns.net:8585/dcenter/html/prontuari
     </page_footer>
 
     <?php
-    echo $resultado;
-    if ($med_analise != '') {
-        include("conexao.php");
-        $stmt = "Select * from pessoas where username='$med_analise'";
-        $sth = pg_query($stmt) or die($stmt);
-        $row = pg_fetch_object($sth);
-        $medico_analise     = $row->nome;
-        $num_conselho_ana   = $row->num_conselho_reg;
-        $conselho_reg_ana   = $row->conselho_regional;
-        $assinatura_ana        = $row->assinatura;
-    }
-    if ($med_confere != '') {
-        include("conexao.php");
-        $stmt = "Select * from pessoas where username='$med_confere'";
-        $sth = pg_query($stmt) or die($stmt);
-        $row = pg_fetch_object($sth);
-        $medico_confere      = $row->nome;
-        $num_conselho_conf   = $row->num_conselho_reg;
-        $conselho_reg_conf   = $row->conselho_regional;
-        $assinatura_conf     = $row->assinatura;
-    }
-    if ($medico_confere != '' and $medico_analise != "" and $medico_analise != $medico_confere and $hora_confere != "") {
-        echo "<table>";
-        echo "<tr>";
-        echo "<td style=\"width: 50%; text-align: center\">";
-        //if ($assinatura_ana!="") { echo "<img src=\"imagens/assinaturas/".$assinatura_ana."\" width=\"112\" height=\"75\"><br>";}
-        //echo "_____________________________________"."<br>";
-        echo "RESULTADO DE EXAME EMITIDO ELETRONICAMENTE POR<br>";
-        echo $medico_analise;
-        echo "<br>";
-        echo $conselho_reg_ana . ' : ' . $num_conselho_ana;
-        echo "<br>";
+	echo $resultado;
+	if ($med_analise != '') {
+		include 'conexao.php';
+		$stmt = "Select * from pessoas where username='$med_analise'";
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		$medico_analise = ts_decodifica($row->nome);
+		$num_conselho_ana = $row->num_conselho_reg;
+		$conselho_reg_ana = $row->conselho_regional;
+		$assinatura_ana = $row->assinatura;
+	}
+	if ($med_confere != '') {
+		include 'conexao.php';
+		$stmt = "Select * from pessoas where username='$med_confere'";
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		$medico_confere = ts_decodifica($row->nome);
+		$num_conselho_conf = $row->num_conselho_reg;
+		$conselho_reg_conf = $row->conselho_regional;
+		$assinatura_conf = $row->assinatura;
+	}
+	if ($medico_confere != '' and $medico_analise != '' and $medico_analise != $medico_confere and $hora_confere != '') {
+		echo '<table>';
+		echo '<tr>';
+		echo '<td style="width: 50%; text-align: center">';
+		//if ($assinatura_ana!="") { echo "<img src=\"imagens/assinaturas/".$assinatura_ana."\" width=\"112\" height=\"75\"><br>";}
+		//echo "_____________________________________"."<br>";
+		echo 'RESULTADO DE EXAME EMITIDO ELETRONICAMENTE POR<br>';
+		echo $medico_analise;
+		echo '<br>';
+		echo $conselho_reg_ana . ' : ' . $num_conselho_ana;
+		echo '<br>';
 
+		echo '</td>';
+		echo '<td style="width: 50%; text-align: center">';
+		//if ($assinatura_conf!="") { echo "<img src=\"imagens/assinaturas/".$assinatura_conf."\" width=\"112\" height=\"75\"><br>";}
+		//echo "_____________________________________"."<br>";
+		echo 'RESULTADO DE EXAME EMITIDO ELETRONICAMENTE POR<br>';
+		echo $medico_confere;
+		echo '<br>';
+		echo $conselho_reg_conf . ' : ' . $num_conselho_conf;
+		echo '<br>';
+		echo '</td>';
+		echo '</tr>';
+		echo '</table>';
+	} else {
+		echo '<table style="width: 100%;">';
+		echo '<tr>';
+		echo '<td style="width: 100%; text-align: center">';
 
-        echo "</td>";
-        echo "<td style=\"width: 50%; text-align: center\">";
-        //if ($assinatura_conf!="") { echo "<img src=\"imagens/assinaturas/".$assinatura_conf."\" width=\"112\" height=\"75\"><br>";}
-        //echo "_____________________________________"."<br>";
-        echo "RESULTADO DE EXAME EMITIDO ELETRONICAMENTE POR<br>";
-        echo $medico_confere;
-        echo "<br>";
-        echo $conselho_reg_conf . ' : ' . $num_conselho_conf;
-        echo "<br>";
-        echo "</td>";
-        echo "</tr>";
-        echo "</table>";
-    } else {
-        echo "<table style=\"width: 100%;\">";
-        echo "<tr>";
-        echo "<td style=\"width: 100%; text-align: center\">";
+		//echo "<img src=\"./imagens/assinaturas/".$assinatura_ana."\" width=\"115\" height=\"75\"><br>";
+		//echo "___________________________________"."<br>";
+		echo 'RESULTADO DE EXAME EMITIDO ELETRONICAMENTE POR<br>';
+		echo $medico_analise;
+		echo '<br>';
+		echo $conselho_reg_ana . ' : ' . $num_conselho_ana;
+		echo '</td>';
+		echo '</tr>';
+		echo '</table>';
+	}
 
-        //echo "<img src=\"./imagens/assinaturas/".$assinatura_ana."\" width=\"115\" height=\"75\"><br>";		
-        //echo "___________________________________"."<br>";
-        echo "RESULTADO DE EXAME EMITIDO ELETRONICAMENTE POR<br>";
-        echo $medico_analise;
-        echo "<br>";
-        echo $conselho_reg_ana . ' : ' . $num_conselho_ana;
-        echo "</td>";
-        echo "</tr>";
-        echo "</table>";
-    }
-
-
-    ?>
+	?>
 
 
 </page>
@@ -236,13 +238,13 @@ $msg = "Diagnostic Center\r\nhttp://dcenter.ddns.net:8585/dcenter/html/prontuari
 <?php
 $content = ob_get_clean();
 
-require_once(dirname(__FILE__) . '/html2pdf/html2pdf.class.php');
+require_once dirname(__FILE__) . '/html2pdf/html2pdf.class.php';
 try {
-    $html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 0);
-    $html2pdf->writeHTML($content, isset($_GET['vuehtml']));
-    // $html2pdf->createIndex('Sommaire', 25, 12, false, true, 1);
-    $html2pdf->Output('bookmark.pdf');
+	$html2pdf = new HTML2PDF('P', 'A4', 'fr', true, 'UTF-8', 0);
+	$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
+	// $html2pdf->createIndex('Sommaire', 25, 12, false, true, 1);
+	$html2pdf->Output('bookmark.pdf');
 } catch (HTML2PDF_exception $e) {
-    echo $e;
-    exit;
+	echo $e;
+	exit;
 }

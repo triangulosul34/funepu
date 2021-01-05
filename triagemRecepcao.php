@@ -1,214 +1,215 @@
 <?php
 
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 error_reporting(0);
 $menu_grupo = '3';
 $menu_sgrupo = '1';
-$nome         = '';
-$dtnasc     = '';
-$telefone    = '';
-$mae         = '';
-include('verifica.php');
-$RX             = '';
-$US              = '';
-$CT             = '';
-$MM             = '';
-$RM             = '';
-$DS             = '';
-$ECO         = '';
+$nome = '';
+$dtnasc = '';
+$telefone = '';
+$mae = '';
+include 'verifica.php';
+$RX = '';
+$US = '';
+$CT = '';
+$MM = '';
+$RM = '';
+$DS = '';
+$ECO = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $codigo = $_GET['id'];
-    if ($codigo != "") {
-        $where = ' pessoa_id =' . $codigo;
-    }
+	$codigo = $_GET['id'];
+	if ($codigo != '') {
+		$where = ' pessoa_id =' . $codigo;
+	}
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $procedimentox = $_POST['procedimentox'];
-    $situacao     = $_POST['situacao'];
-    $nome           = $_POST['nome'];
-    $xbox          = $_POST['xbox'];
-    $CM              = $_POST['cb_cm'];
-    $PED           = $_POST['cb_ped'];
-    $start           = $_POST['start'];
-    $end           = $_POST['end'];
-    $transfere       = $_POST['cb_exame'];
-    $profissional = $_POST['prof_transfere'];
-    $cb_meus      = $_POST['cb_meus'];
-    $cb_conf      = $_POST['cb_CONFERENCIA'];
+	$procedimentox = $_POST['procedimentox'];
+	$situacao = $_POST['situacao'];
+	$nome = ts_codifica($_POST['nome']);
+	$xbox = $_POST['xbox'];
+	$CM = $_POST['cb_cm'];
+	$PED = $_POST['cb_ped'];
+	$start = $_POST['start'];
+	$end = $_POST['end'];
+	$transfere = $_POST['cb_exame'];
+	$profissional = $_POST['prof_transfere'];
+	$cb_meus = $_POST['cb_meus'];
+	$cb_conf = $_POST['cb_CONFERENCIA'];
 
-    $where = "";
+	$where = '';
 
+	if (isset($_POST['semana'])) {
+		$start = date('d/m/Y', strtotime('-7 days'));
+		$end = date('d/m/Y');
+	}
+	if (isset($_POST['hoje'])) {
+		$start = date('d/m/Y');
+		$end = date('d/m/Y');
+	}
+	if (isset($_POST['ontem'])) {
+		$start = date('d/m/Y', strtotime('-1 days'));
+		$end = date('d/m/Y', strtotime('-1 days'));
+	}
+	$modalidades = '';
 
-    if (isset($_POST['semana'])) {
-        $start          = date('d/m/Y', strtotime("-7 days"));
-        $end          = date('d/m/Y');
-    }
-    if (isset($_POST['hoje'])) {
-        $start          = date('d/m/Y');
-        $end          = date('d/m/Y');
-    }
-    if (isset($_POST['ontem'])) {
-        $start          = date('d/m/Y', strtotime("-1 days"));
-        $end          = date('d/m/Y', strtotime("-1 days"));
-    }
-    $modalidades = "";
+	if ($CM != '') {
+		$modalidades = $modalidades . "'Consultorio Adulto',";
+	}
 
-    if ($CM != "") {
-        $modalidades = $modalidades . "'Consultorio Adulto',";
-    }
+	if ($PED != '') {
+		$modalidades = $modalidades . "'Consultorio Pediátrico',";
+	}
 
-    if ($PED != "") {
-        $modalidades = $modalidades . "'Consultorio Pediátrico',";
-    }
+	$modalidades = substr($modalidades, 0, -1);
 
-    $modalidades = substr($modalidades, 0, -1);
+	if ($nome != '') {
+		$where = $where . " c.nome like '%" . $nome . "%' ";
+	}
 
-    if ($nome != "") {
-        $where = $where . " c.nome like '%" . $nome . "%' ";
-    }
+	if ($procedimentox != '') {
+		if ($where != '') {
+			$where = $where . " and a.exame_id = $procedimentox";
+		} else {
+			$where = $where . " a.exame_id = $procedimentox";
+		}
+	}
 
-    if ($procedimentox != "") {
-        if ($where != "") {
-            $where = $where . " and a.exame_id = $procedimentox";
-        } else {
-            $where = $where . " a.exame_id = $procedimentox";
-        }
-    }
+	if ($xbox != '') {
+		if ($where != '') {
+			$where = $where . " and box = $xbox";
+		} else {
+			$where = $where . " box = $xbox";
+		}
+	}
 
-    if ($xbox != "") {
-        if ($where != "") {
-            $where = $where . " and box = $xbox";
-        } else {
-            $where = $where . " box = $xbox";
-        }
-    }
+	if ($modalidades != '') {
+		if ($where != '') {
+			$where = $where . " and a.especialidade in ($modalidades) ";
+		} else {
+			$where = $where . " a.especialidade in ($modalidades) ";
+		}
+	}
 
-    if ($modalidades != "") {
-        if ($where != "") {
-            $where = $where . " and a.especialidade in ($modalidades) ";
-        } else {
-            $where = $where . " a.especialidade in ($modalidades) ";
-        }
-    }
+	if ($start != '') {
+		$data = inverteData($start);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad >= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad >= '$data')";
+		}
+	}
 
-    if ($start != "") {
-        $data = inverteData($start);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad >= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad >= '$data')";
-        }
-    }
+	if ($end != '') {
+		$data = inverteData($end);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad <= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad <= '$data')";
+		}
+	}
 
-    if ($end != "") {
-        $data = inverteData($end);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad <= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad <= '$data')";
-        }
-    }
+	if ($situacao != '') {
+		if ($situacao != 'Pendentes') {
+			if ($where != '') {
+				$where = $where . " and (a.status = '$situacao')";
+			} else {
+				$where = $where . " (a.status = '$situacao')";
+			}
+		} else {
+			if ($where != '' and $status == 'Pendentes') {
+				$where = $where . " and (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
+			} else {
+				$where = $where . " (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
+			}
+		}
+	}
 
-    if ($situacao != "") {
-        if ($situacao != "Pendentes") {
-            if ($where != "") {
-                $where = $where . " and (a.status = '$situacao')";
-            } else {
-                $where = $where . " (a.status = '$situacao')";
-            }
-        } else {
-            if ($where != "" and $status == "Pendentes") {
-                $where = $where . " and (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
-            } else {
-                $where = $where . " (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
-            }
-        }
-    }
+	if ($cb_meus != '') {
+		if ($where != '') {
+			$where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
+		} else {
+			$where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
+		}
+	}
 
-    if ($cb_meus != "") {
-        if ($where != "") {
-            $where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
-        } else {
-            $where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
-        }
-    }
+	if ($cb_conf != '') {
+		if ($where != '') {
+			$where = $where . " and (a.med_confere = '$cb_conf')";
+		} else {
+			$where = $where . " (a.med_confere = '$cb_conf')";
+		}
+	}
+	$stmtx = 'nao entrei';
 
-    if ($cb_conf != "") {
-        if ($where != "") {
-            $where = $where . " and (a.med_confere = '$cb_conf')";
-        } else {
-            $where = $where . " (a.med_confere = '$cb_conf')";
-        }
-    }
-    $stmtx = "nao entrei";
+	if ($transfere != '') {
+		if (isset($_POST['transferir'])) {
+			include 'conexao.php';
+			$stmty = "Select username from pessoas where pessoa_id = $profissional";
 
-    if ($transfere != "") {
-        if (isset($_POST["transferir"])) {
-            include('conexao.php');
-            $stmty = "Select username from pessoas where pessoa_id = $profissional";
+			$sth = pg_query($stmty) or die($stmty);
+			$row = pg_fetch_object($sth);
+			$username = $row->username;
+			if ($username != '') {
+				include 'conexao.php';
+				$stmtx = "Update itenspedidos set med_analise = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Editado' or situacao='Cadastrado')";
+				$sth = pg_query($stmtx) or die($stmtx);
 
-            $sth = pg_query($stmty) or die($stmty);
-            $row = pg_fetch_object($sth);
-            $username = $row->username;
-            if ($username != "") {
-                include('conexao.php');
-                $stmtx = "Update itenspedidos set med_analise = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Editado' or situacao='Cadastrado')";
-                $sth = pg_query($stmtx) or die($stmtx);
+				foreach ($transfere as $item) {
+					include 'conexao.php';
+					$data = date('Y-m-d H:i:s');
+					$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
+					$sth = pg_query($stmtx) or die($stmtx);
+				}
+			}
+		}
+		if (isset($_POST['transfconf'])) {
+			include 'conexao.php';
+			$stmty = "Select username from pessoas where pessoa_id = $profissional";
 
-                foreach ($transfere as $item) {
-                    include('conexao.php');
-                    $data  = date('Y-m-d H:i:s');
-                    $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
-                    $sth   = pg_query($stmtx) or die($stmtx);
-                }
-            }
-        }
-        if (isset($_POST["transfconf"])) {
-            include('conexao.php');
-            $stmty = "Select username from pessoas where pessoa_id = $profissional";
+			$sth = pg_query($stmty) or die($stmty);
+			$row = pg_fetch_object($sth);
+			$username = $row->username;
+			if ($username != '') {
+				include 'conexao.php';
+				$stmtx = "Update itenspedidos set med_confere = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Laudado' or situacao='Editado')";
+				$sth = pg_query($stmtx) or die($stmtx);
 
-            $sth = pg_query($stmty) or die($stmty);
-            $row = pg_fetch_object($sth);
-            $username = $row->username;
-            if ($username != "") {
-                include('conexao.php');
-                $stmtx = "Update itenspedidos set med_confere = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Laudado' or situacao='Editado')";
-                $sth = pg_query($stmtx) or die($stmtx);
-
-                foreach ($transfere as $item) {
-                    include('conexao.php');
-                    $data  = date('Y-m-d H:i:s');
-                    $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
-                    $sth   = pg_query($stmtx) or die($stmtx);
-                }
-            }
-        }
-        if (isset($_POST["imprimir"])) {
-            echo "<script>alert('Imprimir')</script>";
-        }
-        if (isset($_POST["enviar"])) {
-            include('conexao.php');
-            $stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
+				foreach ($transfere as $item) {
+					include 'conexao.php';
+					$data = date('Y-m-d H:i:s');
+					$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
+					$sth = pg_query($stmtx) or die($stmtx);
+				}
+			}
+		}
+		if (isset($_POST['imprimir'])) {
+			echo "<script>alert('Imprimir')</script>";
+		}
+		if (isset($_POST['enviar'])) {
+			include 'conexao.php';
+			$stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
                 where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Finalizado' or situacao='Impresso')";
-            $sth = pg_query($stmtx) or die($stmtx);
+			$sth = pg_query($stmtx) or die($stmtx);
 
-            foreach ($transfere as $item) {
-                include('conexao.php');
-                $data  = date('Y-m-d H:i:s');
-                $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Env Recepcao', '$usuario', '$data' )";
-                $sth   = pg_query($stmtx) or die($stmtx);
-            }
-        }
-    }
+			foreach ($transfere as $item) {
+				include 'conexao.php';
+				$data = date('Y-m-d H:i:s');
+				$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Env Recepcao', '$usuario', '$data' )";
+				$sth = pg_query($stmtx) or die($stmtx);
+			}
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -330,8 +331,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -387,80 +388,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                 <tbody id="atualizaTriagem">
                                                     <?php
-                                                    $i = 0;
-                                                    include('conexao.php');
-                                                    $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
+													$i = 0;
+													include 'conexao.php';
+													$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
                                                             a.dat_cad, c.nome, c.nome_social, c.dt_nasc, k.origem, a.tipo, a.coronavirus
                                                             from atendimentos a 
                                                             left join pessoas c on a.paciente_id=c.pessoa_id 
                                                             left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
-                                                            WHERE status in ('Aguardando Triagem', 'Em Triagem') and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
+                                                            WHERE status in ('Aguardando Triagem', 'Em Triagem') and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
                                                             cast(tipo as integer) != '6' and tipo_at is null 
                                                             ORDER by 3, 1";
-                                                    $sth = pg_query($stmt) or die($stmt);
-                                                    while ($row = pg_fetch_object($sth)) {
-                                                        if ($row->prioridade   == 'AMARELO') {
-                                                            $classe = "style=\"background-color:gold\"";
-                                                        }
-                                                        if ($row->prioridade   == 'VERMELHO') {
-                                                            $classe = "class='bg-danger'";
-                                                        }
-                                                        if ($row->prioridade   == 'VERDE') {
-                                                            $classe = "class='bg-success'";
-                                                        }
-                                                        if ($row->prioridade   == 'AZUL') {
-                                                            $classe = "class='bg-primary'";
-                                                        }
-                                                        if ($row->prioridade   == 'LARANJA') {
-                                                            $classe = "class='bg-warning'";
-                                                        }
-                                                        if ($row->prioridade   == '') {
-                                                            $classe = "style=\"background-color:Gainsboro\"";
-                                                        }
+													$sth = pg_query($stmt) or die($stmt);
+													while ($row = pg_fetch_object($sth)) {
+														if ($row->prioridade == 'AMARELO') {
+															$classe = 'style="background-color:gold"';
+														}
+														if ($row->prioridade == 'VERMELHO') {
+															$classe = "class='bg-danger'";
+														}
+														if ($row->prioridade == 'VERDE') {
+															$classe = "class='bg-success'";
+														}
+														if ($row->prioridade == 'AZUL') {
+															$classe = "class='bg-primary'";
+														}
+														if ($row->prioridade == 'LARANJA') {
+															$classe = "class='bg-warning'";
+														}
+														if ($row->prioridade == '') {
+															$classe = 'style="background-color:Gainsboro"';
+														}
 
-
-                                                        $ip = getenv("REMOTE_ADDR");
-                                                        echo "<tr " . $classe . ">";
-                                                        if ($row->coronavirus == 1) {
-                                                            echo "<td>" . $row->transacao . "</td>";
-                                                            echo "<td class='blink'>" . inverteData(substr($row->dat_cad, 0, 10)) . " - " . $row->hora_cad . "</td>";
-                                                            if ($row->nome_social == '') {
-                                                                echo "<td class='blink'>" . $row->nome;
-                                                            } else {
-                                                                echo "<td class='blink'>" . $row->nome_social . " (" . $row->nome . ")";
-                                                            }
-                                                            if ($row->nec_especiais != 'Nenhuma') {
-                                                                echo "<br>Paciente com deficiencia $row->nec_especiais";
-                                                            }
-                                                            echo "</td>";
-                                                            echo "<td class='blink'>" . inverteData($row->dt_nasc) . "</td>";
-                                                            echo "<td class='blink'>" . $row->origem . "</td>";
-                                                            echo "<td class='blink'>" . $row->status . "</td>";
-                                                        } else {
-                                                            echo "<td>" . $row->transacao . "</td>";
-                                                            echo "<td>" . inverteData(substr($row->dat_cad, 0, 10)) . " - " . $row->hora_cad . "</td>";
-                                                            if ($row->nome_social == '') {
-                                                                echo "<td>" . $row->nome;
-                                                            } else {
-                                                                echo "<td>" . $row->nome_social . " (" . $row->nome . ")";
-                                                            }
-                                                            if ($row->nec_especiais != 'Nenhuma') {
-                                                                echo "<br>Paciente com deficiencia $row->nec_especiais";
-                                                            }
-                                                            echo "</td>";
-                                                            echo "<td>" . inverteData($row->dt_nasc) . "</td>";
-                                                            echo "<td>" . $row->origem . "</td>";
-                                                            echo "<td>" . $row->status . "</td>";
-                                                        }
-                                                        echo "<td>";
-                                                        //if (($perfil == '06' or $perfil == '04' or $perfil == '08' or $perfil == '15') and isset($_SESSION['box'])) {
-                                                        echo "<a id=\"triagemmanual\" data-id=\"$row->transacao\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn triagemmanual\" data-target=\"#modalConteudo\" data-toggle=\"modal\" data-original-title=\"Triagem Manual\" onClick=\"valorTriagem(this);\">
+														$ip = getenv('REMOTE_ADDR');
+														echo '<tr ' . $classe . '>';
+														if ($row->coronavirus == 1) {
+															echo '<td>' . $row->transacao . '</td>';
+															echo "<td class='blink'>" . inverteData(substr($row->dat_cad, 0, 10)) . ' - ' . $row->hora_cad . '</td>';
+															if ($row->nome_social == '') {
+																echo "<td class='blink'>" . ts_decodifica($row->nome);
+															} else {
+																echo "<td class='blink'>" . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+															}
+															if ($row->nec_especiais != 'Nenhuma') {
+																echo "<br>Paciente com deficiencia $row->nec_especiais";
+															}
+															echo '</td>';
+															echo "<td class='blink'>" . inverteData($row->dt_nasc) . '</td>';
+															echo "<td class='blink'>" . $row->origem . '</td>';
+															echo "<td class='blink'>" . $row->status . '</td>';
+														} else {
+															echo '<td>' . $row->transacao . '</td>';
+															echo '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . ' - ' . $row->hora_cad . '</td>';
+															if ($row->nome_social == '') {
+																echo '<td>' . ts_decodifica($row->nome);
+															} else {
+																echo '<td>' . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+															}
+															if ($row->nec_especiais != 'Nenhuma') {
+																echo "<br>Paciente com deficiencia $row->nec_especiais";
+															}
+															echo '</td>';
+															echo '<td>' . inverteData($row->dt_nasc) . '</td>';
+															echo '<td>' . $row->origem . '</td>';
+															echo '<td>' . $row->status . '</td>';
+														}
+														echo '<td>';
+														//if (($perfil == '06' or $perfil == '04' or $perfil == '08' or $perfil == '15') and isset($_SESSION['box'])) {
+														echo "<a id=\"triagemmanual\" data-id=\"$row->transacao\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn triagemmanual\" data-target=\"#modalConteudo\" data-toggle=\"modal\" data-original-title=\"Triagem Manual\" onClick=\"valorTriagem(this);\">
                                                             <i class=\"fas fa-hand-holding-medical\"></i></a>";
-                                                        //}
-                                                        echo "</td>";
-                                                        echo "</tr>";
-                                                    }
-                                                    ?>
+														//}
+														echo '</td>';
+														echo '</tr>';
+													}
+													?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -472,7 +472,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <?php include('footer.php'); ?>
+        <?php include 'footer.php'; ?>
 
 
         <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>

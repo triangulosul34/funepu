@@ -1,194 +1,192 @@
 <?php
 
+require 'tsul_ssl.php';
 
 error_reporting(0);
 
-
-
-include('verifica.php');
-include('conexao.php');
-$stmt   = "select nome, imagem, perfil from pessoas where username='$usuario'";
+include 'verifica.php';
+include 'conexao.php';
+$stmt = "select nome, imagem, perfil from pessoas where username='$usuario'";
 $sth = pg_query($stmt) or die($stmt);
 $row = pg_fetch_object($sth);
-$nome_usuario = $row->nome;
+$nome_usuario = ts_decodifica($row->nome);
 $imagem = $row->imagem;
 
 if ($box == '') {
-    header("location:loginbox.php");
+	header('location:loginbox.php');
 }
 
-include('conexao.php');
-$stmt   = "select descricao from boxes where box_id='$box'";
+include 'conexao.php';
+$stmt = "select descricao from boxes where box_id='$box'";
 $sth = pg_query($stmt) or die($stmt);
 $row = pg_fetch_object($sth);
 $box_descricao = $row->descricao;
-include('funcoes.php');
-$atalho  = "";
-$modalidade = "";
-$exame         = "";
-$marca        = "";
+include 'funcoes.php';
+$atalho = '';
+$modalidade = '';
+$exame = '';
+$marca = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $codigo         = $_POST['codigo'];
-    $transacao         = $_POST['transacao'];
-    $pesquisa_paciente = $_POST['pesquisa_paciente'];
-    $item            = $_POST['item'];
-    $prontuario        = $_POST['prontuario'];
-    $descricao      = $_POST['descricao'];
-    ;
-    $classificacao    = $_POST['classificacao'];
-    ;
+	$codigo = $_POST['codigo'];
+	$transacao = $_POST['transacao'];
+	$pesquisa_paciente = $_POST['pesquisa_paciente'];
+	$item = $_POST['item'];
+	$prontuario = $_POST['prontuario'];
+	$descricao = $_POST['descricao'];
+	;
+	$classificacao = $_POST['classificacao'];
+	;
 
-    if (isset($_POST['proximo'])) {
-        include('conexao.php');
-        $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
+	if (isset($_POST['proximo'])) {
+		include 'conexao.php';
+		$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
 			k.origem, f.descricao as clinica,c.nome_social
 			from atendimentos a 
 			left join pessoas c on a.paciente_id=c.pessoa_id  
 			left join especialidade f on a.especialidade = f.descricao 
 			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
-			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
+			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
 			cast(tipo as integer) != '6' and cast(tipo as integer) != '11'
 			order by 3, 1 asc limit 1
 			";
-        $sth         = pg_query($stmt) or die($stmt);
-        $row         = pg_fetch_object($sth);
-        $nome         = $row->nome;
-        $transacao     =  $row->transacao;
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		$nome = ts_decodifica($row->nome);
+		$transacao = $row->transacao;
 
-        if ($row->nome_social != '') {
-            $nome         = $row->nome_social . '(' . $row->nome . ')';
-        } else {
-            $nome         = $row->nome;
-        }
-        if ($transacao != "") {
-            // include('conexao.php');
-            // $sql = "select * from painel_atendimento where transacao = $row->transacao";
-            // $result = pg_query($sql) or die($sql);
-            // $rowt = pg_fetch_object($result);
-            // if ($rowt->transacao == '') {
-            //     include('conexao.php');
-            //     $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "')";
-            //     $result = pg_query($sql) or die($sql);
+		if ($row->nome_social != '') {
+			$nome = $row->nome_social . '(' . ts_decodifica($row->nome) . ')';
+		} else {
+			$nome = ts_decodifica($row->nome);
+		}
+		if ($transacao != '') {
+			include 'conexao.php';
+			$sql = "select * from painel_atendimento where transacao = $row->transacao";
+			$result = pg_query($sql) or die($sql);
+			$rowt = pg_fetch_object($result);
+			if ($rowt->transacao == '') {
+				include 'conexao.php';
+				$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora,profissional) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "','$usuario')";
+				$result = pg_query($sql) or die($sql);
 
-            //     $data = date('Y-m-d');
-            //     $hora = date('H:i');
-            //     include('conexao.php');
-            //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-            // 	values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-            //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-            // } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
-            //     include('conexao.php');
-            //     $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null where transacao = $row->transacao";
-            //     $result = pg_query($sql) or die($sql);
+				$data = date('Y-m-d');
+				$hora = date('H:i');
+				include 'conexao.php';
+				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			} elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+				include 'conexao.php';
+				$sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, profissional='$usuario' where transacao = $row->transacao";
+				$result = pg_query($sql) or die($sql);
 
-            //     $data = date('Y-m-d');
-            //     $hora = date('H:i');
-            //     include('conexao.php');
-            //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-            // 	values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-            //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-            // } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
-            //     include('conexao.php');
-            //     $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
-            //     $result = pg_query($sql) or die($sql);
+				$data = date('Y-m-d');
+				$hora = date('H:i');
+				include 'conexao.php';
+				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			} elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+				include 'conexao.php';
+				$sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala', profissional='$usuario' where transacao = $row->transacao";
+				$result = pg_query($sql) or die($sql);
 
-            //     $data = date('Y-m-d');
-            //     $hora = date('H:i');
-            //     include('conexao.php');
-            //     $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-            // 	values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-            //     $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-            // } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
-            //     $erro = "Paciente ainda esta sendo chamado";
-            // } else {
-            //     $erro = "Paciente chamado por outro consultorio";
-            //     $nome = '';
-            //     $transacao = '';
-            // }
-        } else {
-            $erro = "Nenhum paciente aguardando triagem";
-        }
-    }
+				$data = date('Y-m-d');
+				$hora = date('H:i');
+				include 'conexao.php';
+				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
+				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			} elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+				$erro = 'Paciente ainda esta sendo chamado';
+			} else {
+				$erro = 'Paciente chamado por outro consultorio';
+				$nome = '';
+				$transacao = '';
+			}
+		} else {
+			$erro = 'Nenhum paciente aguardando triagem';
+		}
+	}
 
+	if (isset($_POST['nrchamada'])) {
+		include 'conexao.php';
+		$stmt = "Update Atendimentos set status='Não Respondeu Chamado', destino_paciente='09', data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = $transacao ";
+		$sth = pg_query($stmt) or die($stmt);
+	}
 
-    if (isset($_POST['nrchamada'])) {
-        include('conexao.php');
-        $stmt   = "Update Atendimentos set status='Não Respondeu Chamado', destino_paciente='09', data_destino='" . date('Y-m-d') . "', hora_destino='" . date('H:i') . "' where transacao = $transacao ";
-        $sth         = pg_query($stmt) or die($stmt);
-    }
-
-    if (isset($_POST['chamar_novamente'])) {
-        include('conexao.php');
-        $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
+	if (isset($_POST['chamar_novamente'])) {
+		include 'conexao.php';
+		$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
 			k.origem, f.descricao as clinica,c.nome_social
 			from atendimentos a 
 			left join pessoas c on a.paciente_id=c.pessoa_id  
 			left join especialidade f on a.especialidade = f.descricao 
 			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
-			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and 
+			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
             cast(tipo as integer) != '6' and cast(tipo as integer) != '11'
             and transacao = $transacao
 			order by 3, 1 asc limit 1
 			";
-        $sth         = pg_query($stmt) or die($stmt);
-        $row         = pg_fetch_object($sth);
-        $nome         = $row->nome;
-        $transacao     =  $row->transacao;
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		$nome = ts_decodifica($row->nome);
+		$transacao = $row->transacao;
 
-        if ($row->nome_social != '') {
-            $nome         = $row->nome_social . '(' . $row->nome . ')';
-        } else {
-            $nome         = $row->nome;
-        }
-        if ($transacao != "") {
-            include('conexao.php');
-            $sql = "select * from painel_atendimento where transacao = $row->transacao";
-            $result = pg_query($sql) or die($sql);
-            $rowt = pg_fetch_object($result);
-            if ($rowt->transacao == '') {
-                include('conexao.php');
-                $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "')";
-                $result = pg_query($sql) or die($sql);
+		if ($row->nome_social != '') {
+			$nome = $row->nome_social . '(' . ts_decodifica($row->nome) . ')';
+		} else {
+			$nome = ts_decodifica($row->nome);
+		}
+		if ($transacao != '') {
+			include 'conexao.php';
+			$sql = "select * from painel_atendimento where transacao = $row->transacao";
+			$result = pg_query($sql) or die($sql);
+			$rowt = pg_fetch_object($result);
+			if ($rowt->transacao == '') {
+				include 'conexao.php';
+				$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','triagem','" . date('Y-m-d H:i:00') . "')";
+				$result = pg_query($sql) or die($sql);
 
-                $data = date('Y-m-d');
-                $hora = date('H:i');
-                include('conexao.php');
-                $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				$data = date('Y-m-d');
+				$hora = date('H:i');
+				include 'conexao.php';
+				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-                $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-            } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
-                include('conexao.php');
-                $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null where transacao = $row->transacao";
-                $result = pg_query($sql) or die($sql);
+				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			} elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+				include 'conexao.php';
+				$sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null where transacao = $row->transacao";
+				$result = pg_query($sql) or die($sql);
 
-                $data = date('Y-m-d');
-                $hora = date('H:i');
-                include('conexao.php');
-                $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				$data = date('Y-m-d');
+				$hora = date('H:i');
+				include 'conexao.php';
+				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-                $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-            } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
-                include('conexao.php');
-                $sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
-                $result = pg_query($sql) or die($sql);
+				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			} elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+				include 'conexao.php';
+				$sql = "update painel_atendimento set status = 'triagem', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+				$result = pg_query($sql) or die($sql);
 
-                $data = date('Y-m-d');
-                $hora = date('H:i');
-                include('conexao.php');
-                $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+				$data = date('Y-m-d');
+				$hora = date('H:i');
+				include 'conexao.php';
+				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 				values ('$usuario','CHAMOU NOVAMENTE O PACIENTE PARA A TRIAGEM','$row->transacao','$data','$hora')";
-                $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-            } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
-                $erro = "Paciente ainda esta sendo chamado";
-            } else {
-                $erro = "Paciente sendo chamado por outro consultorio";
-                $nome = '';
-                $transacao = '';
-            }
-        } else {
-            $erro = "Nenhum paciente aguardando triagem";
-        }
-    }
+				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			} elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+				$erro = 'Paciente ainda esta sendo chamado';
+			} else {
+				$erro = 'Paciente sendo chamado por outro consultorio';
+				$nome = '';
+				$transacao = '';
+			}
+		} else {
+			$erro = 'Nenhum paciente aguardando triagem';
+		}
+	}
 }
 
 ?>
@@ -274,8 +272,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -359,14 +357,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row mt-3">
                                             <div class="col-sm-12" align="center">
                                                 <?php
-                                                if ($nome != '') {
-                                                    echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+												if ($nome != '') {
+													echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
 
-                                                    echo '<button type="submit" name="nrchamada" id="nrchamada" value="nrchamada" class="btn btn-warning">Não Respondeu Chamada</button>';
-                                                } else {
-                                                    echo '<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>';
-                                                }
-                                                ?>
+													echo '<button type="submit" name="nrchamada" id="nrchamada" value="nrchamada" class="btn btn-warning">Não Respondeu Chamada</button>';
+												} else {
+													echo '<button type="submit" name="proximo"   value="proximo"   class="btn btn-success">Chamar Próximo Paciente</button>';
+												}
+												?>
                                                 <div id="botaoChamar">
 
                                                 </div>
@@ -398,34 +396,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <?php
-                                                if ($pesquisa_paciente != "") {
-                                                    include('conexao.php');
-                                                    $stmt = "select a.transacao, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+												if ($pesquisa_paciente != '') {
+													include 'conexao.php';
+													$stmt = "select a.transacao, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 								a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome
 								from atendimentos a 
 								left join pessoas c on a.paciente_id=c.pessoa_id 
 								where c.nome like upper('%$pesquisa_paciente%')";
-                                                    echo "<table class='table table-striped table-bordered'>";
-                                                    echo "<tr>";
-                                                    echo "<td width='15%'>Data</td>";
-                                                    echo "<td width='55%'>Nome</td>";
-                                                    echo "<td width='15%'>Situacao</td>";
-                                                    echo "<td width='15%'>Ação</td>";
-                                                    echo "</tr>";
+													echo "<table class='table table-striped table-bordered'>";
+													echo '<tr>';
+													echo "<td width='15%'>Data</td>";
+													echo "<td width='55%'>Nome</td>";
+													echo "<td width='15%'>Situacao</td>";
+													echo "<td width='15%'>Ação</td>";
+													echo '</tr>';
 
-                                                    $sth = pg_query($stmt) or die($stmt);
-                                                    while ($row = pg_fetch_object($sth)) {
-                                                        $transacao = $row->transacao;
-                                                        echo "<tr>";
-                                                        echo "<td>" . substr($row->cadastro, 0, 10) . "</td>";
-                                                        echo "<td>" . $row->nome . "</td>";
-                                                        echo "<td>" . $row->status . "</td>";
-                                                        echo '<td><a href="relFAA.php?id=' . $transacao . '" target="_blank" id="triagemmanual"><i class="fas fa-print"></i></a></td>';
-                                                        echo "</tr>";
-                                                    }
-                                                    echo "</table>";
-                                                }
-                                                ?>
+													$sth = pg_query($stmt) or die($stmt);
+													while ($row = pg_fetch_object($sth)) {
+														$transacao = $row->transacao;
+														echo '<tr>';
+														echo '<td>' . substr($row->cadastro, 0, 10) . '</td>';
+														echo '<td>' . ts_decodifica($row->nome) . '</td>';
+														echo '<td>' . $row->status . '</td>';
+														echo '<td><a href="relFAA.php?id=' . $transacao . '" target="_blank" id="triagemmanual"><i class="fas fa-print"></i></a></td>';
+														echo '</tr>';
+													}
+													echo '</table>';
+												}
+												?>
                                             </div>
                                         </div>
                                     </form>
@@ -437,7 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>

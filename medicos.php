@@ -1,36 +1,38 @@
 <?php
 
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 error_reporting(0);
 $menu_grupo = '1';
 $menu_sgrupo = '2';
-$nome         = '';
-$dtnasc     = '';
-$telefone    = '';
-$mae         = '';
+$nome = '';
+$dtnasc = '';
+$telefone = '';
+$mae = '';
 $where = "tipo_pessoa='Medico Laudador'";
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $codigo = $_GET['id'];
-    if ($codigo != "") {
-        $where = "tipo_pessoa='Medico Laudador' and pessoa_id =" . $codigo;
-    }
+	$codigo = $_GET['id'];
+	if ($codigo != '') {
+		$where = "tipo_pessoa='Medico Laudador' and pessoa_id =" . $codigo;
+	}
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome         = $_POST['nome'];
-    $dtnasc     = $_POST['dtnasc'];
-    $telefone    = $_POST['telefone'];
-    $mae         = $_POST['mae'];
-    $where = '';
-    if ($nome != "") {
-        $where = " tipo_pessoa='Medico Laudador' and nome like '%" . $nome . "%' ";
-    }
+	$nome = ts_codifica($_POST['nome']);
+	$dtnasc = $_POST['dtnasc'];
+	$telefone = $_POST['telefone'];
+	$mae = ts_codifica($_POST['mae']);
+	$where = '';
+	if ($nome != '') {
+		$where = " tipo_pessoa='Medico Laudador' and nome like '" . $nome . "%' ";
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -52,7 +54,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -83,15 +87,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body class="pace-done" cz-shortcut-listen="true">
     <div class="pace  pace-inactive">
-        <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+        <div class="pace-progress" data-progress-text="100%" data-progress="99"
+            style="transform: translate3d(100%, 0px, 0px);">
             <div class="pace-progress-inner"></div>
         </div>
         <div class="pace-activity"></div>
     </div>
 
     <div class="wrapper">
-        <?php include('menu.php'); ?>
-        <?php include('header.php'); ?>
+        <?php include 'menu.php'; ?>
+        <?php include 'header.php'; ?>
         <div class="main-panel">
             <div class="main-content">
                 <div class="content-wrapper">
@@ -104,7 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h4 class="card-title">
-                                                        <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                        <p
+                                                            style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                             » </p>MEDICOS
                                                     </h4>
                                                 </div>
@@ -131,25 +137,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="col-6">
                                                     <div class="form-group">
                                                         <label for="inputBasicFirstName">Nome</label>
-                                                        <input type="text" class="form-control square" id="inputBasicFirstName" name="nome" placeholder="Nome do Medico" autocomplete="off" onkeyup="maiuscula(this)" value="<?php echo $nome; ?>" />
+                                                        <input type="text" class="form-control square"
+                                                            id="inputBasicFirstName" name="nome"
+                                                            placeholder="Nome do Medico" autocomplete="off"
+                                                            onkeyup="maiuscula(this)"
+                                                            value="<?php echo ts_decodifica($nome); ?>" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label for="inputBasicLastName">Nascimento</label>
-                                                    <input type="text" class="form-control square" id="inputBasicLastName" name="dtnasc" value="<?php echo $dtnasc; ?>" placeholder="dd/mm/aaaa" autocomplete="off" />
+                                                    <input type="text" class="form-control square"
+                                                        id="inputBasicLastName" name="dtnasc"
+                                                        value="<?php echo $dtnasc; ?>"
+                                                        placeholder="dd/mm/aaaa" autocomplete="off" />
                                                 </div>
                                             </div>
                                             <div class="row mt-4">
                                                 <div class="col-12" align="center">
-                                                    <button type="submit" name="pesquisa" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
-                                                    <button type="reset" name="limpar" class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1">Limpar</button>
-                                                    <button type="button" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1" onclick="location.href='cadastro.php?tipo=M'">Adicionar novo Medico</button>
+                                                    <button type="submit" name="pesquisa"
+                                                        class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
+                                                    <button type="reset" name="limpar"
+                                                        class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1">Limpar</button>
+                                                    <button type="button"
+                                                        class="btn btn-raised btn-success square btn-min-width mr-1 mb-1"
+                                                        onclick="location.href='cadastro.php?tipo=M'">Adicionar novo
+                                                        Medico</button>
                                                 </div>
                                             </div>
                                         </form>
                                         <div class="row mt-4 mb-5" align="center">
                                             <div class="col-12">
-                                                <hr style="color: #12A1A6; background-color: #12A1A6; height: 1px; width: 900px;">
+                                                <hr
+                                                    style="color: #12A1A6; background-color: #12A1A6; height: 1px; width: 900px;">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -179,31 +198,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </tfoot>
                                                     <tbody>
                                                         <?php
-                                                        include('conexao.php');
-                                                        $stmt = "SELECT * FROM pessoas";
-                                                        if ($where != "") {
-                                                            $stmt = $stmt . " where " . $where;
-                                                        }
-                                                        $stmt = $stmt . " order by nome";
-                                                        $sth = pg_query($stmt) or die($stmt);
-                                                        while ($row = pg_fetch_object($sth)) {
-                                                            if ($row->situacao == '1') {
-                                                                $situacao = 'Inativo';
-                                                            } else {
-                                                                $situacao = 'Ativo';
-                                                            }
-                                                            echo "<tr>";
-                                                            echo "<td>" . str_pad($row->pessoa_id, 7, "0", STR_PAD_LEFT) . "</td>";
-                                                            echo "<td>" . $row->nome . "</td>";
-                                                            echo "<td>" . inverteData($row->dt_nasc) . "</td>";
-                                                            echo "<td>" . $row->telefone . "</td>";
-                                                            echo "<td>" . $row->nome_mae . "</td>";
-                                                            echo "<td>" . $situacao . "</td>";
-                                                            echo "<td><a href=\"alteracadastro.php?id=" . $row->pessoa_id . "\"><i class=\"fas fa-edit\"></i></a> <a href=\"\"  onclick=\"doConfirm(" . $row->pessoa_id . ");\" data-popup=\"tooltip\" title=\"\" data-original-title=\"Inativar\"><i class=\"fas fa-trash-alt\"></i></a></td>";
+														include 'conexao.php';
+														$stmt = 'SELECT * FROM pessoas';
+														if ($where != '') {
+															$stmt = $stmt . ' where ' . $where;
+														}
+														$stmt = $stmt . ' order by nome';
+														$sth = pg_query($stmt) or die($stmt);
+														while ($row = pg_fetch_object($sth)) {
+															if ($row->situacao == '1') {
+																$situacao = 'Inativo';
+															} else {
+																$situacao = 'Ativo';
+															}
+															echo '<tr>';
+															echo '<td>' . str_pad($row->pessoa_id, 7, '0', STR_PAD_LEFT) . '</td>';
+															echo '<td>' . ts_decodifica($row->nome) . '</td>';
+															echo '<td>' . inverteData($row->dt_nasc) . '</td>';
+															echo '<td>' . $row->telefone . '</td>';
+															echo '<td>' . ts_decodifica($row->nome_mae) . '</td>';
+															echo '<td>' . $situacao . '</td>';
+															echo '<td><a href="alteracadastro.php?id=' . $row->pessoa_id . '"><i class="fas fa-edit"></i></a> <a href=""  onclick="doConfirm(' . $row->pessoa_id . ');" data-popup="tooltip" title="" data-original-title="Inativar"><i class="fas fa-trash-alt"></i></a></td>';
 
-                                                            echo "</tr>";
-                                                        }
-                                                        ?>
+															echo '</tr>';
+														}
+														?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -217,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/popper.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/bootstrap.min.js" type="text/javascript"></script>

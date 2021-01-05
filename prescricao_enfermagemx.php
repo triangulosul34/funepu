@@ -1,52 +1,54 @@
 <?php
+
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 $hora_transacao = '';
 function validaCPF($cpf = null)
 {
+	// Verifica se um número foi informado
+	if (empty($cpf)) {
+		return false;
+	}
 
-    // Verifica se um número foi informado
-    if (empty($cpf)) {
-        return false;
-    }
+	// Elimina possivel mascara
+	$cpf = ereg_replace('[^0-9]', '', $cpf);
+	$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
 
-    // Elimina possivel mascara
-    $cpf = ereg_replace('[^0-9]', '', $cpf);
-    $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+	// Verifica se o numero de digitos informados é igual a 11
+	if (strlen($cpf) != 11) {
+		return false;
+	} // Verifica se nenhuma das sequências invalidas abaixo
+	// foi digitada. Caso afirmativo, retorna falso
+	elseif ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
+		return false;
+	// Calcula os digitos verificadores para verificar se o
+		// CPF é válido
+	} else {
+		for ($t = 9; $t < 11; $t++) {
+			for ($d = 0, $c = 0; $c < $t; $c++) {
+				$d += $cpf{
+					$c} * (($t + 1) - $c);
+			}
+			$d = ((10 * $d) % 11) % 10;
+			if ($cpf{
+				$c} != $d) {
+				return false;
+			}
+		}
 
-    // Verifica se o numero de digitos informados é igual a 11
-    if (strlen($cpf) != 11) {
-        return false;
-    } // Verifica se nenhuma das sequências invalidas abaixo
-    // foi digitada. Caso afirmativo, retorna falso
-    else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
-        return false;
-        // Calcula os digitos verificadores para verificar se o
-        // CPF é válido
-    } else {
-
-        for ($t = 9; $t < 11; $t++) {
-            for ($d = 0, $c = 0; $c < $t; $c++) {
-                $d += $cpf{
-                    $c} * (($t + 1) - $c);
-            }
-            $d = ((10 * $d) % 11) % 10;
-            if ($cpf{
-                $c} != $d) {
-                return false;
-            }
-        }
-        return true;
-    }
+		return true;
+	}
 }
 error_reporting(0);
-include('verifica.php');
+include 'verifica.php';
 date_default_timezone_set('America/Sao_Paulo');
 $menu_grupo = '1';
 $data_transacao = inverteData(date('Y-m-d'));
@@ -59,13 +61,13 @@ $mae = '';
 $where = 'nome is null';
 $tipoConv = '3';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $transacao = $_GET['id'];
-    $senha = $_GET['senha'];
-    $agendamento = $_GET['ag'];
-    $texto = "";
-    if ($transacao != "") {
-        include('conexao.php');
-        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+	$transacao = $_GET['id'];
+	$senha = $_GET['senha'];
+	$agendamento = $_GET['ag'];
+	$texto = '';
+	if ($transacao != '') {
+		include 'conexao.php';
+		$stmt = "select a.transacao,a.hora_cad, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade
@@ -74,79 +76,80 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 		left join classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao' 
 		where a.transacao=$transacao";
-        $sth = pg_query($stmt) or die($stmt);
-        $row = pg_fetch_object($sth);
-        $data_transacao = substr($row->cadastro, 0, 10);
-        $hora_transacao = $row->hora_cad;
-        $prontuario = $row->paciente_id;
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		$data_transacao = substr($row->cadastro, 0, 10);
+		$hora_transacao = $row->hora_cad;
+		$prontuario = $row->paciente_id;
 
-        $status = $row->status;
-        $data_destino = $row->data_destino;
-        $prioridade = $row->prioridade;
-        $sexo = $row->sexo;
-        $nome = $row->nome;
-        $email = $row->email;
-        $dt_nascimento = inverteData($row->dt_nasc);
-        $sexo = $row->sexo;
-        $enderecox = $row->endereco;
-        $end_numero = $row->numero;
-        $complemento = $row->complemento;
-        $bairro = $row->bairro;
-        $cidade = $row->cidade;
-        $estado = $row->estado;
-        $atendprioridade = $row->atendprioridade;
-        $peso = $row->peso;
-        $pressaodiastolica = $row->pressaodiastolica;
-        $pressaosistolica = $row->pressaosistolica;
-        $relato = $row->relato;
-        $pulso = $row->pulso;
-        $temperatura = $row->pressaodiastolica;
-        $cns = $row->num_carteira_convenio;
-        $cep = $row->cep;
-        $cpf = $row->cpf;
-        $telefone = $row->telefone;
-        $celular = $row->celular;
-        $dt_nasc = $row->dt_nasc;
-        $date = new DateTime($dt_nasc); // data de nascimento
-        $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
-        $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
-        $procedimento = $row->procedimento_id;
-        $senha = $row->num_senha;
-        $deficiencia = $_POST['deficiencia'];
-        $origem = $row->origem;
-        $deficiencia = $row->nec_especiais;
-        $observacao = $row->relato . PHP_EOL;
-        if ($pressaodiastolica != '') {
-            $observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . ' PA SIST.:' . $pressaosistolica . PHP_EOL;;
-        }
-        if ($peso != '') {
-            $observacao = $observacao . 'PESO:' . $peso . ' Temperatura:' . $temperatura . PHP_EOL;;
-        }
+		$status = $row->status;
+		$data_destino = $row->data_destino;
+		$prioridade = $row->prioridade;
+		$sexo = $row->sexo;
+		$nome = ts_decodifica($row->nome);
+		$email = $row->email;
+		$dt_nascimento = inverteData($row->dt_nasc);
+		$sexo = $row->sexo;
+		$enderecox = $row->endereco;
+		$end_numero = $row->numero;
+		$complemento = $row->complemento;
+		$bairro = $row->bairro;
+		$cidade = $row->cidade;
+		$estado = $row->estado;
+		$atendprioridade = $row->atendprioridade;
+		$peso = $row->peso;
+		$pressaodiastolica = $row->pressaodiastolica;
+		$pressaosistolica = $row->pressaosistolica;
+		$relato = $row->relato;
+		$pulso = $row->pulso;
+		$temperatura = $row->pressaodiastolica;
+		$cns = $row->num_carteira_convenio;
+		$cep = $row->cep;
+		$cpf = ts_decodifica($row->cpf);
+		$telefone = $row->telefone;
+		$celular = $row->celular;
+		$dt_nasc = $row->dt_nasc;
+		$date = new DateTime($dt_nasc); // data de nascimento
+		$interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
+		$idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
+		$procedimento = $row->procedimento_id;
+		$senha = $row->num_senha;
+		$deficiencia = $_POST['deficiencia'];
+		$origem = $row->origem;
+		$deficiencia = $row->nec_especiais;
+		$observacao = $row->relato . PHP_EOL;
+		if ($pressaodiastolica != '') {
+			$observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . ' PA SIST.:' . $pressaosistolica . PHP_EOL;
+			;
+		}
+		if ($peso != '') {
+			$observacao = $observacao . 'PESO:' . $peso . ' Temperatura:' . $temperatura . PHP_EOL;
+			;
+		}
 
-        $oque_faz = $row->oque_faz;
-        $com_oqfaz = $row->com_oqfaz;
-        $tempo_faz = $row->tempo_faz;
-        $como_faz = $row->como_faz;
-        $enfermaria = $row->enfermaria;
-        $leito = $row->leito;
-        $imagem = $row->imagem;
-        $origem = $row->tipo;
-        $destino = $row->destino_paciente;
-        $alta = inverteData($row->data_destino);
-        $CID = $row->cid_principal;
-        $diag_pri = $row->diagnostico_principal;
-        $queixa = $row->queixa;
-        $exame_fisico = $row->exame_fisico;
-        $hora_dest = $row->hora_destino;
-    } else {
-        $data_transacao = date('Y-m-d');
-        $hora_transacao = date('H:i');
-        $usuario_transacao = $usuario;
-    }
+		$oque_faz = $row->oque_faz;
+		$com_oqfaz = $row->com_oqfaz;
+		$tempo_faz = $row->tempo_faz;
+		$como_faz = $row->como_faz;
+		$enfermaria = $row->enfermaria;
+		$leito = $row->leito;
+		$imagem = $row->imagem;
+		$origem = $row->tipo;
+		$destino = $row->destino_paciente;
+		$alta = inverteData($row->data_destino);
+		$CID = $row->cid_principal;
+		$diag_pri = $row->diagnostico_principal;
+		$queixa = $row->queixa;
+		$exame_fisico = $row->exame_fisico;
+		$hora_dest = $row->hora_destino;
+	} else {
+		$data_transacao = date('Y-m-d');
+		$hora_transacao = date('H:i');
+		$usuario_transacao = $usuario;
+	}
 }
 
-
-include('conexao.php');
+include 'conexao.php';
 $stmtCns = "
     select *
     from controle_epidemiologico
@@ -174,7 +177,9 @@ $rowcns = pg_fetch_object($sthCns);
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -221,8 +226,8 @@ $rowcns = pg_fetch_object($sthCns);
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -237,7 +242,8 @@ $rowcns = pg_fetch_object($sthCns);
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Prescricao Enfermagem
                                                 </h4>
                                             </div>
@@ -259,38 +265,62 @@ $rowcns = pg_fetch_object($sthCns);
                             </div>
                             <div class="card-content">
                                 <div class="card-body">
-                                    <input type="hidden" name="transacao" id="transacao" class="form-control" value="<?php echo $transacao; ?>" readonly>
-                                    <input type="hidden" name="data_transacao" class="form-control" value="<?php echo date('d/m/Y', strtotime($data_transacao)); ?>" readonly>
+                                    <input type="hidden" name="transacao" id="transacao" class="form-control"
+                                        value="<?php echo $transacao; ?>"
+                                        readonly>
+                                    <input type="hidden" name="data_transacao" class="form-control"
+                                        value="<?php echo date('d/m/Y', strtotime($data_transacao)); ?>"
+                                        readonly>
                                     <input type="hidden" name="hora_transacao" class="form-control" value="<?php
 
-                                                                                                            if (empty($transacao)) {
-                                                                                                                echo date('H:i');
-                                                                                                            } else {
-                                                                                                                echo $hora_transacao;
-                                                                                                            }
-                                                                                                            ?>" readonly>
-                                    <input type="hidden" name="usuario_transacao" id="usuario_transacao" class="form-control" value="<?php echo $usuario; ?>" readonly>
+																											if (empty($transacao)) {
+																												echo date('H:i');
+																											} else {
+																												echo $hora_transacao;
+																											}
+																											?>" readonly>
+                                    <input type="hidden" name="usuario_transacao" id="usuario_transacao"
+                                        class="form-control"
+                                        value="<?php echo $usuario; ?>"
+                                        readonly>
                                     <div class="row">
                                         <div class="col-6">
-                                            <label>Nome </label> <input type="text" name="nome" id="nome" class="form-control square" style="font-weight: bold;" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" readOnly>
+                                            <label>Nome </label> <input type="text" name="nome" id="nome"
+                                                class="form-control square" style="font-weight: bold;"
+                                                value="<?php echo $nome; ?>"
+                                                onkeyup="maiuscula(this)" readOnly>
                                         </div>
                                         <div class="col-2">
-                                            <label>Sexo</label> <input type="text" name="sexo" id="sexo" class="form-control square" value="<?php echo $sexo; ?>" readonly>
+                                            <label>Sexo</label> <input type="text" name="sexo" id="sexo"
+                                                class="form-control square"
+                                                value="<?php echo $sexo; ?>"
+                                                readonly>
                                         </div>
                                         <div class="col-sm-2">
-                                            <label>Nascimento</label> <input type="text" name="dt_nascimento" id="dt_nascimento" class="form-control square" value="<?php echo $dt_nascimento; ?>" OnKeyPress="formatar('##/##/####', this)" readOnly>
+                                            <label>Nascimento</label> <input type="text" name="dt_nascimento"
+                                                id="dt_nascimento" class="form-control square"
+                                                value="<?php echo $dt_nascimento; ?>"
+                                                OnKeyPress="formatar('##/##/####', this)" readOnly>
                                         </div>
                                         <div class="col-sm-2">
-                                            <label>Idade</label> <input type="text" name="idade" id="idade" class="form-control square" value="<?php echo $idade; ?>" readonly>
+                                            <label>Idade</label> <input type="text" name="idade" id="idade"
+                                                class="form-control square"
+                                                value="<?php echo $idade; ?>"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-3">
-                                            <label>CNS</label> <input type="text" name="cns" id="cns" class="form-control square" value="<?php echo $cns; ?>" onkeypress='return SomenteNumero(event)' readOnly>
+                                            <label>CNS</label> <input type="text" name="cns" id="cns"
+                                                class="form-control square"
+                                                value="<?php echo $cns; ?>"
+                                                onkeypress='return SomenteNumero(event)' readOnly>
                                         </div>
                                         <div class="col-sm-6">
                                             <label>Origem</label>
-                                            <input type="text" name="origem" id="origem" class="form-control" value="<?php echo $origem; ?>" readonly>
+                                            <input type="text" name="origem" id="origem" class="form-control"
+                                                value="<?php echo $origem; ?>"
+                                                readonly>
                                         </div>
                                     </div>
                                     <div class="row mt-2">
@@ -314,24 +344,24 @@ $rowcns = pg_fetch_object($sthCns);
                                                 </thead>
 
                                                 <tbody>
-                                                    <?php include('conexao.php');
-                                                    $stmt = "select a.data, a.hora, c.nome, a.prescricao_id, d.nome as medico
+                                                    <?php include 'conexao.php';
+													$stmt = "select a.data, a.hora, c.nome, a.prescricao_id, d.nome as medico
 												from prescricoes a
 												left join atendimentos b on a.atendimento_id = b.transacao
 												left join pessoas c on b.paciente_id = c.pessoa_id
 												left join pessoas d on d.pessoa_id = a.profissional_id
 												where a.atendimento_id = $transacao order by a.data desc";
-                                                    $sth = pg_query($stmt) or die($stmt);
+													$sth = pg_query($stmt) or die($stmt);
 
-                                                    while ($row = pg_fetch_object($sth)) {
-                                                        $seq = $row->sequencia + 1;
-                                                        echo "<tr>";
-                                                        echo "<td class='small'>" . $seq . "</td>";
-                                                        echo "<td class='small'>" . date('d/m/Y', strtotime($row->data)) . "</td>";
-                                                        echo "<td class='small'>" . $row->hora . "</td>";
-                                                        echo "<td class='small'>" . $row->nome . "</td>";
-                                                        echo "<td class='small'>" . $row->medico . "</td>";
-                                                        echo "<td class='small'>
+													while ($row = pg_fetch_object($sth)) {
+														$seq = $row->sequencia + 1;
+														echo '<tr>';
+														echo "<td class='small'>" . $seq . '</td>';
+														echo "<td class='small'>" . date('d/m/Y', strtotime($row->data)) . '</td>';
+														echo "<td class='small'>" . $row->hora . '</td>';
+														echo "<td class='small'>" . ts_decodifica($row->nome) . '</td>';
+														echo "<td class='small'>" . ts_decodifica($row->medico) . '</td>';
+														echo "<td class='small'>
 											<a href=\"prescricaoenfermagemy.php?id=$row->prescricao_id&p=$transacao\" target=\"_blank\" 
 											class=\"btn btn-sm btn-default\" data-toggle=\"tooltip\" 
 											data-original-title=\"Prescrição\">
@@ -343,9 +373,9 @@ $rowcns = pg_fetch_object($sthCns);
 											</a>
 										</td>";
 
-                                                        echo "<tr>";
-                                                    }
-                                                    ?>
+														echo '<tr>';
+													}
+													?>
 
                                                 </tbody>
                                             </table>
@@ -353,7 +383,9 @@ $rowcns = pg_fetch_object($sthCns);
                                     </div>
                                     <div class="row">
                                         <div class="col-12 text-center">
-                                            <a class="btn btn-success" href="prescricaoj.php?prioridade=<?php echo $prioridade; ?>&id=<?php echo $transacao; ?>&nome=<?php echo $nome; ?>&cns=<?php echo $cns; ?>&idade=<?php echo $idade; ?>&prontuario=<?php echo $prontuario; ?>" role="button" target="_blank">Solicitar Prescricao</a>
+                                            <a class="btn btn-success"
+                                                href="prescricaoj.php?prioridade=<?php echo $prioridade; ?>&id=<?php echo $transacao; ?>&nome=<?php echo $nome; ?>&cns=<?php echo $cns; ?>&idade=<?php echo $idade; ?>&prontuario=<?php echo $prontuario; ?>"
+                                                role="button" target="_blank">Solicitar Prescricao</a>
                                         </div>
                                     </div>
                                 </div>
@@ -364,7 +396,7 @@ $rowcns = pg_fetch_object($sthCns);
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -676,9 +708,10 @@ $rowcns = pg_fetch_object($sthCns);
 
         function solicitacaoprescricao(valor) {
             $('#modaSolictalPrecricao').modal('toggle');
-            $.get('listaprescricaoevolucao.php?atendimento=<?php echo $_GET['id'] ?>', function(dataReturn) {
-                $('#conteudoPrescricaoModal').html(dataReturn);
-            });
+            $.get('listaprescricaoevolucao.php?atendimento=<?php echo $_GET['id'] ?>',
+                function(dataReturn) {
+                    $('#conteudoPrescricaoModal').html(dataReturn);
+                });
         }
 
 
@@ -706,20 +739,28 @@ $rowcns = pg_fetch_object($sthCns);
             var url = '';
 
             if (tipo_prescricao == '5') {
-                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&dosagem=' + dosagem + '&aprazamento=' + aprazamento + '&medicamento=' + medicamento + '&medico=' + medico + '&descricao=' + descricao + '&via=' + via + '&tipo_prescricao=' + tipo_prescricao;
+                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&dosagem=' + dosagem +
+                    '&aprazamento=' + aprazamento + '&medicamento=' + medicamento + '&medico=' + medico +
+                    '&descricao=' + descricao + '&via=' + via + '&tipo_prescricao=' + tipo_prescricao;
             } else if (tipo_prescricao == '10') {
-                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&cuidados=' + campoCuidados + '&medico=+' + medico + '&tipo_prescricao=' + tipo_prescricao;
+                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&cuidados=' + campoCuidados +
+                    '&medico=+' + medico + '&tipo_prescricao=' + tipo_prescricao;
             } else if (tipo_prescricao == '1') {
-                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&dieta=' + campoDieta + '&medico=' + medico + '&tipo_prescricao=' + tipo_prescricao;
+                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&dieta=' + campoDieta +
+                    '&medico=' + medico + '&tipo_prescricao=' + tipo_prescricao;
             } else if (tipo_prescricao == '3') {
-                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&hidratacao_text=' + hidratacao_text + '&componente1=' + componente1 + '&componente2=' + componente2 + '&componente3=' + componente3 + '&descricao_hd=' + descricao_hd + '&medico=' + medico + '&tipo_prescricao=' + tipo_prescricao;
+                url = 'salvarprescricaoevolucao.php?atendimento=' + atendimento + '&hidratacao_text=' +
+                    hidratacao_text + '&componente1=' + componente1 + '&componente2=' + componente2 +
+                    '&componente3=' + componente3 + '&descricao_hd=' + descricao_hd + '&medico=' + medico +
+                    '&tipo_prescricao=' + tipo_prescricao;
             }
 
 
             $.get(url, function(dataReturn) {
-                $.get('listaprescricaoevolucao.php?atendimento=<?php echo $_GET['id'] ?>', function(Return) {
-                    $('#conteudoPrescricaoModal').html(Return);
-                });
+                $.get('listaprescricaoevolucao.php?atendimento=<?php echo $_GET['id'] ?>',
+                    function(Return) {
+                        $('#conteudoPrescricaoModal').html(Return);
+                    });
             });
 
             event.preventDefault();
@@ -736,40 +777,61 @@ $rowcns = pg_fetch_object($sthCns);
             if (total_campos == 0) {
                 swal("Lista de Prescrição vazia!", "", "warning");
             } else {
-                $.get('salvar_lista_prescricao.php?atendimento=<?php echo $_GET['id'] ?>', function(dataReturn) {
-                    var total_campos = $("#tamanhoArray").val();
-                    var i = 0;
-                    var data = '<?php echo date('Y-m-d'); ?>';
-                    var hora = '<?php echo date('H:i'); ?>';
+                $.get('salvar_lista_prescricao.php?atendimento=<?php echo $_GET['id'] ?>',
+                    function(dataReturn) {
+                        var total_campos = $("#tamanhoArray").val();
+                        var i = 0;
+                        var data =
+                            '<?php echo date('Y-m-d'); ?>';
+                        var hora =
+                            '<?php echo date('H:i'); ?>';
 
-                    var prescricao = new Array();
+                        var prescricao = new Array();
 
-                    while (i <= total_campos) {
-                        if ($('#cuidados' + i + '').val() != undefined) {
-                            prescricao[i] = ["cuidados", "<?php echo $_GET['id'] ?>", $('#tipo_presc' + i + '').val(), $('#cuidados' + i + '').val(), data, hora];
+                        while (i <= total_campos) {
+                            if ($('#cuidados' + i + '').val() != undefined) {
+                                prescricao[i] = ["cuidados",
+                                    "<?php echo $_GET['id'] ?>",
+                                    $('#tipo_presc' + i + '').val(), $('#cuidados' + i + '').val(),
+                                    data, hora
+                                ];
+                            }
+
+                            if ($('#medicamento' + i + '').val() != undefined) {
+                                prescricao[i] = ["medicamentos",
+                                    "<?php echo $_GET['id'] ?>",
+                                    $('#tipo_presc' + i + '').val(), $('#medicamento' + i + '').val(),
+                                    $('#descricao' + i + '').val(), $('#dosagem' + i + '').val(), $(
+                                        '#via' + i + '').val(), $('#aprazamento' + i + '').val(), data,
+                                    hora
+                                ];
+                            }
+
+                            if ($('#hidratacao_text' + i + '').val() != undefined) {
+                                prescricao[i] = ["hidratacao",
+                                    "<?php echo $_GET['id'] ?>",
+                                    $('#tipo_presc' + i + '').val(), $('#hidratacao_text' + i + '')
+                                    .val(), $('#componente1' + i + '').val(), $('#componente2' + i + '')
+                                    .val(), $('#componente3' + i + '').val(), $('#descricao_hd' + i +
+                                        '').val(), data, hora
+                                ];
+                            }
+
+                            i++;
                         }
+                        $.post("geradorPrescricaoEvolucao.php", {
+                            prescricao: prescricao
+                        }, function(data, status) {
+                            $("#retorno_prescricao").html(data);
+                        });
 
-                        if ($('#medicamento' + i + '').val() != undefined) {
-                            prescricao[i] = ["medicamentos", "<?php echo $_GET['id'] ?>", $('#tipo_presc' + i + '').val(), $('#medicamento' + i + '').val(), $('#descricao' + i + '').val(), $('#dosagem' + i + '').val(), $('#via' + i + '').val(), $('#aprazamento' + i + '').val(), data, hora];
-                        }
 
-                        if ($('#hidratacao_text' + i + '').val() != undefined) {
-                            prescricao[i] = ["hidratacao", "<?php echo $_GET['id'] ?>", $('#tipo_presc' + i + '').val(), $('#hidratacao_text' + i + '').val(), $('#componente1' + i + '').val(), $('#componente2' + i + '').val(), $('#componente3' + i + '').val(), $('#descricao_hd' + i + '').val(), data, hora];
-                        }
+                        $('#modaSolictalPrecricao').modal('hide');
+                        window.location.assign(
+                            "prescricao_enfermagem.php?id=<?php echo $_GET['id'] ?>"
+                        );
 
-                        i++;
-                    }
-                    $.post("geradorPrescricaoEvolucao.php", {
-                        prescricao: prescricao
-                    }, function(data, status) {
-                        $("#retorno_prescricao").html(data);
                     });
-
-
-                    $('#modaSolictalPrecricao').modal('hide');
-                    window.location.assign("prescricao_enfermagem.php?id=<?php echo $_GET['id'] ?>");
-
-                });
 
             }
 
@@ -793,14 +855,17 @@ $rowcns = pg_fetch_object($sthCns);
         function remover_prescricao(indice) {
             $.get('exlcuirIndiceArray.php?indice=' + indice);
 
-            $.get('listaprescricaoevolucao.php?atendimento=<?php echo $_GET['id'] ?>&flag=1', function(Return) {
-                $('#conteudoPrescricaoModal').html(Return);
-            });
+            $.get('listaprescricaoevolucao.php?atendimento=<?php echo $_GET['id'] ?>&flag=1',
+                function(Return) {
+                    $('#conteudoPrescricaoModal').html(Return);
+                });
         }
 
 
         $("#prescricao").click(function() {
-            window.open('relprescricao.php?id=<?php echo $_GET['id'] ?>', '_blank');
+            window.open(
+                'relprescricao.php?id=<?php echo $_GET['id'] ?>',
+                '_blank');
         });
 
 
@@ -826,7 +891,8 @@ $rowcns = pg_fetch_object($sthCns);
                 return false;
             }
 
-            if ((document.pedido.destino.value != '09' && document.pedido.destino.value != '10') && document.pedido.CID.value == '') {
+            if ((document.pedido.destino.value != '09' && document.pedido.destino.value != '10') && document.pedido.CID
+                .value == '') {
                 sweetAlert("Informe o CID!", "", "warning");
                 return false;
             }
@@ -868,12 +934,14 @@ $rowcns = pg_fetch_object($sthCns);
 
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        window.location = "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
+                        window.location =
+                            "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
                         window.location.reload()
                     }
                 }
 
-                xmlhttp.open("GET", "apagaagendatemp.php?id=<?php echo $transacao; ?>");
+                xmlhttp.open("GET",
+                    "apagaagendatemp.php?id=<?php echo $transacao; ?>");
                 xmlhttp.send();
             }
         }

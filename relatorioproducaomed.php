@@ -1,50 +1,51 @@
 <?php
 
+require 'tsul_ssl.php';
+
 error_reporting(0);
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
-include('verifica.php');
+include 'verifica.php';
 if ($perfil == '03') {
-    header("location:loginbox.php");
+	header('location:loginbox.php');
 }
 $qtde_atendimentos = '';
 $dias = '';
-$start          = '';
-$end          = '';
+$start = '';
+$end = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	if (isset($_POST['gerarrelatorio'])) {
+		$start = $_POST['start'];
+		$end = $_POST['end'];
+		$profissional = $_POST['profissional'];
 
-    if (isset($_POST['gerarrelatorio'])) {
-        $start          = $_POST['start'];
-        $end          = $_POST['end'];
-        $profissional = $_POST['profissional'];
-
-        include('conexao.php');
-        $stmtRel = "SELECT a.dat_cad, p.nome, p.empresa, count(*) as qtde
+		include 'conexao.php';
+		$stmtRel = "SELECT a.dat_cad, p.nome, p.empresa, count(*) as qtde
 				from atendimentos a left join pessoas p on a.med_atendimento=p.username where a.dat_cad between '$start' and '$end' ";
-        if ($profissional != "") {
-            $stmtRel = $stmtRel . " and a.med_atendimento='$profissional'";
-        }
-        $stmtRel = $stmtRel . "	group by 1,2,3 order by 1,2,3";
-        $sthRel = pg_query($stmtRel);
+		if ($profissional != '') {
+			$stmtRel = $stmtRel . " and a.med_atendimento='$profissional'";
+		}
+		$stmtRel = $stmtRel . '	group by 1,2,3 order by 1,2,3';
+		$sthRel = pg_query($stmtRel);
 
-        include('conexao.php');
-        $stmtRelCont = "SELECT count(*) as qtde from atendimentos a left join pessoas p on a.med_atendimento=p.username where a.dat_cad between '$start' and '$end'";
-        if ($profissional != "") {
-            $stmtRelCont = $stmtRelCont . " and a.med_atendimento='$profissional' ";
-        }
-        $sthRelCont = pg_query($stmtRelCont);
-        $rowCount = pg_fetch_object($sthRelCont);
-        $qtde_atendimentos = $rowCount->qtde;
-        $dias = date('d');
-    }
+		include 'conexao.php';
+		$stmtRelCont = "SELECT count(*) as qtde from atendimentos a left join pessoas p on a.med_atendimento=p.username where a.dat_cad between '$start' and '$end'";
+		if ($profissional != '') {
+			$stmtRelCont = $stmtRelCont . " and a.med_atendimento='$profissional' ";
+		}
+		$sthRelCont = pg_query($stmtRelCont);
+		$rowCount = pg_fetch_object($sthRelCont);
+		$qtde_atendimentos = $rowCount->qtde;
+		$dias = date('d');
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -66,7 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -104,8 +107,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -120,7 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>relatorio producao medica
                                                 </h4>
                                             </div>
@@ -146,78 +150,94 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Profissional</label>
-                                                    <select name="profissional" id="profissional" class="form-control square">
+                                                    <select name="profissional" id="profissional"
+                                                        class="form-control square">
                                                         <option></option>
                                                         <?php
-                                                        include('conexao.php');
-                                                        $stmt = "SELECT * FROM pessoas where tipo_pessoa='Medico Laudador' order by nome";
-                                                        $sth = pg_query($stmt) or die($stmt);
-                                                        while ($row = pg_fetch_object($sth)) {
-                                                            echo "<option value=\"" . $row->username . "\"";
-                                                            if ($row->username == $profissional)
-                                                                echo "selected";
-                                                            echo ">" . $row->nome . "</option>";
-                                                        }
-                                                        ?>
+														include 'conexao.php';
+														$stmt = "SELECT * FROM pessoas where tipo_pessoa='Medico Laudador'";
+														$sth = pg_query($stmt) or die($stmt);
+														while ($row = pg_fetch_object($sth)) {
+															echo '<option value="' . $row->username . '"';
+															if ($row->username == $profissional) {
+																echo 'selected';
+															}
+															echo '>' . ts_decodifica($row->nome) . '</option>';
+														}
+														?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Data Inicial</label>
-                                                    <input type="date" class="form-control square" id="start" name="start" value="<?php echo $_POST['start']; ?>" onkeydown="mascaraData(this)">
+                                                    <input type="date" class="form-control square" id="start"
+                                                        name="start"
+                                                        value="<?php echo $_POST['start']; ?>"
+                                                        onkeydown="mascaraData(this)">
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <label>Data Final</label>
-                                                    <input type="date" class="form-control square" id="end" name="end" value="<?php echo $_POST['end']; ?>" onkeydown="mascaraData(this)">
+                                                    <input type="date" class="form-control square" id="end" name="end"
+                                                        value="<?php echo $_POST['end']; ?>"
+                                                        onkeydown="mascaraData(this)">
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <label class="control-label">Ação</label><br>
-                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary" style="width:100%">Gerar Relatório</button>
+                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary"
+                                                    style="width:100%">Gerar Relatório</button>
                                             </div>
                                         </div>
                                     </form>
                                     <?php if (isset($_POST['gerarrelatorio']) and $qtde_atendimentos > 0) { ?>
-                                        <div class="row mt-3">
-                                            <div class="col-6">
-                                                <h4>Atendimentos de</h4>
-                                                <p class="font-size-20 blue-grey-700"><?php echo inverteData($start); ?> até <?php echo inverteData($end); ?></p>
-                                            </div>
-                                            <div class="col-6">
-                                                <h4>Atendimentos</h4>
-                                                <p><?php echo $qtde_atendimentos; ?> Atendimentos</p>
-                                            </div>
+                                    <div class="row mt-3">
+                                        <div class="col-6">
+                                            <h4>Atendimentos de</h4>
+                                            <p class="font-size-20 blue-grey-700"><?php echo inverteData($start); ?>
+                                                até <?php echo inverteData($end); ?>
+                                            </p>
                                         </div>
-                                        <div class="row mt-3">
-                                            <table class="table">
-                                                <thead align="left">
-                                                    <tr>
-                                                        <th>Data</th>
-                                                        <th>Empresa</th>
-                                                        <th>Profissional</th>
-                                                        <th>Quantidade</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <?php
-                                                    include('conexao.php');
-                                                    while ($rowRel = pg_fetch_object($sthRel)) { ?>
-                                                        <tr>
-                                                            <td><?php echo date('d/m/Y', strtotime($rowRel->dat_cad)); ?></td>
-                                                            <td><?php echo $rowRel->empresa; ?></td>
-                                                            <td><?php echo $rowRel->nome; ?></td>
-                                                            <td><?php echo str_pad($rowRel->qtde, 5, '0', STR_PAD_LEFT); ?></td>
-                                                        </tr>
-                                                    <?php } ?>
-                                                </tbody>
-                                            </table>
+                                        <div class="col-6">
+                                            <h4>Atendimentos</h4>
+                                            <p><?php echo $qtde_atendimentos; ?>
+                                                Atendimentos</p>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-12" align="center"><button id="imprimirelatorio" class="btn btn-raised btn-success square">Imprimir</button></div>
-                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <table class="table">
+                                            <thead align="left">
+                                                <tr>
+                                                    <th>Data</th>
+                                                    <th>Empresa</th>
+                                                    <th>Profissional</th>
+                                                    <th>Quantidade</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+													include 'conexao.php';
+													while ($rowRel = pg_fetch_object($sthRel)) { ?>
+                                                <tr>
+                                                    <td><?php echo date('d/m/Y', strtotime($rowRel->dat_cad)); ?>
+                                                    </td>
+                                                    <td><?php echo $rowRel->empresa; ?>
+                                                    </td>
+                                                    <td><?php echo ts_decodifica($rowRel->nome); ?>
+                                                    </td>
+                                                    <td><?php echo str_pad($rowRel->qtde, 5, '0', STR_PAD_LEFT); ?>
+                                                    </td>
+                                                </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12" align="center"><button id="imprimirelatorio"
+                                                class="btn btn-raised btn-success square">Imprimir</button></div>
+                                    </div>
                                     <?php } ?>
                                 </div>
                             </div>
@@ -227,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>

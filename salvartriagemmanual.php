@@ -1,7 +1,9 @@
 <?php
 
+require 'tsul_ssl.php';
+
 error_reporting(0);
-include('verifica.php');
+include 'verifica.php';
 $transacao = $_POST['transacaoModal'];
 $consultorio = $_POST['consultorioModal'];
 $prioridade = $_POST['prioridadeModal'];
@@ -13,15 +15,14 @@ $pa_dist = $_POST['pa_dist'];
 $dor = $_POST['dor'];
 $temperatura = $_POST['temperatura'];
 $queixa = $_POST['queixa'];
-$fimclassificacao = date("Y-m-d H:i:s");
-$horatriagem = date("H:i");
-$peso =  $_POST['peso'];
+$fimclassificacao = date('Y-m-d H:i:s');
+$horatriagem = date('H:i');
+$peso = $_POST['peso'];
 $oxigenio = $_POST['oxigenio'];
 $pulso = $_POST['pulso'];
 $glicose = $_POST['glicose'];
 
-
-include('conexao.php');
+include 'conexao.php';
 $stmtdiscriminador = "SELECT discriminador FROM classificacao where cast(atendimento_id as integer) = $transacao";
 $sthdiscriminador = pg_query($stmtdiscriminador) or die($stmtdiscriminador);
 $rowdiscriminador = pg_fetch_object($sthdiscriminador);
@@ -46,15 +47,15 @@ $pulso = stripslashes(pg_escape_string($pulso));
 $glicose = stripslashes(pg_escape_string($glicose));
 $usuario = stripslashes(pg_escape_string($usuario));
 
-include('conexao.php');
+include 'conexao.php';
 $stmty = "SELECT upper(nome) as nome FROM atendimentos a
 		left join pessoas p on a.paciente_id = p.pessoa_id
 		where transacao = $transacao";
 $sth = pg_query($stmty) or die($stmty);
 $row = pg_fetch_object($sth);
-$nome = $row->nome;
+$nome = ts_decodifica($row->nome);
 
-include('conexao.php');
+include 'conexao.php';
 $stmty = "
 	select count(*) as qtd 
 		from classificacao 
@@ -64,8 +65,7 @@ $sth = pg_query($stmty) or die($stmty);
 $row = pg_fetch_object($sth);
 $qtd = $row->qtd;
 
-
-include('conexao.php');
+include 'conexao.php';
 if ($qtd == 0) {
 	$stmt1 = "insert into classificacao 
 		(atendimento_id,discriminador,dor,encaminhamentos,fimclassificacao,fluxograma,glicose,nome,oxigenio,peso,pressaodiastolica,pressaosistolica,
@@ -80,8 +80,7 @@ if ($qtd == 0) {
 			queixa = '$queixa', pulso = '$pulso', usuario='$usuario' WHERE cast(atendimento_id as integer) = $transacao";
 }
 
-
-include('conexao.php');
+include 'conexao.php';
 if ($prioridade == 'BRANCO') {
 	$stmt2 = "UPDATE atendimentos 
 			SET especialidade = '$consultorio', prioridade = '$prioridade', observacao_triagem = '$observacao', status = 'Atendimento Finalizado', hora_triagem = '$horatriagem' 
@@ -92,19 +91,17 @@ if ($prioridade == 'BRANCO') {
 		WHERE transacao = $transacao";
 }
 
-
 $data = date('Y-m-d');
 $hora = date('H:i');
 $ip = $_SERVER['REMOTE_ADDR'];
-include('verifica.php');
-include('conexao.php');
+include 'verifica.php';
+include 'conexao.php';
 $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora,ip) 
 			values ('$usuario','REALIZOU TRIAGEM','$transacao','$data','$hora', '$ip')";
 $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
-
 if (pg_query($stmt1) or die($stmt1)) {
 	if (pg_query($stmt2) or die($stmt2)) {
-		echo "Triagem realizado com sucesso! ";
+		echo 'Triagem realizado com sucesso! ';
 	}
 }

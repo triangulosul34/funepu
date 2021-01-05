@@ -1,51 +1,53 @@
 <?php
 
+require 'tsul_ssl.php';
+
 error_reporting(0);
 
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
-include('verifica.php');
-$start          = '';
-$end          = '';
+include 'verifica.php';
+$start = '';
+$end = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['gerarrelatorio'])) {
-        $start = $_POST['start'];
-        $end   = $_POST['end'];
-        $medico = $_POST['medico'];
-        $where = '';
+	if (isset($_POST['gerarrelatorio'])) {
+		$start = $_POST['start'];
+		$end = $_POST['end'];
+		$medico = $_POST['medico'];
+		$where = '';
 
-        if ($medico) {
-            $where = " and pessoa_id = $medico";
-        }
+		if ($medico) {
+			$where = " and pessoa_id = $medico";
+		}
 
-        include('conexao.php');
-        $stmt1 = "select nome, p.pessoa_id, count(*) as qtd,a.med_atendimento, 
+		include 'conexao.php';
+		$stmt1 = "select nome, p.pessoa_id, count(*) as qtd,a.med_atendimento, 
 					CASE
-					WHEN a.hora_destino >= '00:00' and a.hora_destino <'07:00'   THEN '00h a 06:59'
+					WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '01h a 06:59'
 					WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '07h a 12:59'
 					WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '13h a 18:59'
 					WHEN a.hora_destino >= '19:00' and a.hora_destino <'00:00' 	 THEN '19h a 23:59'
-					WHEN a.hora_destino >= '19:00' and a.hora_destino >= '00:00' THEN '19h e passou das 23:59'
+                    WHEN a.hora_destino >= '00:00' THEN '19h e passou das 23:59'
 					END as HORAS FROM atendimentos a 
 					left join pessoas p on p.username = a.med_atendimento
 					WHERE nome is not null AND status = 'Atendimento Finalizado' $where and dat_cad between '$start' and '$end'								
 					group by 1,2,4,5
 					order by nome";
 
-        $sth1 = pg_query($stmt1) or die($stmt1);
+		$sth1 = pg_query($stmt1) or die($stmt1);
 
-        include('conexao.php');
-        $stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
+		include 'conexao.php';
+		$stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
 					CASE
-					WHEN e.hora >= '00:00' and e.hora < '07:00' THEN '00h a 06:59'
+					WHEN e.hora >= '01:00' and e.hora < '07:00' THEN '01h a 06:59'
 					WHEN e.hora >= '07:00' and e.hora < '13:00' THEN '07h a 12:59'
 					WHEN e.hora >= '13:00' and e.hora < '19:00' THEN '13h a 18:59'
 					WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
@@ -55,17 +57,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					group by 1,2,4,5
 					order by nome";
 
-        $sth2 = pg_query($stmt2) or die($stmt2);
+		$sth2 = pg_query($stmt2) or die($stmt2);
 
-        include('conexao.php');
-        $stmt3 = "select p.nome,l.usuario,p.perfil, min(l.hora) as login from logs l
+		include 'conexao.php';
+		$stmt3 = "select p.nome,l.usuario,p.perfil, min(l.hora) as login from logs l
 					left join pessoas p on p.username = l.usuario
 					left join atendimentos a on a.med_atendimento = p.username  
 					where data between '$start' and '$end' $where and p.perfil = '03' and username is not null
 					group by 1,2,3";
 
-        $sth3 = pg_query($stmt3) or die($stmt3);
-    }
+		$sth3 = pg_query($stmt3) or die($stmt3);
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -129,8 +131,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -198,20 +200,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <select name="medico" id="medico" class="form-control">
                                                     <option value=""></option>
                                                     <?php
-                                                include('conexao.php');
-                                                $sql = "select * from pessoas where tipo_pessoa = 'Medico Laudador'";
-                                                $result = pg_query($sql);
-                                                while ($row = pg_fetch_object($result)) {
-                                                    ?>
+												include 'conexao.php';
+												$sql = "select * from pessoas where tipo_pessoa = 'Medico Laudador'";
+												$result = pg_query($sql);
+												while ($row = pg_fetch_object($result)) {
+													?>
                                                     <option
                                                         value="<?= $row->pessoa_id; ?>"
                                                         <?php if ($_POST['medico'] == $row->pessoa_id) {
-                                                        echo "selected";
-                                                    } ?>>
-                                                        <?= $row->nome; ?>
+														echo 'selected';
+													} ?>>
+                                                        <?= ts_decodifica($row->nome); ?>
                                                     </option>
                                                     <?php
-                                                } ?>
+												} ?>
                                                 </select>
                                             </div>
                                             <div class="col-md-3 mt-3">
@@ -228,20 +230,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </p>
                                                     <?php
 
-                                                    $horaAtual = date('H');
-                                                    $datainicio = $_POST['start'];
-                                                    $datafinal = $_POST['end'];
+													$horaAtual = date('H');
+													$datainicio = $_POST['start'];
+													$datafinal = $_POST['end'];
 
-                                                    include('conexao.php');
-                                                    $stmt = "	SELECT count(*) as qtd  
+													include 'conexao.php';
+													$stmt = "	SELECT count(*) as qtd  
 															FROM atendimentos a
                                                             inner join pessoas b on a.med_atendimento = b.username 
 															WHERE dat_cad between '$datainicio' and '$datafinal' $where AND status = 'Atendimento Finalizado' 
 															and med_atendimento is not null";
 
-                                                    $sth = pg_query($stmt);
-                                                    $rows = pg_fetch_object($sth);
-                                                    ?>
+													$sth = pg_query($stmt);
+													$rows = pg_fetch_object($sth);
+													?>
 
                                                     <div class="counter-number-group">
                                                         <span class="counter-number red-600"><?php echo $rows->qtd; ?></span>
@@ -264,15 +266,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <table class="table">
                                                     <?php
 
-                                                    $i = 0;
-                                                    $meuarray = array();
+													$i = 0;
+													$meuarray = [];
 
-                                                    include('conexao.php');
-                                                    while ($row = pg_fetch_object($sth1)) { ?>
+													include 'conexao.php';
+													while ($row = pg_fetch_object($sth1)) { ?>
 
                                                     <?php $meuarray[$i++] = $row->pessoa_id; ?>
                                                     <tr>
-                                                        <td><?php echo $row->nome ?>
+                                                        <td><?php echo ts_decodifica($row->nome) ?>
                                                         </td>
                                                         <td><?php echo $row->horas ?>
                                                         </td>
@@ -283,14 +285,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                     <?php }
 
-                                                    foreach ($meuarray as $value) {
-                                                        if ($leo == '') {
-                                                            $leo .= $value;
-                                                        } else {
-                                                            $leo .= ',' . $value;
-                                                        }
-                                                    }
-                                                    ?>
+													foreach ($meuarray as $value) {
+														if ($leo == '') {
+															$leo .= $value;
+														} else {
+															$leo .= ',' . $value;
+														}
+													}
+													?>
                                                 </table>
                                             </div>
                                         </div>
@@ -307,20 +309,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <?php echo inverteData($_POST['end']); ?></span>
                                                     </p>
                                                     <?php
-                                                    $horaAtual = date('H');
-                                                    $datainicio = $_POST['start'];
-                                                    $datafinal = $_POST['end'];
+													$horaAtual = date('H');
+													$datainicio = $_POST['start'];
+													$datafinal = $_POST['end'];
 
-                                                    include('conexao.php');
-                                                    $stmt = "	SELECT count(*) as qtd  
+													include 'conexao.php';
+													$stmt = "	SELECT count(*) as qtd  
 														FROM evolucoes a
                                                         inner join pessoas b on b.username = a.usuario 
 														WHERE data between '$datainicio' and '$datafinal' $where
 														and usuario is not null";
 
-                                                    $sth = pg_query($stmt);
-                                                    $rows = pg_fetch_object($sth);
-                                                    ?>
+													$sth = pg_query($stmt);
+													$rows = pg_fetch_object($sth);
+													?>
 
                                                     <div class="counter-number-group">
                                                         <span class="counter-number red-600"><?php echo $rows->qtd; ?></span>
@@ -342,10 +344,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-12">
                                                 <table class="table mt-3">
                                                     <?php
-                                                    include('conexao.php');
-                                                    $stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
+													include 'conexao.php';
+													$stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
 													CASE
-													WHEN e.hora >= '00:00' and e.hora < '07:00' THEN '00h a 06:59'
+													WHEN e.hora >= '01:00' and e.hora < '07:00' THEN '01h a 06:59'
 													WHEN e.hora >= '07:00' and e.hora < '13:00' THEN '07h a 12:59'
 													WHEN e.hora >= '13:00' and e.hora < '19:00' THEN '13h a 18:59'
 													WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
@@ -355,11 +357,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													group by 1,2,4,5
 													order by nome";
 
-                                                    $sth2 = pg_query($stmt2);
+													$sth2 = pg_query($stmt2);
 
-                                                    while ($row = pg_fetch_object($sth2)) { ?>
+													while ($row = pg_fetch_object($sth2)) { ?>
                                                     <tr>
-                                                        <td><?php echo $row->nome ?>
+                                                        <td><?php echo ts_decodifica($row->nome) ?>
                                                         </td>
                                                         <td><?php echo $row->horas ?>
                                                         </td>
@@ -367,7 +369,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </td>
                                                     </tr>
                                                     <?php }
-                                                    ?>
+													?>
                                                 </table>
                                             </div>
                                         </div>
@@ -380,16 +382,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="col-md-12">
                                                 <table class="table">
                                                     <?php
-                                                    include('conexao.php');
-                                                    while ($row = pg_fetch_object($sth3)) { ?>
+													include 'conexao.php';
+													while ($row = pg_fetch_object($sth3)) { ?>
                                                     <tr>
-                                                        <td><?php echo $row->nome ?>
+                                                        <td><?php echo ts_decodifica($row->nome) ?>
                                                         </td>
                                                         <td><?php echo $row->login ?>
                                                         </td>
                                                     </tr>
                                                     <?php }
-                                                    ?>
+													?>
                                                 </table>
                                             </div>
                                         </div>
@@ -406,7 +408,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>

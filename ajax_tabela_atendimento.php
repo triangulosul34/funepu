@@ -1,11 +1,12 @@
 <?php
+require 'tsul_ssl.php';
 $transacao = $_GET['transacao'];
 $nome = $_GET['nome'];
 $cns = $_GET['cns'];
 $idade = $_GET['idade'];
 $prontuario = $_GET['prontuario'];
 ?>
-<?php include('conexao.php');
+<?php include 'conexao.php';
 $stmt = "select a.data, a.hora, c.nome, a.prescricao_id, d.nome as medico
 					from prescricoes a
 					left join atendimentos b on a.atendimento_id = b.transacao
@@ -15,14 +16,14 @@ $stmt = "select a.data, a.hora, c.nome, a.prescricao_id, d.nome as medico
 $sth = pg_query($stmt) or die($stmt);
 
 while ($row = pg_fetch_object($sth)) {
-    $seq = $row->sequencia + 1;
-    echo "<tr>";
-    echo "<td class='small'>" . $seq . "</td>";
-    echo "<td class='small'>" . date('d/m/Y', strtotime($row->data)) . "</td>";
-    echo "<td class='small'>" . $row->hora . "</td>";
-    echo "<td class='small'>" . $row->nome . "</td>";
-    echo "<td class='small'>" . $row->medico . "</td>";
-    echo "<td class='small'>
+	$seq = $row->sequencia + 1;
+	echo '<tr>';
+	echo "<td class='small'>" . $seq . '</td>';
+	echo "<td class='small'>" . date('d/m/Y', strtotime($row->data)) . '</td>';
+	echo "<td class='small'>" . $row->hora . '</td>';
+	echo "<td class='small'>" . ts_decodifica($row->nome) . '</td>';
+	echo "<td class='small'>" . $row->medico . '</td>';
+	echo "<td class='small'>
 				<a href=\"prescricaoenfermagemy.php?id=$row->prescricao_id&p=$transacao\" target=\"_blank\" 
 				class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" 
 				data-original-title=\"Prescrição\">
@@ -33,6 +34,5 @@ while ($row = pg_fetch_object($sth)) {
 				
 			</td>";
 
-    echo "<tr>";
+	echo '<tr>';
 }
-?>

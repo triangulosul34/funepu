@@ -1,7 +1,8 @@
 <?php
 error_reporting(0);
-include('verifica.php');
-include('funcoes.php');
+include 'verifica.php';
+include 'funcoes.php';
+require 'tsul_ssl.php';
 
 // if($apac=="")
 //     {
@@ -13,43 +14,42 @@ include('funcoes.php');
 //     }
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $pessoa_id   = $_GET['id'];
+	$pessoa_id = $_GET['id'];
 
-    include('conexao.php');
-    $stmt = "SELECT conselho_regional, num_conselho_reg, nome  from pessoas where tipo_pessoa = 'Medico Laudador' and username='$usuario'";
-    $sth = pg_query($stmt) or die($stmt);
-    $row = pg_fetch_object($sth);
+	include 'conexao.php';
+	$stmt = "SELECT conselho_regional, num_conselho_reg, nome  from pessoas where tipo_pessoa = 'Medico Laudador' and username='$usuario'";
+	$sth = pg_query($stmt) or die($stmt);
+	$row = pg_fetch_object($sth);
 
-    $crm         = $row->num_conselho_reg;
-    $solicitante = $row->nome;
-    $usuario     = $row->username;
+	$crm = $row->num_conselho_reg;
+	$solicitante = ts_decodifica($row->nome);
+	$usuario = $row->username;
 }
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $usuario          = $_POST['usuario'];
-    $procedimento     = $_POST['procedimento'];
-    $pessoa_id        = $_POST['prontuario'];
-    $nome             = $_POST['nome'];
-    $crm              = $_POST['crm'];
-    $cid10            = $_POST['cid'];
-    $anannese         = $_POST['anannese'];
-    $exames_comp      = $_POST['exames_comp'];
-    $justificativa    = $_POST['justificativa'];
-    $med_solicitante  = $_POST['solicitante'];
-    $data             = $_POST['data_solicitacao'];
-    $raca_cor         = $_POST['raca_cor'];
+	$usuario = $_POST['usuario'];
+	$procedimento = $_POST['procedimento'];
+	$pessoa_id = $_POST['prontuario'];
+	$nome = ts_codifica($_POST['nome']);
+	$crm = $_POST['crm'];
+	$cid10 = $_POST['cid'];
+	$anannese = $_POST['anannese'];
+	$exames_comp = $_POST['exames_comp'];
+	$justificativa = $_POST['justificativa'];
+	$med_solicitante = $_POST['solicitante'];
+	$data = $_POST['data_solicitacao'];
+	$raca_cor = $_POST['raca_cor'];
 
-    if ($erro == "") {
-        include('conexao.php');
-        $stmt = "INSERT into apacs_solicitadas (pessoa_id, procedimento_id, raca_cor, cid10, justificativa, med_solicitante, crm, data_solicitacao)
+	if ($erro == '') {
+		include 'conexao.php';
+		$stmt = "INSERT into apacs_solicitadas (pessoa_id, procedimento_id, raca_cor, cid10, justificativa, med_solicitante, crm, data_solicitacao)
 		values ($pessoa_id, $procedimento,'$raca_cor', '$cid10','$justificativa', '$med_solicitante', '$crm','$data') RETURNING apac_id ";
-        $sth = pg_query($stmt) or die($stmt);
-        $row = pg_fetch_object($sth);
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
 
-        header("Location:apac.php?prontuario=$pessoa_id&apac_id=$row->apac_id ");
-        //echo "<script>window.open('apac.php?prontuario=$pessoa_id&apac_id=$row->apac_id', '_blank')</script>";
-    }
+		header("Location:apac.php?prontuario=$pessoa_id&apac_id=$row->apac_id ");
+		//echo "<script>window.open('apac.php?prontuario=$pessoa_id&apac_id=$row->apac_id', '_blank')</script>";
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -112,8 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -194,30 +194,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <select class="form-control campo-requerido square"
                                                                 name="raca_cor" id="raca_cor">
                                                                 <option></option>
-                                                                <option value="01" <?php if ($raca_cor == "01") {
-    echo "selected";
+                                                                <option value="01" <?php if ($raca_cor == '01') {
+	echo 'selected';
 } ?>>Branca
                                                                 </option>
-                                                                <option value="02" <?php if ($raca_cor == "02") {
-    echo "selected";
+                                                                <option value="02" <?php if ($raca_cor == '02') {
+	echo 'selected';
 } ?>>Preta
                                                                 </option>
-                                                                <option value="03" <?php if ($raca_cor == "03") {
-    echo "selected";
+                                                                <option value="03" <?php if ($raca_cor == '03') {
+	echo 'selected';
 } ?>>Parda
                                                                 </option>
-                                                                <option value="04" <?php if ($raca_cor == "04") {
-    echo "selected";
+                                                                <option value="04" <?php if ($raca_cor == '04') {
+	echo 'selected';
 } ?>>Amarela
                                                                 </option>
-                                                                <option value="05" <?php if ($raca_cor == "05") {
-    echo "selected";
+                                                                <option value="05" <?php if ($raca_cor == '05') {
+	echo 'selected';
 } ?>>Indigena
                                                                 </option>
-                                                                <option value="99" <?php if ($raca_cor == "99") {
-    echo "selected";
+                                                                <option value="99" <?php if ($raca_cor == '99') {
+	echo 'selected';
 } ?>>Nao
-                                                                    Informado</option>
+                                                                    Informado
+                                                                </option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -355,17 +356,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         name="procedimento" id="procedimento">
                                                         <option></option>
                                                         <?php
-                                                        include('conexao.php');
-                                                        $stmt = "SELECT descricao, procedimento_id FROM procedimentos where modalidade_id= 3 and sigtap !='' order by descricao";
-                                                        $sth = pg_query($stmt) or die($stmt);
-                                                        while ($row = pg_fetch_object($sth)) {
-                                                            echo "<option value=\"" . $row->procedimento_id . "\"";
-                                                            if ($procedimentos == $row->procedimento_id) {
-                                                                echo "selected";
-                                                            }
-                                                            echo ">" . $row->descricao . "</option>";
-                                                        }
-                                                        ?>
+														include 'conexao.php';
+														$stmt = "SELECT descricao, procedimento_id FROM procedimentos where modalidade_id= 3 and sigtap !='' order by descricao";
+														$sth = pg_query($stmt) or die($stmt);
+														while ($row = pg_fetch_object($sth)) {
+															echo '<option value="' . $row->procedimento_id . '"';
+															if ($procedimentos == $row->procedimento_id) {
+																echo 'selected';
+															}
+															echo '>' . $row->descricao . '</option>';
+														}
+														?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -489,7 +490,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>

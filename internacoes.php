@@ -1,38 +1,40 @@
 <?php
 
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome = $_POST['nome'];
-    $start = $_POST['start'];
-    $end = $_POST['end'];
+	$nome = ts_codifica($_POST['nome']);
+	$start = $_POST['start'];
+	$end = $_POST['end'];
 
-    $where = "";
+	$where = '';
 
-    if ($start != "") {
-        $data = inverteData($start);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad >= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad >= '$data')";
-        }
-    }
+	if ($start != '') {
+		$data = inverteData($start);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad >= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad >= '$data')";
+		}
+	}
 
-    if ($end != "") {
-        $data = inverteData($end);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad <= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad <= '$data')";
-        }
-    }
+	if ($end != '') {
+		$data = inverteData($end);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad <= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad <= '$data')";
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -54,7 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -91,7 +95,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </script>
 
 <body class="pace-done" cz-shortcut-listen="true">
-    <div class="modal fade" id="ExemploModalCentralizado" tabindex="-1" role="dialog" aria-labelledby="TituloModalCentralizado" aria-hidden="true">
+    <div class="modal fade" id="ExemploModalCentralizado" tabindex="-1" role="dialog"
+        aria-labelledby="TituloModalCentralizado" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -99,8 +104,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="modal-body">
 
                         <label for="message-text" class="col-form-label">Observações:</label>
-                        <!-- <textarea class="form-control" name="obs_modal" id="obs_modal" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea> -->
-                        <textarea name="obs_modal" id="obs_modal" cla3ss="form-control" rows="15" style="resize: none" rows="10" cols="52" form="usrform" static readonly><?php echo $obs_modal; ?></textarea>
+                        <!-- <textarea class="form-control" name="obs_modal" id="obs_modal" style="resize: none" rows="10" cols="60" form="usrform" static><?php echo $obs_modal; ?></textarea>
+                        -->
+                        <textarea name="obs_modal" id="obs_modal" cla3ss="form-control" rows="15" style="resize: none"
+                            rows="10" cols="52" form="usrform" static
+                            readonly><?php echo $obs_modal; ?></textarea>
 
                     </div>
                 </div>
@@ -115,8 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -131,7 +139,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Internações
                                                 </h4>
                                             </div>
@@ -156,16 +165,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <form action="#" method="POST">
                                         <div class="row">
                                             <div class="col-4"><label>Paciente</label>
-                                                <input type="text" class="form-control square" id="inputBasicFirstName" name="nome" placeholder="Parte do Nome" autocomplete="off" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" /></div>
+                                                <input type="text" class="form-control square" id="inputBasicFirstName"
+                                                    name="nome" placeholder="Parte do Nome" autocomplete="off"
+                                                    value="<?php echo ts_decodifica($nome); ?>"
+                                                    onkeyup="maiuscula(this)" />
+                                            </div>
                                             <div class="col col-lg-3">
-                                                <label class="control-label" for="inputBasicFirstName">Data Ínicial</label>
-                                                <input type="date" class="form-control text-center" name="start" id="start" OnKeyPress="formatar('##/##/####', this)" value="<?php echo $start; ?>" />
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Ínicial</label>
+                                                <input type="date" class="form-control text-center" name="start"
+                                                    id="start" OnKeyPress="formatar('##/##/####', this)"
+                                                    value="<?php echo $start; ?>" />
                                             </div>
                                             <div class="col col-lg-3 text-center">
-                                                <label class="control-label" for="inputBasicFirstName">Data Final</label>
-                                                <input type="date" class="form-control text-center" name="end" OnKeyPress="formatar('##/##/####', this)"/ value="<?php echo $end; ?>">
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Final</label>
+                                                <input type="date" class="form-control text-center" name="end"
+                                                    OnKeyPress="formatar('##/##/####', this)" /
+                                                    value="<?php echo $end; ?>">
                                             </div>
-                                            <div class="col-2"><label>Ação</label><button type="submit" name="pesquisa" value="semana" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button></div>
+                                            <div class="col-2"><label>Ação</label><button type="submit" name="pesquisa"
+                                                    value="semana"
+                                                    class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
+                                            </div>
                                         </div>
                                     </form>
                                     <div class="row mt-5">
@@ -195,8 +217,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </tfoot>
                                                 <tbody>
                                                     <?php
-                                                    include('conexao.php');
-                                                    $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.obs_modal, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
+													include 'conexao.php';
+													$stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.obs_modal, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
 							a.hora_atendimento, a.dat_cad, 	c.nome, k.origem, a.tipo,a.hora_destino,
 							CASE prioridade
 								WHEN 'VERMELHO' THEN '0'
@@ -230,45 +252,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							left join destino_paciente p on p.atendimento_id = a.transacao
 							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) ";
 
-                                                    if ($where != "") {
-                                                        $stmt = $stmt . " where " . $where . " and obs_modal is not null";
-                                                    } else {
-                                                        $stmt = $stmt . " where a.dat_cad='" . date('Y-m-d') . "' and obs_modal is not null";
-                                                    }
+													if ($where != '') {
+														$stmt = $stmt . ' where ' . $where . ' and obs_modal is not null';
+													} else {
+														$stmt = $stmt . " where a.dat_cad='" . date('Y-m-d') . "' and obs_modal is not null";
+													}
 
-                                                    $stmt = $stmt . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') order by a.dat_cad desc,a.hora_cad desc ";
-                                                    $sth = pg_query($stmt) or die($stmt);
-                                                    while ($row = pg_fetch_object($sth)) {
-                                                        if ($row->prioridade   == 'AMARELO') {
-                                                            $classe = "style=\"background-color:gold\"";
-                                                        }
-                                                        if ($row->prioridade   == 'VERMELHO') {
-                                                            $classe = "class='bg-danger'";
-                                                        }
-                                                        if ($row->prioridade   == 'VERDE') {
-                                                            $classe = "class='bg-success'";
-                                                        }
-                                                        if ($row->prioridade   == 'AZUL') {
-                                                            $classe = "class='bg-primary'";
-                                                        }
-                                                        if ($row->prioridade   == 'LARANJA') {
-                                                            $classe = "class='bg-warning'";
-                                                        }
-                                                        if ($row->prioridade   == '') {
-                                                            $classe = "style=\"background-color:Gainsboro\"";
-                                                        } ?>
-                                                        <tr <?= $classe ?>>
-                                                            <td><?= $row->nome; ?></td>
-                                                            <td><?= $row->origem; ?></td>
-                                                            <td><?= $row->hora_cad; ?></td>
-                                                            <td><?= $row->hora_triagem; ?></td>
-                                                            <td><?= $row->hora_destino; ?></td>
-                                                            <td><?= $row->destino; ?></td>
-                                                            <td><button type="button" id="receituario" class="btn btn-light" href="#" data-id="<?= $_GET['id']; ?>" data-toggle="modal" data-target="#ExemploModalCentralizado" value='Receituário' onclick="inter(`<?= $row->obs_modal; ?>`)">
-                                                                    <i class="fas fa-procedures"></i>
-                                                                </button></td>
-                                                        </tr>
-                                                    <?php } ?>
+													$stmt = $stmt . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') order by a.dat_cad desc,a.hora_cad desc ";
+													$sth = pg_query($stmt) or die($stmt);
+													while ($row = pg_fetch_object($sth)) {
+														if ($row->prioridade == 'AMARELO') {
+															$classe = 'style="background-color:gold"';
+														}
+														if ($row->prioridade == 'VERMELHO') {
+															$classe = "class='bg-danger'";
+														}
+														if ($row->prioridade == 'VERDE') {
+															$classe = "class='bg-success'";
+														}
+														if ($row->prioridade == 'AZUL') {
+															$classe = "class='bg-primary'";
+														}
+														if ($row->prioridade == 'LARANJA') {
+															$classe = "class='bg-warning'";
+														}
+														if ($row->prioridade == '') {
+															$classe = 'style="background-color:Gainsboro"';
+														} ?>
+                                                    <tr <?= $classe ?>>
+                                                        <td><?= ts_decodifica($row->nome); ?>
+                                                        </td>
+                                                        <td><?= $row->origem; ?>
+                                                        </td>
+                                                        <td><?= $row->hora_cad; ?>
+                                                        </td>
+                                                        <td><?= $row->hora_triagem; ?>
+                                                        </td>
+                                                        <td><?= $row->hora_destino; ?>
+                                                        </td>
+                                                        <td><?= $row->destino; ?>
+                                                        </td>
+                                                        <td><button type="button" id="receituario" class="btn btn-light"
+                                                                href="#"
+                                                                data-id="<?= $_GET['id']; ?>"
+                                                                data-toggle="modal"
+                                                                data-target="#ExemploModalCentralizado"
+                                                                value='Receituário'
+                                                                onclick="inter(`<?= $row->obs_modal; ?>`)">
+                                                                <i class="fas fa-procedures"></i>
+                                                            </button></td>
+                                                    </tr>
+                                                    <?php
+													} ?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -281,7 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>

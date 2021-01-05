@@ -1,82 +1,77 @@
 <?php
 
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 error_reporting(0);
 $menu_grupo = '1';
 $menu_sgrupo = '1';
-$nome         = '';
-$dtnasc     = '';
-$telefone    = '';
-$mae         = '';
+$nome = '';
+$dtnasc = '';
+$telefone = '';
+$mae = '';
 $where = 'nome is null';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $codigo = $_GET['id'];
-    if ($codigo != "") {
-        $where = ' pessoa_id =' . $codigo;
-    }
+	$codigo = $_GET['id'];
+	if ($codigo != '') {
+		$where = ' pessoa_id =' . $codigo;
+	}
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome         = $_POST['nome'];
-    $dtnasc     = $_POST['dtnasc'];
-    $telefone    = $_POST['telefone'];
-    $mae         = $_POST['mae'];
-    $prontuario    = $_POST['prontuario'];
+	$nome = ts_codifica($_POST['nome']);
+	$dtnasc = $_POST['dtnasc'];
+	$telefone = $_POST['telefone'];
+	$mae = ts_codifica($_POST['mae']);
+	$prontuario = $_POST['prontuario'];
 
-    $where = '';
+	$where = '';
 
+	if ($nome != '') {
+		if ($where != '') {
+			$where = $where . " and nome like '" . $nome . "%' ";
+		} else {
+			$where = $where . " nome like '" . $nome . "%' ";
+		}
+	}
 
-    if ($nome != "") {
+	if ($mae != '') {
+		if ($where != '') {
+			$where = $where . " and nome_mae like '" . $mae . "%' ";
+		} else {
+			$where = $where . " nome_mae like '" . $mae . "%' ";
+		}
+	}
 
-        if ($where != "") {
-            $where = $where . " and nome like upper('%" . $nome . "%') ";
-        } else {
-            $where = $where . " nome like upper('%" . $nome . "%') ";
-        }
-    }
+	if ($prontuario != '') {
+		if ($where != '') {
+			$where = $where . ' and pessoa_id = ' . $prontuario . ' ';
+		} else {
+			$where = $where . ' pessoa_id = ' . $prontuario . ' ';
+		}
+	}
 
-    if ($mae != "") {
+	if ($dtnasc != '') {
+		if ($where != '') {
+			$where = $where . " and dt_nasc = '" . $dtnasc . "' ";
+		} else {
+			$where = $where . " dt_nasc = '" . $dtnasc . "' ";
+		}
+	}
 
-        if ($where != "") {
-            $where = $where . " and nome_mae like upper('%" . $mae . "%') ";
-        } else {
-            $where = $where . " nome_mae like upper('%" . $mae . "%') ";
-        }
-    }
-
-    if ($prontuario != "") {
-        if ($where != "") {
-            $where = $where . " and pessoa_id = " . $prontuario . " ";
-        } else {
-            $where = $where . " pessoa_id = " . $prontuario . " ";
-        }
-    }
-
-
-    if ($dtnasc != "") {
-
-        if ($where != "") {
-            $where = $where . " and dt_nasc = '" . $dtnasc . "' ";
-        } else {
-            $where = $where . " dt_nasc = '" . $dtnasc . "' ";
-        }
-    }
-
-
-    if ($telefone != "") {
-
-        if ($where != "") {
-            $where = $where . " and telefone like '%" . $telefone . "%' or celular like '%" . $telefone . "%' or  telefone2 like '%" . $telefone . "%' or celular2 like '%" . $telefone . "%' ";
-        } else {
-            $where = $where . " telefone like '%" . $telefone . "%' or celular like '%" . $telefone . "%' or  telefone2 like '%" . $telefone . "%' or celular2 like '%" . $telefone . "%' ";
-        }
-    }
+	if ($telefone != '') {
+		if ($where != '') {
+			$where = $where . " and telefone like '%" . $telefone . "%' or celular like '%" . $telefone . "%' or  telefone2 like '%" . $telefone . "%' or celular2 like '%" . $telefone . "%' ";
+		} else {
+			$where = $where . " telefone like '%" . $telefone . "%' or celular like '%" . $telefone . "%' or  telefone2 like '%" . $telefone . "%' or celular2 like '%" . $telefone . "%' ";
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -98,7 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -129,15 +126,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body class="pace-done" cz-shortcut-listen="true">
     <div class="pace  pace-inactive">
-        <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+        <div class="pace-progress" data-progress-text="100%" data-progress="99"
+            style="transform: translate3d(100%, 0px, 0px);">
             <div class="pace-progress-inner"></div>
         </div>
         <div class="pace-activity"></div>
     </div>
 
     <div class="wrapper">
-        <?php include('menu.php'); ?>
-        <?php include('header.php'); ?>
+        <?php include 'menu.php'; ?>
+        <?php include 'header.php'; ?>
         <div class="main-panel">
             <div class="main-content">
                 <div class="content-wrapper">
@@ -150,7 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             <div class="row">
                                                 <div class="col-12">
                                                     <h4 class="card-title">
-                                                        <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                        <p
+                                                            style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                             » </p>PACIENTES
                                                     </h4>
                                                 </div>
@@ -177,31 +176,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="col-3">
                                                     <div class="form-group">
                                                         <label for="inputBasicFirstName">Prontuário</label>
-                                                        <input type="text" class="form-control square" id="inputBasicFirstName" name="prontuario" placeholder="Prontuário do Cliente" autocomplete="off" onkeyup="maiuscula(this)" value="<?php echo $prontuario; ?>" />
+                                                        <input type="text" class="form-control square"
+                                                            id="inputBasicFirstName" name="prontuario"
+                                                            placeholder="Prontuário do Cliente" autocomplete="off"
+                                                            onkeyup="maiuscula(this)"
+                                                            value="<?php echo $prontuario; ?>" />
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="form-group">
                                                         <label for="inputBasicFirstName">Nome</label>
-                                                        <input type="text" class="form-control square" id="inputBasicFirstName" name="nome" placeholder="Nome do Cliente" autocomplete="off" onkeyup="maiuscula(this)" value="<?php echo $nome; ?>" />
+                                                        <input type="text" class="form-control square"
+                                                            id="inputBasicFirstName" name="nome"
+                                                            placeholder="Nome do Cliente" autocomplete="off"
+                                                            onkeyup="maiuscula(this)"
+                                                            value="<?php echo ts_decodifica($nome); ?>" />
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-3">
                                                     <label for="inputBasicLastName">Nascimento</label>
-                                                    <input type="text" class="form-control square" id="nascimento" name="dtnasc" value="<?php echo $dtnasc; ?>" placeholder="dd/mm/aaaa" autocomplete="off" />
+                                                    <input type="text" class="form-control square" id="nascimento"
+                                                        name="dtnasc"
+                                                        value="<?php echo $dtnasc; ?>"
+                                                        placeholder="dd/mm/aaaa" autocomplete="off" />
                                                 </div>
                                             </div>
                                             <div class="row mt-4">
                                                 <div class="col-12" align="center">
-                                                    <button type="submit" name="pesquisa" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
-                                                    <button type="reset" name="limpar" class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1">Limpar</button>
-                                                    <button type="button" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1" onclick="location.href='cadastro.php?tipo=C'">Adicionar novo Cliente</button>
+                                                    <button type="submit" name="pesquisa"
+                                                        class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
+                                                    <button type="reset" name="limpar"
+                                                        class="btn btn-raised btn-danger square btn-min-width mr-1 mb-1">Limpar</button>
+                                                    <button type="button"
+                                                        class="btn btn-raised btn-success square btn-min-width mr-1 mb-1"
+                                                        onclick="location.href='cadastro.php?tipo=C'">Adicionar novo
+                                                        Cliente</button>
                                                 </div>
                                             </div>
                                         </form>
                                         <div class="row mt-4 mb-5" align="center">
                                             <div class="col-12">
-                                                <hr style="color: #12A1A6; background-color: #12A1A6; height: 1px; width: 900px;">
+                                                <hr
+                                                    style="color: #12A1A6; background-color: #12A1A6; height: 1px; width: 900px;">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -233,36 +249,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </tfoot>
                                                     <tbody>
                                                         <?php
-                                                        include('conexao.php');
-                                                        $stmt = "SELECT * FROM pessoas";
-                                                        if ($where != "") {
-                                                            $stmt = $stmt . " where " . $where;
-                                                        }
-                                                        $stmt = $stmt . " order by nome";
-                                                        $sth = pg_query($stmt) or die($stmt);
-                                                        while ($row = pg_fetch_object($sth)) {
-                                                            if ($row->situacao == '1') {
-                                                                $situacao = 'Inativo';
-                                                            } else {
-                                                                $situacao = 'Ativo';
-                                                            }
-                                                            echo "<tr>";
-                                                            echo "<td>" . str_pad($row->pessoa_id, 7, "0", STR_PAD_LEFT) . "</td>";
-                                                            echo "<td>" . $row->nome . "</td>";
-                                                            echo "<td>" . inverteData($row->dt_nasc) . "</td>";
-                                                            echo "<td>" . $row->telefone . "</td>";
-                                                            echo "<td>" . $row->nome_mae . "</td>";
-                                                            echo "<td>" . $situacao . "</td>";
-                                                            echo "<td>";
-                                                            if ($row->documento) { ?>
-                                                                <a href="<?= "documents/{$row->documento}"; ?>" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc"><i class="far fa-address-card"></i></a>
+														include 'conexao.php';
+														$stmt = 'SELECT * FROM pessoas';
+														if ($where != '') {
+															$stmt = $stmt . ' where ' . $where;
+														}
+														$stmt = $stmt . ' order by nome';
+														$sth = pg_query($stmt) or die($stmt);
+														while ($row = pg_fetch_object($sth)) {
+															if ($row->situacao == '1') {
+																$situacao = 'Inativo';
+															} else {
+																$situacao = 'Ativo';
+															}
+															echo '<tr>';
+															echo '<td>' . str_pad($row->pessoa_id, 7, '0', STR_PAD_LEFT) . '</td>';
+															echo '<td>' . ts_decodifica($row->nome) . '</td>';
+															echo '<td>' . inverteData($row->dt_nasc) . '</td>';
+															echo '<td>' . $row->telefone . '</td>';
+															echo '<td>' . ts_decodifica($row->nome_mae) . '</td>';
+															echo '<td>' . $situacao . '</td>';
+															echo '<td>';
+															if ($row->documento) { ?>
+                                                        <a href="<?= "documents/{$row->documento}"; ?>"
+                                                            class="btn btn-primary btn-lg mr-5" target="_blank"
+                                                            id="doc"><i class="far fa-address-card"></i></a>
                                                         <?php }
-                                                            echo "</td>";
-                                                            echo "<td><a href=\"alteracadastro.php?id=" . $row->pessoa_id . "\"><i class=\"fas fa-edit\"></i></a> <a href=\"\"  onclick=\"doConfirm(" . $row->pessoa_id . ");\" data-popup=\"tooltip\" title=\"\" data-original-title=\"Inativar\"><i class=\"fas fa-trash-alt\"></i></a></td>";
+															echo '</td>';
+															echo '<td><a href="alteracadastro.php?id=' . $row->pessoa_id . '"><i class="fas fa-edit"></i></a> <a href=""  onclick="doConfirm(' . $row->pessoa_id . ');" data-popup="tooltip" title="" data-original-title="Inativar"><i class="fas fa-trash-alt"></i></a></td>';
 
-                                                            echo "</tr>";
-                                                        }
-                                                        ?>
+															echo '</tr>';
+														}
+														?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -276,7 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/popper.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/bootstrap.min.js" type="text/javascript"></script>
@@ -294,8 +312,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
     <script src="app-assets/js/scripts.js" type="text/javascript"></script>
     <script defer src="/your-path-to-fontawesome/js/all.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" type="text/javascript">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" type="text/javascript">
+    </script>
     <script>
         $("#nascimento").mask("99/99/9999");
 

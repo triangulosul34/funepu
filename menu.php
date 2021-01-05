@@ -1,4 +1,4 @@
-<?php include('verifica.php'); ?>
+<?php include 'verifica.php'; ?>
 <div data-active-color="white" data-background-color="primary" data-image="app-assets/img/sidebar-bg/01.jpg"
     class="app-sidebar">
     <div class="sidebar-header">
@@ -19,7 +19,7 @@
                             <a href="monitor_triagem.php" class="menu-item">TRIAGEM</a>
                         </li>
                         <?php }
-                        if ($perfil == '06' or $perfil == '03' or $perfil == '08') { ?>
+						if ($perfil == '06' or $perfil == '03' or $perfil == '08') { ?>
                         <li class="is-shown">
                             <a href="monitor_medico.php" class="menu-item">ATENDIMENTO MEDICO</a>
                         </li>
@@ -28,19 +28,19 @@
                             <a href="atendimentos.php" class="menu-item">ATENDIMENTOS</a>
                         </li>
                         <?php
-                        if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
+						if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                         <li class="is-shown">
-                            <a href="atendimentoretroativo.php" class="menu-item">ATEND. RETROATIVO</a>
+                            <a href="atendimento_retroativo.php" class="menu-item">ATEND. RETROATIVO</a>
                         </li>
                         <?php
-                        }
-                        //if ($perfil == '06' or $perfil == '08' or $perfil == '03') {
-                        ?>
+						}
+						//if ($perfil == '06' or $perfil == '08' or $perfil == '03') {
+						?>
                         <li class="is-shown">
                             <a href="resultado_exames.php" class="menu-item">RESULTADO DE EXAMES</a>
                         </li>
                         <?php //}
-                        if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
+						if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                         <li class="is-shown">
                             <a href="evolucoes.php" class="menu-item">EVOLUCAO DIARIA</a>
                         </li>
@@ -49,12 +49,12 @@
                             <a href="evolucoesmp.php" class="menu-item">ASSISTENCIA SOCIAL</a>
                         </li>
                         <?php
-                        if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
+						if ($perfil == '06' or $perfil == '08' or $perfil == '03') { ?>
                         <li class="is-shown">
                             <a href="internacoes.php" class="menu-item">SOLIC. INTERNACAO</a>
                         </li>
                         <?php }
-                        if ($perfil == '06' or $perfil == '03') { ?>
+						if ($perfil == '06' or $perfil == '03') { ?>
                         <li class="is-shown">
                             <a href="selformapac.php" class="menu-item">SOLICITAÇÃO APAC</a>
                         </li>
@@ -63,27 +63,27 @@
                     </ul>
                 </li>
                 <?php
-                if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
+				if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-user-plus"></i><span class="menu-title">CADASTRO</span></a>
                     <ul class="menu-content">
                         <?php
-                            if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
+							if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
                         <li class="is-shown">
                             <a href="clientes.php" class="menu-item">PACIENTES</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="medicos.php" class="menu-item">MEDICOS/LAUDADORES</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="colaboradores.php" class="menu-item">COLABORADORES</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="procedimentos.php" class="menu-item">PROCEDIMENTOS</a>
                         </li>
@@ -91,7 +91,7 @@
                     </ul>
                 </li>
                 <?php }
-                if ($perfil == '06' or $perfil == '04') { ?>
+				if ($perfil == '06' or $perfil == '04') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-tasks"></i><span class="menu-title">GESTÃO</span></a>
                     <ul class="menu-content">
@@ -156,22 +156,22 @@
                     </ul>
                 </li>
                 <?php }
-                if ($perfil == '06' or $perfil == '08' or $perfil == '04') { ?>
+				if ($perfil == '06' or $perfil == '08' or $perfil == '04') { ?>
                 <li class="has-sub nav-item"><a href="#"><i class="fas fa-tv"></i><span
                             class="menu-title">MONITORAMENTO</span></a>
                     <ul class="menu-content">
                         <?php
-                            if ($perfil == '06' or $perfil == '08' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '08' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="triagemRecepcao.php" class="menu-item">AGUARD. TRIAGEM</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '08' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '08' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="atendimentoRecepcao.php" class="menu-item">AGUARD. ATENDIMENTO</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="monitorAtendMedicos.php" class="menu-item">EM ATENDIMENTO</a>
                         </li>
@@ -179,47 +179,47 @@
                     </ul>
                 </li>
                 <?php }
-                if ($perfil == '06' or $perfil == '03' or $perfil == '05' or $perfil == '04') { ?>
+				if ($perfil == '06' or $perfil == '03' or $perfil == '05' or $perfil == '04') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-chart-pie"></i><span class="menu-title">PAINÉIS</span></a>
                     <ul class="menu-content">
                         <?php
-                            if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="painel_us.php" class="menu-item">PAINEL US</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="painel_rx.php" class="menu-item">PAINEL RX</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="painel_ecg.php" class="menu-item">PAINEL ECG</a>
                         </li>
                         <?php }
-                            if ($perfil == '06' or $perfil == '04') { ?>
+							if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="has-sub nav-item">
                             <a href="#"><span class="menu-title">ATENDIMENTOS</span></a>
                             <ul class="menu-content">
                                 <?php }
-                                if ($perfil == '06' or $perfil == '04') { ?>
+								if ($perfil == '06' or $perfil == '04') { ?>
                                 <li class="is-shown">
                                     <a href="painel_at_adulto.php" class="menu-item">ADULTO</a>
                                 </li>
                                 <?php }
-                                if ($perfil == '06' or $perfil == '04') { ?>
+								if ($perfil == '06' or $perfil == '04') { ?>
                                 <li class="is-shown">
                                     <a href="painel_at_odontologico.php" class="menu-item">ODONTOLOGICO</a>
                                 </li>
                                 <?php }
-                                if ($perfil == '06' or $perfil == '04') { ?>
+								if ($perfil == '06' or $perfil == '04') { ?>
                                 <li class="is-shown">
                                     <a href="painel_at_ortopedia.php" class="menu-item">ORTOPEDIA</a>
                                 </li>
                                 <?php }
-                                if ($perfil == '06' or $perfil == '08' or $perfil == '03' or $perfil == '04') { ?>
+								if ($perfil == '06' or $perfil == '08' or $perfil == '03' or $perfil == '04') { ?>
                                 <li class="is-shown">
                                     <a href="painel_at_ala_vermelha.php" class="menu-item">ALA VERMELHA</a>
                                 </li>
@@ -246,7 +246,7 @@
                             class="menu-title">LAUDOS</span></a>
                 </li>
                 <?php }
-                if ($perfil != '08' && $perfil != '03') { ?>
+				if ($perfil != '08' && $perfil != '03') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-pills"></i><span class="menu-title">FARMACIA</span></a>
                     <ul class="menu-content">
@@ -259,7 +259,7 @@
                     </ul>
                 </li>
                 <?php }
-                if ($perfil == '14' or $perfil == '06') { ?>
+				if ($perfil == '14' or $perfil == '06') { ?>
                 <li class="nav-item">
                     <a href="novopedido.php"><i class="fas fa-clinic-medical"></i><span class="menu-title">SOLICITAR
                             EXAMES</span></a>

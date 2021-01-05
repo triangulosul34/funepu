@@ -1,3 +1,6 @@
+<?php
+	include 'tsul_ssl.php';
+?>
 <!DOCTYPE html>
 <html lang="pt-br" class="loading">
 
@@ -17,7 +20,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -56,8 +61,8 @@
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -72,7 +77,8 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Ações Médicas
                                                 </h4>
                                             </div>
@@ -96,36 +102,45 @@
                                     <form action="#" method="POST">
                                         <div class="row">
                                             <div class="col col-lg-3">
-                                                <label class="control-label" for="inputBasicFirstName">Data Ínicial</label>
-                                                <input type="date" class="form-control text-center" name="start" id="start" value="<?php echo $_POST['start']; ?>" />
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Ínicial</label>
+                                                <input type="date" class="form-control text-center" name="start"
+                                                    id="start"
+                                                    value="<?php echo $_POST['start']; ?>" />
                                             </div>
                                             <div class="col col-lg-3 text-center">
-                                                <label class="control-label" for="inputBasicFirstName">Data Final</label>
-                                                <input type="date" class="form-control text-center" name="end" id="end" value="<?php echo $_POST['end']; ?>">
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Final</label>
+                                                <input type="date" class="form-control text-center" name="end" id="end"
+                                                    value="<?php echo $_POST['end']; ?>">
                                             </div>
                                             <div class="col col-lg-3 text-center">
-                                                <label class="control-label" for="inputBasicFirstName">Profissional</label>
+                                                <label class="control-label"
+                                                    for="inputBasicFirstName">Profissional</label>
                                                 <select name="medico" id="medico" class="form-control">
                                                     <option value=""></option>
                                                     <?php
-                                                        include('conexao.php');
-                                                        $sql = "select * from pessoas where tipo_pessoa = 'Medico Laudador' order by nome";
-                                                        $result = pg_query($sql);
-                                                        while ($row = pg_fetch_object($result)) {
-                                                            ?>
-                                                            <option
-                                                                value="<?= $row->username; ?>"
-                                                                <?php if ($_POST['medico'] == $row->username) {
-                                                                echo "selected";
-                                                            } ?>>
-                                                                <?= $row->nome; ?>
-                                                            </option>
-                                                            <?php
-                                                        } ?>
+														include 'conexao.php';
+														$sql = "select * from pessoas where tipo_pessoa = 'Medico Laudador' order by nome";
+														$result = pg_query($sql);
+														while ($row = pg_fetch_object($result)) {
+															?>
+                                                    <option
+                                                        value="<?= $row->username; ?>"
+                                                        <?php if ($_POST['medico'] == $row->username) {
+																echo 'selected';
+															} ?>>
+                                                        <?= ts_decodifica($row->nome); ?>
+                                                    </option>
+                                                    <?php
+														} ?>
                                                 </select>
                                             </div>
-                                            <div class="col-3" align="center"><label class="control-label" for="inputBasicFirstName">Ação</label><br>
-                                                <button type="submit" name="pesquisa" value="semana" class="btn btn-primary">Pesquisar</button></div>
+                                            <div class="col-3" align="center"><label class="control-label"
+                                                    for="inputBasicFirstName">Ação</label><br>
+                                                <button type="submit" name="pesquisa" value="semana"
+                                                    class="btn btn-primary">Pesquisar</button>
+                                            </div>
                                         </div>
                                         <div class="col-12">
                                             <table id="data_table" class="table">
@@ -153,51 +168,54 @@
                                                 </tfoot>
                                                 <tbody>
                                                     <?php
-                                                    $hoje = date('d/m/Y');
+													$hoje = date('d/m/Y');
 
-                                                    $end = $_POST['end'];
-                                                    $start = $_POST['start'];
-                                                    $medico = $_POST['medico'];
-                                                    
+													$end = $_POST['end'];
+													$start = $_POST['start'];
+													$medico = $_POST['medico'];
 
+													$where = '';
+													if ($end != '' or $start != '') {
+														$where = " where l.data between '$start' and '$end' ";
+													}
+													if ($medico != '') {
+														$where = $where . " and usuario= '$medico' ";
+													}
 
-
-                                                    $where = "";
-                                                    if ($end != '' or $start != '') {
-                                                        $where = " where l.data between '$start' and '$end' ";
-                                                    }
-                                                    if ($medico != '' ) {
-                                                        $where = $where." and usuario= '$medico' ";
-                                                    }
-
-
-                                                    include('conexao.php');
-                                                    $stmt = "SELECT l.*, p.nome FROM logs l
-						left join pessoas p on p.username = l.usuario";
-                                                    if ($where == '') {
-                                                        $stmt = $stmt . " where l.data = '$hoje' ";
-                                                    } else {
-                                                        $stmt = $stmt . ' ' . $where;
-                                                    }
-                                                    $stmt = $stmt . "order by log_id, l.data desc,l.hora desc";
-                                                    $sth = pg_query($stmt) or die($stmt);
-                                                    //echo $stmt;
-                                                    while ($row = pg_fetch_object($sth)) { ?>
-                                                        <tr>
-                                                            <td><?php echo $row->log_id; ?></td>
-                                                            <td><?php echo $row->nome; ?></td>
-                                                            <td><?php echo $row->tipo_acao; ?></td>
-                                                            <td><?php echo $row->atendimento_id; ?></td>
-                                                            <td><?php echo date('d/m/Y', strtotime($row->data)); ?></td>
-                                                            <td><?php echo date('H:i', strtotime($row->hora)); ?></td>
-                                                            <td><?php echo $row->ip; ?></td>
-                                                        </tr>
+													include 'conexao.php';
+													$stmt = 'SELECT l.*, p.nome FROM logs l
+						left join pessoas p on p.username = l.usuario';
+													if ($where == '') {
+														$stmt = $stmt . " where l.data = '$hoje' ";
+													} else {
+														$stmt = $stmt . ' ' . $where;
+													}
+													$stmt = $stmt . 'order by log_id, l.data desc,l.hora desc';
+													$sth = pg_query($stmt) or die($stmt);
+													//echo $stmt;
+													while ($row = pg_fetch_object($sth)) { ?>
+                                                    <tr>
+                                                        <td><?php echo $row->log_id; ?>
+                                                        </td>
+                                                        <td><?php echo ts_decodifica($row->nome); ?>
+                                                        </td>
+                                                        <td><?php echo $row->tipo_acao; ?>
+                                                        </td>
+                                                        <td><?php echo $row->atendimento_id; ?>
+                                                        </td>
+                                                        <td><?php echo date('d/m/Y', strtotime($row->data)); ?>
+                                                        </td>
+                                                        <td><?php echo date('H:i', strtotime($row->hora)); ?>
+                                                        </td>
+                                                        <td><?php echo $row->ip; ?>
+                                                        </td>
+                                                    </tr>
                                                     <?php } ?>
                                                 </tbody>
-                                            </table> 
+                                            </table>
                                         </div>
                                         <div class="col-md-12" align="center"><button id="imprimirelatorio"
-                                                    class="btn btn-success">Imprimir</button></div>
+                                                class="btn btn-success">Imprimir</button></div>
                                     </form>
                                 </div>
                             </div>
@@ -207,7 +225,7 @@
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -234,7 +252,7 @@
         $("#imprimirelatorio").click(function(event) {
             var profissional = $("#medico").val();
             var start = $("#start").val();
-            var end   = $("#end").val();
+            var end = $("#end").val();
 
             var url = 'relacoesmed.php?start=' + start + '&end=' + end + '&medico=' + profissional;
             window.open(url);

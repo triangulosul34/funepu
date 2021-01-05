@@ -1,245 +1,246 @@
 <?php
+require 'tsul_ssl.php';
 
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
 error_reporting(0);
-include('verifica.php');
+include 'verifica.php';
 //include('funcoes.php');
 $menu_grupo = '2';
 $menu_sgrupo = '4';
 
-$nome        = "";
-$sexo        = "";
-$cpf        = "";
-$dtnasc    = "";
-$endereco    = "";
-$numero    = "";
-$complemento = "";
-$bairro    = "";
-$cep        = "";
-$cidade    = "";
-$uf         = "";
-$nome_mae    = "";
-$nome_pai = "";
-$identidade = "";
-$org_exped = "";
-$raca_cor    = "";
-$est_civil = "";
-$telefone    = "";
-$telefone2 = "";
-$celular    = "";
-$celular2    = "";
-$imagem    = "";
-$facebook    = "";
-$twitter    = "";
-$whatsup    = "";
-$email    = "";
+$nome = '';
+$sexo = '';
+$cpf = '';
+$dtnasc = '';
+$endereco = '';
+$numero = '';
+$complemento = '';
+$bairro = '';
+$cep = '';
+$cidade = '';
+$uf = '';
+$nome_mae = '';
+$nome_pai = '';
+$identidade = '';
+$org_exped = '';
+$raca_cor = '';
+$est_civil = '';
+$telefone = '';
+$telefone2 = '';
+$celular = '';
+$celular2 = '';
+$imagem = '';
+$facebook = '';
+$twitter = '';
+$whatsup = '';
+$email = '';
 $nome_social = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $id =     $_GET['id'];
-    $codigox = $id;
-    include('conexao.php');
-    $stmt = "SELECT * FROM pessoas a WHERE pessoa_id=$id";
-    $sth = pg_query($stmt) or die($stmt);
-    $row = pg_fetch_object($sth);
-    $nome        = $row->nome;
-    $sexo        = $row->sexo;
-    $cpf        = $row->cpf;
-    $dtnasc    = inverteData($row->dt_nasc);
-    $endereco    = $row->endereco;
-    $numero    = $row->numero;
-    $complemento = $row->complemento;
-    $bairro    = $row->bairro;
-    $cep        = $row->cep;
-    $cidade    = $row->cidade;
-    $uf         = $row->estado;
-    $nome_mae    = $row->nome_mae;
-    $nome_pai = $row->nome_pai;
-    $identidade = $row->identidade;
-    $org_exped = $row->org_expeditor;
-    $raca_cor    = $row->raca_cor;
-    $est_civil = $row->est_civil;
-    $telefone    = $row->telefone;
-    $telefone2 = $row->telefone2;
-    $celular    = $row->celular;
-    $celular2    = $row->celular2;
-    $imagem        = $row->imagem;
-    $perfilu    = $row->perfil;
-    $facebook    = $row->facebook;
-    $twitter    = $row->twitter;
-    $whatsup    = $row->whatsup;
-    $email        = $row->email;
-    $tipo_pessoa = $row->tipo_pessoa;
-    $lotacao      = $row->lotacao;
-    $grupo_user = $row->grupo_user_id;
-    $sgrupo_userx = $row->sgrupo_user_id;
-    ;
-    $convenio   = $row->convenio_padrao;
-    $num_carteira_convenio = $row->num_carteira_convenio;
-    $conselho = $row->conselho_regional;
-    $num_conselho  = $row->num_conselho_reg;
-    $especialidade = $row->especialidade_id;
-    $username  = $row->username;
-    $password  = 'senha';
-    $nome_social = $row->nome_social;
-    if ($sexo == 'M') {
-        $sexo_desc = 'Masculino';
-    }
-    if ($status == 'F') {
-        $status_desc = 'Feminino';
-    }
-    if ($tipo_pessoa == 'Administrativo') {
-        $tipo = 'A';
-    }
-    if ($tipo_pessoa == 'Cliente') {
-        $tipo = 'C';
-    }
-    if ($tipo_pessoa == 'Medico Laudador') {
-        $tipo = 'M';
-    }
-    if ($tipo_pessoa == 'Solicitante') {
-        $tipo == 'S';
-    }
+	$id = $_GET['id'];
+	$codigox = $id;
+	include 'conexao.php';
+	$stmt = "SELECT * FROM pessoas a WHERE pessoa_id=$id";
+	$sth = pg_query($stmt) or die($stmt);
+	$row = pg_fetch_object($sth);
+	$nome = ts_decodifica($row->nome);
+	$sexo = $row->sexo;
+	$cpf = ts_decodifica($row->cpf);
+	$dtnasc = inverteData($row->dt_nasc);
+	$endereco = $row->endereco;
+	$numero = $row->numero;
+	$complemento = $row->complemento;
+	$bairro = $row->bairro;
+	$cep = $row->cep;
+	$cidade = $row->cidade;
+	$uf = $row->estado;
+	$nome_mae = ts_decodifica($row->nome_mae);
+	$nome_pai = ts_decodifica($row->nome_pai);
+	$identidade = $row->identidade;
+	$org_exped = $row->org_expeditor;
+	$raca_cor = $row->raca_cor;
+	$est_civil = $row->est_civil;
+	$telefone = $row->telefone;
+	$telefone2 = $row->telefone2;
+	$celular = $row->celular;
+	$celular2 = $row->celular2;
+	$imagem = $row->imagem;
+	$perfilu = $row->perfil;
+	$facebook = $row->facebook;
+	$twitter = $row->twitter;
+	$whatsup = $row->whatsup;
+	$email = $row->email;
+	$tipo_pessoa = $row->tipo_pessoa;
+	$lotacao = $row->lotacao;
+	$grupo_user = $row->grupo_user_id;
+	$sgrupo_userx = $row->sgrupo_user_id;
+	;
+	$convenio = $row->convenio_padrao;
+	$num_carteira_convenio = $row->num_carteira_convenio;
+	$conselho = $row->conselho_regional;
+	$num_conselho = $row->num_conselho_reg;
+	$especialidade = $row->especialidade_id;
+	$username = $row->username;
+	$password = 'senha';
+	$nome_social = $row->nome_social;
+	if ($sexo == 'M') {
+		$sexo_desc = 'Masculino';
+	}
+	if ($status == 'F') {
+		$status_desc = 'Feminino';
+	}
+	if ($tipo_pessoa == 'Administrativo') {
+		$tipo = 'A';
+	}
+	if ($tipo_pessoa == 'Cliente') {
+		$tipo = 'C';
+	}
+	if ($tipo_pessoa == 'Medico Laudador') {
+		$tipo = 'M';
+	}
+	if ($tipo_pessoa == 'Solicitante') {
+		$tipo == 'S';
+	}
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $codigox     = $_POST['codigo'];
-    $nome        = $_POST['nome'];
-    $nome_mae    = $_POST['nome_mae'];
-    $nome_pai    = $_POST['nome_pai'];
-    $sexo        = $_POST['sexo'];
-    $cpf        = $_POST['cpf'];
-    $dtnasc        = $_POST['dtnasc'];
-    $raca_cor    = $_POST['raca_cor'];
-    $endereco    = $_POST['endereco'];
-    $numero        = $_POST['numero'];
-    $complemento = $_POST['complemento'];
-    $bairro        = $_POST['bairro'];
-    $cep        = $_POST['cep'];
-    $cidade        = $_POST['cidade'];
-    $uf         = $_POST['uf'];
-    $telefone    = $_POST['telefone'];
-    $celular    = $_POST['celular'];
-    $telefone2    = $_POST['telefone2'];
-    $celular2    = $_POST['celular2'];
-    $depto        = $_POST['setor'];
-    $ramal        = $_POST['ramal'];
-    $tratamento = $_POST['tratamento'];
-    $profissao    = $_POST['profissao'];
-    $username    = trim($_POST['username']);
-    $senha        = $_POST['password'];
-    $imagem        = $_FILES["fileToUpload"]["name"];
-    $perfilu    = $_POST['perfil'];
-    $status        = $_POST['status'];
-    $facebook    = $_POST['facebook'];
-    $twitter    = $_POST['twitter'];
-    $email        = $_POST['email'];
-    $nome_mae    = $_POST['nome_mae'];
-    $nome_pai      = $_POST['nome_pai'];
-    $conselho    = $_POST['conselho'];
-    $num_conselho = $_POST['num_conselho'];
-    $especialidade =    $_POST['especialidade'];
-    $identidade    = $_POST['identidade'];
-    $org_exped     = $_POST['org_exped'];
-    $dtn        = inverteData($_POST['dtnasc']);
-    $whatsup    = $_POST['whatsup'];
-    $tipo         = $_POST['tipo'];
-    $tipo_pessoa = $_POST['tipo_pessoa'];
-    $datacad    = date('Y-m-d');
-    $lotacao      = $_POST['lotacao'];
-    $grupo_user = $_POST['grupo_user'];
-    $sgrupo_user = $_POST['sgrupo_user'];
-    $convenio   = $_POST['convenio'];
-    $password   = $_POST['password'];
-    $num_carteira_convenio = $_POST['num_carteira_convenio'];
-    $nome_social = $_POST['nome_social'];
+	$codigox = $_POST['codigo'];
+	$nome = ts_codifica($_POST['nome']);
+	$nome_mae = ts_codifica($_POST['nome_mae']);
+	$nome_pai = ts_codifica($_POST['nome_pai']);
+	$sexo = $_POST['sexo'];
+	$cpf = $_POST['cpf'];
+	$dtnasc = $_POST['dtnasc'];
+	$raca_cor = $_POST['raca_cor'];
+	$endereco = $_POST['endereco'];
+	$numero = $_POST['numero'];
+	$complemento = $_POST['complemento'];
+	$bairro = $_POST['bairro'];
+	$cep = $_POST['cep'];
+	$cidade = $_POST['cidade'];
+	$uf = $_POST['uf'];
+	$telefone = $_POST['telefone'];
+	$celular = $_POST['celular'];
+	$telefone2 = $_POST['telefone2'];
+	$celular2 = $_POST['celular2'];
+	$depto = $_POST['setor'];
+	$ramal = $_POST['ramal'];
+	$tratamento = $_POST['tratamento'];
+	$profissao = $_POST['profissao'];
+	$username = trim($_POST['username']);
+	$senha = $_POST['password'];
+	$imagem = $_FILES['fileToUpload']['name'];
+	$perfilu = $_POST['perfil'];
+	$status = $_POST['status'];
+	$facebook = $_POST['facebook'];
+	$twitter = $_POST['twitter'];
+	$email = $_POST['email'];
+	$nome_mae = ts_codifica($_POST['nome_mae']);
+	$nome_pai = ts_codifica($_POST['nome_pai']);
+	$conselho = $_POST['conselho'];
+	$num_conselho = $_POST['num_conselho'];
+	$especialidade = $_POST['especialidade'];
+	$identidade = $_POST['identidade'];
+	$org_exped = $_POST['org_exped'];
+	$dtn = inverteData($_POST['dtnasc']);
+	$whatsup = $_POST['whatsup'];
+	$tipo = $_POST['tipo'];
+	$tipo_pessoa = $_POST['tipo_pessoa'];
+	$datacad = date('Y-m-d');
+	$lotacao = $_POST['lotacao'];
+	$grupo_user = $_POST['grupo_user'];
+	$sgrupo_user = $_POST['sgrupo_user'];
+	$convenio = $_POST['convenio'];
+	$password = $_POST['password'];
+	$num_carteira_convenio = $_POST['num_carteira_convenio'];
+	$nome_social = $_POST['nome_social'];
 
-    $desc_sexo = "";
-    if ($sexo == 'F') {
-        $desc_sexo = "Feminino";
-    }
-    if ($sexo == 'M') {
-        $desc_sexo = "Masculino";
-    }
+	$desc_sexo = '';
+	if ($sexo == 'F') {
+		$desc_sexo = 'Feminino';
+	}
+	if ($sexo == 'M') {
+		$desc_sexo = 'Masculino';
+	}
 
-    $erro = "";
-    if ($sexo == "") {
-        $erro = "Sexo - Campo Obrigatorio";
-    }
-    if ($nome == "") {
-        $erro = "Nome - Campo Obrigatorio";
-    }
-    //if ($dtn=="")   {$erro="Data de Nascimento - Campo Obrigatorio";}
-    // if ($cpf != "") {
-    //     if (!(validaCPF($cpf))) {
-    //         $erro = "CPF - Valor Invalido";
-    //     }
-    // }
-    if ($especialidade == "") {
-        $especialidade = '0';
-    }
-    if ($lotacao == "") {
-        $lotacao = '0';
-    }
-    if ($grupo_user == "") {
-        $grupo_user = '0';
-    }
-    if ($sgrupo_user == "") {
-        $sgrupo_user = '0';
-    }
-    if ($convenio == "") {
-        $convenio = '0';
-    }
-    if ($erro == "") {
-        $pessoa_pront = $_GET['id'];
-        include('conexao.php');
-        $stmt = "update pessoas set nome='$nome', nome_mae='$nome_mae', nome_pai='$nome_pai', perfil='$perfilu', sexo='$sexo', cpf='$cpf', dt_nasc='$dtn', endereco='$endereco', numero='$numero', complemento='$complemento', bairro='$bairro', cep='$cep',		
+	$erro = '';
+	if ($sexo == '') {
+		$erro = 'Sexo - Campo Obrigatorio';
+	}
+	if ($nome == '') {
+		$erro = 'Nome - Campo Obrigatorio';
+	}
+	//if ($dtn=="")   {$erro="Data de Nascimento - Campo Obrigatorio";}
+	// if ($cpf != "") {
+	//     if (!(validaCPF($cpf))) {
+	//         $erro = "CPF - Valor Invalido";
+	//     }
+	// }
+	if ($especialidade == '') {
+		$especialidade = '0';
+	}
+	if ($lotacao == '') {
+		$lotacao = '0';
+	}
+	if ($grupo_user == '') {
+		$grupo_user = '0';
+	}
+	if ($sgrupo_user == '') {
+		$sgrupo_user = '0';
+	}
+	if ($convenio == '') {
+		$convenio = '0';
+	}
+	if ($erro == '') {
+		$pessoa_pront = $_GET['id'];
+		include 'conexao.php';
+		$stmt = "update pessoas set nome='$nome', nome_mae='$nome_mae', nome_pai='$nome_pai', perfil='$perfilu', sexo='$sexo', cpf='$cpf', dt_nasc='$dtn', endereco='$endereco', numero='$numero', complemento='$complemento', bairro='$bairro', cep='$cep',		
 			cidade='$cidade', estado='$uf', telefone='$telefone',  telefone2='$telefone2', org_expeditor = '$org_exped', celular='$celular', celular2='$celular', username='$username',";
 
-        if ($imagem <> '') {
-            $stmt = $stmt . "imagem='$imagem',";
-        }
-        if ($password <> 'senha') {
-            $stmt = $stmt . "password=md5('$password'),";
-        }
-        if ($identidade <> '') {
-            $stmt = $stmt . "identidade=$identidade,";
-        }
-        if ($raca_cor <> '') {
-            $stmt = $stmt . "raca_cor='$raca_cor',";
-        }
-        $stmt = $stmt . "facebook='$facebook', twitter='$twitter', tipo_pessoa='$tipo_pessoa', 
+		if ($imagem <> '') {
+			$stmt = $stmt . "imagem='$imagem',";
+		}
+		if ($password <> 'senha') {
+			$stmt = $stmt . "password=md5('$password'),";
+		}
+		if ($identidade <> '') {
+			$stmt = $stmt . "identidade=$identidade,";
+		}
+		if ($raca_cor <> '') {
+			$stmt = $stmt . "raca_cor='$raca_cor',";
+		}
+		$stmt = $stmt . "facebook='$facebook', twitter='$twitter', tipo_pessoa='$tipo_pessoa', 
 			lotacao='$lotacao', grupo_user_id = '$grupo_user', sgrupo_user_id = '$sgrupo_user',	convenio_padrao = '$convenio', num_carteira_convenio='$num_carteira_convenio', conselho_regional='$conselho', num_conselho_reg='$num_conselho', especialidade_id = $especialidade, email='$email', whatsup='$whatsup',nome_social='$nome_social' WHERE pessoa_id=$pessoa_pront";
-        $sth = pg_query($stmt) or die($stmt);
-        if ($imagem <> '') {
-            $target_dir = "/var/www/html/funepu/html/imagens/clientes";
-            $target_file = $target_dir . '/' . basename($_FILES["fileToUpload"]["name"]);
-            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-                echo  '<script type="text/javascript">alert("Arquivo Enviado!");</script>';
-            } else {
-                echo  '<script type="text/javascript">alert("' . $imagem . ' Arquivo nao Enviado!");</script>';
-            }
-        }
-        if ($tipo_pessoa == 'Cliente') {
-            header("location: clientes.php");
-        }
-        if ($tipo_pessoa == 'Medico Laudador') {
-            header("location: medicos.php");
-        }
-        if ($tipo_pessoa == 'Solicitante') {
-            header("location: solicitantes.php");
-        }
-        if ($tipo_pessoa == 'Administrativo') {
-            header("location: colaboradores.php");
-        }
-    }
+		$sth = pg_query($stmt) or die($stmt);
+		if ($imagem <> '') {
+			$target_dir = '/var/www/html/funepu/html/imagens/clientes';
+			$target_file = $target_dir . '/' . basename($_FILES['fileToUpload']['name']);
+			if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file)) {
+				echo  '<script type="text/javascript">alert("Arquivo Enviado!");</script>';
+			} else {
+				echo  '<script type="text/javascript">alert("' . $imagem . ' Arquivo nao Enviado!");</script>';
+			}
+		}
+		if ($tipo_pessoa == 'Cliente') {
+			header('location: clientes.php');
+		}
+		if ($tipo_pessoa == 'Medico Laudador') {
+			header('location: medicos.php');
+		}
+		if ($tipo_pessoa == 'Solicitante') {
+			header('location: solicitantes.php');
+		}
+		if ($tipo_pessoa == 'Administrativo') {
+			header('location: colaboradores.php');
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -295,8 +296,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body class="pace-done" cz-shortcut-listen="true">
     <div class="wrapper">
-        <?php include('menu.php'); ?>
-        <?php include('header.php'); ?>
+        <?php include 'menu.php'; ?>
+        <?php include 'header.php'; ?>
         <div class="main-panel">
             <div class="main-content">
                 <div class="content-wrapper">
@@ -343,13 +344,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </div>
                                     </div>
                                     <?php
-                                    if ($erro != "") {
-                                        echo '<div class="row">
+									if ($erro != '') {
+										echo '<div class="row">
 		        <div class="col-sm-12">
 								<strong>Erro:!</strong><br><li>' . $erro . '</li>
 				</div>		
 		  </div>';
-                                    } ?>
+									} ?>
                                 </div>
                                 <!-- CORPO DA PAGINA -->
                                 <div class="card-content">
@@ -440,13 +441,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <label class="control-label">Sexo</label>
                                                             <select name="sexo" id="sexo" class="form-control square">
                                                                 <option></option>
-                                                                <option value="M" <?php if ($sexo == "M") {
-                                        echo "selected";
-                                    } ?>>Masculino
+                                                                <option value="M" <?php if ($sexo == 'M') {
+										echo 'selected';
+									} ?>>Masculino
                                                                 </option>
-                                                                <option value="F" <?php if ($sexo == "F") {
-                                        echo "selected";
-                                    } ?>>Feminino
+                                                                <option value="F" <?php if ($sexo == 'F') {
+										echo 'selected';
+									} ?>>Feminino
                                                                 </option>
                                                             </select>
                                                         </div>
@@ -477,28 +478,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <select name="raca_cor" id="raca_cor"
                                                                 class="form-control  square">
                                                                 <option></option>
-                                                                <option value="Branca" <?php if ($raca_cor == "Branca") {
-                                        echo "selected";
-                                    } ?>>Branca
+                                                                <option value="Branca" <?php if ($raca_cor == 'Branca') {
+										echo 'selected';
+									} ?>>Branca
                                                                 </option>
-                                                                <option value="Preta" <?php if ($raca_cor == "Preta") {
-                                        echo "selected";
-                                    } ?>>Preta
+                                                                <option value="Preta" <?php if ($raca_cor == 'Preta') {
+										echo 'selected';
+									} ?>>Preta
                                                                 </option>
-                                                                <option value="Parda" <?php if ($raca_cor == "Parda") {
-                                        echo "selected";
-                                    } ?>>Parda
+                                                                <option value="Parda" <?php if ($raca_cor == 'Parda') {
+										echo 'selected';
+									} ?>>Parda
                                                                 </option>
-                                                                <option value="Amarela" <?php if ($raca_cor == "Amarela") {
-                                        echo "selected";
-                                    } ?>>Amarela
+                                                                <option value="Amarela" <?php if ($raca_cor == 'Amarela') {
+										echo 'selected';
+									} ?>>Amarela
                                                                 </option>
-                                                                <option value="Indigena" <?php if ($raca_cor == "Indigena") {
-                                        echo "selected";
-                                    } ?>>Indigena
+                                                                <option value="Indigena" <?php if ($raca_cor == 'Indigena') {
+										echo 'selected';
+									} ?>>Indigena
                                                                 </option>
                                                             </select>
                                                         </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-3">
+                                                        <label class="control-label">CNS
+                                                        </label> <input type="text" name="num_carteira_convenio"
+                                                            id="num_carteira_convenio" class="form-control"
+                                                            value="<?php echo $num_carteira_convenio; ?>"
+                                                            onkeypress='return SomenteNumero(event)'>
                                                     </div>
                                                 </div>
                                                 <h4 class="form-section"><i class="fas fa-phone-volume"></i> Contato
@@ -621,32 +631,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <select name="conselho" id="conselho" class="form-control">
                                                                 <option></option>
                                                                 <option value='CRA' <?php if ($conselho == 'CRA') {
-                                        echo 'selected';
-                                    } ?>>CRA
+										echo 'selected';
+									} ?>>CRA
                                                                 </option>
                                                                 <option value='CRBIO' <?php if ($conselho == 'CRBIO') {
-                                        echo 'selected';
-                                    } ?>>CRBIO
+										echo 'selected';
+									} ?>>CRBIO
                                                                 </option>
                                                                 <option value='CRBM' <?php if ($conselho == 'CRBM') {
-                                        echo 'selected';
-                                    } ?>>CRBM
+										echo 'selected';
+									} ?>>CRBM
                                                                 </option>
                                                                 <option value='CREFITO' <?php if ($conselho == 'CREFITO') {
-                                        echo 'selected';
-                                    } ?>>CREFITO
+										echo 'selected';
+									} ?>>CREFITO
                                                                 </option>
                                                                 <option value='CRM' <?php if ($conselho == 'CRM') {
-                                        echo 'selected';
-                                    } ?>>CRM
+										echo 'selected';
+									} ?>>CRM
                                                                 </option>
                                                                 <option value='CRO' <?php if ($conselho == 'CRO') {
-                                        echo 'selected';
-                                    } ?>>CRO
+										echo 'selected';
+									} ?>>CRO
                                                                 </option>
                                                                 <option value='COREN' <?php if ($conselho == 'COREN') {
-                                        echo 'selected';
-                                    } ?>>COREN
+										echo 'selected';
+									} ?>>COREN
                                                                 </option>
                                                             </select>
                                                         </div>
@@ -667,25 +677,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 class="form-control">
                                                                 <option></option>
                                                                 <?php
-                                                                    include('conexao.php');
-                                                                    $stmt = "SELECT * FROM especialidade order by descricao";
-                                                                    $sth = pg_query($stmt) or die($stmt);
-                                                                    while ($row = pg_fetch_object($sth)) { ?>
+																	include 'conexao.php';
+																	$stmt = 'SELECT * FROM especialidade order by descricao';
+																	$sth = pg_query($stmt) or die($stmt);
+																	while ($row = pg_fetch_object($sth)) { ?>
                                                                 <option
                                                                     value="<?php echo $row->especialidade_id; ?>"
                                                                     <?php if ($especialidade == $row->especialidade_id) {
-                                                                        echo "selected";
-                                                                    } ?>><?php echo $row->descricao; ?>
+																		echo 'selected';
+																	} ?>><?php echo $row->descricao; ?>
                                                                 </option>
                                                                 <?php
-                                                                    }
-                                                                    ?>
+																	}
+																	?>
                                                             </select>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <?php }
-                                                if ($tipo != 'C') { ?>
+												if ($tipo != 'C') { ?>
                                                 <h4 class="form-section"><i class="fas fa-sign-in-alt"></i> Controle de
                                                     Usuario</h4>
                                                 <div class="row">
@@ -694,76 +704,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <label class="control-label">Perfil de Usuario</label>
                                                             <select name="perfil" id="perfil" class="form-control">
                                                                 <option></option>
-                                                                <option value='01' <?php if ($perfilu == "01") {
-                                                    echo "selected";
-                                                } ?>>Usuário
+                                                                <option value='01' <?php if ($perfilu == '01') {
+													echo 'selected';
+												} ?>>Usuário
                                                                 </option>
-                                                                <option value='02' <?php if ($perfilu == "02") {
-                                                    echo "selected";
-                                                } ?>>Gerente
-                                                                </option>
-
-                                                                <option value='07' <?php if ($perfilu == "07") {
-                                                    echo "selected";
-                                                } ?>>Laudador
+                                                                <option value='02' <?php if ($perfilu == '02') {
+													echo 'selected';
+												} ?>>Gerente
                                                                 </option>
 
-                                                                <option value='03' <?php if ($perfilu == "03") {
-                                                    echo "selected";
-                                                } ?>>Médico
+                                                                <option value='07' <?php if ($perfilu == '07') {
+													echo 'selected';
+												} ?>>Laudador
                                                                 </option>
-                                                                <option value='08' <?php if ($perfilu == "08") {
-                                                    echo "selected";
-                                                } ?>>Enfermagem
+
+                                                                <option value='03' <?php if ($perfilu == '03') {
+													echo 'selected';
+												} ?>>Médico
                                                                 </option>
-                                                                <option value='05' <?php if ($perfilu == "05") {
-                                                    echo "selected";
-                                                } ?>>Tecnico
+                                                                <option value='08' <?php if ($perfilu == '08') {
+													echo 'selected';
+												} ?>>Enfermagem
                                                                 </option>
-                                                                <option value='04' <?php if ($perfilu == "04") {
-                                                    echo "selected";
-                                                } ?>>Administrativo
+                                                                <option value='05' <?php if ($perfilu == '05') {
+													echo 'selected';
+												} ?>>Tecnico
+                                                                </option>
+                                                                <option value='04' <?php if ($perfilu == '04') {
+													echo 'selected';
+												} ?>>Administrativo
                                                                 </option>
                                                                 <?php if ($perfil == '06') { ?>
-                                                                <option value='06' <?php if ($perfilu == "06") {
-                                                    echo "selected";
-                                                } ?>>Super
+                                                                <option value='06' <?php if ($perfilu == '06') {
+													echo 'selected';
+												} ?>>Super
                                                                     Usuário
                                                                 </option>
                                                                 <?php } ?>
-                                                                <option value='09' <?php if ($perfilu == "09") {
-                                                    echo "selected";
-                                                } ?>>Monitoramento
+                                                                <option value='09' <?php if ($perfilu == '09') {
+													echo 'selected';
+												} ?>>Monitoramento
                                                                 </option>
 
-                                                                <option value='10' <?php if ($perfilu == "10") {
-                                                    echo "selected";
-                                                } ?>>Biomedico
+                                                                <option value='10' <?php if ($perfilu == '10') {
+													echo 'selected';
+												} ?>>Biomedico
                                                                 </option>
-                                                                <option value='11' <?php if ($perfilu == "11") {
-                                                    echo "selected";
-                                                } ?>>Técnico
+                                                                <option value='11' <?php if ($perfilu == '11') {
+													echo 'selected';
+												} ?>>Técnico
                                                                     em Análises Clinicas
                                                                 </option>
 
-                                                                <option value='12' <?php if ($perfilu == "12") {
-                                                    echo "selected";
-                                                } ?>>Adm.
+                                                                <option value='12' <?php if ($perfilu == '12') {
+													echo 'selected';
+												} ?>>Adm.
                                                                     Laboratorio
                                                                 </option>
-                                                                <option value='13' <?php if ($perfilu == "13") {
-                                                    echo "selected";
-                                                } ?>>Sus
+                                                                <option value='13' <?php if ($perfilu == '13') {
+													echo 'selected';
+												} ?>>Sus
                                                                     Fácil
                                                                 </option>
-                                                                <option value='14' <?php if ($perfilu == "14") {
-                                                    echo "selected";
-                                                } ?>>Médico
+                                                                <option value='14' <?php if ($perfilu == '14') {
+													echo 'selected';
+												} ?>>Médico
                                                                     do Trabalho
                                                                 </option>
-                                                                <option value='15' <?php if ($perfilu == "15") {
-                                                    echo "selected";
-                                                } ?>>Recepcionista
+                                                                <option value='15' <?php if ($perfilu == '15') {
+													echo 'selected';
+												} ?>>Recepcionista
                                                                 </option>
 
                                                             </select>
@@ -776,19 +786,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                 class="form-control">
                                                                 <option></option>
                                                                 <?php
-                                                                    include('conexao.php');
-                                                                    $stmt = "SELECT * FROM usuarios_grupos order by descricao";
-                                                                    $sth = pg_query($stmt) or die($stmt);
-                                                                    while ($row = pg_fetch_object($sth)) { ?>
+																	include 'conexao.php';
+																	$stmt = 'SELECT * FROM usuarios_grupos order by descricao';
+																	$sth = pg_query($stmt) or die($stmt);
+																	while ($row = pg_fetch_object($sth)) { ?>
                                                                 <option
                                                                     value="<?php echo $row->grupo_user_id; ?>"
                                                                     <?php if ($grupo_user == $row->grupo_user_id) {
-                                                                        echo "selected";
-                                                                    } ?>><?php echo $row->descricao ?>
+																		echo 'selected';
+																	} ?>><?php echo $row->descricao ?>
                                                                 </option>
                                                                 <?php
-                                                                    }
-                                                                    ?>
+																	}
+																	?>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -815,6 +825,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </div>
                                                 <?php } ?>
                                                 <div class="row">
+                                                    <div class="col-md-12">
+                                                        <button type="button" class="btn btn-success"
+                                                            onclick="bhidden_estadia()">Estadias</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row" id="hidden_estadia" style="display: none;">
+                                                    <div class="col-6 col"><br>
+                                                        <div class="col-12 text-center"><br>
+                                                            <h4 class="form-section-center"><i
+                                                                    class="fas fa-hospital-alt"></i> Estadias Anteriores
+                                                            </h4>
+                                                            <hr style="margin: auto;width: 260px">
+                                                        </div>
+
+                                                        <div class="col-sm-12" style="height: 300px;overflow-y: auto;">
+                                                            <br>
+
+                                                            <table class="table table-hover table-striped width-full">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Data</th>
+                                                                        <th>Unidade</th>
+                                                                        <th style="text-align: center">Laudo</th>
+                                                                    </tr>
+                                                                </thead>
+
+                                                                <tbody>
+                                                                    <?php
+																	include 'conexao.php';
+																	$stmt = 'select dat_cad, paciente_id, sigla, transacao from atendimentos a left join unidade_atendimento b on a.local=b.unidade_id where paciente_id=' . $codigox . ' order by dat_cad desc';
+																	$sth = pg_query($stmt) or die($stmt);
+																	//echo $stmt;
+																	while ($row = pg_fetch_object($sth)) {
+																		echo '<tr>';
+																		echo '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . '</td>';
+																		echo '<td>' . UNIDADE_CONFIG . '</td>';
+																		echo "<td align=\"center\" ><a href='atendimentoclinico.php?id=" . $row->transacao . "&estadia=1' target='_blank' class=\"fas fa-search\"></a></td>";
+																		echo '</tr>';
+																	}
+																	?>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-4">
                                                     <div align="center" class="col-md-12 margin-bottom-30">
                                                         <button type="submit"
                                                             class="btn btn-wide btn-primary">Gravar</button>
@@ -831,7 +888,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/popper.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/bootstrap.min.js" type="text/javascript"></script>
@@ -1040,6 +1097,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $.get('verifica_cpf.php?cpf=' + a, function(dataReturn) {
                 $("#cpf_exists").html(dataReturn);
             });
+        }
+
+        function bhidden_estadia() {
+            document.getElementById("hidden_estadia").style.display = 'block';
         }
     </script>
 </body>

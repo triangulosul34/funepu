@@ -1,30 +1,33 @@
 <?php
+
+require 'tsul_ssl.php';
+
 error_reporting(0);
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
 $pesquisa = 'qwwwqq';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $termo            = $_GET['pesquisa'];
+	$termo = $_GET['pesquisa'];
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $pesquisa            = strtoupper($_POST['pesquisa']);
-    if ($pesquisa == '') {
-        $pesquisa = 'qwwwqq';
-    }
-    $palavras = explode(" ", $pesquisa);
-    $pos      = explode("/", $pesquisa);
+	$pesquisa = strtoupper($_POST['pesquisa']);
+	if ($pesquisa == '') {
+		$pesquisa = 'qwwwqq';
+	}
+	$palavras = explode(' ', $pesquisa);
+	$pos = explode('/', $pesquisa);
 
-    if ((count($palavras) < 2) and  (count($pos) < 3) and !is_numeric($pesquisa)) {
-        $pesquisa = 'qwwwqq';
-        echo  "<script>alert('Consulta Invalida! Seja Especifico');</script>";
-    }
+	if ((count($palavras) < 2) and (count($pos) < 3) and !is_numeric($pesquisa)) {
+		$pesquisa = 'qwwwqq';
+		echo  "<script>alert('Consulta Invalida! Seja Especifico');</script>";
+	}
 }
 ?>
 
@@ -47,7 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -73,9 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         //função javascript que retornará o codigo 
-        function retorna(id, nome, sexo, dtnasc, idade, endereco, numero, complemento, bairro, cidade, estado, telefone, celular, cep, ocorrencia, cpf, imagem, nome_mae, carteirinha, identidade, org_expeditor, doc) //passando um parametro 
+        function retorna(id, nome, sexo, dtnasc, idade, endereco, numero, complemento, bairro, cidade, estado, telefone,
+            celular, cep, ocorrencia, cpf, imagem, nome_mae, carteirinha, identidade, org_expeditor, doc
+        ) //passando um parametro 
         {
-            window.opener.document.pedido.prontuario.value = id; //a janela mãe recebe o id, você precisa passar o nome do formulario e do textfield que receberá o valor passado por parametro. 
+            window.opener.document.pedido.prontuario.value =
+                id; //a janela mãe recebe o id, você precisa passar o nome do formulario e do textfield que receberá o valor passado por parametro. 
             window.opener.document.pedido.nome.value = nome;
             window.opener.document.pedido.sexo.value = sexo;
             window.opener.document.pedido.dt_nascimento.value = dtnasc;
@@ -111,7 +119,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             if (doc) {
-                window.opener.document.getElementById('fdoc').innerHTML = '<div class="row mt-3"><div class="col-md-12"><a href="documents/' + doc + '" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc">Visualizar Documentos <i class="far fa-address-card"></i></a></div></div>';
+                window.opener.document.getElementById('fdoc').innerHTML =
+                    '<div class="row mt-3"><div class="col-md-12"><a href="documents/' + doc +
+                    '" class="btn btn-primary btn-lg mr-5" target="_blank" id="doc">Visualizar Documentos <i class="far fa-address-card"></i></a></div></div>';
             }
 
             arr_idade = idade.split('');
@@ -168,12 +178,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                        window.location = "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
+                        window.location =
+                            "agendaexame.php?data=<?php echo date('Y-m-d'); ?>";
                         window.location.reload()
                     }
                 }
 
-                xmlhttp.open("GET", "apagaagendatemp.php?id=<?php echo $transacao; ?>");
+                xmlhttp.open("GET",
+                    "apagaagendatemp.php?id=<?php echo $transacao; ?>");
                 xmlhttp.send();
             }
         }
@@ -214,8 +226,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -230,7 +242,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Página Padrão
                                                 </h4>
                                             </div>
@@ -260,7 +273,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <form method="post" id="form_pesquisa" autocomplete="off">
                                         <div class="col-sm-12">
                                             <label class="control-label">Paciente</label>
-                                            <input type="text" name="pesquisa" id="pesquisa" value='<?php echo $termo; ?>' class="form-control" autofocus>
+                                            <input type="text" name="pesquisa" id="pesquisa"
+                                                value='<?php echo $termo; ?>'
+                                                class="form-control" autofocus>
                                         </div>
 
 
@@ -268,7 +283,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                             <div class="col-md-12">
                                                 <div class="form-group">
-                                                    <table class="table table-hover table-condensed table-striped width-full">
+                                                    <table
+                                                        class="table table-hover table-condensed table-striped width-full">
                                                         <thead>
                                                             <tr>
                                                                 <th>Ação
@@ -282,45 +298,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </thead>
                                                         <tbody>
                                                             <?php
-                                                            $x = 0;
-                                                            include('conexao.php');
-                                                            $stmt = "SELECT a.*, (select count(*) as qtde from ocorrencias b where b.pessoa_id=a.pessoa_id and situacao='Pendente') 
+															$x = 0;
+															include 'conexao.php';
+															$stmt = "SELECT a.*, (select count(*) as qtde from ocorrencias b where b.pessoa_id=a.pessoa_id and situacao='Pendente') 
 									                                 FROM pessoas a where ";
 
-                                                            if (is_numeric($pesquisa)) {
-                                                                $stmt = $stmt . " a.cpf = '$pesquisa' order by a.nome";
-                                                            } else {
-                                                                $pos = strpos($pesquisa, '/');
-                                                                if ($pos === false) {
-                                                                    $stmt = $stmt . " a.nome like '%$pesquisa%' order by a.nome, a.cpf desc ";
-                                                                } else {
-                                                                    $stmt = $stmt . " a.dt_nasc = '" . inverteData($pesquisa) . "' order by a.nome, a.cpf desc";
-                                                                }
-                                                            }
+															if (is_numeric($pesquisa)) {
+																$stmt = $stmt . " a.cpf = '" . ts_codifica($pesquisa) . "' order by a.nome";
+															} else {
+																$pos = strpos($pesquisa, '/');
+																if ($pos === false) {
+																	$stmt = $stmt . " a.nome like '" . ts_codifica($pesquisa) . "%' order by a.nome, a.cpf desc ";
+																} else {
+																	$stmt = $stmt . " a.dt_nasc = '" . inverteData($pesquisa) . "' order by a.nome, a.cpf desc";
+																}
+															}
 
-                                                            $sth = pg_query($stmt) or die($stmt);
-                                                            while ($row = pg_fetch_object($sth)) {
-                                                                $stmtAT = "SELECT dat_cad from atendimentos where paciente_id = $row->pessoa_id order by transacao desc";
-                                                                $sthAT = pg_query($stmtAT) or die($stmtAT);
-                                                                $rowAT = pg_fetch_object($sthAT);
+															$sth = pg_query($stmt) or die($stmt);
+															while ($row = pg_fetch_object($sth)) {
+																$stmtAT = "SELECT dat_cad from atendimentos where paciente_id = $row->pessoa_id order by transacao desc";
+																$sthAT = pg_query($stmtAT) or die($stmtAT);
+																$rowAT = pg_fetch_object($sthAT);
 
-                                                                $x = $x + 1;
-                                                                $dt_nasc = $row->dt_nasc;
-                                                                $date = new DateTime($dt_nasc); // data de nascimento
-                                                                $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
+																$x = $x + 1;
+																$dt_nasc = $row->dt_nasc;
+																$date = new DateTime($dt_nasc); // data de nascimento
+																$interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
 
-                                                                $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias																
-                                                                echo "<tr>";
-                                                                echo "<td><a href=\"javascript:retorna('" . $row->pessoa_id . "','" . $row->nome . "','" . $row->sexo . "','" . inverteData($row->dt_nasc) . "','" . $idade . "','" . $row->endereco . "','" . $row->numero . "','" . $row->complemento . "','" . $row->bairro . "','" . $row->cidade . "','" . $row->estado . "','" . $row->telefone . "','" . $row->celular . "','" . $row->cep . "','" . $row->qtde . "','" . $row->cpf . "','" . $row->imagem . "','" . $row->nome_mae . "','" . $row->num_carteira_convenio . "','" . $row->identidade . "','" . $row->org_expeditor . "','" . $row->documento . "')\" <i class=\"icon fas fa-check-circle\"></i></a></td>";
-                                                                echo "<td>" . $row->nome . "</td>";
-                                                                echo "<td>" . $row->qtde . "</td>";
-                                                                echo "<td>" . inverteData($row->dt_nasc) . "</td>";
-                                                                echo "<td>" . $row->nome_mae . "</td>";
-                                                                echo "<td>" . $row->cpf . "</td>";
-                                                                echo "<td>" . inverteData(substr($rowAT->dat_cad, "0", "10")) . "</td>";
-                                                                echo "</tr>";
-                                                            }
-                                                            ?>
+																$idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
+																echo '<tr>';
+																echo "<td><a href=\"javascript:retorna('" . $row->pessoa_id . "','" . ts_decodifica($row->nome) . "','" . $row->sexo . "','" . inverteData($row->dt_nasc) . "','" . $idade . "','" . $row->endereco . "','" . $row->numero . "','" . $row->complemento . "','" . $row->bairro . "','" . $row->cidade . "','" . $row->estado . "','" . $row->telefone . "','" . $row->celular . "','" . $row->cep . "','" . $row->qtde . "','" . ts_decodifica($row->cpf) . "','" . $row->imagem . "','" . ts_decodifica($row->nome_mae) . "','" . $row->num_carteira_convenio . "','" . ts_decodifica($row->identidade) . "','" . $row->org_expeditor . "','" . $row->documento . "')\" <i class=\"icon fas fa-check-circle\"></i></a></td>";
+																echo '<td>' . ts_decodifica($row->nome) . '</td>';
+																echo '<td>' . $row->qtde . '</td>';
+																echo '<td>' . inverteData($row->dt_nasc) . '</td>';
+																echo '<td>' . ts_decodifica($row->nome_mae) . '</td>';
+																echo '<td>' . ts_decodifica($row->cpf) . '</td>';
+																echo '<td>' . inverteData(substr($rowAT->dat_cad, '0', '10')) . '</td>';
+																echo '</tr>';
+															}
+															?>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -337,16 +353,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <?php if ($x == 0 && $pesquisa != "") {
-            if ($pesquisa != 'qwwwqq') {
-                echo "<div class=\"row\">";
-                echo "<div align=\"center\" class=\"col-md-12 margin-bottom-30\">";
-                echo "<button type=\"button\" class=\"btn btn-wide btn-success\" 	onClick=\"location.href='cadastropopup.php'\">Novo Cliente</button>";
-                echo  "</div></div>";
-            }
-        }
-        ?>
-        <?php include('footer.php'); ?>
+        <?php if ($x == 0 && $pesquisa != '') {
+																if ($pesquisa != 'qwwwqq') {
+																	echo '<div class="row">';
+																	echo '<div align="center" class="col-md-12 margin-bottom-30">';
+																	echo "<button type=\"button\" class=\"btn btn-wide btn-success\" 	onClick=\"location.href='cadastropopup.php'\">Novo Cliente</button>";
+																	echo  '</div></div>';
+																}
+															}
+		?>
+        <?php include 'footer.php'; ?>
         <!-- </div> -->
 
         <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -363,11 +379,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script defer src="/your-path-to-fontawesome/js/all.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" type="text/javascript"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.js" type="text/javascript">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
+            type="text/javascript"></script>
         <script>
             $("#pesquisa").keydown(function() {
                 if (window.event.keyCode == 13) {

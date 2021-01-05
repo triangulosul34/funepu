@@ -1,142 +1,141 @@
 <?php
 
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 error_reporting(0);
 $menu_grupo = '3';
 $menu_sgrupo = '1';
-$nome         = '';
-$dtnasc     = '';
-$telefone    = '';
-$mae         = '';
-include('verifica.php');
-$RX             = '';
-$US              = '';
-$CT             = '';
-$MM             = '';
-$RM             = '';
-$DS             = '';
-$ECO         = '';
+$nome = '';
+$dtnasc = '';
+$telefone = '';
+$mae = '';
+include 'verifica.php';
+$RX = '';
+$US = '';
+$CT = '';
+$MM = '';
+$RM = '';
+$DS = '';
+$ECO = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $codigo = $_GET['id'];
-    if ($codigo != "") {
-        $where = ' pessoa_id =' . $codigo;
-    }
+	$codigo = $_GET['id'];
+	if ($codigo != '') {
+		$where = ' pessoa_id =' . $codigo;
+	}
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $procedimentox = $_POST['procedimentox'];
-    $destino     = $_POST['encaminhamento'];
-    $nome        = $_POST['nome'];
-    $xbox        = $_POST['xbox'];
-    $CM          = $_POST['cb_cm'];
-    $OR          = $_POST['cb_ort'];
-    $start       = $_POST['start'];
-    $end         = $_POST['end'];
-    $transfere    = $_POST['cb_exame'];
-    $profissional = $_POST['prof_transfere'];
-    $cb_meus      = $_POST['cb_meus'];
-    $cb_conf      = $_POST['cb_CONFERENCIA'];
+	$procedimentox = $_POST['procedimentox'];
+	$destino = $_POST['encaminhamento'];
+	$nome = ts_codifica($_POST['nome']);
+	$xbox = $_POST['xbox'];
+	$CM = $_POST['cb_cm'];
+	$OR = $_POST['cb_ort'];
+	$start = $_POST['start'];
+	$end = $_POST['end'];
+	$transfere = $_POST['cb_exame'];
+	$profissional = $_POST['prof_transfere'];
+	$cb_meus = $_POST['cb_meus'];
+	$cb_conf = $_POST['cb_CONFERENCIA'];
 
-    $where = "";
+	$where = '';
 
+	if (isset($_POST['semana'])) {
+		$start = date('d/m/Y', strtotime('-7 days'));
+		$end = date('d/m/Y');
+	}
+	if (isset($_POST['hoje'])) {
+		$start = date('d/m/Y');
+		$end = date('d/m/Y');
+	}
+	if (isset($_POST['ontem'])) {
+		$start = date('d/m/Y', strtotime('-1 days'));
+		$end = date('d/m/Y', strtotime('-1 days'));
+	}
+	$modalidades = '';
 
-    if (isset($_POST['semana'])) {
-        $start          = date('d/m/Y', strtotime("-7 days"));
-        $end          = date('d/m/Y');
-    }
-    if (isset($_POST['hoje'])) {
-        $start          = date('d/m/Y');
-        $end          = date('d/m/Y');
-    }
-    if (isset($_POST['ontem'])) {
-        $start          = date('d/m/Y', strtotime("-1 days"));
-        $end          = date('d/m/Y', strtotime("-1 days"));
-    }
-    $modalidades = "";
+	if ($CM != '') {
+		$modalidades = $modalidades . "'Consultorio Adulto',";
+	}
 
-    if ($CM != "") {
-        $modalidades = $modalidades . "'Consultorio Adulto',";
-    }
+	if ($OR != '') {
+		$modalidades = $modalidades . "'Ortopedia',";
+	}
 
-    if ($OR != "") {
-        $modalidades = $modalidades . "'Ortopedia',";
-    }
+	$modalidades = substr($modalidades, 0, -1);
 
-    $modalidades = substr($modalidades, 0, -1);
+	if ($nome != '') {
+		$where = $where . " c.nome like '%" . $nome . "%' ";
+	}
 
-    if ($nome != "") {
-        $where = $where . " c.nome like '%" . $nome . "%' ";
-    }
+	if ($procedimentox != '') {
+		if ($where != '') {
+			$where = $where . " and a.exame_id = $procedimentox";
+		} else {
+			$where = $where . " a.exame_id = $procedimentox";
+		}
+	}
 
-    if ($procedimentox != "") {
-        if ($where != "") {
-            $where = $where . " and a.exame_id = $procedimentox";
-        } else {
-            $where = $where . " a.exame_id = $procedimentox";
-        }
-    }
+	if ($start == '' and $end == '' and $nome == '') {
+		$start = date('d/m/Y', strtotime('-7 days'));
+		$end = date('d/m/Y');
+	}
+	if ($start != '') {
+		$data = inverteData($start);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad >= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad >= '$data')";
+		}
+	}
 
+	if ($end != '') {
+		$data = inverteData($end);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad <= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad <= '$data')";
+		}
+	}
 
-    if ($start == '' and $end == '' and $nome == '') {
-        $start          = date('d/m/Y', strtotime("-7 days"));
-        $end          = date('d/m/Y');
-    }
-    if ($start != "") {
-        $data = inverteData($start);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad >= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad >= '$data')";
-        }
-    }
+	if ($destino != '') {
+		if ($where != '') {
+			$where = $where . " and a.destino_paciente = '$destino' ";
+		} else {
+			$where = $where . " a.destino_paciente = '$destino' ";
+		}
+	} else {
+		if ($where != '') {
+			$where = $where . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') ";
+		} else {
+			$where = $where . "  (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') ";
+		}
+	}
+	if ($cb_meus != '') {
+		if ($where != '') {
+			$where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
+		} else {
+			$where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
+		}
+	}
 
-    if ($end != "") {
-        $data = inverteData($end);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad <= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad <= '$data')";
-        }
-    }
-
-    if ($destino != "") {
-
-        if ($where != "") {
-            $where = $where . " and a.destino_paciente = '$destino' ";
-        } else {
-            $where = $where . " a.destino_paciente = '$destino' ";
-        }
-    } else {
-        if ($where != "") {
-            $where = $where . " and (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') ";
-        } else {
-            $where = $where . "  (a.destino_paciente = '03' or a.destino_paciente = '05' or a.destino_paciente = '07' or a.destino_paciente = '10') ";
-        }
-    }
-    if ($cb_meus != "") {
-        if ($where != "") {
-            $where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
-        } else {
-            $where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
-        }
-    }
-
-    if ($cb_conf != "") {
-        if ($where != "") {
-            $where = $where . " and (a.med_confere = '$cb_conf')";
-        } else {
-            $where = $where . " (a.med_confere = '$cb_conf')";
-        }
-    }
-    $stmtx = "nao entrei";
+	if ($cb_conf != '') {
+		if ($where != '') {
+			$where = $where . " and (a.med_confere = '$cb_conf')";
+		} else {
+			$where = $where . " (a.med_confere = '$cb_conf')";
+		}
+	}
+	$stmtx = 'nao entrei';
 }
 ?>
 <!DOCTYPE html>
@@ -158,7 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -197,8 +198,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -213,7 +214,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Assistência Social
                                                 </h4>
                                             </div>
@@ -239,33 +241,58 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-3">
                                                 <label>Paciente</label>
-                                                <input type="text" class="form-control square" id="inputBasicFirstName" name="nome" placeholder="Parte do Nome" autocomplete="off" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" />
+                                                <input type="text" class="form-control square" id="inputBasicFirstName"
+                                                    name="nome" placeholder="Parte do Nome" autocomplete="off"
+                                                    value="<?php echo ts_decodifica($nome); ?>"
+                                                    onkeyup="maiuscula(this)" />
                                             </div>
                                             <div class="col-3">
                                                 <label>Encaminhamento</label>
-                                                <select class="form-control square" name="encaminhamento" id="encaminhamento">
+                                                <select class="form-control square" name="encaminhamento"
+                                                    id="encaminhamento">
                                                     <option value="">Todos</option>
-                                                    <option value="07" <?php if ($destino == '07') echo "selected"; ?>>EM OBSERVAÇÃO / MEDICAÇÃO</option>;
-                                                    <option value="03" <?php if ($destino == '03') echo "selected"; ?>>PERMANÊCIA.</option>;
-                                                    <option value="10" <?php if ($destino == '10') echo "selected"; ?>>EXAMES / REAVALIACAO</option>;
+                                                    <option value="07" <?php if ($destino == '07') {
+	echo 'selected';
+} ?>>EM
+                                                        OBSERVAÇÃO / MEDICAÇÃO
+                                                    </option>;
+                                                    <option value="03" <?php if ($destino == '03') {
+	echo 'selected';
+} ?>>PERMANÊCIA.
+                                                    </option>;
+                                                    <option value="10" <?php if ($destino == '10') {
+	echo 'selected';
+} ?>>EXAMES
+                                                        / REAVALIACAO
+                                                    </option>;
                                                 </select>
                                             </div>
                                             <div class="col col-lg-3">
-                                                <label class="control-label" for="inputBasicFirstName">Data Ínicial</label>
-                                                <input type="date" class="form-control text-center" name="start" id="start" OnKeyPress="formatar('##/##/####', this)" value="<?php echo $start; ?>" />
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Ínicial</label>
+                                                <input type="date" class="form-control text-center" name="start"
+                                                    id="start" OnKeyPress="formatar('##/##/####', this)"
+                                                    value="<?php echo $start; ?>" />
                                             </div>
                                             <div class="col col-lg-3 text-center">
-                                                <label class="control-label" for="inputBasicFirstName">Data Final</label>
-                                                <input type="date" class="form-control text-center" name="end" OnKeyPress="formatar('##/##/####', this)"/ value="<?php echo $end; ?>">
+                                                <label class="control-label" for="inputBasicFirstName">Data
+                                                    Final</label>
+                                                <input type="date" class="form-control text-center" name="end"
+                                                    OnKeyPress="formatar('##/##/####', this)" /
+                                                    value="<?php echo $end; ?>">
                                             </div>
                                         </div>
                                         <div class="row align-items-end">
                                             <br>
                                             <div class="offset-3 col-12">
-                                                <button type="submit" name="pesquisa" value="semana" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
-                                                <button type="submit" name="hoje" value="hoje" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Hoje</button>
-                                                <button type="submit" name="ontem" value="ontem" class="btn btn-raised btn-info square btn-min-width mr-1 mb-1">Ontem</button>
-                                                <button type="submit" name="semana" value="semana" class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1">Semana</button>
+                                                <button type="submit" name="pesquisa" value="semana"
+                                                    class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
+                                                <button type="submit" name="hoje" value="hoje"
+                                                    class="btn btn-raised btn-success square btn-min-width mr-1 mb-1">Hoje</button>
+                                                <button type="submit" name="ontem" value="ontem"
+                                                    class="btn btn-raised btn-info square btn-min-width mr-1 mb-1">Ontem</button>
+                                                <button type="submit" name="semana" value="semana"
+                                                    class="btn btn-raised btn-warning square btn-min-width mr-1 mb-1">Semana</button>
                                             </div>
                                         </div>
                                         <div class="row mt-5">
@@ -274,13 +301,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <thead>
                                                         <tr>
                                                             <th width='3%' style="font-size: 8.5pt;">
-                                                                <div class="checkbox-custom checkbox-primary"><input type="checkbox" name="todos" id='todos' onclick='marcardesmarcar();' value="T"><label></label></div>
+                                                                <div class="checkbox-custom checkbox-primary"><input
+                                                                        type="checkbox" name="todos" id='todos'
+                                                                        onclick='marcardesmarcar();'
+                                                                        value="T"><label></label></div>
                                                             </th>
                                                             <th width='8%' style="font-size: 8.5pt;">Solicitação</th>
                                                             <th width='25%' style="font-size: 8.5pt;">Paciente</th>
                                                             <th width='18%' style="font-size: 8.5pt;">Origem</th>
                                                             <th width='5%' style="font-size: 8.5pt;">Atendim.</th>
-                                                            <th width='15%' style="font-size: 8.5pt;">Encaminhamento</th>
+                                                            <th width='15%' style="font-size: 8.5pt;">Encaminhamento
+                                                            </th>
                                                             <th width='26%' style="font-size: 8.5pt;">Ação</th>
                                                         </tr>
                                                     </thead>
@@ -298,8 +329,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </tfoot>
                                                     <tbody>
                                                         <?php
-                                                        include('conexao.php');
-                                                        $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
+														include 'conexao.php';
+														$stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
 							a.hora_atendimento, a.dat_cad, 	c.nome, k.origem, a.tipo,a.hora_destino,
 							CASE prioridade 
 								WHEN 'VERMELHO' THEN '0' 
@@ -334,79 +365,73 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 							left join destino_paciente p on p.atendimento_id = a.transacao
 							left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) ";
 
-                                                        if ($where != "") {
-                                                            $stmt = $stmt . " where " . $where;
-                                                        } else {
-                                                            $stmt = $stmt . " where a.dat_cad='" . date('Y-m-d') . "'";
-                                                        }
+														if ($where != '') {
+															$stmt = $stmt . ' where ' . $where;
+														} else {
+															$stmt = $stmt . " where a.dat_cad='" . date('Y-m-d') . "'";
+														}
 
-                                                        $stmt = $stmt . "  order by a.dat_cad desc,a.hora_cad desc ";
-                                                        $sth = pg_query($stmt) or die($stmt);
-                                                        //echo $stmt; 
-                                                        while ($row = pg_fetch_object($sth)) {
+														$stmt = $stmt . '  order by a.dat_cad desc,a.hora_cad desc ';
+														$sth = pg_query($stmt) or die($stmt);
+														//echo $stmt;
+														while ($row = pg_fetch_object($sth)) {
+															if ($row->prioridade == 'AMARELO') {
+																$classe = 'style="background-color:gold"';
+															}
+															if ($row->prioridade == 'VERMELHO') {
+																$classe = "class='bg-danger'";
+															}
+															if ($row->prioridade == 'VERDE') {
+																$classe = "class='bg-success'";
+															}
+															if ($row->prioridade == 'AZUL') {
+																$classe = "class='bg-primary'";
+															}
+															if ($row->prioridade == 'LARANJA') {
+																$classe = "class='bg-warning'";
+															}
+															if ($row->prioridade == '') {
+																$classe = 'style="background-color:Gainsboro"';
+															}
 
-                                                            if ($row->prioridade   == 'AMARELO') {
-                                                                $classe = "style=\"background-color:gold\"";
-                                                            }
-                                                            if ($row->prioridade   == 'VERMELHO') {
-                                                                $classe = "class='bg-danger'";
-                                                            }
-                                                            if ($row->prioridade   == 'VERDE') {
-                                                                $classe = "class='bg-success'";
-                                                            }
-                                                            if ($row->prioridade   == 'AZUL') {
-                                                                $classe = "class='bg-primary'";
-                                                            }
-                                                            if ($row->prioridade   == 'LARANJA') {
-                                                                $classe = "class='bg-warning'";
-                                                            }
-                                                            if ($row->prioridade   == '') {
-                                                                $classe = "style=\"background-color:Gainsboro\"";
-                                                            }
+															$ip = getenv('REMOTE_ADDR');
+															echo '<tr ' . $classe . '>';
+															if ($row->coronavirus == 1) {
+																echo "<td align='center'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . '"><label></label></div></td>';
+																echo "<td class='blink'>" . inverteData(substr($row->dat_cad, 0, 10)) . '</td>';
+																echo "<td class='blink'>" . ts_decodifica($row->nome) . '</td>';
+																echo "<td class='blink'>" . $row->origem . '</td>';
+																//echo "<td class='blink'>" . $row->hora_cad . "</td>";
+																echo "<td class='blink'>" . $row->hora_destino . '</td>';
 
+																echo '<td class="small">' . $row->destino . '</td>';
+															//echo "<td class=\"small\">" . $row->destinoalta . "</td>";
+															} else {
+																echo "<td align='center'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . '"><label></label></div></td>';
+																echo '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . '</td>';
+																echo '<td>' . ts_decodifica($row->nome) . '</td>';
+																echo '<td>' . $row->origem . '</td>';
+																//echo "<td>" . $row->hora_cad . "</td>";
+																//echo "<td>" . $row->hora_triagem . "</td>";
+																echo '<td>' . $row->hora_destino . '</td>';
 
-                                                            $ip = getenv("REMOTE_ADDR");
-                                                            echo "<tr " . $classe . ">";
-                                                            if ($row->coronavirus == 1) {
-                                                                echo "<td align='center'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td class='blink'>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
-                                                                echo "<td class='blink'>" . $row->nome . "</td>";
-                                                                echo "<td class='blink'>" . $row->origem . "</td>";
-                                                                //echo "<td class='blink'>" . $row->hora_cad . "</td>";
-                                                                echo "<td class='blink'>" . $row->hora_destino . "</td>";
+																echo '<td class="small">' . $row->destino . '</td>';
+															}
 
+															echo '<td>';
 
-                                                                echo "<td class=\"small\">" . $row->destino . "</td>";
-                                                                //echo "<td class=\"small\">" . $row->destinoalta . "</td>";
-                                                            } else {
-                                                                echo "<td align='center'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td>" . inverteData(substr($row->dat_cad, 0, 10)) . "</td>";
-                                                                echo "<td>" . $row->nome . "</td>";
-                                                                echo "<td>" . $row->origem . "</td>";
-                                                                //echo "<td>" . $row->hora_cad . "</td>";
-                                                                //echo "<td>" . $row->hora_triagem . "</td>";
-                                                                echo "<td>" . $row->hora_destino . "</td>";
+															// if ($perfil == '03' or $perfil == '06') {
+															//     echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn \" data-toggle=\"tooltip\" title=\"Visualizar\"><i class=\"fas fa-eye\"></i></a>";
+															// }
+															echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn \" data-toggle=\"tooltip\" title=\"FAA\"><i class=\"fas fa-print\"></i></a>";
 
+															//if ($perfil == '03' or $perfil == '06' or $perfil == '08' or $perfil == '13') {
+															echo "<a href=\"evolucao_atendimentomp.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" title=\"Evolução\"><i class=\"fas fa-file-medical\"></i></a>";
+															//}
 
-                                                                echo "<td class=\"small\">" . $row->destino . "</td>";
-                                                            }
-
-
-
-                                                            echo "<td>";
-
-                                                            // if ($perfil == '03' or $perfil == '06') {
-                                                            //     echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn \" data-toggle=\"tooltip\" title=\"Visualizar\"><i class=\"fas fa-eye\"></i></a>";
-                                                            // }
-                                                            echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn \" data-toggle=\"tooltip\" title=\"FAA\"><i class=\"fas fa-print\"></i></a>";
-
-                                                            //if ($perfil == '03' or $perfil == '06' or $perfil == '08' or $perfil == '13') {
-                                                            echo "<a href=\"evolucao_atendimentomp.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" title=\"Evolução\"><i class=\"fas fa-file-medical\"></i></a>";
-                                                            //}
-
-                                                            echo "</tr>";
-                                                        }
-                                                        ?>
+															echo '</tr>';
+														}
+														?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -420,7 +445,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <!-- </div> -->
 
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -592,7 +617,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             var transacaoModal = $("#transacaoMod").val();
             var situacaoMod = $("#situacaoMod").val();
 
-            $.get('salvarsituacao.php?transacaoMod=' + transacaoModal + "&situacaoMod=" + situacaoMod, function(dataReturn) {
+            $.get('salvarsituacao.php?transacaoMod=' + transacaoModal + "&situacaoMod=" + situacaoMod, function(
+                dataReturn) {
                 alert(dataReturn);
                 $('#modalConteudoSitu').modal('hide');
             });

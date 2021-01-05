@@ -1,252 +1,253 @@
 <?php
 
 error_reporting(0);
-include('verifica.php');
+include 'verifica.php';
+require 'tsul_ssl.php';
 //include('funcoes.php');
 
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
-$convenio = "";
-$username    = "";
-$password    = "";
-$num_carteira_convenio = "";
-$num_conselho    = "";
-$codigo     = "";
-$nome        = "";
-$sexo        = "";
-$cpf        = "";
-$dtnasc    = "";
-$endereco    = "";
-$numero    = "";
-$complemento = "";
-$bairro    = "";
-$cep        = "";
-$cidade    = "";
-$uf         = "";
-$nome_mae    = "";
-$nome_pai = "";
-$identidade = "";
-$org_exped = "";
-$raca_cor    = "";
-$est_civil = "";
-$telefone    = "";
-$telefone2 = "";
-$celular    = "";
-$celular2    = "";
-$imagem    = "";
-$facebook    = "";
-$twitter    = "";
-$whatsup    = "";
-$email    = "";
+$convenio = '';
+$username = '';
+$password = '';
+$num_carteira_convenio = '';
+$num_conselho = '';
+$codigo = '';
+$nome = '';
+$sexo = '';
+$cpf = '';
+$dtnasc = '';
+$endereco = '';
+$numero = '';
+$complemento = '';
+$bairro = '';
+$cep = '';
+$cidade = '';
+$uf = '';
+$nome_mae = '';
+$nome_pai = '';
+$identidade = '';
+$org_exped = '';
+$raca_cor = '';
+$est_civil = '';
+$telefone = '';
+$telefone2 = '';
+$celular = '';
+$celular2 = '';
+$imagem = '';
+$facebook = '';
+$twitter = '';
+$whatsup = '';
+$email = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $tipo =     'C';
-    $modo =  $_GET['modo'];
-    $tipo_pessoa = 'NA';
-    if ($tipo == 'A') {
-        $tipo_pessoa = 'Administrativo';
-        $menu_grupo = '1';
-        $menu_sgrupo = '4';
-    }
-    if ($tipo == 'C') {
-        $tipo_pessoa = 'Cliente';
-        $menu_grupo = '1';
-        $menu_sgrupo = '1';
-    }
-    if ($tipo == 'M') {
-        $tipo_pessoa = 'Medico Laudador';
-        $menu_grupo = '1';
-        $menu_sgrupo = '2';
-    }
-    if ($tipo == 'S') {
-        $tipo_pessoa = 'Solicitante';
-        $menu_grupo = '1';
-        $menu_sgrupo = '3';
-    }
+	$tipo = 'C';
+	$modo = $_GET['modo'];
+	$tipo_pessoa = 'NA';
+	if ($tipo == 'A') {
+		$tipo_pessoa = 'Administrativo';
+		$menu_grupo = '1';
+		$menu_sgrupo = '4';
+	}
+	if ($tipo == 'C') {
+		$tipo_pessoa = 'Cliente';
+		$menu_grupo = '1';
+		$menu_sgrupo = '1';
+	}
+	if ($tipo == 'M') {
+		$tipo_pessoa = 'Medico Laudador';
+		$menu_grupo = '1';
+		$menu_sgrupo = '2';
+	}
+	if ($tipo == 'S') {
+		$tipo_pessoa = 'Solicitante';
+		$menu_grupo = '1';
+		$menu_sgrupo = '3';
+	}
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $codigo     = $_POST['codigo'];
-    $nome        = $_POST['nome'];
-    $nome_mae    = $_POST['nome_mae'];
-    $nome_pai    = $_POST['nome_pai'];
-    $sexo        = $_POST['sexo'];
-    $cpf = str_replace("-", "", str_replace(".", "", $_POST['cpf']));
-    $dtnasc        = $_POST['dtnasc'];
-    $raca_cor    = $_POST['raca_cor'];
-    $endereco    = $_POST['endereco'];
-    $numero        = $_POST['numero'];
-    $complemento = $_POST['complemento'];
-    $bairro        = $_POST['bairro'];
-    $cep        = $_POST['cep'];
-    $cidade        = $_POST['cidade'];
-    $uf         = $_POST['uf'];
-    $telefone    = $_POST['telefone'];
-    $celular    = $_POST['celular'];
-    $depto        = $_POST['setor'];
-    $ramal        = $_POST['ramal'];
-    $tratamento = $_POST['tratamento'];
-    $profissao    = $_POST['profissao'];
-    $username    = trim($_POST['username']);
-    $senha        = $_POST['password'];
-    $imagem        = $_FILES["fileToUpload"]["name"];
-    $perfil        = $_POST['perfil'];
-    $status        = $_POST['status'];
-    $facebook    = $_POST['facebook'];
-    $twitter    = $_POST['twitter'];
-    $email        = $_POST['email'];
-    $nome_mae    = $_POST['nome_mae'];
-    $nome_pai      = $_POST['nome_pai'];
-    $conselho    = $_POST['conselho'];
-    $num_conselho = $_POST['num_conselho'];
-    $especialidade =    $_POST['especialidade'];
-    $identidade    = $_POST['identidade'];
-    $org_exped     = $_POST['org_exped'];
-    $dtn        = inverteData($_POST['dtnasc']);
-    $whatsup    = $_POST['whatsup'];
-    $tipo         = $_POST['tipo'];
-    $datacad    = date('Y-m-d');
-    $lotacao      = $_POST['lotacao'];
-    $grupo_user = $_POST['grupo_user'];
-    $sgrupo_user = $_POST['sgrupo_user'];
-    $convenio   = $_POST['convenio'];
-    $nome_social   = $_POST['nome_social'];
-    $p_username = $username;
-    $p_password = $senha;
-    $num_carteira_convenio = $_POST['num_carteira_convenio'];
-    $tipo_pessoa = 'NA';
-    if ($tipo == 'A') {
-        $tipo_pessoa = 'Administrativo';
-    }
-    if ($tipo == 'C') {
-        $tipo_pessoa = 'Cliente';
-    }
-    if ($tipo == 'M') {
-        $tipo_pessoa = 'Medico Laudador';
-    }
-    if ($tipo == 'S') {
-        $tipo_pessoa = 'Solicitante';
-    }
-    $desc_sexo = "";
-    if ($sexo == 'F') {
-        $desc_sexo = "Feminino";
-    }
-    if ($sexo == 'M') {
-        $desc_sexo = "Masculino";
-    }
-    if ($convenio == "") {
-        $convenio = '0';
-    }
-    $erro = "";
-    if ($sexo == "") {
-        $erro = "Sexo - Campo Obrigatorio";
-    }
-    if ($nome == "") {
-        $erro = "Nome - Campo Obrigatorio";
-    }
-    // if ($dtn != "") {
-    //     if (!(ValidaData($dtnasc))) {
-    //         $erro = "Data de Nascimento - Campo Obrigatorio";
-    //     }
-    // }
-    if ($tipo != "C") {
-        if ($username == "") {
-            $erro = "Usuario - Campo Obrigatorio";
-        }
-        if ($senha == "") {
-            $erro = "Senha - Campo Obrigatorio";
-        }
-    }
-    // if ($cpf != "") {
-    //     if (!(validaCPF($cpf))) {
-    //         $erro = "CPF - Valor Invalido";
-    //     }
-    // }
+	$codigo = $_POST['codigo'];
+	$nome = ts_codifica($_POST['nome']);
+	$nome_mae = ts_codifica($_POST['nome_mae']);
+	$nome_pai = ts_codifica($_POST['nome_pai']);
+	$sexo = $_POST['sexo'];
+	$cpf = ts_codifica(str_replace('-', '', str_replace('.', '', $_POST['cpf'])));
+	$dtnasc = $_POST['dtnasc'];
+	$raca_cor = $_POST['raca_cor'];
+	$endereco = $_POST['endereco'];
+	$numero = $_POST['numero'];
+	$complemento = $_POST['complemento'];
+	$bairro = $_POST['bairro'];
+	$cep = $_POST['cep'];
+	$cidade = $_POST['cidade'];
+	$uf = $_POST['uf'];
+	$telefone = $_POST['telefone'];
+	$celular = $_POST['celular'];
+	$depto = $_POST['setor'];
+	$ramal = $_POST['ramal'];
+	$tratamento = $_POST['tratamento'];
+	$profissao = $_POST['profissao'];
+	$username = trim($_POST['username']);
+	$senha = $_POST['password'];
+	$imagem = $_FILES['fileToUpload']['name'];
+	$perfil = $_POST['perfil'];
+	$status = $_POST['status'];
+	$facebook = $_POST['facebook'];
+	$twitter = $_POST['twitter'];
+	$email = $_POST['email'];
+	$nome_mae = ts_codifica($_POST['nome_mae']);
+	$nome_pai = ts_codifica($_POST['nome_pai']);
+	$conselho = $_POST['conselho'];
+	$num_conselho = $_POST['num_conselho'];
+	$especialidade = $_POST['especialidade'];
+	$identidade = $_POST['identidade'];
+	$org_exped = $_POST['org_exped'];
+	$dtn = inverteData($_POST['dtnasc']);
+	$whatsup = $_POST['whatsup'];
+	$tipo = $_POST['tipo'];
+	$datacad = date('Y-m-d');
+	$lotacao = $_POST['lotacao'];
+	$grupo_user = $_POST['grupo_user'];
+	$sgrupo_user = $_POST['sgrupo_user'];
+	$convenio = $_POST['convenio'];
+	$nome_social = $_POST['nome_social'];
+	$p_username = $username;
+	$p_password = $senha;
+	$num_carteira_convenio = $_POST['num_carteira_convenio'];
+	$tipo_pessoa = 'NA';
+	if ($tipo == 'A') {
+		$tipo_pessoa = 'Administrativo';
+	}
+	if ($tipo == 'C') {
+		$tipo_pessoa = 'Cliente';
+	}
+	if ($tipo == 'M') {
+		$tipo_pessoa = 'Medico Laudador';
+	}
+	if ($tipo == 'S') {
+		$tipo_pessoa = 'Solicitante';
+	}
+	$desc_sexo = '';
+	if ($sexo == 'F') {
+		$desc_sexo = 'Feminino';
+	}
+	if ($sexo == 'M') {
+		$desc_sexo = 'Masculino';
+	}
+	if ($convenio == '') {
+		$convenio = '0';
+	}
+	$erro = '';
+	if ($sexo == '') {
+		$erro = 'Sexo - Campo Obrigatorio';
+	}
+	if ($nome == '') {
+		$erro = 'Nome - Campo Obrigatorio';
+	}
+	// if ($dtn != "") {
+	//     if (!(ValidaData($dtnasc))) {
+	//         $erro = "Data de Nascimento - Campo Obrigatorio";
+	//     }
+	// }
+	if ($tipo != 'C') {
+		if ($username == '') {
+			$erro = 'Usuario - Campo Obrigatorio';
+		}
+		if ($senha == '') {
+			$erro = 'Senha - Campo Obrigatorio';
+		}
+	}
+	// if ($cpf != "") {
+	//     if (!(validaCPF($cpf))) {
+	//         $erro = "CPF - Valor Invalido";
+	//     }
+	// }
 
-    if ($username != '') {
-        include('conexao.php');
-        $stmtUser = "select count(*) as total from pessoas where username = '$username'";
-        $sthUser = pg_query($stmtUser) or die($stmtUser);
-        $rowUser = pg_fetch_object($sthUser);
-        $usuario_existe = $rowUser->total;
+	if ($username != '') {
+		include 'conexao.php';
+		$stmtUser = "select count(*) as total from pessoas where username = '$username'";
+		$sthUser = pg_query($stmtUser) or die($stmtUser);
+		$rowUser = pg_fetch_object($sthUser);
+		$usuario_existe = $rowUser->total;
 
-        if ($usuario_existe > 0) {
-            $erro = "Nome de usuário ja cadastrado.";
-        }
-    }
+		if ($usuario_existe > 0) {
+			$erro = 'Nome de usuário ja cadastrado.';
+		}
+	}
 
-
-    if ($especialidade == "") {
-        $especialidade = '0';
-    }
-    if ($lotacao == "") {
-        $lotacao = '0';
-    }
-    if ($grupo_user == "") {
-        $grupo_user = '0';
-    }
-    if ($sgrupo_user == "") {
-        $sgrupo_user = '0';
-    }
-    if ($erro == "") {
-        include('conexao.php');
-        $stmt = "insert into pessoas (nome, tipo_pessoa, nome_mae, nome_pai, sexo, cpf, identidade, dt_nasc, endereco, numero, complemento, bairro, cep, cidade, estado, telefone, telefone2, celular, celular2, imagem, facebook, twitter,
+	if ($especialidade == '') {
+		$especialidade = '0';
+	}
+	if ($lotacao == '') {
+		$lotacao = '0';
+	}
+	if ($grupo_user == '') {
+		$grupo_user = '0';
+	}
+	if ($sgrupo_user == '') {
+		$sgrupo_user = '0';
+	}
+	if ($erro == '') {
+		include 'conexao.php';
+		$stmt = "insert into pessoas (nome, tipo_pessoa, nome_mae, nome_pai, sexo, cpf, identidade, dt_nasc, endereco, numero, complemento, bairro, cep, cidade, estado, telefone, telefone2, celular, celular2, imagem, facebook, twitter,
 				email, whatsup, conselho_regional, num_conselho_reg, especialidade_id, convenio_padrao, num_carteira_convenio, perfil, lotacao, grupo_user_id, sgrupo_user_id, usuario_cad, data_cad, username, password, situacao,nome_social) 
 				values ('$nome', '$tipo_pessoa', '$nome_mae', '$nome_pai', '$sexo', '$cpf', '$identidade', ";
-        if ($dtn == "") {
-            $stmt = $stmt . 'null,';
-        } else {
-            $stmt = $stmt . "'$dtn',";
-        }
-        $stmt = $stmt . " '$endereco', '$numero', '$complemento', '$bairro', '$cep', '$cidade', '$uf', '$telefone', '$telefone2', '$celular', '$celular2', '$imagem', '$facebook', '$twitter',
+		if ($dtn == '') {
+			$stmt = $stmt . 'null,';
+		} else {
+			$stmt = $stmt . "'$dtn',";
+		}
+		$stmt = $stmt . " '$endereco', '$numero', '$complemento', '$bairro', '$cep', '$cidade', '$uf', '$telefone', '$telefone2', '$celular', '$celular2', '$imagem', '$facebook', '$twitter',
 				'$email', '$whatsup', '$conselho', '$num_conselho', '$especialidade', '$convenio', '$num_carteira_convenio', '$perfil', '$lotacao', '$grupo_user', '$sgrupo_user', '$usuario', '$datacad', '$p_username', md5('$p_password'), '0','$nome_social') RETURNING pessoa_id";
-        $sth = pg_query($stmt) or die($stmt);
-        $row = pg_fetch_object($sth);
-        if ($imagem != "") {
-            $target_dir = "C:/inetpub/wwwroot/dcenter/html/imagens/clientes";
-            $target_file = $target_dir . '/' . basename($_FILES["fileToUpload"]["name"]);
-            if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-                echo  '<script type="text/javascript">alert("Arquivo Enviado!");</script>';
-            } else {
-                $erro = "Arquivo nao Enviado!";
-            }
-        }
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		if ($imagem != '') {
+			$target_dir = 'C:/inetpub/wwwroot/dcenter/html/imagens/clientes';
+			$target_file = $target_dir . '/' . basename($_FILES['fileToUpload']['name']);
+			if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $target_file)) {
+				echo  '<script type="text/javascript">alert("Arquivo Enviado!");</script>';
+			} else {
+				$erro = 'Arquivo nao Enviado!';
+			}
+		}
 
-        // if ($modo != "popup") {
-        //     if ($tipo_pessoa == 'Cliente') {
-        //         header("location: clientes.php");
-        //     }
-        //     if ($tipo_pessoa == 'Medico Laudador') {
-        //         header("location: medicos.php");
-        //     }
-        //     if ($tipo_pessoa == 'Solicitante') {
-        //         header("location: solicitantes.php");
-        //     }
-        //     if ($tipo_pessoa == 'Administrativo') {
-        //         header("location: colaboradores.php");
-        //     }
-        // } else {
-        //header("location: poppac.php");
-        // }
+		// if ($modo != "popup") {
+		//     if ($tipo_pessoa == 'Cliente') {
+		//         header("location: clientes.php");
+		//     }
+		//     if ($tipo_pessoa == 'Medico Laudador') {
+		//         header("location: medicos.php");
+		//     }
+		//     if ($tipo_pessoa == 'Solicitante') {
+		//         header("location: solicitantes.php");
+		//     }
+		//     if ($tipo_pessoa == 'Administrativo') {
+		//         header("location: colaboradores.php");
+		//     }
+		// } else {
+		//header("location: poppac.php");
+		// }
 
-        $sql = "select * from pessoas where pessoa_id = $row->pessoa_id";
-        $result = pg_query($sql) or die($sql);
-        $row = pg_fetch_object($result);
-        $dt_nasc = $row->dt_nasc;
-        $date = new DateTime($dt_nasc); // data de nascimento
-        $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
+		$sql = "select * from pessoas where pessoa_id = $row->pessoa_id";
+		$result = pg_query($sql) or die($sql);
+		$row = pg_fetch_object($result);
+		$dt_nasc = $row->dt_nasc;
+		$date = new DateTime($dt_nasc); // data de nascimento
+		$interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
 
-        $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias?>
+		$idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias?>
 <script>
     window.opener.document.pedido.prontuario.value = '<?= $row->pessoa_id; ?>';
-    window.opener.document.pedido.nome.value = '<?= $row->nome; ?>';
+    window.opener.document.pedido.nome.value =
+        '<?= ts_decodifica($row->nome); ?>';
     window.opener.document.pedido.sexo.value = '<?= $row->sexo; ?>';
     window.opener.document.pedido.dt_nascimento.value =
         '<?= inverteData($row->dt_nasc); ?>';
@@ -259,10 +260,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     window.opener.document.pedido.end_uf.value = '<?= $row->estado; ?>';
     window.opener.document.pedido.telefone.value = '<?= $row->telefone; ?>';
     window.opener.document.pedido.celular.value = '<?= $row->celular; ?>';
-    window.opener.document.pedido.cpf.value = '<?= $row->cpf; ?>';
+    window.opener.document.pedido.cpf.value =
+        '<?= ts_decodifica($row->cpf); ?>';
     window.opener.document.pedido.cns.value =
         '<?= $row->num_carteira_convenio; ?>';
-    window.opener.document.pedido.nome_mae.value = '<?= $row->nome_mae; ?>';
+    window.opener.document.pedido.nome_mae.value =
+        '<?= ts_decodifica($row->nome_mae); ?>';
     window.opener.document.pedido.rg.value = '<?= $row->identidade; ?>';
     window.opener.document.pedido.org_expeditor.value =
         '<?= inverteData($row->org_expeditor); ?>';
@@ -276,7 +279,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     window.close();
 </script>
 <?php
-    }
+	}
 }
 
 ?>
@@ -333,8 +336,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <body class="pace-done" cz-shortcut-listen="true">
     <div class="wrapper">
-        <?php include('menu.php'); ?>
-        <?php include('header.php'); ?>
+        <?php include 'menu.php'; ?>
+        <?php include 'header.php'; ?>
         <div class="main-panel">
             <div class="main-content">
                 <div class="content-wrapper">
@@ -382,13 +385,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div> -->
                             </div>
                             <?php
-                                    if ($erro != "") {
-                                        echo '<div class="row">
+									if ($erro != '') {
+										echo '<div class="row">
 		        <div class="col-sm-12">
 								<strong>Erro:!</strong><br><li>' . $erro . '</li>
 				</div>		
 		  </div>';
-                                    } ?>
+									} ?>
                         </div>
                         <!-- CORPO DA PAGINA -->
                         <div class="card-content">
@@ -404,7 +407,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         name="codigo"
                                                         value="<?php echo $codigo; ?>">
                                                     <input type="text" class="form-control square" id="nome" name="nome"
-                                                        value="<?php echo $nome; ?>"
+                                                        value="<?php echo ts_decodifica($nome); ?>"
                                                         onkeyup="maiuscula(this)">
                                                 </div>
                                             </div>
@@ -435,7 +438,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label>Nome da Mae</label>
                                                     <input type="text" class="form-control square" id="nome_mae"
                                                         name="nome_mae"
-                                                        value="<?php echo $nome_mae; ?>"
+                                                        value="<?php echo ts_decodifica($nome_mae); ?>"
                                                         onkeyup="maiuscula(this)">
                                                 </div>
                                             </div>
@@ -444,7 +447,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label>Nome da Pai</label>
                                                     <input type="text" class="form-control square" id="nome_pai"
                                                         name="nome_pai"
-                                                        value="<?php echo $nome_pai; ?>"
+                                                        value="<?php echo ts_decodifica($nome_pai); ?>"
                                                         onkeyup="maiuscula(this)">
                                                 </div>
                                             </div>
@@ -464,7 +467,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <div class="form-group">
                                                     <label> CPF</label>
                                                     <input type="text" placeholder="99999999999"
-                                                        value="<?php echo $cpf; ?>"
+                                                        value="<?php echo ts_decodifica($cpf); ?>"
                                                         onkeypress='return SomenteNumero(event)'
                                                         onblur='verifica_cpf(this.value)' maxlength="11"
                                                         class="form-control square" id="cpf" name="cpf">
@@ -476,14 +479,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label class="control-label">Sexo</label>
                                                     <select name="sexo" id="sexo" class="form-control square">
                                                         <option></option>
-                                                        <option value="M" <?php if ($sexo == "M") {
-                                        echo "selected";
-                                    } ?>>
+                                                        <option value="M" <?php if ($sexo == 'M') {
+										echo 'selected';
+									} ?>>
                                                             Masculino
                                                         </option>
-                                                        <option value="F" <?php if ($sexo == "F") {
-                                        echo "selected";
-                                    } ?>>
+                                                        <option value="F" <?php if ($sexo == 'F') {
+										echo 'selected';
+									} ?>>
                                                             Feminino
                                                         </option>
                                                     </select>
@@ -496,7 +499,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label>Identidade</label>
                                                     <input type="text" class="form-control square" id="identidade"
                                                         name="identidade"
-                                                        value="<?php echo $identidade; ?>"
+                                                        value="<?php echo ts_decodifica($identidade); ?>"
                                                         onkeyup="maiuscula(this)">
                                                 </div>
                                             </div>
@@ -514,29 +517,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <label class="control-label">Raca/Cor</label>
                                                     <select name="raca_cor" id="raca_cor" class="form-control  square">
                                                         <option></option>
-                                                        <option value="Branca" <?php if ($raca_cor == "Branca") {
-                                        echo "selected";
-                                    } ?>>
+                                                        <option value="Branca" <?php if ($raca_cor == 'Branca') {
+										echo 'selected';
+									} ?>>
                                                             Branca
                                                         </option>
-                                                        <option value="Preta" <?php if ($raca_cor == "Preta") {
-                                        echo "selected";
-                                    } ?>>
+                                                        <option value="Preta" <?php if ($raca_cor == 'Preta') {
+										echo 'selected';
+									} ?>>
                                                             Preta
                                                         </option>
-                                                        <option value="Parda" <?php if ($raca_cor == "Parda") {
-                                        echo "selected";
-                                    } ?>>
+                                                        <option value="Parda" <?php if ($raca_cor == 'Parda') {
+										echo 'selected';
+									} ?>>
                                                             Parda
                                                         </option>
-                                                        <option value="Amarela" <?php if ($raca_cor == "Amarela") {
-                                        echo "selected";
-                                    } ?>>
+                                                        <option value="Amarela" <?php if ($raca_cor == 'Amarela') {
+										echo 'selected';
+									} ?>>
                                                             Amarela
                                                         </option>
-                                                        <option value="Indigena" <?php if ($raca_cor == "Indigena") {
-                                        echo "selected";
-                                    } ?>>
+                                                        <option value="Indigena" <?php if ($raca_cor == 'Indigena') {
+										echo 'selected';
+									} ?>>
                                                             Indigena
                                                         </option>
                                                     </select>
@@ -685,19 +688,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         class="form-control">
                                                         <option></option>
                                                         <?php
-                                                                    include('conexao.php');
-                                                                    $stmt = "SELECT * FROM especialidade order by descricao";
-                                                                    $sth = pg_query($stmt) or die($stmt);
-                                                                    while ($row = pg_fetch_object($sth)) {
-                                                                        echo "<option value=\"" . $row->especialidade_id . "\" >" . $row->descricao . "</option>";
-                                                                    }
-                                                                    ?>
+																	include 'conexao.php';
+																	$stmt = 'SELECT * FROM especialidade order by descricao';
+																	$sth = pg_query($stmt) or die($stmt);
+																	while ($row = pg_fetch_object($sth)) {
+																		echo '<option value="' . $row->especialidade_id . '" >' . $row->descricao . '</option>';
+																	}
+																	?>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                         <?php }
-                                                if ($tipo != 'C') { ?>
+												if ($tipo != 'C') { ?>
                                         <h4 class="form-section"><i class="fas fa-sign-in-alt"></i> Controle de
                                             Usuario</h4>
                                         <div class="row">
@@ -736,13 +739,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <select name="grupo_user" id="grupo_user" class="form-control">
                                                         <option></option>
                                                         <?php
-                                                                    include('conexao.php');
-                                                                    $stmt = "SELECT * FROM usuarios_grupos order by descricao";
-                                                                    $sth = pg_query($stmt) or die($stmt);
-                                                                    while ($row = pg_fetch_object($sth)) {
-                                                                        echo "<option value=\"" . $row->grupo_user_id . "\" >" . $row->descricao . "</option>";
-                                                                    }
-                                                                    ?>
+																	include 'conexao.php';
+																	$stmt = 'SELECT * FROM usuarios_grupos order by descricao';
+																	$sth = pg_query($stmt) or die($stmt);
+																	while ($row = pg_fetch_object($sth)) {
+																		echo '<option value="' . $row->grupo_user_id . '" >' . $row->descricao . '</option>';
+																	}
+																	?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -783,7 +786,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     </div>
     </div>
-    <?php include('footer.php'); ?>
+    <?php include 'footer.php'; ?>
     <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/popper.min.js" type="text/javascript"></script>
     <script src="app-assets/vendors/js/core/bootstrap.min.js" type="text/javascript"></script>

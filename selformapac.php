@@ -1,24 +1,24 @@
 <?php
 
-include('verifica.php');
+include 'verifica.php';
+require 'tsul_ssl.php';
 
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 error_reporting(0);
 $menu_grupo = '3';
 $menu_sgrupo = '3';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome             = $_POST['nome'];
-    $pessoa_id        = $_POST['prontuario'];
+	$nome = ts_codifica($_POST['nome']);
+	$pessoa_id = $_POST['prontuario'];
 }
-
 
 ?>
 <!DOCTYPE html>
@@ -40,7 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -79,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -95,7 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Solicitação de APAC
                                                 </h4>
                                             </div>
@@ -121,11 +124,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12" align="center">
                                                 <label>Paciente</label>
-                                                <input type="text" class="form-control square" id="inputBasicFirstName" name="nome" placeholder="Parte do Nome" autocomplete="off" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" />
+                                                <input type="text" class="form-control square" id="inputBasicFirstName"
+                                                    name="nome" placeholder="Parte do Nome" autocomplete="off"
+                                                    value="<?php echo ts_decodifica($nome); ?>"
+                                                    onkeyup="maiuscula(this)" />
                                             </div>
                                             <div class="col-12 mt-2" align="center">
-                                                <button type="submit" name="pesquisa" value="semana" class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
-                                                <button type="button" class="btn btn-raised btn-success square btn-min-width mr-1 mb-1" onclick="location.href='formapac.php'"><i class="icon-stack2 position-left"></i> Novo APAC</button>
+                                                <button type="submit" name="pesquisa" value="semana"
+                                                    class="btn btn-raised btn-primary square btn-min-width mr-1 mb-1">Pesquisar</button>
+                                                <button type="button"
+                                                    class="btn btn-raised btn-success square btn-min-width mr-1 mb-1"
+                                                    onclick="location.href='formapac.php'"><i
+                                                        class="icon-stack2 position-left"></i> Novo APAC</button>
                                             </div>
                                         </div>
                                     </form>
@@ -154,31 +164,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </tfoot>
                                         <tbody>
                                             <?php
-                                            include('conexao.php');
-                                            $stmt = "SELECT a.pessoa_id, a.med_solicitante, a.data_solicitacao, a.apac_id, b.nome,c.descricao FROM apacs_solicitadas a
+											include 'conexao.php';
+											$stmt = 'SELECT a.pessoa_id, a.med_solicitante, a.data_solicitacao, a.apac_id, b.nome,c.descricao FROM apacs_solicitadas a
 						left join pessoas b on a.pessoa_id=b.pessoa_id
-						left join procedimentos c on a.procedimento_id=c.procedimento_id ";
+						left join procedimentos c on a.procedimento_id=c.procedimento_id ';
 
-                                            if ($nome <> '') {
-                                                $stmt = $stmt . " where b.nome like '%$nome%' ";
-                                            }
+											if ($nome <> '') {
+												$stmt = $stmt . " where b.nome like '%$nome%' ";
+											}
 
-                                            $stmt = $stmt . " order by 3 desc";
-                                            $sth = pg_query($stmt) or die($stmt);
-                                            while ($row = pg_fetch_object($sth)) {
-                                                echo "<tr>";
-                                                echo "<td><input type=\"checkbox\" name=\"\" id=\"\"></td>";
-                                                echo "<td width='7%' >" . str_pad($row->apac_id, 4, "0", STR_PAD_LEFT) . "</td>";
-                                                echo "<td width='10%' >" . inverteData($row->data_solicitacao) . "</td>";
-                                                echo "<td >" . $row->nome . "</td>";
-                                                echo "<td width='30%'>" . $row->descricao . "</td>";
-                                                echo "<td>" . $row->med_solicitante . "</td>";
+											$stmt = $stmt . ' order by 3 desc';
+											$sth = pg_query($stmt) or die($stmt);
+											while ($row = pg_fetch_object($sth)) {
+												echo '<tr>';
+												echo '<td><input type="checkbox" name="" id=""></td>';
+												echo "<td width='7%' >" . str_pad($row->apac_id, 4, '0', STR_PAD_LEFT) . '</td>';
+												echo "<td width='10%' >" . inverteData($row->data_solicitacao) . '</td>';
+												echo '<td >' . ts_decodifica($row->nome) . '</td>';
+												echo "<td width='30%'>" . $row->descricao . '</td>';
+												echo '<td>' . $row->med_solicitante . '</td>';
 
-                                                echo "<td><a target='_blank' href=apac.php?prontuario=$row->pessoa_id&apac_id=$row->apac_id><i class=\"fas fa-search\"></i></a></td>";
-                                                echo "</tr>";
-                                            }
+												echo "<td><a target='_blank' href=apac.php?prontuario=$row->pessoa_id&apac_id=$row->apac_id><i class=\"fas fa-search\"></i></a></td>";
+												echo '</tr>';
+											}
 
-                                            ?>
+											?>
                                         </tbody>
                                     </table>
                                 </div>
@@ -188,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <?php include('footer.php'); ?>
+        <?php include 'footer.php'; ?>
         <!-- </div> -->
 
         <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -205,7 +215,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script src="app-assets/js/popover.js" type="text/javascript"></script>
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>

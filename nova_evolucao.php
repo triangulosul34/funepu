@@ -1,51 +1,50 @@
 <?php
+
+require 'tsul_ssl.php';
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 $hora_transacao = '';
 function validaCPF($cpf = null)
 {
+	// Verifica se um número foi informado
+	if (empty($cpf)) {
+		return false;
+	}
 
-    // Verifica se um número foi informado
-    if (empty($cpf)) {
-        return false;
-    }
+	// Elimina possivel mascara
+	$cpf = ereg_replace('[^0-9]', '', $cpf);
+	$cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
 
-    // Elimina possivel mascara
-    $cpf = ereg_replace('[^0-9]', '', $cpf);
-    $cpf = str_pad($cpf, 11, '0', STR_PAD_LEFT);
+	// Verifica se o numero de digitos informados é igual a 11
+	if (strlen($cpf) != 11) {
+		return false;
+	}  // Verifica se nenhuma das sequências invalidas abaixo
+	// foi digitada. Caso afirmativo, retorna falso
+	elseif ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
+		return false;
+	// Calcula os digitos verificadores para verificar se o
+		// CPF é válido
+	} else {
+		for ($t = 9; $t < 11; $t++) {
+			for ($d = 0, $c = 0; $c < $t; $c++) {
+				$d += $cpf{
+					$c} * (($t + 1) - $c);
+			}
+			$d = ((10 * $d) % 11) % 10;
+			if ($cpf{
+				$c} != $d) {
+				return false;
+			}
+		}
 
-    // Verifica se o numero de digitos informados é igual a 11
-    if (strlen($cpf) != 11) {
-        return false;
-    }  // Verifica se nenhuma das sequências invalidas abaixo
-    // foi digitada. Caso afirmativo, retorna falso
-    else if ($cpf == '00000000000' || $cpf == '11111111111' || $cpf == '22222222222' || $cpf == '33333333333' || $cpf == '44444444444' || $cpf == '55555555555' || $cpf == '66666666666' || $cpf == '77777777777' || $cpf == '88888888888' || $cpf == '99999999999') {
-        return false;
-        // Calcula os digitos verificadores para verificar se o
-        // CPF é válido
-    } else {
-
-        for ($t = 9; $t < 11; $t++) {
-
-            for ($d = 0, $c = 0; $c < $t; $c++) {
-                $d += $cpf{
-                    $c} * (($t + 1) - $c);
-            }
-            $d = ((10 * $d) % 11) % 10;
-            if ($cpf{
-                $c} != $d) {
-                return false;
-            }
-        }
-
-        return true;
-    }
+		return true;
+	}
 }
 error_reporting(0);
 date_default_timezone_set('America/Sao_Paulo');
@@ -60,16 +59,14 @@ $mae = '';
 $where = 'nome is null';
 $tipoConv = '3';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $transacao         = $_GET['id'];
-    $senha             = $_GET['senha'];
-    $agendamento     = $_GET['ag'];
-    $texto = "";
+	$transacao = $_GET['id'];
+	$senha = $_GET['senha'];
+	$agendamento = $_GET['ag'];
+	$texto = '';
 
-
-
-    if ($transacao != "") {
-        include('conexao.php');
-        $stmt = "select a.transacao,a.hora_cad, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+	if ($transacao != '') {
+		include 'conexao.php';
+		$stmt = "select a.transacao,a.hora_cad, a.cid_principal, a.destino_paciente, a.data_destino, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade
@@ -78,103 +75,105 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 		left join classificacao x ON ltrim(x.atendimento_id, '0')= '$transacao' 
 		where a.transacao=$transacao";
-        $sth = pg_query($stmt) or die($stmt);
-        $row = pg_fetch_object($sth);
-        $data_transacao = substr($row->cadastro, 0, 10);
-        $hora_transacao = $row->hora_cad;
-        $prontuario = $row->paciente_id;
+		$sth = pg_query($stmt) or die($stmt);
+		$row = pg_fetch_object($sth);
+		$data_transacao = substr($row->cadastro, 0, 10);
+		$hora_transacao = $row->hora_cad;
+		$prontuario = $row->paciente_id;
 
-        $status = $row->status;
-        $data_destino = $row->data_destino;
+		$status = $row->status;
+		$data_destino = $row->data_destino;
 
-        $sexo = $row->sexo;
-        $nome = $row->nome;
-        $email = $row->email;
-        $dt_nascimento = inverteData($row->dt_nasc);
-        $sexo = $row->sexo;
-        $enderecox = $row->endereco;
-        $end_numero = $row->numero;
-        $complemento = $row->complemento;
-        $bairro = $row->bairro;
-        $cidade = $row->cidade;
-        $estado = $row->estado;
-        $atendprioridade = $row->atendprioridade;
-        $peso = $row->peso;
-        $pressaodiastolica = $row->pressaodiastolica;
-        $pressaosistolica = $row->pressaosistolica;
-        $relato = $row->relato;
-        $pulso = $row->pulso;
-        $temperatura = $row->pressaodiastolica;
-        $cns    = $row->num_carteira_convenio;
-        $cep = $row->cep;
-        $cpf = $row->cpf;
-        $telefone = $row->telefone;
-        $celular = $row->celular;
-        $dt_nasc = $row->dt_nasc;
-        $date = new DateTime($dt_nasc); // data de nascimento
-        $interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
-        $idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
-        $procedimento = $row->procedimento_id;
-        $senha = $row->num_senha;
-        $deficiencia = $_POST['deficiencia'];
-        $origem = $row->origem;
-        $deficiencia = $row->nec_especiais;
-        $observacao  = $row->relato . PHP_EOL;
-        if ($pressaodiastolica != '') {
-            $observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . ' PA SIST.:' . $pressaosistolica . PHP_EOL;;
-        }
-        if ($peso != '') {
-            $observacao = $observacao . 'PESO:' . $peso . ' Temperatura:' . $temperatura . PHP_EOL;;
-        }
+		$sexo = $row->sexo;
+		$nome = ts_decodifica($row->nome);
+		$email = $row->email;
+		$dt_nascimento = inverteData($row->dt_nasc);
+		$sexo = $row->sexo;
+		$enderecox = $row->endereco;
+		$end_numero = $row->numero;
+		$complemento = $row->complemento;
+		$bairro = $row->bairro;
+		$cidade = $row->cidade;
+		$estado = $row->estado;
+		$atendprioridade = $row->atendprioridade;
+		$peso = $row->peso;
+		$pressaodiastolica = $row->pressaodiastolica;
+		$pressaosistolica = $row->pressaosistolica;
+		$relato = $row->relato;
+		$pulso = $row->pulso;
+		$temperatura = $row->pressaodiastolica;
+		$cns = $row->num_carteira_convenio;
+		$cep = $row->cep;
+		$cpf = ts_decodifica($row->cpf);
+		$telefone = $row->telefone;
+		$celular = $row->celular;
+		$dt_nasc = $row->dt_nasc;
+		$date = new DateTime($dt_nasc); // data de nascimento
+		$interval = $date->diff(new DateTime(date('Y-m-d'))); // data definida
+		$idade = $interval->format('%YA%mM%dD'); // 110 Anos, 2 Meses e 2 Dias
+		$procedimento = $row->procedimento_id;
+		$senha = $row->num_senha;
+		$deficiencia = $_POST['deficiencia'];
+		$origem = $row->origem;
+		$deficiencia = $row->nec_especiais;
+		$observacao = $row->relato . PHP_EOL;
+		if ($pressaodiastolica != '') {
+			$observacao = $observacao . 'PA DIAST:' . $pressaodiastolica . ' PA SIST.:' . $pressaosistolica . PHP_EOL;
+			;
+		}
+		if ($peso != '') {
+			$observacao = $observacao . 'PESO:' . $peso . ' Temperatura:' . $temperatura . PHP_EOL;
+			;
+		}
 
-        $oque_faz      = $row->oque_faz;
-        $com_oqfaz     = $row->com_oqfaz;
-        $tempo_faz     = $row->tempo_faz;
-        $como_faz      = $row->como_faz;
-        $enfermaria = $row->enfermaria;
-        $leito         = $row->leito;
-        $imagem     = $row->imagem;
-        $origem     = $row->tipo;
-        $destino     = $row->destino_paciente;
-        $alta         = inverteData($row->data_destino);
-        $CID         = $row->cid_principal;
-        $diag_pri     = $row->diagnostico_principal;
-        $queixa       = $row->queixa;
-        $exame_fisico   = $row->exame_fisico;
-        $hora_dest    = $row->hora_destino;
-    }
+		$oque_faz = $row->oque_faz;
+		$com_oqfaz = $row->com_oqfaz;
+		$tempo_faz = $row->tempo_faz;
+		$como_faz = $row->como_faz;
+		$enfermaria = $row->enfermaria;
+		$leito = $row->leito;
+		$imagem = $row->imagem;
+		$origem = $row->tipo;
+		$destino = $row->destino_paciente;
+		$alta = inverteData($row->data_destino);
+		$CID = $row->cid_principal;
+		$diag_pri = $row->diagnostico_principal;
+		$queixa = $row->queixa;
+		$exame_fisico = $row->exame_fisico;
+		$hora_dest = $row->hora_destino;
+	}
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $transacao = stripslashes(pg_escape_string($_GET['id']));
-    $evolucao = stripslashes(pg_escape_string($_POST['evolucao']));
-    $temp = stripslashes(pg_escape_string($_POST['temp']));
-    $pa = stripslashes(pg_escape_string($_POST['pa']));
-    $fc = stripslashes(pg_escape_string($_POST['fc']));
-    $fr = stripslashes(pg_escape_string($_POST['fr']));
-    $sat = stripslashes(pg_escape_string($_POST['sat']));
-    $glicemia = stripslashes(pg_escape_string($_POST['glicemia']));
-    $diurese = stripslashes(pg_escape_string($_POST['diurese']));
-    $usuario = stripslashes(pg_escape_string($_POST['user']));
-    $perfil = stripslashes(pg_escape_string($_POST['perfil']));
+	$transacao = stripslashes(pg_escape_string($_GET['id']));
+	$evolucao = stripslashes(pg_escape_string($_POST['evolucao']));
+	$temp = stripslashes(pg_escape_string($_POST['temp']));
+	$pa = stripslashes(pg_escape_string($_POST['pa']));
+	$fc = stripslashes(pg_escape_string($_POST['fc']));
+	$fr = stripslashes(pg_escape_string($_POST['fr']));
+	$sat = stripslashes(pg_escape_string($_POST['sat']));
+	$glicemia = stripslashes(pg_escape_string($_POST['glicemia']));
+	$diurese = stripslashes(pg_escape_string($_POST['diurese']));
+	$usuario = stripslashes(pg_escape_string($_POST['user']));
+	$perfil = stripslashes(pg_escape_string($_POST['perfil']));
 
-    if ($evolucao == "") {
-        $erro = "Evolução deve ser Informado";
-    }
+	if ($evolucao == '') {
+		$erro = 'Evolução deve ser Informado';
+	}
 
-    if ($erro == "") {
-        include('conexao.php');
-        $horacad = date('H:i');
-        $datacad = date('Y-m-d');
+	if ($erro == '') {
+		include 'conexao.php';
+		$horacad = date('H:i');
+		$datacad = date('Y-m-d');
 
-        $stmt = "insert into evolucoes  (atendimento_id,tipo,data,hora,usuario,evolucao,temperatura,pressao_arterial,frequencia_cardiaca,
+		$stmt = "insert into evolucoes  (atendimento_id,tipo,data,hora,usuario,evolucao,temperatura,pressao_arterial,frequencia_cardiaca,
 												frequencia_respiratoria,saturacao_ox,glicemia,diurese)
 						values ($transacao,$perfil,'$datacad','$horacad','$usuario','$evolucao','$temp','$pa','$fc','$fr','$sat','$glicemia','$diurese')";
-        $sth = pg_query($stmt) or die($stmt);
+		$sth = pg_query($stmt) or die($stmt);
 
-        header("location: evolucao_atendimento.php?id=" . $transacao);
-    }
+		header('location: evolucao_atendimento.php?id=' . $transacao);
+	}
 }
-include('verifica.php');
+include 'verifica.php';
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" class="loading">
@@ -195,7 +194,9 @@ include('verifica.php');
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -234,8 +235,8 @@ include('verifica.php');
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -250,7 +251,8 @@ include('verifica.php');
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Nova Evolução
                                                 </h4>
                                             </div>
@@ -271,18 +273,20 @@ include('verifica.php');
                                 </div>
                             </div>
                             <?php
-                            if ($erro != "") {
-                                echo '<div class="row">
+							if ($erro != '') {
+								echo '<div class="row">
 		        <div class="col-sm-12">
 								<strong>Erro:!</strong><br><li>' . $erro . '</li>
 				</div>		
 		  </div>';
-                            } ?>
+							} ?>
                             <div class="card-content">
                                 <div class="card-body">
                                     <form method="post" id="pedido" name='pedido'>
-                                        <input type="hidden" name="user" value="<?= $usuario; ?>">
-                                        <input type="hidden" name="perfil" value="<?= $perfil; ?>">
+                                        <input type="hidden" name="user"
+                                            value="<?= $usuario; ?>">
+                                        <input type="hidden" name="perfil"
+                                            value="<?= $perfil; ?>">
                                         <div class="row mb-2">
                                             <div class="col-sm-12">
                                                 <h3 align="center">Identificação do Paciente</h3>
@@ -291,31 +295,49 @@ include('verifica.php');
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
-                                                <label>Nome </label> <input type="text" name="nome" id="nome" class="form-control square" style="font-weight: bold;" value="<?php echo $nome; ?>" onkeyup="maiuscula(this)" readOnly>
+                                                <label>Nome </label> <input type="text" name="nome" id="nome"
+                                                    class="form-control square" style="font-weight: bold;"
+                                                    value="<?php echo $nome; ?>"
+                                                    onkeyup="maiuscula(this)" readOnly>
                                             </div>
                                             <div class="col-2">
-                                                <label>Sexo</label> <input type="text" name="sexo" id="sexo" class="form-control square" value="<?php echo $sexo; ?>" readonly>
+                                                <label>Sexo</label> <input type="text" name="sexo" id="sexo"
+                                                    class="form-control square"
+                                                    value="<?php echo $sexo; ?>"
+                                                    readonly>
                                             </div>
                                             <div class="col-sm-2">
-                                                <label>Nascimento</label> <input type="text" name="dt_nascimento" id="dt_nascimento" class="form-control square" value="<?php echo $dt_nascimento; ?>" OnKeyPress="formatar('##/##/####', this)" readOnly>
+                                                <label>Nascimento</label> <input type="text" name="dt_nascimento"
+                                                    id="dt_nascimento" class="form-control square"
+                                                    value="<?php echo $dt_nascimento; ?>"
+                                                    OnKeyPress="formatar('##/##/####', this)" readOnly>
                                             </div>
                                             <div class="col-sm-2">
-                                                <label>Idade</label> <input type="text" name="idade" id="idade" class="form-control square" value="<?php echo $idade; ?>" readonly>
+                                                <label>Idade</label> <input type="text" name="idade" id="idade"
+                                                    class="form-control square"
+                                                    value="<?php echo $idade; ?>"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-sm-3">
-                                                <label>CNS</label> <input type="text" name="cns" id="cns" class="form-control square" value="<?php echo $cns; ?>" onkeypress='return SomenteNumero(event)' readOnly>
+                                                <label>CNS</label> <input type="text" name="cns" id="cns"
+                                                    class="form-control square"
+                                                    value="<?php echo $cns; ?>"
+                                                    onkeypress='return SomenteNumero(event)' readOnly>
                                             </div>
                                             <div class="col-sm-6">
                                                 <label>Origem</label>
-                                                <input type="text" name="origem" id="origem" class="form-control" value="<?php echo $origem; ?>" readonly>
+                                                <input type="text" name="origem" id="origem" class="form-control"
+                                                    value="<?php echo $origem; ?>"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-12">
                                                 <label>Observações</label>
-                                                <textarea rows="5" name="observacao" class="form-control square" readonly><?php echo $observacao; ?></textarea>
+                                                <textarea rows="5" name="observacao" class="form-control square"
+                                                    readonly><?php echo $observacao; ?></textarea>
                                             </div>
                                         </div>
                                         <div class="row mt-2  mb-2">
@@ -359,15 +381,18 @@ include('verifica.php');
                                         <div class="row">
                                             <div class="col-sm-12">
                                                 <label>Evolução</label>
-                                                <textarea name="evolucao" class="form-control square" rows="50" cols="50" style="resize: none"></textarea> </br>
+                                                <textarea name="evolucao" class="form-control square" rows="50"
+                                                    cols="50" style="resize: none"></textarea> </br>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-12" align="center">
                                                 <?php if ($perfil == '06' or $perfil == '03' or $perfil == '08') { ?>
-                                                    <input type='submit' name='gravar' class="btn btn-primary" value='Gravar' onclick="return valida()">
+                                                <input type='submit' name='gravar' class="btn btn-primary"
+                                                    value='Gravar' onclick="return valida()">
                                                 <?php } ?>
-                                                <a href="evolucao_atendimento.php?id=<?php echo $_GET['id'] ?>" class="btn btn-danger">Cancelar</a>
+                                                <a href="evolucao_atendimento.php?id=<?php echo $_GET['id'] ?>"
+                                                    class="btn btn-danger">Cancelar</a>
                                             </div>
                                         </div>
                                     </form>
@@ -378,7 +403,7 @@ include('verifica.php');
                 </div>
             </div>
         </div>
-        <?php include('footer.php'); ?>
+        <?php include 'footer.php'; ?>
         <!-- </div> -->
 
         <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -395,7 +420,8 @@ include('verifica.php');
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script src="app-assets/js/popover.js" type="text/javascript"></script>
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>

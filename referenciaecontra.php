@@ -1,17 +1,18 @@
 <?php
 
-include("conexao.php");
+include 'conexao.php';
+require 'tsul_ssl.php';
 
-require("../vendor/autoload.php");
-require_once(dirname(__FILE__) . '/html2pdf/html2pdf.class.php');
+require '../vendor/autoload.php';
+require_once dirname(__FILE__) . '/html2pdf/html2pdf.class.php';
 
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 
 $atendimento_id = $_POST['atendimento_id_referencia'];
@@ -24,11 +25,11 @@ $sql = "select * from contra_referencia where atendimento_id = $atendimento_id";
 $result = pg_query($sql) or die($sql);
 $row = pg_fetch_object($result);
 if ($row->atendimento_id) {
-    $sql = "update contra_referencia set justificativa = '$justificativa_referencia', diagnostico = '$diagnostico_referencia', resultado='$resultado_referencia', unidade = '$unidade_referencia'  where atendimento_id = $atendimento_id";
-    $result = pg_query($sql) or die($sql);
+	$sql = "update contra_referencia set justificativa = '$justificativa_referencia', diagnostico = '$diagnostico_referencia', resultado='$resultado_referencia', unidade = '$unidade_referencia'  where atendimento_id = $atendimento_id";
+	$result = pg_query($sql) or die($sql);
 } else {
-    $sql = "insert into contra_referencia(atendimento_id, justificativa, diagnostico, resultado, unidade) values($atendimento_id,'$justificativa_referencia','$diagnostico_referencia','$resultado_referencia', '$unidade_referencia')";
-    $result = pg_query($sql) or die($sql);
+	$sql = "insert into contra_referencia(atendimento_id, justificativa, diagnostico, resultado, unidade) values($atendimento_id,'$justificativa_referencia','$diagnostico_referencia','$resultado_referencia', '$unidade_referencia')";
+	$result = pg_query($sql) or die($sql);
 }
 
 $sql = "select a.unidade, c.nome, c.endereco, c.numero, c.bairro, c.cidade, c.dt_nasc, c.sexo, a.justificativa, a.diagnostico, a.resultado
@@ -39,29 +40,29 @@ where a.atendimento_id = $atendimento_id";
 $result = pg_query($sql) or die($sql);
 $row = pg_fetch_object($result);
 $unidade = $row->unidade;
-$nome = $row->nome;
-$endereço = $row->endereco . ", " . $row->numero . " - " . $row->bairro;
+$nome = ts_decodifica($row->nome);
+$endereço = $row->endereco . ', ' . $row->numero . ' - ' . $row->bairro;
 $cidade = $row->cidade;
 $date = new DateTime($row->dt_nasc);
 $interval = $date->diff(new DateTime(date('Y-m-d')));
 $idade = $interval->format('%Y');
-if ($row->sexo == "M") {
-    $sexo = "Masculino";
-} else if ($row->sexo == "F") {
-    $sexo = "Feminino";
+if ($row->sexo == 'M') {
+	$sexo = 'Masculino';
+} elseif ($row->sexo == 'F') {
+	$sexo = 'Feminino';
 }
 $justificativa = $row->justificativa;
 $diagnostico = $row->diagnostico;
 $resultado = $row->resultado;
 
 $html2pdf = new Html2Pdf(
-    $orientation = 'P',
-    $format = 'A4',
-    $lang = 'fr',
-    $unicode = true,
-    $encoding = 'UTF-8',
-    $margins = array(5, 5, 5, 8),
-    $pdfa = false
+	$orientation = 'P',
+	$format = 'A4',
+	$lang = 'fr',
+	$unicode = true,
+	$encoding = 'UTF-8',
+	$margins = [5, 5, 5, 8],
+	$pdfa = false
 );
 $html2pdf->writeHTML('
 ?>

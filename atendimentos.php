@@ -1,284 +1,283 @@
 <?php
 
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 error_reporting(0);
 $menu_grupo = '3';
 $menu_sgrupo = '1';
-$nome         = '';
-$dtnasc     = '';
-$telefone    = '';
-$mae         = '';
-include('verifica.php');
-$RX             = '';
-$US              = '';
-$CT             = '';
-$MM             = '';
-$RM             = '';
-$DS             = '';
-$ECO         = '';
+$nome = '';
+$dtnasc = '';
+$telefone = '';
+$mae = '';
+include 'verifica.php';
+$RX = '';
+$US = '';
+$CT = '';
+$MM = '';
+$RM = '';
+$DS = '';
+$ECO = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $codigo = $_GET['id'];
-    $start  = $_GET['start'];
-    $end    = $_GET['end'];
-    if ($codigo != "") {
-        $where = ' pessoa_id =' . $codigo;
-    }
-    if ($start == "") {
-        $start  = date('d/m/Y');
-        $end    = date('d/m/Y');
-    }
+	$codigo = $_GET['id'];
+	$start = $_GET['start'];
+	$end = $_GET['end'];
+	if ($codigo != '') {
+		$where = ' pessoa_id =' . $codigo;
+	}
+	if ($start == '') {
+		$start = date('d/m/Y');
+		$end = date('d/m/Y');
+	}
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $procedimentox    = $_POST['procedimentox'];
-    $situacao         = $_POST['situacao'];
-    $nome               = $_POST['nome'];
-    $xbox              = $_POST['xbox'];
-    $CM                  = $_POST['cb_cm'];
-    $OR               = $_POST['cb_or'];
-    $start               = $_POST['start'];
-    $end               = $_POST['end'];
-    $transfere           = $_POST['cb_exame'];
-    $profissional     = $_POST['prof_transfere'];
-    $cb_meus          = $_POST['cb_meus'];
-    $cb_conf          = $_POST['cb_CONFERENCIA'];
-    $prontuario        = $_POST['prontuario'];
-    $trs        = $_POST['trs'];
-    $palavras = explode(" ", $nome);
+	$procedimentox = $_POST['procedimentox'];
+	$situacao = $_POST['situacao'];
+	$nome = ts_codifica($_POST['nome']);
+	$xbox = $_POST['xbox'];
+	$CM = $_POST['cb_cm'];
+	$OR = $_POST['cb_or'];
+	$start = $_POST['start'];
+	$end = $_POST['end'];
+	$transfere = $_POST['cb_exame'];
+	$profissional = $_POST['prof_transfere'];
+	$cb_meus = $_POST['cb_meus'];
+	$cb_conf = $_POST['cb_CONFERENCIA'];
+	$prontuario = $_POST['prontuario'];
+	$trs = $_POST['trs'];
+	$palavras = explode(' ', $nome);
 
-    // if ((count($palavras) < 2) and $nome != '') {
-    //     $pesquisa = 'qwwwqq';
-    //     echo  "<script>alert('Consulta Invalida! Seja Especifico. Digite o nome e o sobrenome');</script>";
-    // } else {
+	// if ((count($palavras) < 2) and $nome != '') {
+	//     $pesquisa = 'qwwwqq';
+	//     echo  "<script>alert('Consulta Invalida! Seja Especifico. Digite o nome e o sobrenome');</script>";
+	// } else {
 
+	$where = '';
+	if (isset($_POST['semana'])) {
+		$start = date('d/m/Y', strtotime('-7 days'));
+		$end = date('d/m/Y');
+	}
+	if (isset($_POST['hoje'])) {
+		$start = date('d/m/Y');
+		$end = date('d/m/Y');
+	}
+	if (isset($_POST['ontem'])) {
+		$start = date('d/m/Y', strtotime('-1 days'));
+		$end = date('d/m/Y', strtotime('-1 days'));
+	}
+	$modalidades = '';
 
-    $where = "";
-    if (isset($_POST['semana'])) {
-        $start          = date('d/m/Y', strtotime("-7 days"));
-        $end          = date('d/m/Y');
-    }
-    if (isset($_POST['hoje'])) {
-        $start          = date('d/m/Y');
-        $end          = date('d/m/Y');
-    }
-    if (isset($_POST['ontem'])) {
-        $start          = date('d/m/Y', strtotime("-1 days"));
-        $end          = date('d/m/Y', strtotime("-1 days"));
-    }
-    $modalidades = "";
+	if ($CM != '') {
+		$modalidades = $modalidades . "'Consultorio Adulto',";
+	}
 
-    if ($CM != "") {
-        $modalidades = $modalidades . "'Consultorio Adulto',";
-    }
+	if ($OR != '') {
+		$modalidades = $modalidades . "'Ortopedia',";
+	}
 
-    if ($OR != "") {
-        $modalidades = $modalidades . "'Ortopedia',";
-    }
+	$modalidades = substr($modalidades, 0, -1);
 
-    $modalidades = substr($modalidades, 0, -1);
+	if ($nome != '') {
+		$where = $where . " c.nome like '" . $nome . "%' ";
+	}
 
-    if ($nome != "") {
-        $where = $where . " c.nome like '" . $nome . "%' ";
-    }
+	if ($procedimentox != '') {
+		if ($where != '') {
+			$where = $where . " and a.exame_id = $procedimentox";
+		} else {
+			$where = $where . " a.exame_id = $procedimentox";
+		}
+	}
 
-    if ($procedimentox != "") {
-        if ($where != "") {
-            $where = $where . " and a.exame_id = $procedimentox";
-        } else {
-            $where = $where . " a.exame_id = $procedimentox";
-        }
-    }
+	if ($trs != '') {
+		if ($where != '') {
+			$where = $where . " and a.transacao = $trs";
+		} else {
+			$where = $where . " a.transacao = $trs";
+		}
+	}
 
-    if ($trs != "") {
-        if ($where != "") {
-            $where = $where . " and a.transacao = $trs";
-        } else {
-            $where = $where . " a.transacao = $trs";
-        }
-    }
+	if ($xbox != '') {
+		if ($where != '') {
+			$where = $where . " and box = $xbox";
+		} else {
+			$where = $where . " box = $xbox";
+		}
+	}
 
-    if ($xbox != "") {
-        if ($where != "") {
-            $where = $where . " and box = $xbox";
-        } else {
-            $where = $where . " box = $xbox";
-        }
-    }
+	if ($modalidades != '') {
+		if ($where != '') {
+			$where = $where . " and a.especialidade in ($modalidades) ";
+		} else {
+			$where = $where . " a.especialidade in ($modalidades) ";
+		}
+	}
 
-    if ($modalidades != "") {
-        if ($where != "") {
-            $where = $where . " and a.especialidade in ($modalidades) ";
-        } else {
-            $where = $where . " a.especialidade in ($modalidades) ";
-        }
-    }
+	if ($start != '') {
+		$data = inverteData($start);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad >= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad >= '$data')";
+		}
+	}
 
-    if ($start != "") {
-        $data = inverteData($start);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad >= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad >= '$data')";
-        }
-    }
+	if ($end != '') {
+		$data = inverteData($end);
+		if ($where != '') {
+			$where = $where . " and (a.dat_cad <= '$data')";
+		} else {
+			$where = $where . " (a.dat_cad <= '$data')";
+		}
+	}
 
-    if ($end != "") {
-        $data = inverteData($end);
-        if ($where != "") {
-            $where = $where . " and (a.dat_cad <= '$data')";
-        } else {
-            $where = $where . " (a.dat_cad <= '$data')";
-        }
-    }
+	if ($situacao != '') {
+		if ($situacao != 'Pendentes') {
+			if ($where != '') {
+				$where = $where . " and (a.status = '$situacao')";
+			} else {
+				$where = $where . " (a.status = '$situacao')";
+			}
+		} else {
+			if ($where != '' and $status == 'Pendentes') {
+				$where = $where . " and (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
+			} else {
+				$where = $where . " (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
+			}
+		}
+		if ($start == '') {
+			$data = inverteData($start);
+			if ($where != '') {
+				$where = $where . " and (a.dat_cad >= '" . date('Y-m-d') . "')";
+			} else {
+				$where = $where . " (a.dat_cad >= '" . date('Y-m-d') . "')";
+			}
+		}
 
-    if ($situacao != "") {
-        if ($situacao != "Pendentes") {
-            if ($where != "") {
-                $where = $where . " and (a.status = '$situacao')";
-            } else {
-                $where = $where . " (a.status = '$situacao')";
-            }
-        } else {
-            if ($where != "" and $status == "Pendentes") {
-                $where = $where . " and (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
-            } else {
-                $where = $where . " (a.status not in ('Finalizado', 'Env.Recepção', 'Impresso') )";
-            }
-        }
-        if ($start == "") {
-            $data = inverteData($start);
-            if ($where != "") {
-                $where = $where . " and (a.dat_cad >= '" . date('Y-m-d') . "')";
-            } else {
-                $where = $where . " (a.dat_cad >= '" . date('Y-m-d') . "')";
-            }
-        }
+		if ($end == '') {
+			$data = inverteData($end);
+			if ($where != '') {
+				$where = $where . " and (a.dat_cad <= '" . date('Y-m-d') . "')";
+			} else {
+				$where = $where . " (a.dat_cad <= '" . date('Y-m-d') . "')";
+			}
+		}
+	}
 
-        if ($end == "") {
-            $data = inverteData($end);
-            if ($where != "") {
-                $where = $where . " and (a.dat_cad <= '" . date('Y-m-d') . "')";
-            } else {
-                $where = $where . " (a.dat_cad <= '" . date('Y-m-d') . "')";
-            }
-        }
-    }
+	if ($prontuario != '') {
+		if ($where != '') {
+			$where = $where . " and (a.paciente_id = '$prontuario')";
+		} else {
+			$where = $where . " (a.paciente_id = '$prontuario')";
+		}
+	}
 
+	if ($cb_meus != '') {
+		if ($where != '') {
+			$where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
+		} else {
+			$where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
+		}
+	}
 
-    if ($prontuario != '') {
-        if ($where != "") {
-            $where = $where . " and (a.paciente_id = '$prontuario')";
-        } else {
-            $where = $where . " (a.paciente_id = '$prontuario')";
-        }
-    }
+	if ($cb_conf != '') {
+		if ($where != '') {
+			$where = $where . " and (a.med_confere = '$cb_conf')";
+		} else {
+			$where = $where . " (a.med_confere = '$cb_conf')";
+		}
+	}
+	$stmtx = 'nao entrei';
 
+	if ($transfere != '') {
+		if (isset($_POST['transferir'])) {
+			include 'conexao.php';
+			$stmty = "Select username from pessoas where pessoa_id = $profissional";
 
-    if ($cb_meus != "") {
-        if ($where != "") {
-            $where = $where . " and (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus' )";
-        } else {
-            $where = $where . " (a.med_analise = '$cb_meus' or a.med_confere = '$cb_meus')";
-        }
-    }
+			$sth = pg_query($stmty) or die($stmty);
+			$row = pg_fetch_object($sth);
+			$username = $row->username;
+			if ($username != '') {
+				include 'conexao.php';
+				$stmtx = "Update itenspedidos set med_analise = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Editado' or situacao='Cadastrado')";
+				$sth = pg_query($stmtx) or die($stmtx);
 
-    if ($cb_conf != "") {
-        if ($where != "") {
-            $where = $where . " and (a.med_confere = '$cb_conf')";
-        } else {
-            $where = $where . " (a.med_confere = '$cb_conf')";
-        }
-    }
-    $stmtx = "nao entrei";
+				foreach ($transfere as $item) {
+					include 'conexao.php';
+					$data = date('Y-m-d H:i:s');
+					$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
+					$sth = pg_query($stmtx) or die($stmtx);
+				}
+			}
+		}
+		if (isset($_POST['transfconf'])) {
+			include 'conexao.php';
+			$stmty = "Select username from pessoas where pessoa_id = $profissional";
 
-    if ($transfere != "") {
-        if (isset($_POST["transferir"])) {
-            include('conexao.php');
-            $stmty = "Select username from pessoas where pessoa_id = $profissional";
+			$sth = pg_query($stmty) or die($stmty);
+			$row = pg_fetch_object($sth);
+			$username = $row->username;
+			if ($username != '') {
+				include 'conexao.php';
+				$stmtx = "Update itenspedidos set med_confere = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Laudado' or situacao='Editado')";
+				$sth = pg_query($stmtx) or die($stmtx);
 
-            $sth = pg_query($stmty) or die($stmty);
-            $row = pg_fetch_object($sth);
-            $username = $row->username;
-            if ($username != "") {
-                include('conexao.php');
-                $stmtx = "Update itenspedidos set med_analise = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Editado' or situacao='Cadastrado')";
-                $sth = pg_query($stmtx) or die($stmtx);
-
-                foreach ($transfere as $item) {
-                    include('conexao.php');
-                    $data  = date('Y-m-d H:i:s');
-                    $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
-                    $sth   = pg_query($stmtx) or die($stmtx);
-                }
-            }
-        }
-        if (isset($_POST["transfconf"])) {
-            include('conexao.php');
-            $stmty = "Select username from pessoas where pessoa_id = $profissional";
-
-            $sth = pg_query($stmty) or die($stmty);
-            $row = pg_fetch_object($sth);
-            $username = $row->username;
-            if ($username != "") {
-                include('conexao.php');
-                $stmtx = "Update itenspedidos set med_confere = '" . $username . "' where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Laudado' or situacao='Editado')";
-                $sth = pg_query($stmtx) or die($stmtx);
-
-                foreach ($transfere as $item) {
-                    include('conexao.php');
-                    $data  = date('Y-m-d H:i:s');
-                    $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
-                    $sth   = pg_query($stmtx) or die($stmtx);
-                }
-            }
-        }
-        if (isset($_POST["imprimir"])) {
-            echo "<script>alert('Imprimir')</script>";
-        }
-        if (isset($_POST["enviar"])) {
-            include('conexao.php');
-            $stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
+				foreach ($transfere as $item) {
+					include 'conexao.php';
+					$data = date('Y-m-d H:i:s');
+					$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Distribuicao', '$usuario', '$data' )";
+					$sth = pg_query($stmtx) or die($stmtx);
+				}
+			}
+		}
+		if (isset($_POST['imprimir'])) {
+			echo "<script>alert('Imprimir')</script>";
+		}
+		if (isset($_POST['enviar'])) {
+			include 'conexao.php';
+			$stmtx = "Update itenspedidos set situacao = 'Env.Recepção', envio_recepcao=now(), usu_envio_recepcao='$usuario'
                 where exame_nro in (" . implode(',', $transfere) . ") and (situacao='Finalizado' or situacao='Impresso')";
-            $sth = pg_query($stmtx) or die($stmtx);
+			$sth = pg_query($stmtx) or die($stmtx);
 
-            foreach ($transfere as $item) {
-                include('conexao.php');
-                $data  = date('Y-m-d H:i:s');
-                $stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Env Recepcao', '$usuario', '$data' )";
-                $sth   = pg_query($stmtx) or die($stmtx);
-            }
-        }
-    }
+			foreach ($transfere as $item) {
+				include 'conexao.php';
+				$data = date('Y-m-d H:i:s');
+				$stmtx = "Insert into log_exames (exame_nro, acao, usuario, data_hora) values ($item, 'Env Recepcao', '$usuario', '$data' )";
+				$sth = pg_query($stmtx) or die($stmtx);
+			}
+		}
+	}
 }
 
-if (isset($_POST["excel"])) {
-    $arquivo = 'Relatorio Atendimento.xls';
-    // Criamos uma tabela HTML com o formato da planilha
-    $html = '';
-    $html .= '<table style="font-size:8px" border="1">';
-    $html .= '<tr>';
-    $html .= '<td colspan="5" align=\'center\'>UPA PARQUE DO MIRANTE - RELACAO ATENDIMENTOS</td>';
-    $html .= '</tr>';
-    $html .= '<tr>';
-    $html .= '<tr align=\'center\'>';
-    $html .= '<td><b>Solicitacao</b></td>';
-    $html .= '<td><b>Paciente</b></td>';
-    $html .= '<td><b>Origem</b></td>';
-    $html .= '<td><b>Chegada</b></td>';
-    $html .= '<td><b>Triagem</b></td>';
-    $html .= '<td><b>Atendimento</b></td>';
-    $html .= '<td><b>Situacao</b></td>';
-    $html .= '</tr>';
-    include('conexao.php');
-    $stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento,
+if (isset($_POST['excel'])) {
+	$arquivo = 'Relatorio Atendimento.xls';
+	// Criamos uma tabela HTML com o formato da planilha
+	$html = '';
+	$html .= '<table style="font-size:8px" border="1">';
+	$html .= '<tr>';
+	$html .= '<td colspan="5" align=\'center\'>UPA PARQUE DO MIRANTE - RELACAO ATENDIMENTOS</td>';
+	$html .= '</tr>';
+	$html .= '<tr>';
+	$html .= '<tr align=\'center\'>';
+	$html .= '<td><b>Solicitacao</b></td>';
+	$html .= '<td><b>Paciente</b></td>';
+	$html .= '<td><b>Origem</b></td>';
+	$html .= '<td><b>Chegada</b></td>';
+	$html .= '<td><b>Triagem</b></td>';
+	$html .= '<td><b>Atendimento</b></td>';
+	$html .= '<td><b>Situacao</b></td>';
+	$html .= '</tr>';
+	include 'conexao.php';
+	$stmt = "select a.transacao,d.nome as nomemed, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento,
 						 a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
 						CASE prioridade 
 									WHEN 'VERMELHO' THEN '0' 
@@ -292,51 +291,51 @@ if (isset($_POST["excel"])) {
 						left join pessoas d on a.med_atendimento = d.username
 						left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo  ";
 
-    if ($where != "") {
-        $stmt = $stmt . " where " . $where;
-    } else {
-        $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
-    }
+	if ($where != '') {
+		$stmt = $stmt . ' where ' . $where;
+	} else {
+		$stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
+	}
 
-    $stmt = $stmt . " order by a.dat_cad desc,a.hora_cad desc ";
-    $sth = pg_query($stmt) or die($stmt);
-    //echo $stmt;
-    $qtde = 0;
-    while ($row = pg_fetch_object($sth)) {
-        $html .= '<tr>';
-        $html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
-        $html .= '<td>' . $row->nome . '</td>';
-        $html .= '<td>' . $row->origem . '</td>';
-        $html .= '<td>' . $row->hora_cad . '</td>';
-        $html .= '<td>' . $row->hora_triagem . '</td>';
-        $html .= '<td>' . $row->hora_destino . '</td>';
-        $html .= '<td>' . $row->status . '</td>';
-        $html .= '</tr>';
+	$stmt = $stmt . ' order by a.dat_cad desc,a.hora_cad desc ';
+	$sth = pg_query($stmt) or die($stmt);
+	//echo $stmt;
+	$qtde = 0;
+	while ($row = pg_fetch_object($sth)) {
+		$html .= '<tr>';
+		$html .= '<td>' . inverteData(substr($row->cadastro, 0, 10)) . '</td>';
+		$html .= '<td>' . ts_decodifica($row->nome) . '</td>';
+		$html .= '<td>' . $row->origem . '</td>';
+		$html .= '<td>' . $row->hora_cad . '</td>';
+		$html .= '<td>' . $row->hora_triagem . '</td>';
+		$html .= '<td>' . $row->hora_destino . '</td>';
+		$html .= '<td>' . $row->status . '</td>';
+		$html .= '</tr>';
 
-        $qtde = $qtde + 1;
-    }
-    $html .= '<tr>';
-    $html .= '<td>Quantidade de Pacientes</td>';
-    $html .= '<td></td>';
-    $html .= '<td></td>';
-    $html .= '<td></td>';
-    $html .= '<td></td>';
-    $html .= '<td></td>';
-    $html .= '<td>' . $qtde . '</td>';
-    $html .= '</tr>';
-    $html .= '</table>';
+		$qtde = $qtde + 1;
+	}
+	$html .= '<tr>';
+	$html .= '<td>Quantidade de Pacientes</td>';
+	$html .= '<td></td>';
+	$html .= '<td></td>';
+	$html .= '<td></td>';
+	$html .= '<td></td>';
+	$html .= '<td></td>';
+	$html .= '<td>' . $qtde . '</td>';
+	$html .= '</tr>';
+	$html .= '</table>';
 
-    // Configurações header para forçar o download
-    header("Expires: Mon, 26 Jul 2017 05:00:00 GMT");
-    header("Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT");
-    header("Cache-Control: no-cache, must-revalidate");
-    header("Pragma: no-cache");
-    header("Content-type: application/x-msexcel");
-    header("Content-Disposition: attachment; filename=\"{$arquivo}\"");
-    header("Content-Description: PHP Generated Data");
-    // Envia o conteúdo do arquivo
-    echo $html;
-    exit;
+	// Configurações header para forçar o download
+	header('Expires: Mon, 26 Jul 2017 05:00:00 GMT');
+	header('Last-Modified: ' . gmdate('D,d M YH:i:s') . ' GMT');
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Pragma: no-cache');
+	header('Content-type: application/x-msexcel');
+	header("Content-Disposition: attachment; filename=\"{$arquivo}\"");
+	header('Content-Description: PHP Generated Data');
+	// Envia o conteúdo do arquivo
+	echo $html;
+	exit;
 }
 // }
 ?>
@@ -499,8 +498,8 @@ if (isset($_POST["excel"])) {
                 <div class="modal-body" id="conteudoModal"></div>
                 <div class="modal-footer">
                     <div class="col-md-6">
-                        <input type='button' name='confTriagem' id="confTriagem" class="btn btn-success width-full"
-                            value='Confirmar Triagem'>
+                        <input type='button' name='confTriagem' id="confTriagem" onclick="salvar_triagem()"
+                            class="btn btn-success width-full" value='Confirmar Triagem'>
                     </div>
                     <div class="col-md-6">
                         <input type='button' name='cancelarModal' data-dismiss="modal" id="cancelarModal"
@@ -513,8 +512,8 @@ if (isset($_POST["excel"])) {
 
 
     <!-- <div class="wrapper"> -->
-    <!-- <?php include('menu.php'); ?> -->
-    <?php include('header2.php'); ?>
+    <!-- <?php include 'menu.php'; ?> -->
+    <?php include 'header2.php'; ?>
     <div class="main-panel">
         <div class="">
             <div class="content-wrapper">
@@ -589,7 +588,7 @@ if (isset($_POST["excel"])) {
                                                             for="inputBasicFirstName">Paciente</label>
                                                         <input type="text" class="form-control" id="inputBasicFirstName"
                                                             name="nome" placeholder="Parte do Nome" autocomplete="off"
-                                                            value="<?php echo $nome; ?>"
+                                                            value="<?php echo ts_decodifica($nome); ?>"
                                                             onkeyup="maiuscula(this)" />
                                                     </div>
 
@@ -598,27 +597,27 @@ if (isset($_POST["excel"])) {
                                                         <select class="form-control" name="situacao" id="situacao">
                                                             <option value="">Todos</option>
                                                             <option value="Aguardando Triagem" <?php if ($situacao == 'Aguardando Triagem') {
-    echo "selected";
+	echo 'selected';
 } ?>>Aguardando
                                                                 Triagem
                                                             </option>
                                                             <option value="Aguardando Atendimento" <?php if ($situacao == 'Aguardando Atendimento') {
-    echo "selected";
+	echo 'selected';
 } ?>>Aguardando
                                                                 Atendimento
                                                             </option>
                                                             <option value="Em Atendimento" <?php if ($situacao == 'Em Atendimento') {
-    echo "selected";
+	echo 'selected';
 } ?>>Em
                                                                 Atendimento
                                                             </option>
                                                             <option value="Atendimento Finalizado" <?php if ($situacao == 'Atendimento Finalizado') {
-    echo "selected";
+	echo 'selected';
 } ?>>Atendimento
                                                                 Finalizado
                                                             </option>
                                                             <option value="Não Resp. Chamado" <?php if ($situacao == 'Não Resp. Chamado') {
-    echo "selected";
+	echo 'selected';
 } ?>>Não
                                                                 Resp. Chamado
                                                             </option>
@@ -634,7 +633,7 @@ if (isset($_POST["excel"])) {
                                                         <div class="custom-control custom-checkbox">
                                                             <input type="checkbox" class="custom-control-input"
                                                                 id="cb_cm" name="cb_cm" value='CM' <?php if ($CM == 'CM') {
-    echo "checked";
+	echo 'checked';
 } ?>>
                                                             <label class="custom-control-label" for="cb_cm">Clinica
                                                                 Médica</label>
@@ -645,7 +644,7 @@ if (isset($_POST["excel"])) {
                                                         <div class="custom-control custom-checkbox">
                                                             <input type="checkbox" class="custom-control-input"
                                                                 id="cb_or" name="cb_or" value='OR' <?php if ($OR == 'OR') {
-    echo "checked";
+	echo 'checked';
 } ?>>
                                                             <label class="custom-control-label"
                                                                 for="cb_or">Ortopedia</label>
@@ -719,140 +718,139 @@ if (isset($_POST["excel"])) {
                                                     </tfoot>
                                                     <tbody>
                                                         <?php
-                                                        include('conexao.php');
-                                                        $stmt = "select a.transacao,d.nome as nomemed, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, case when z.destino_encaminhamento::varchar is null then a.dat_cad else z.data end as data_paciente, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
+														include 'conexao.php';
+														$stmt = "select a.transacao,d.nome as nomemed, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, case when z.destino_encaminhamento::varchar is null then a.dat_cad else z.data end as data_paciente, a.paciente_id, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro, 	c.nome, k.origem, a.tipo,a.hora_destino,
                                                         CASE prioridade WHEN 'VERMELHO' THEN '0' WHEN 'LARANJA' THEN '1' WHEN 'AMARELO' THEN '2' WHEN 'VERDE' THEN '3'  WHEN 'AZUL' THEN '4' ELSE '5'
                                                         END as ORDEM, a.coronavirus from atendimentos a 
                                                         left join pessoas c on a.paciente_id=c.pessoa_id
                                                         left join pessoas d on a.med_atendimento=d.username 
                                                         left join tipo_origem k on cast(k.tipo_id as varchar)=a.tipo 
                                                         left join destino_paciente z on a.transacao = z.atendimento_id";
-                                                        if ($where != "") {
-                                                            $stmt = $stmt . " where " . $where;
-                                                        } else {
-                                                            $stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
-                                                        }
-                                                        $stmt = $stmt . " order by a.dat_cad desc,a.hora_cad desc ";
-                                                        $sth = pg_query($stmt) or die($stmt);
-                                                        //echo $stmt;
-                                                        while ($row = pg_fetch_object($sth)) {
-                                                            if ($row->prioridade   == 'AMARELO') {
-                                                                $classe = "style=\"background-color:#FFEE58\"";
-                                                                $color = "black";
-                                                            }
-                                                            if ($row->prioridade   == 'VERMELHO') {
-                                                                $classe = "class='bg-danger' style='color: white'";
-                                                                $color = "white";
-                                                            }
-                                                            if ($row->prioridade   == 'VERDE') {
-                                                                $classe = "class='bg-success' style='color: white'";
-                                                                $color = "white";
-                                                            }
-                                                            if ($row->prioridade   == 'AZUL') {
-                                                                $classe = "class='bg-info' style='color: white'";
-                                                                $color = "white";
-                                                            }
-                                                            if ($row->prioridade   == 'LARANJA') {
-                                                                $classe = "class='bg-warning' style='color: white'";
-                                                                $color = "white";
-                                                            }
-                                                            if ($row->prioridade   == '') {
-                                                                $classe = "style=\"background-color:Gainsboro\"";
-                                                                $color = "black";
-                                                            } else {
-                                                                $color = "black";
-                                                            }
+														if ($where != '') {
+															$stmt = $stmt . ' where ' . $where;
+														} else {
+															$stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
+														}
+														$stmt = $stmt . ' order by a.dat_cad desc,a.hora_cad desc ';
+														$sth = pg_query($stmt) or die($stmt);
+														//echo $stmt;
+														while ($row = pg_fetch_object($sth)) {
+															if ($row->prioridade == 'AMARELO') {
+																$classe = 'style="background-color:#FFEE58"';
+																$color = 'black';
+															}
+															if ($row->prioridade == 'VERMELHO') {
+																$classe = "class='bg-danger' style='color: white'";
+																$color = 'white';
+															}
+															if ($row->prioridade == 'VERDE') {
+																$classe = "class='bg-success' style='color: white'";
+																$color = 'white';
+															}
+															if ($row->prioridade == 'AZUL') {
+																$classe = "class='bg-info' style='color: white'";
+																$color = 'white';
+															}
+															if ($row->prioridade == 'LARANJA') {
+																$classe = "class='bg-warning' style='color: white'";
+																$color = 'white';
+															}
+															if ($row->prioridade == '') {
+																$classe = 'style="background-color:Gainsboro"';
+																$color = 'black';
+															} else {
+																$color = 'black';
+															}
 
-                                                            if ($row->destino_paciente == '03') {
-                                                                $classe = "style=\"background-color:#4B0082\"";
-                                                                $color = "white";
-                                                            }
+															if ($row->destino_paciente == '03') {
+																$classe = 'style="background-color:#4B0082"';
+																$color = 'white';
+															}
 
-                                                            $ip = getenv("REMOTE_ADDR");
-                                                            echo "<tr " . $classe . " >";
-                                                            if ($row->coronavirus == 1) {
-                                                                echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td class='blink' style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . "</td>";
-                                                                echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank'>" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
-                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";
-                                                                echo "<td class='blink' style=\"color:$color\">" . $row->hora_triagem . "</td>";
-                                                                echo "<td class='blink' style=\"color:$color\">" . $row->hora_destino . "</td>";
+															$ip = getenv('REMOTE_ADDR');
+															echo '<tr ' . $classe . ' >';
+															if ($row->coronavirus == 1) {
+																echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . '"><label></label></div></td>';
+																echo "<td class='blink' style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . '</td>';
+																echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank'>" . ts_decodifica($row->nome) . '<br><br> Origem:' . $row->origem . '</a></td>';
+																//echo "<td>".utf8_encode($row->convenio)."</td>";
+																echo "<td class='blink' style=\"color:$color\">" . $row->hora_triagem . '</td>';
+																echo "<td class='blink' style=\"color:$color\">" . $row->hora_destino . '</td>';
 
-                                                                if ($row->status == 'Atendimento Finalizado') {
-                                                                    echo "<td class='blink' style=\"color:$color\">" . $row->status . "<br>";
-                                                                    echo "<small>" . substr($row->nomemed, 0, 21) . "</small></td>";
-                                                                } else {
-                                                                    echo "<td class='blink' style=\"color:$color\">" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
-                                                                }
-                                                            } else {
-                                                                echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . "\"><label></label></div></td>";
-                                                                echo "<td style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad .  '<br>' . $row->paciente_id . "</td>";
-                                                                echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank' style=\"color:$color\">" . $row->nome . '<br><br> Origem:' . $row->origem . "</a></td>";
-                                                                //echo "<td>".utf8_encode($row->convenio)."</td>";
-                                                                echo "<td style=\"color:$color\">" . $row->hora_triagem . "</td>";
-                                                                echo "<td style=\"color:$color\">" . $row->hora_destino . "</td>";
+																if ($row->status == 'Atendimento Finalizado') {
+																	echo "<td class='blink' style=\"color:$color\">" . $row->status . '<br>';
+																	echo '<small>' . substr(ts_decodifica($row->nomemed), 0, 21) . '</small></td>';
+																} else {
+																	echo "<td class='blink' style=\"color:$color\">" . $row->status . ' - ' . substr(ts_decodifica($row->nomemed), 0, 21) . '</td>';
+																}
+															} else {
+																echo "<td style='display:none;'><div class=\"checkbox-custom checkbox-primary\"><input type=\"checkbox\" class='marcar' name=\"cb_exame[]\"    value=\"" . $row->exame_nro . '"><label></label></div></td>';
+																echo "<td style=\"color:$color\">" . inverteData(substr($row->cadastro, 0, 10)) . '<br>' . $row->hora_cad . '<br>' . $row->paciente_id . '</td>';
+																echo "<td><a style=\"color:$color\" data-toggle=\"popover\" data-content=\"Ir para o cadastro do paciente.\" data-trigger=\"hover\" data-original-title=\"Paciente\" href='novoatendimento.php?id=" . $row->transacao . "' target='_blank' style=\"color:$color\">" . ts_decodifica($row->nome) . '<br><br> Origem:' . $row->origem . '</a></td>';
+																//echo "<td>".utf8_encode($row->convenio)."</td>";
+																echo "<td style=\"color:$color\">" . $row->hora_triagem . '</td>';
+																echo "<td style=\"color:$color\">" . $row->hora_destino . '</td>';
 
-                                                                if ($row->status == 'Atendimento Finalizado') {
-                                                                    echo "<td style=\"color:$color\">" . $row->status . "<br>";
-                                                                    echo "<small>" . substr($row->nomemed, 0, 21) . "</small></td>";
-                                                                } else {
-                                                                    echo "<td style=\"color:$color\">" . $row->status . " - " . substr($row->nomemed, 0, 21) . "</td>";
-                                                                }
-                                                            }
-                                                            echo "<td style=\"color:$color\">";
-                                                            if ($row->destino_paciente == '01') {
-                                                                echo 'ALTA';
-                                                            } elseif ($row->destino_paciente == '02') {
-                                                                echo 'ALTA / ENCAM. AMBUL.';
-                                                            } elseif ($row->destino_paciente == '07') {
-                                                                echo 'EM OBSERVAÇÃO / MEDICAÇÃO';
-                                                            } elseif ($row->destino_paciente == '10') {
-                                                                echo 'EXAMES / REAVALIACAO';
-                                                            } elseif ($row->destino_paciente == '03') {
-                                                                echo 'PERMANÊCIA.';
-                                                            } elseif ($row->destino_paciente == '04') {
-                                                                echo 'TRANSF. OUTRA UPA';
-                                                            } elseif ($row->destino_paciente == '05') {
-                                                                echo 'TRANSF. INTERN. HOSPITALAR';
-                                                            } elseif ($row->destino_paciente == '06') {
-                                                                echo 'ÓBITO';
-                                                            } elseif ($row->destino_paciente == '09') {
-                                                                echo 'NAO RESPONDEU CHAMADO';
-                                                            } elseif ($row->destino_paciente == '11') {
-                                                                echo 'ALTA EVASÃO';
-                                                            } elseif ($row->destino_paciente == '12') {
-                                                                echo 'ALTA PEDIDO';
-                                                            } elseif ($row->destino_paciente == '14') {
-                                                                echo 'ALTA / POLICIA';
-                                                            } elseif ($row->destino_paciente == '15') {
-                                                                echo 'ALTA / PENITENCIÁRIA';
-                                                            } elseif ($row->destino_paciente == '16') {
-                                                                echo 'ALTA / PÓS MEDICAMENTO';
-                                                            } elseif ($row->destino_paciente == '20') {
-                                                                echo 'ALTA VIA SISTEMA';
-                                                            } elseif ($row->destino_paciente == '21') {
-                                                                echo 'TRANSFERENCIA';
-                                                            }
-                                                            echo "</td>";
-                                                            echo "<td style=\"color:$color\">";
-                                                            if ($row->destino_paciente and ($row->destino_paciente != '07' and $row->destino_paciente != '10' and $row->destino_paciente != '03')) {
-                                                                echo inverteData(substr($row->data_paciente, 0, 10));
-                                                            }
-                                                            echo "</td>";
+																if ($row->status == 'Atendimento Finalizado') {
+																	echo "<td style=\"color:$color\">" . $row->status . '<br>';
+																	echo '<small>' . substr(ts_decodifica($row->nomemed), 0, 21) . '</small></td>';
+																} else {
+																	echo "<td style=\"color:$color\">" . $row->status . ' - ' . substr(ts_decodifica($row->nomemed), 0, 21) . '</td>';
+																}
+															}
+															echo "<td style=\"color:$color\">";
+															if ($row->destino_paciente == '01') {
+																echo 'ALTA';
+															} elseif ($row->destino_paciente == '02') {
+																echo 'ALTA / ENCAM. AMBUL.';
+															} elseif ($row->destino_paciente == '07') {
+																echo 'EM OBSERVAÇÃO / MEDICAÇÃO';
+															} elseif ($row->destino_paciente == '10') {
+																echo 'EXAMES / REAVALIACAO';
+															} elseif ($row->destino_paciente == '03') {
+																echo 'PERMANÊCIA.';
+															} elseif ($row->destino_paciente == '04') {
+																echo 'TRANSF. OUTRA UPA';
+															} elseif ($row->destino_paciente == '05') {
+																echo 'TRANSF. INTERN. HOSPITALAR';
+															} elseif ($row->destino_paciente == '06') {
+																echo 'ÓBITO';
+															} elseif ($row->destino_paciente == '09') {
+																echo 'NAO RESPONDEU CHAMADO';
+															} elseif ($row->destino_paciente == '11') {
+																echo 'ALTA EVASÃO';
+															} elseif ($row->destino_paciente == '12') {
+																echo 'ALTA PEDIDO';
+															} elseif ($row->destino_paciente == '14') {
+																echo 'ALTA / POLICIA';
+															} elseif ($row->destino_paciente == '15') {
+																echo 'ALTA / PENITENCIÁRIA';
+															} elseif ($row->destino_paciente == '16') {
+																echo 'ALTA / PÓS MEDICAMENTO';
+															} elseif ($row->destino_paciente == '20') {
+																echo 'ALTA VIA SISTEMA';
+															} elseif ($row->destino_paciente == '21') {
+																echo 'TRANSFERENCIA';
+															}
+															echo '</td>';
+															echo "<td style=\"color:$color\">";
+															if ($row->destino_paciente and ($row->destino_paciente != '07' and $row->destino_paciente != '10' and $row->destino_paciente != '03')) {
+																echo inverteData(substr($row->data_paciente, 0, 10));
+															}
+															echo '</td>';
 
-                                                            echo "<td>";
-                                                            //if ($row->status != 'Aguardando Triagem' and ($perfil == '06' or $perfil == '03')) {
-                                                            echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\" style=\"color:$color\"><i class=\"fas fa-file-medical\"></i></a>";
-                                                            //}
+															echo '<td>';
+															//if ($row->status != 'Aguardando Triagem' and ($perfil == '06' or $perfil == '03')) {
+															echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\" style=\"color:$color\"><i class=\"fas fa-file-medical\"></i></a>";
+															//}
 
-
-                                                            if ($row->tipo == 9) {
-                                                                echo "<a href=\"relOdonto.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"ODONTOLOGICO\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
-                                                            } else {
-                                                                echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
-                                                            }
-                                                            // if ($perfil == '06' or $perfil == '04') {
-                                                        ?>
+															if ($row->tipo == 9) {
+																echo "<a href=\"relOdonto.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"ODONTOLOGICO\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
+															} else {
+																echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
+															}
+															// if ($perfil == '06' or $perfil == '04') {
+														?>
                                                         <?php if ($row->status != 'Atendimento Finalizado') { ?>
                                                         <a id="triagemmanual"
                                                             data-id="<?php echo $row->transacao; ?>"
@@ -867,8 +865,8 @@ if (isset($_POST["excel"])) {
                                                         <?php } ?>
                                                         <?php //}
 
-                                                            //if ($perfil == '06' or $perfil == '04' or $perfil == '01') {
-                                                            ?>
+															//if ($perfil == '06' or $perfil == '04' or $perfil == '01') {
+															?>
                                                         <a id="mudasituacao"
                                                             data-id="<?php echo $row->transacao; ?>"
                                                             class="btn btn-sm btn-icon btn-pure btn-default delete-row-btn"
@@ -879,11 +877,11 @@ if (isset($_POST["excel"])) {
                                                             <i class="fa fa-user" aria-hidden="true" onclick=""></i>
                                                         </a>
                                                         <?php //}
-                                                            ?>
+															?>
 
-                                                        <?php echo "</tr>";
-                                                        }
-                                                        ?>
+                                                        <?php echo '</tr>';
+														}
+														?>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -917,7 +915,7 @@ if (isset($_POST["excel"])) {
                 </div>
             </div>
 
-            <?php include('footer.php'); ?>
+            <?php include 'footer.php'; ?>
         </div>
     </div>
     </div>
@@ -1123,6 +1121,53 @@ if (isset($_POST["excel"])) {
                 $('#modalConteudoSitu').modal('hide');
             });
 
+        };
+
+        function salvar_triagem() {
+            // document.getElementById("confTriagem").disabled = true;
+            var transacaoModal = $("#transacaoModal").val();
+            var consultorioModal = $("#consultorioModal").val();
+            var prioridadeModal = $("#prioridadeModal").val();
+            var observacao = $("#observacao").val();
+            var discriminador = $("#discriminador option:selected").text();
+            var fluxograma = $("#fluxograma option:selected").text();
+            var pa_sis = $("#pa_sis").val();
+            var pa_dist = $("#pa_dis").val();
+            var temperatura = $("#temp").val();
+            var dor = $("#dor").val();
+            var queixa = $("#queixa").val();
+            var peso = $("#peso").val();
+            var oxigenio = $("#oxigenio").val();
+            var pulso = $("#pulso").val();
+            var glicose = $("#glicose").val();
+
+            if (prioridadeModal == '') {
+                sweetAlert("Informe a prioridade para o atendimento!", "", "warning");
+            } else if (consultorioModal == '') {
+                sweetAlert("Informe o consultorio para o atendimento!", "", "warning");
+            } else {
+                $.post("salvartriagemmanual.php", {
+                        transacaoModal: transacaoModal,
+                        consultorioModal: consultorioModal,
+                        prioridadeModal: prioridadeModal,
+                        observacao: observacao,
+                        discriminador: discriminador,
+                        fluxograma: fluxograma,
+                        pa_sis: pa_sis,
+                        pa_dist: pa_dist,
+                        dor: dor,
+                        temperatura: temperatura,
+                        queixa: queixa,
+                        peso: peso,
+                        oxigenio: oxigenio,
+                        pulso: pulso,
+                        glicose: glicose
+                    },
+                    function(dataReturn) {
+                        alert(dataReturn);
+                        $('#modalConteudo').modal('hide');
+                    });
+            }
         };
     </script>
 </body>

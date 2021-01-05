@@ -1,6 +1,6 @@
 <?php
 
-//require 'tsul_ssl.php';
+require 'tsul_ssl.php';
 
 function inverteData($data)
 {
@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$data_destino = $row->data_destino;
 
 		$sexo = $row->sexo;
-		$nome = $row->nome;
+		$nome = ts_decodifica($row->nome);
 		$email = $row->email;
 		$dt_nascimento = inverteData($row->dt_nasc);
 		$sexo = $row->sexo;
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$temperatura = $row->pressaodiastolica;
 		$cns = $row->num_carteira_convenio;
 		$cep = $row->cep;
-		$cpf = $row->cpf;
+		$cpf = ts_decodifica($row->cpf);
 		$telefone = $row->telefone;
 		$celular = $row->celular;
 		$dt_nasc = $row->dt_nasc;

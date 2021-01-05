@@ -1,11 +1,14 @@
 <?php
+
+require 'tsul_ssl.php';
+
 function inverteData($data)
 {
-    if (count(explode("/", $data)) > 1) {
-        return implode("-", array_reverse(explode("/", $data)));
-    } elseif (count(explode("-", $data)) > 1) {
-        return implode("/", array_reverse(explode("-", $data)));
-    }
+	if (count(explode('/', $data)) > 1) {
+		return implode('-', array_reverse(explode('/', $data)));
+	} elseif (count(explode('-', $data)) > 1) {
+		return implode('/', array_reverse(explode('-', $data)));
+	}
 }
 error_reporting(0);
 $menu_grupo = '30';
@@ -17,48 +20,48 @@ $mae = '';
 $data = date('Y-m-d');
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    $codigo = $_GET['id'];
-    if ($codigo != "") {
-        $where = ' where pessoa_id =' . $codigo;
-    }
+	$codigo = $_GET['id'];
+	if ($codigo != '') {
+		$where = ' where pessoa_id =' . $codigo;
+	}
 
-    $data = $_GET['data'];
-    if ($data != "") {
-        $where = " where dat_cad ='$data'";
-    }
+	$data = $_GET['data'];
+	if ($data != '') {
+		$where = " where dat_cad ='$data'";
+	}
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $data          = $_POST['data'];
-    $conveniox  = $_POST['conveniox'];
-    $modalidade = $_POST['modalidade'];
-    $situacao = $_POST['situacao'];
+	$data = $_POST['data'];
+	$conveniox = $_POST['conveniox'];
+	$modalidade = $_POST['modalidade'];
+	$situacao = $_POST['situacao'];
 
-    $where = "";
+	$where = '';
 
-    if ($data != "") {
-        if ($where != "") {
-            $where = $where . " and   b.dat_cad = '$data'";
-        } else {
-            $where = $where . " where b.dat_cad = '$data'";
-        }
-    }
+	if ($data != '') {
+		if ($where != '') {
+			$where = $where . " and   b.dat_cad = '$data'";
+		} else {
+			$where = $where . " where b.dat_cad = '$data'";
+		}
+	}
 
-    if ($modalidade != "") {
-        if ($where != "") {
-            $where = $where . " and f.modalidade_id = 4";
-        } else {
-            $where = $where . " where f.modalidade_id = 4";
-        }
-    }
+	if ($modalidade != '') {
+		if ($where != '') {
+			$where = $where . ' and f.modalidade_id = 4';
+		} else {
+			$where = $where . ' where f.modalidade_id = 4';
+		}
+	}
 
-    if ($situacao != "") {
-        if ($where != "") {
-            $where = $where . " and a.situacao = 'Cadastrando'";
-        } else {
-            $where = $where . " where a.situacao = 'Cadastrando'";
-        }
-    }
+	if ($situacao != '') {
+		if ($where != '') {
+			$where = $where . " and a.situacao = 'Cadastrando'";
+		} else {
+			$where = $where . " where a.situacao = 'Cadastrando'";
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
@@ -80,7 +83,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-touch-fullscreen" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Rubik:300,400,500,700,900|Montserrat:300,400,500,600,700,800,900"
+        rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/feather/style.min.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/simple-line-icons/style.css">
     <link rel="stylesheet" type="text/css" href="app-assets/fonts/font-awesome/css/all.min.css">
@@ -137,8 +142,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div> -->
 
     <!-- <div class="wrapper"> -->
-    <?php include('menu.php'); ?>
-    <?php include('header.php'); ?>
+    <?php include 'menu.php'; ?>
+    <?php include 'header.php'; ?>
     <div class="main-panel">
         <div class="main-content">
             <div class="content-wrapper">
@@ -153,7 +158,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <div class="row">
                                             <div class="col-12">
                                                 <h4 class="card-title">
-                                                    <p style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
+                                                    <p
+                                                        style="color: #12A1A6;display:inline;font-size: 18pt;font-weight: bold;">
                                                         » </p>Painel Radiologico
                                                 </h4>
                                             </div>
@@ -178,20 +184,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class="row">
                                         <div class="col-4">
                                             <div class="form-group">
-                                                <label>Data</label> <input type="text" class="form-control square" id="data" name="data" value="<?php echo date('d/m/Y'); ?>" readonly>
+                                                <label>Data</label> <input type="text" class="form-control square"
+                                                    id="data" name="data"
+                                                    value="<?php echo date('d/m/Y'); ?>"
+                                                    readonly>
                                             </div>
                                         </div>
                                         <div class="col-8">
                                             <div class="form-group">
                                                 <label>Modalidade</label>
                                                 <?php
-                                                include('conexao.php');
-                                                $stmt = "Select * from modalidades WHERE modalidade_id = 1";
-                                                $sth = pg_query($stmt) or die($stmt);
-                                                $row = pg_fetch_object($sth);
-                                                ?>
-                                                <input type="text" class="form-control square" id="modalidade" name="modalidade" value="<?php echo $row->descricao; ?>" readonly>
-                                                <input type="hidden" class="form-control" id="modalidade_id" name="modalidade_id" value="<?php echo $row->modalidade_id; ?>" readonly>
+												include 'conexao.php';
+												$stmt = 'Select * from modalidades WHERE modalidade_id = 1';
+												$sth = pg_query($stmt) or die($stmt);
+												$row = pg_fetch_object($sth);
+												?>
+                                                <input type="text" class="form-control square" id="modalidade"
+                                                    name="modalidade"
+                                                    value="<?php echo $row->descricao; ?>"
+                                                    readonly>
+                                                <input type="hidden" class="form-control" id="modalidade_id"
+                                                    name="modalidade_id"
+                                                    value="<?php echo $row->modalidade_id; ?>"
+                                                    readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -227,8 +242,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </tfoot>
                                                 <tbody>
                                                     <?php
-                                                    include('conexao.php');
-                                                    $stmt = "select a.transacao, a.exame_nro, a.exame_id, a.pessoa_id, s.nome as solicitante, a.situacao, a.contraste, b.transacao, a.med_analise, b.dat_cad as cadastro, b.dt_solicitacao, b.dt_realizacao, b.convenio_id, a.pedido,
+													include 'conexao.php';
+													$stmt = "select a.transacao, a.exame_nro, a.exame_id, a.pessoa_id, s.nome as solicitante, a.situacao, a.contraste, b.transacao, a.med_analise, b.dat_cad as cadastro, b.dt_solicitacao, b.dt_realizacao, b.convenio_id, a.pedido,
                                                        c.nome, d.sigla as convenio, a.exame_id, e.descricao as desc_exames, f.sigla as modalidade,c.dt_nasc, z.coronavirus
                                                        from itenspedidos a 
                                                        left join pedidos b on b.transacao=a.transacao 
@@ -238,39 +253,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                        left join procedimentos e on a.exame_id=e.procedimento_id 
                                                        left join modalidades f on e.modalidade_id=f.modalidade_id 
                                                         left join atendimentos z on a.atendimento_id=z.transacao
-                                                       WHERE f.modalidade_id = '1' AND b.dat_cad = '$data' order by a.transacao DESC";;
-                                                    $sth = pg_query($stmt) or die($stmt);
-                                                    while ($row = pg_fetch_object($sth)) {
-                                                        if ($row->situacao   == 'Realizado') {
-                                                            $classe = "class='bg-info'";
-                                                        } else {
-                                                            $classe = "class='bg-danger'";
-                                                        }
-                                                        echo "<tr " . $classe . ">";
-                                                        if ($row->coronavirus == 1) {
-                                                            echo "<td class='blink'><font size='2'>" . inverteData(substr($row->cadastro, 0, 10)) . "</font></td>";
-                                                            echo "<td class='blink'><font size='2'>" . $row->exame_nro . "</font></td>";
-                                                            echo "<td class='blink'><font size='2'>" . $row->pessoa_id . "</font></td>";
-                                                            echo "<td class='blink'><font size='2'>" . $row->nome . "</font></td>";
-                                                            echo "<td class='blink'><font size='2'>" . date('d/m/Y', strtotime($row->dt_nasc)) . "</font></td>";
-                                                            echo "<td class='blink'><font size='2'>" . $row->solicitante . "</font></td>";
-                                                            echo "<td class='blink'><font size='2'>" . $row->desc_exames . "</font></td>";
-                                                            echo "<td class='blink'><font size='2'>" . $row->situacao . "</font></td>";
-                                                            echo "<td class='blink'><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
-                                                        } else {
-                                                            echo "<td><font size='2'>" . inverteData(substr($row->cadastro, 0, 10)) . "</font></td>";
-                                                            echo "<td><font size='2'>" . $row->exame_nro . "</font></td>";
-                                                            echo "<td><font size='2'>" . $row->pessoa_id . "</font></td>";
-                                                            echo "<td><font size='2'>" . $row->nome . "</font></td>";
-                                                            echo "<td><font size='2'>" . date('d/m/Y', strtotime($row->dt_nasc)) . "</font></td>";
-                                                            echo "<td><font size='2'>" . $row->solicitante . "</font></td>";
-                                                            echo "<td><font size='2'>" . $row->desc_exames . "</font></td>";
-                                                            echo "<td><font size='2'>" . $row->situacao . "</font></td>";
-                                                            echo "<td><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
-                                                        }
-                                                        echo "</tr>";
-                                                    }
-                                                    ?>
+                                                       WHERE f.modalidade_id = '1' AND b.dat_cad = '$data' order by a.transacao DESC"; ;
+													$sth = pg_query($stmt) or die($stmt);
+													while ($row = pg_fetch_object($sth)) {
+														if ($row->situacao == 'Realizado') {
+															$classe = "class='bg-info'";
+														} else {
+															$classe = "class='bg-danger'";
+														}
+														echo '<tr ' . $classe . '>';
+														if ($row->coronavirus == 1) {
+															echo "<td class='blink'><font size='2'>" . inverteData(substr($row->cadastro, 0, 10)) . '</font></td>';
+															echo "<td class='blink'><font size='2'>" . $row->exame_nro . '</font></td>';
+															echo "<td class='blink'><font size='2'>" . $row->pessoa_id . '</font></td>';
+															echo "<td class='blink'><font size='2'>" . ts_decodifica($row->nome) . '</font></td>';
+															echo "<td class='blink'><font size='2'>" . date('d/m/Y', strtotime($row->dt_nasc)) . '</font></td>';
+															echo "<td class='blink'><font size='2'>" . ts_decodifica($row->solicitante) . '</font></td>';
+															echo "<td class='blink'><font size='2'>" . $row->desc_exames . '</font></td>';
+															echo "<td class='blink'><font size='2'>" . $row->situacao . '</font></td>';
+															echo "<td class='blink'><a href=\"alterastatuspedido.php?id=" . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
+														} else {
+															echo "<td><font size='2'>" . inverteData(substr($row->cadastro, 0, 10)) . '</font></td>';
+															echo "<td><font size='2'>" . $row->exame_nro . '</font></td>';
+															echo "<td><font size='2'>" . $row->pessoa_id . '</font></td>';
+															echo "<td><font size='2'>" . ts_decodifica($row->nome) . '</font></td>';
+															echo "<td><font size='2'>" . date('d/m/Y', strtotime($row->dt_nasc)) . '</font></td>';
+															echo "<td><font size='2'>" . ts_decodifica($row->solicitante) . '</font></td>';
+															echo "<td><font size='2'>" . $row->desc_exames . '</font></td>';
+															echo "<td><font size='2'>" . $row->situacao . '</font></td>';
+															echo '<td><a href="alterastatuspedido.php?id=' . $row->exame_nro . "\"><i class=\"fas fa-radiation-alt\" style='color:white' title=\"Marcar como realizado\"></i>";
+														}
+														echo '</tr>';
+													}
+													?>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -282,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <?php include('footer.php'); ?>
+        <?php include 'footer.php'; ?>
         <!-- </div> -->
 
         <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
@@ -299,7 +314,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="app-assets/js/customizer.js" type="text/javascript"></script>
         <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+        </script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script src="app-assets/js/popover.js" type="text/javascript"></script>
         <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
