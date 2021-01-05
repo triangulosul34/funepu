@@ -78,9 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$hora_transacao = $row->hora_transacao;
 		$prontuario = $row->paciente_id;
 		$sexo = $row->sexo;
-		$nome = ts_decodifica($row->nome);
+		$nome = $row->nome;
 		$nome_social = $row->nome_social;
-		$nomeMae = ts_decodifica($row->nome_mae);
+		$nomeMae = $row->nome_mae;
 		$dt_nascimento = inverteData($row->dt_nasc);
 		$sexo = $row->sexo;
 		$enderecox = $row->endereco;
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$nome_acompanhante = $row->acompanhante;
 		$identidade = $row->identidade;
 		$org_expeditor = $row->org_expeditor;
-		$cpf = ts_decodifica($row->cpf);
+		$cpf = $row->cpf;
 		$coronavirus = $row->coronavirus;
 		$documento = $row->documento;
 	} else {
