@@ -1003,7 +1003,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <label class="control-label">Nome </label> <input
                                                                 type="text" name="nome" id="nome" class="form-control"
                                                                 style="font-weight: bold;"
-                                                                value="<?php echo $nome; ?>"
+                                                                value="<?php echo ts_decodifica($nome); ?>"
                                                                 onkeyup="maiuscula(this)">
                                                         </div>
                                                         <div class="col-sm-6" id="idpnomesocial">
@@ -1090,7 +1090,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <label class="control-label">CPF</label> <input type="text"
                                                                 name="cpf" onblur='verifica_cpf(this.value)'
                                                                 maxlength="15" id="cpf" class="form-control"
-                                                                value="<?php echo $cpf; ?>">
+                                                                value="<?php echo ts_decodifica($cpf); ?>">
                                                             <div id="cpf_exists"></div>
                                                         </div>
                                                     </div>
@@ -1098,7 +1098,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         <div class="col-sm-4">
                                                             <label class="control-label">RG</label> <input type="text"
                                                                 name="rg" id="rg" class="form-control"
-                                                                value="<?php echo $identidade; ?>">
+                                                                value="<?php echo ts_decodifica($identidade); ?>">
                                                         </div>
                                                         <div class="col-sm-3">
                                                             <label class="control-label">Expedição</label> <input
@@ -1129,7 +1129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         <font color='red'>Nome da Mae</font>
                                                     </label> <input type="text" name="nomeMae" id="nome_mae"
                                                         class="form-control"
-                                                        value="<?php echo $nomeMae; ?>"
+                                                        value="<?php echo ts_decodifica($nomeMae); ?>"
                                                         onkeyup="maiuscula(this)">
                                                 </div>
 

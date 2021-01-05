@@ -46,7 +46,7 @@ $qtdatmed = $rowCountqtdmd->qtd;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$codigo = $_POST['codigo'];
 	$transacao = $_POST['transacao'];
-	$pesquisa_paciente = $_POST['pesquisa_paciente'];
+	$pesquisa_paciente = ts_codifica($_POST['pesquisa_paciente']);
 	$item = $_POST['item'];
 	$prontuario = $_POST['prontuario'];
 	$descricao = $_POST['descricao'];
@@ -496,7 +496,7 @@ $qtdAtendiemento = $rowCount->qtd;
                                     a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome
                                     from atendimentos a 
                                     left join pessoas c on a.paciente_id=c.pessoa_id 
-                                    where c.nome like upper('%$pesquisa_paciente%') and (a.especialidade = '$consultorio') and a.dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "'";
+                                    where c.nome like '$pesquisa_paciente%' and (a.especialidade = '$consultorio') and a.dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "'";
 													echo "<table class='table table-striped table-bordered'>";
 													echo '<tr>';
 													echo "<td width='15%'>Data</td>";
