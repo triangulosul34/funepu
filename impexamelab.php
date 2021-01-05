@@ -22,9 +22,8 @@ LEFT JOIN procedimentos e ON e.procedimentos_id = d.exame_id
 LEFT JOIN modalidades f ON f.modalidade_id = e.setor where pedido_item_id in ($id) order by a.data, a.horario";
 $sth = pg_query($stmt) or die($stmt);
 $row = pg_fetch_object($sth);
-
 $transacao = $row->pedido_id;
-$nome_paciente = ts_decodifica($row->nome);
+$nome_paciente = $row->nome;
 $dt_nasc = $row->data_nascimento;
 $sexo = $row->sexo;
 if ($sexo == '2') {
