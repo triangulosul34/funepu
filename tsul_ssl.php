@@ -54,6 +54,8 @@ function ts_codifica($texto)
 			$texto[$i] = 'zdF';
 		} elseif ($texto[$i] == 'Z') {
 			$texto[$i] = 'gBd';
+		} elseif ($texto[$i] == 'W') {
+			$texto[$i] = 'DDD';
 		} elseif ($texto[$i] == '0') {
 			$texto[$i] = 'Lx5';
 		} elseif ($texto[$i] == '1') {
@@ -138,6 +140,8 @@ function ts_decodifica($texto)
 			$texto[$i] = 'Y';
 		} elseif ($texto[$i] == 'gBd') {
 			$texto[$i] = 'Z';
+		} elseif ($texto[$i] == 'DDD') {
+			$texto[$i] = 'W';
 		} elseif ($texto[$i] == 'Lx5') {
 			$texto[$i] = '0';
 		} elseif ($texto[$i] == 'nw6') {
