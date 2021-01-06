@@ -114,8 +114,7 @@ $stmt1 = "SELECT a.med_atendimento,nome, p.pessoa_id, count(*) as qtd,dat_cad,
 		WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '13:00'
 		WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '19:00'
 		WHEN a.hora_destino >= '19:00' 	 THEN '01:00'
-		END as saida,
-		(select min(hora) from logs l where a.med_atendimento = l.usuario and (l.data='$start')   ) as login 
+		END as saida
 		FROM atendimentos a 
 		left join pessoas p on p.username = a.med_atendimento
 		WHERE nome is not null AND status = 'Atendimento Finalizado' $where and (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00'								
@@ -169,8 +168,7 @@ $stmt2 = "SELECT nome, p.pessoa_id, count (*) as qtd, e.usuario, e.data,
 				WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '13:00'
 				WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '19:00'
 				WHEN e.hora >= '19:00' 	 THEN '01:00'
-				END as saida,
-				(select min(hora) from logs l where e.usuario = l.usuario and (l.data='$start')   ) as login 
+				END as saida
 				FROM evolucoes e
 				left join pessoas p on p.username = e.usuario 			
 				where nome is not null and (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' $where				
