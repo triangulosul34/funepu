@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '01h a 07:00'
 					WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '07h a 13:00'
 					WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '13h a 19:00'
-					WHEN a.hora_destino >= '19:00' 	 THEN '19h a 01:00'
+					WHEN (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp >= '$start 19:00' AND (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp < '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00'	 THEN '19h a 01:00'
 					END as HORAS, min(a.hora_destino), max(a.hora_destino) FROM atendimentos a 
 					left join pessoas p on p.username = a.med_finalizador
 					WHERE nome is not null AND status = 'Atendimento Finalizado' $where and (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' group by 1,2,4,5
@@ -43,12 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$sth1 = pg_query($stmt1) or die($stmt1);
 
 		include 'conexao.php';
-		$stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
+		$stmt2 = "select nome, p.pessoa_id, count (distinct e.atendimento_id) as qtd, e.usuario,
                     CASE
                     WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '01h a 07:00'
                     WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '07h a 13:00'
                     WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '13h a 19:00'
-                    WHEN e.hora >= '19:00' 	 THEN '19h a 01:00'
+                    WHEN (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp >= '$start 19:00' AND (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp < '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00'	 THEN '19h a 01:00'
                     END as horas FROM evolucoes e
 					left join pessoas p on p.username = e.usuario
 					where nome is not null and (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' $where					
@@ -347,12 +347,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <table class="table mt-3">
                                             <?php
 													include 'conexao.php';
-													$stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
+													$stmt2 = "select nome, p.pessoa_id, count (distinct e.atendimento_id) as qtd, e.usuario,
                                                     CASE
                                                     WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '01h a 07:00'
                                                     WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '07h a 13:00'
                                                     WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '13h a 19:00'
-                                                    WHEN e.hora >= '19:00' 	 THEN '19h a 01:00'
+                                                    WHEN (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp >= '$start 19:00' AND (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp < '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00'	 THEN '19h a 01:00'
                                                     END as horas FROM evolucoes e
                                                     left join pessoas p on p.username = e.usuario
                                                     where nome is not null and (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' $where					

@@ -101,24 +101,26 @@ $pdf->Cell(20, 8, utf8_decode('Entrada'), 1, 0, 'C');
 $pdf->Cell(20, 8, utf8_decode('Saida'), 1, 0, 'C');
 $pdf->Cell(20, 8, utf8_decode('Checagem'), 1, 0, 'C');
 
+//(select min(hora) from logs l where a.med_atendimento = l.usuario and (l.data='$start')   ) as login
+
 include 'conexao.php';
-$stmt1 = "SELECT a.med_atendimento,nome, p.pessoa_id, count(*) as qtd,dat_cad,
+$stmt1 = "SELECT a.med_atendimento,nome, p.pessoa_id, count(*) as qtd,
 		CASE
 		WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '01h'
 		WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '07h'
 		WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '13h'
-		WHEN a.hora_destino >= '19:00' 	 THEN '19h'
+		WHEN (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp >= '$start 19:00' AND (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp < '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' 	 THEN '19h'
 		END as entrada,
 		CASE
 		WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '07:00'
 		WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '13:00'
 		WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '19:00'
-		WHEN a.hora_destino >= '19:00' 	 THEN '01:00'
+		WHEN (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp >= '$start 19:00' AND (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp < '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' 	 THEN '01:00'
 		END as saida
 		FROM atendimentos a 
 		left join pessoas p on p.username = a.med_atendimento
 		WHERE nome is not null AND status = 'Atendimento Finalizado' $where and (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00'								
-		group by 1,2,3,5,6,7
+		group by 1,2,3,5,6
 		order by nome";
 $sth1 = pg_query($stmt1);
 
@@ -132,7 +134,7 @@ while ($stmt1 = pg_fetch_object($sth1)) {
 	$meuarray[$i++] = $stmt1->pessoa_id;
 
 	if ($stmt1->nome <> '') {
-		$pdf->Cell(20, 8, date('d/m/Y', strtotime($stmt1->dat_cad)), 1, 0, 'C');
+		$pdf->Cell(20, 8, date('d/m/Y', strtotime($start)), 1, 0, 'C');
 		$pdf->Cell(70, 8, utf8_decode(substr(ts_decodifica($stmt1->nome), 0, 35)), 1, 0, 'L');
 		$pdf->Cell(10, 8, utf8_decode($stmt1->login), 1, 0, 'C');
 		$pdf->Cell(25, 8, utf8_decode($stmt1->qtd), 1, 0, 'C');
@@ -156,23 +158,23 @@ $pdf->SetFont('Arial', 'BI', 12);
 $pdf->Cell(185, 7, utf8_decode('ATENDIMENTO INTERNO'), 1, 0, 'C');
 
 include 'conexao.php';
-$stmt2 = "SELECT nome, p.pessoa_id, count (*) as qtd, e.usuario, e.data,
+$stmt2 = "SELECT nome, p.pessoa_id, count (distinct e.atendimento_id) as qtd, e.usuario,
 				CASE
 				WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '01h'
 				WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '07h'
 				WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '13h'
-				WHEN e.hora >= '19:00' 	 THEN '19h'
+				WHEN (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp >= '$start 19:00' AND (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp < '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' 	 THEN '19h'
 				END as entrada,
 				CASE
 				WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '07:00'
 				WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '13:00'
 				WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '19:00'
-				WHEN e.hora >= '19:00' 	 THEN '01:00'
+				WHEN (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp >= '$start 19:00' AND (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp < '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' 	 THEN '01:00'
 				END as saida
 				FROM evolucoes e
 				left join pessoas p on p.username = e.usuario 			
 				where nome is not null and (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' $where				
-				group by 1,2,4,5,6,7
+				group by 1,2,4,5,6
 				order by nome";
 $sth2 = pg_query($stmt2);
 
@@ -181,7 +183,7 @@ $pdf->SetFont('Arial', '', 7);
 
 while ($stmt2 = pg_fetch_object($sth2)) {
 	if ($stmt2->nome <> '') {
-		$pdf->Cell(20, 8, date('d/m/Y', strtotime($stmt2->data)), 1, 0, 'C');
+		$pdf->Cell(20, 8, date('d/m/Y', strtotime($start)), 1, 0, 'C');
 		$pdf->Cell(70, 8, utf8_decode(substr(ts_decodifica($stmt2->nome), 0, 35)), 1, 0, 'L');
 		$pdf->Cell(10, 8, utf8_decode($stmt2->login), 1, 0, 'C');
 		$pdf->Cell(25, 8, utf8_decode($stmt2->qtd), 1, 0, 'C');
