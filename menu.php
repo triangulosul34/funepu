@@ -178,8 +178,16 @@
                         <?php } ?>
                     </ul>
                 </li>
-                <?php }
-				if ($perfil == '06' or $perfil == '03' or $perfil == '05' or $perfil == '04') { ?>
+                <?php } ?>
+                <li class="has-sub nav-item">
+                    <a href="#"><i class="fas fa-file-alt"></i><span class="menu-title">FICHAS DE FORM.</span></a>
+                    <ul class="menu-content">
+                        <li class="is-shown">
+                            <a href="sindrome_gripal.php" class="menu-item">FICHA SÍNDROME GRIPAL</a>
+                        </li>
+                    </ul>
+                </li>
+                <?php if ($perfil == '06' or $perfil == '03' or $perfil == '05' or $perfil == '04') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-chart-pie"></i><span class="menu-title">PAINÉIS</span></a>
                     <ul class="menu-content">
@@ -232,14 +240,6 @@
                     </ul>
                 </li>
                 <?php } ?>
-                <li class="has-sub nav-item">
-                    <a href="#"><i class="fas fa-file-alt"></i><span class="menu-title">FICHAS DE FORM.</span></a>
-                    <ul class="menu-content">
-                        <li class="is-shown">
-                            <a href="sindrome_gripal.php" class="menu-item">FICHA SÍNDROME GRIPAL</a>
-                        </li>
-                    </ul>
-                </li>
                 <?php if ($perfil == '07' or $perfil == '06') { ?>
                 <li class="nav-item">
                     <a href="pedidos.php"><i class="fas fa-file-prescription"></i><span

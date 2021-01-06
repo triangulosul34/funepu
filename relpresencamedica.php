@@ -73,7 +73,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial', 'BI', 12);
 		$this->Cell(185, 7, utf8_decode('RELATÓRIO DE PRESENÇA MÉDICA'), 1, 0, 'C');
 		$this->Ln(7);
-		$this->Cell(185, 7, utf8_decode('Período:   ' . $_GET['start']), 1, 0, 'C');
+		$this->Cell(185, 7, utf8_decode('Período:   ' . inverteData($_GET['start'])), 1, 0, 'C');
 		$this->Ln(7);
 	}
 }
@@ -104,21 +104,21 @@ $pdf->Cell(20, 8, utf8_decode('Checagem'), 1, 0, 'C');
 include 'conexao.php';
 $stmt1 = "SELECT a.med_atendimento,nome, p.pessoa_id, count(*) as qtd,dat_cad,
 		CASE
-		WHEN a.hora_destino>='01:00' and a.hora_destino<'07:00' THEN '01h'
-		WHEN a.hora_destino>='07:00' and a.hora_destino<'13:00' THEN '07h'
-		WHEN a.hora_destino>='13:00' and a.hora_destino<'19:00' THEN '13h'
-		WHEN a.hora_destino>='19:00' and a.hora_destino<'00:00' THEN '19h'
+		WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '01h'
+		WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '07h'
+		WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '13h'
+		WHEN a.hora_destino >= '19:00' 	 THEN '19h'
 		END as entrada,
 		CASE
-		WHEN a.hora_destino>='01:00' and a.hora_destino<'07:00' THEN '06:59'
-		WHEN a.hora_destino>='07:00' and a.hora_destino<'13:00' THEN '12:59'
-		WHEN a.hora_destino>='13:00' and a.hora_destino<'19:00' THEN '18:59'
-		WHEN a.hora_destino>='19:00' and a.hora_destino<'00:00' THEN '23:59'
+		WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '07:00'
+		WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '13:00'
+		WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '19:00'
+		WHEN a.hora_destino >= '19:00' 	 THEN '01:00'
 		END as saida,
 		(select min(hora) from logs l where a.med_atendimento = l.usuario and (l.data='$start')   ) as login 
 		FROM atendimentos a 
 		left join pessoas p on p.username = a.med_atendimento
-		WHERE nome is not null AND status = 'Atendimento Finalizado' $where and dat_cad between '$start' and '$end'								
+		WHERE nome is not null AND status = 'Atendimento Finalizado' $where and (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00'								
 		group by 1,2,3,5,6,7
 		order by nome";
 $sth1 = pg_query($stmt1);
@@ -157,23 +157,23 @@ $pdf->SetFont('Arial', 'BI', 12);
 $pdf->Cell(185, 7, utf8_decode('ATENDIMENTO INTERNO'), 1, 0, 'C');
 
 include 'conexao.php';
-$stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario, e.data,
+$stmt2 = "SELECT nome, p.pessoa_id, count (*) as qtd, e.usuario, e.data,
 				CASE
-				WHEN e.hora >= '00:00' and e.hora < '07:00' THEN '00h'
-				WHEN e.hora >= '07:00' and e.hora < '13:00' THEN '07h'
-				WHEN e.hora >= '13:00' and e.hora < '19:00' THEN '13h'
-				WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h'
+				WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '01h'
+				WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '07h'
+				WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '13h'
+				WHEN e.hora >= '19:00' 	 THEN '19h'
 				END as entrada,
 				CASE
-				WHEN e.hora >= '00:00' and e.hora < '07:00' THEN '06:59'
-				WHEN e.hora >= '07:00' and e.hora < '13:00' THEN '12:59'
-				WHEN e.hora >= '13:00' and e.hora < '19:00' THEN '18:59'
-				WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '23:59'
+				WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '07:00'
+				WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '13:00'
+				WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '19:00'
+				WHEN e.hora >= '19:00' 	 THEN '01:00'
 				END as saida,
 				(select min(hora) from logs l where e.usuario = l.usuario and (l.data='$start')   ) as login 
 				FROM evolucoes e
 				left join pessoas p on p.username = e.usuario 			
-				where nome is not null and data between '$start' and '$end' $where	and p.pessoa_id not in ($leo)				
+				where nome is not null and (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' $where				
 				group by 1,2,4,5,6,7
 				order by nome";
 $sth2 = pg_query($stmt2);

@@ -20,7 +20,7 @@ $end = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (isset($_POST['gerarrelatorio'])) {
 		$start = $_POST['start'];
-		$end = $_POST['end'];
+		$end = $_POST['start'];
 		$medico = $_POST['medico'];
 		$where = '';
 
@@ -29,31 +29,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 
 		include 'conexao.php';
-		$stmt1 = "select nome, p.pessoa_id, count(*) as qtd,a.med_atendimento, 
+		$stmt1 = "select nome, p.pessoa_id, count(*) as qtd,a.med_finalizador, 
 					CASE
-					WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '01h a 06:59'
-					WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '07h a 12:59'
-					WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '13h a 18:59'
-					WHEN a.hora_destino >= '19:00' and a.hora_destino <'00:00' 	 THEN '19h a 23:59'
-                    WHEN a.hora_destino >= '00:00' THEN '19h e passou das 23:59'
-					END as HORAS FROM atendimentos a 
-					left join pessoas p on p.username = a.med_atendimento
-					WHERE nome is not null AND status = 'Atendimento Finalizado' $where and dat_cad between '$start' and '$end'								
-					group by 1,2,4,5
-					order by nome";
+					WHEN a.hora_destino >= '01:00' and a.hora_destino <'07:00'   THEN '01h a 07:00'
+					WHEN a.hora_destino >= '07:00' and a.hora_destino <'13:00'   THEN '07h a 13:00'
+					WHEN a.hora_destino >= '13:00' and a.hora_destino <'19:00'   THEN '13h a 19:00'
+					WHEN a.hora_destino >= '19:00' 	 THEN '19h a 01:00'
+					END as HORAS, min(a.hora_destino), max(a.hora_destino) FROM atendimentos a 
+					left join pessoas p on p.username = a.med_finalizador
+					WHERE nome is not null AND status = 'Atendimento Finalizado' $where and (substring(dat_cad::varchar,0,11) || ' ' || a.hora_destino)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' group by 1,2,4,5
+					order by 4,5";
 
 		$sth1 = pg_query($stmt1) or die($stmt1);
 
 		include 'conexao.php';
 		$stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
-					CASE
-					WHEN e.hora >= '01:00' and e.hora < '07:00' THEN '01h a 06:59'
-					WHEN e.hora >= '07:00' and e.hora < '13:00' THEN '07h a 12:59'
-					WHEN e.hora >= '13:00' and e.hora < '19:00' THEN '13h a 18:59'
-					WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
-					END as horas FROM evolucoes e
+                    CASE
+                    WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '01h a 07:00'
+                    WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '07h a 13:00'
+                    WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '13h a 19:00'
+                    WHEN e.hora >= '19:00' 	 THEN '19h a 01:00'
+                    END as horas FROM evolucoes e
 					left join pessoas p on p.username = e.usuario
-					where nome is not null and data between '$start' and '$end' $where					
+					where nome is not null and (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' $where					
 					group by 1,2,4,5
 					order by nome";
 
@@ -186,53 +184,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             id="start"
                                                             value="<?php echo $_POST['start']; ?>" />
                                                     </div>
-                                                    <div class="col col-md-6 text-center">
+                                                    <!-- <div class="col col-md-6 text-center">
                                                         <label class="control-label" for="inputBasicFirstName">Data
                                                             Final</label>
                                                         <input type="date" class="form-control text-center" name="end"
                                                             id="end"
-                                                            value="<?php echo $_POST['end']; ?>">
-                                                    </div>
-                                                </div>
+                                                            value="<?php echo $_POST['start']; ?>">
+                                                </div> -->
                                             </div>
-                                            <div class="col-md-3">
-                                                <label for="">Medico</label>
-                                                <select name="medico" id="medico" class="form-control">
-                                                    <option value=""></option>
-                                                    <?php
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="">Medico</label>
+                                            <select name="medico" id="medico" class="form-control">
+                                                <option value="">Vazio</option>
+                                                <?php
 												include 'conexao.php';
 												$sql = "select * from pessoas where tipo_pessoa = 'Medico Laudador'";
 												$result = pg_query($sql);
 												while ($row = pg_fetch_object($result)) {
 													?>
-                                                    <option
-                                                        value="<?= $row->pessoa_id; ?>"
-                                                        <?php if ($_POST['medico'] == $row->pessoa_id) {
+                                                <option
+                                                    value="<?= $row->pessoa_id; ?>"
+                                                    <?php if ($_POST['medico'] == $row->pessoa_id) {
 														echo 'selected';
 													} ?>>
-                                                        <?= ts_decodifica($row->nome); ?>
-                                                    </option>
-                                                    <?php
+                                                    <?= ts_decodifica($row->nome); ?>
+                                                </option>
+                                                <?php
 												} ?>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-3 mt-3">
-                                                <button type="submit" name="gerarrelatorio" class="btn btn-primary"
-                                                    style="width:100%">Gerar Dados</button>
-                                            </div>
+                                            </select>
                                         </div>
-                                        <div class="row mt-3">
-                                            <div class="col-md-6">
-                                                <div class="counter text-left">
-                                                    <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span
-                                                            class="font-size-18">
-                                                            <?php echo inverteData($_POST['end']); ?></span>
-                                                    </p>
-                                                    <?php
+                                        <div class="col-md-3 mt-3">
+                                            <button type="submit" name="gerarrelatorio" class="btn btn-primary"
+                                                style="width:100%">Gerar Dados</button>
+                                        </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <div class="counter text-left">
+                                            <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span
+                                                    class="font-size-18">
+                                                    <?php echo inverteData($_POST['start']); ?></span>
+                                            </p>
+                                            <?php
 
 													$horaAtual = date('H');
 													$datainicio = $_POST['start'];
-													$datafinal = $_POST['end'];
+													$datafinal = $_POST['start'];
 
 													include 'conexao.php';
 													$stmt = "	SELECT count(*) as qtd  
@@ -245,26 +243,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													$rows = pg_fetch_object($sth);
 													?>
 
-                                                    <div class="counter-number-group">
-                                                        <span class="counter-number red-600"><?php echo $rows->qtd; ?></span>
-                                                        <span class="counter-number-related red-600">Atendimentos</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="counter text-left">
-                                                    <div class="counter-label">Média</div>
-                                                    <div class="counter-number-group">
-                                                        <span class="counter-number"><?php echo number_format($rows->qtd / $horaAtual, 2, ',', '.'); ?></span>
-                                                        <span class="counter-number-related">Atendimento/Hora</span>
-                                                    </div>
-                                                </div>
+                                            <div class="counter-number-group">
+                                                <span class="counter-number red-600"><?php echo $rows->qtd; ?></span>
+                                                <span class="counter-number-related red-600">Atendimentos</span>
                                             </div>
                                         </div>
-                                        <div class="row mt-3">
-                                            <div class="col-md-12">
-                                                <table class="table">
-                                                    <?php
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="counter text-left">
+                                            <div class="counter-label">Média</div>
+                                            <div class="counter-number-group">
+                                                <span class="counter-number"><?php echo number_format($rows->qtd / $horaAtual, 2, ',', '.'); ?></span>
+                                                <span class="counter-number-related">Atendimento/Hora</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <table class="table">
+                                            <?php
 
 													$i = 0;
 													$meuarray = [];
@@ -272,18 +270,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													include 'conexao.php';
 													while ($row = pg_fetch_object($sth1)) { ?>
 
-                                                    <?php $meuarray[$i++] = $row->pessoa_id; ?>
-                                                    <tr>
-                                                        <td><?php echo ts_decodifica($row->nome) ?>
-                                                        </td>
-                                                        <td><?php echo $row->horas ?>
-                                                        </td>
-                                                        <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?>
-                                                        </td>
-                                                    </tr>
+                                            <?php $meuarray[$i++] = $row->pessoa_id; ?>
+                                            <tr>
+                                                <td><?php echo ts_decodifica($row->nome) ?>
+                                                </td>
+                                                <td><?php echo $row->horas ?>
+                                                </td>
+                                                <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?>
+                                                </td>
+                                                <td><?php echo $row->min ?>
+                                                </td>
+                                                <td><?php echo $row->max ?>
+                                                </td>
+                                            </tr>
 
 
-                                                    <?php }
+                                            <?php }
 
 													foreach ($meuarray as $value) {
 														if ($leo == '') {
@@ -293,25 +295,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 														}
 													}
 													?>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="row m-2">
-                                            <div class="col-md-12">
-                                                <h1 style="text-align: center">Atendimento Interno</h1>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="counter text-left">
-                                                    <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span
-                                                            class="font-size-18">
-                                                            <?php echo inverteData($_POST['end']); ?></span>
-                                                    </p>
-                                                    <?php
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row m-2">
+                                    <div class="col-md-12">
+                                        <h1 style="text-align: center">Atendimento Interno</h1>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="counter text-left">
+                                            <p class="font-size-20 blue-grey-700">Atendimento por Médico - <span
+                                                    class="font-size-18">
+                                                    <?php echo inverteData($_POST['start']); ?></span>
+                                            </p>
+                                            <?php
 													$horaAtual = date('H');
 													$datainicio = $_POST['start'];
-													$datafinal = $_POST['end'];
+													$datafinal = $_POST['start'];
 
 													include 'conexao.php';
 													$stmt = "	SELECT count(*) as qtd  
@@ -324,89 +326,89 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													$rows = pg_fetch_object($sth);
 													?>
 
-                                                    <div class="counter-number-group">
-                                                        <span class="counter-number red-600"><?php echo $rows->qtd; ?></span>
-                                                        <span class="counter-number-related red-600">Atendimentos</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="counter text-left">
-                                                    <div class="counter-label">Média</div>
-                                                    <div class="counter-number-group">
-                                                        <span class="counter-number"><?php echo number_format($rows->qtd / $horaAtual, 2, ',', '.'); ?></span>
-                                                        <span class="counter-number-related">Atendimento/Hora</span>
-                                                    </div>
-                                                </div>
+                                            <div class="counter-number-group">
+                                                <span class="counter-number red-600"><?php echo $rows->qtd; ?></span>
+                                                <span class="counter-number-related red-600">Atendimentos</span>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <table class="table mt-3">
-                                                    <?php
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="counter text-left">
+                                            <div class="counter-label">Média</div>
+                                            <div class="counter-number-group">
+                                                <span class="counter-number"><?php echo number_format($rows->qtd / $horaAtual, 2, ',', '.'); ?></span>
+                                                <span class="counter-number-related">Atendimento/Hora</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table mt-3">
+                                            <?php
 													include 'conexao.php';
 													$stmt2 = "select nome, p.pessoa_id, count (*) as qtd, e.usuario,
-													CASE
-													WHEN e.hora >= '01:00' and e.hora < '07:00' THEN '01h a 06:59'
-													WHEN e.hora >= '07:00' and e.hora < '13:00' THEN '07h a 12:59'
-													WHEN e.hora >= '13:00' and e.hora < '19:00' THEN '13h a 18:59'
-													WHEN e.hora >= '19:00' and e.hora < '00:00' THEN '19h a 23:59'
-													END as horas FROM evolucoes e
-													left join pessoas p on p.username = e.usuario
-													where nome is not null and data between '$start' and '$end' $where				
-													group by 1,2,4,5
-													order by nome";
+                                                    CASE
+                                                    WHEN e.hora >= '01:00' and e.hora <'07:00'   THEN '01h a 07:00'
+                                                    WHEN e.hora >= '07:00' and e.hora <'13:00'   THEN '07h a 13:00'
+                                                    WHEN e.hora >= '13:00' and e.hora <'19:00'   THEN '13h a 19:00'
+                                                    WHEN e.hora >= '19:00' 	 THEN '19h a 01:00'
+                                                    END as horas FROM evolucoes e
+                                                    left join pessoas p on p.username = e.usuario
+                                                    where nome is not null and (substring(data::varchar,0,11) || ' ' || e.hora)::timestamp between '$start 01:00' and '" . date('Y-m-d', strtotime('+1 days', strtotime($end))) . " 01:00' $where					
+                                                    group by 1,2,4,5
+                                                    order by nome";
 
 													$sth2 = pg_query($stmt2);
 
 													while ($row = pg_fetch_object($sth2)) { ?>
-                                                    <tr>
-                                                        <td><?php echo ts_decodifica($row->nome) ?>
-                                                        </td>
-                                                        <td><?php echo $row->horas ?>
-                                                        </td>
-                                                        <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?>
-                                                        </td>
-                                                    </tr>
-                                                    <?php }
+                                            <tr>
+                                                <td><?php echo ts_decodifica($row->nome) ?>
+                                                </td>
+                                                <td><?php echo $row->horas ?>
+                                                </td>
+                                                <td><?php echo str_pad($row->qtd, 4, '0', STR_PAD_LEFT) ?>
+                                                </td>
+                                            </tr>
+                                            <?php }
 													?>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12 m-2">
-                                                <h1 style="text-align: center">Login dos Médicos no Sistema</h1>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-3">
-                                            <div class="col-md-12">
-                                                <table class="table">
-                                                    <?php
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 m-2">
+                                        <h1 style="text-align: center">Login dos Médicos no Sistema</h1>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12">
+                                        <table class="table">
+                                            <?php
 													include 'conexao.php';
 													while ($row = pg_fetch_object($sth3)) { ?>
-                                                    <tr>
-                                                        <td><?php echo ts_decodifica($row->nome) ?>
-                                                        </td>
-                                                        <td><?php echo $row->login ?>
-                                                        </td>
-                                                    </tr>
-                                                    <?php }
+                                            <tr>
+                                                <td><?php echo ts_decodifica($row->nome) ?>
+                                                </td>
+                                                <td><?php echo $row->login ?>
+                                                </td>
+                                            </tr>
+                                            <?php }
 													?>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12" align="center"><button id="imprimirelatorio"
-                                                    class="btn btn-success">Imprimir</button></div>
-                                        </div>
-                                    </form>
+                                        </table>
+                                    </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12" align="center"><button id="imprimirelatorio"
+                                            class="btn btn-success">Imprimir</button></div>
+                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <?php include 'footer.php'; ?>
     <!-- </div> -->
@@ -436,7 +438,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $("#imprimirelatorio").click(function(event) {
             var profissional = $("#profissional").val();
             var start = $("#start").val();
-            var end = $("#end").val();
+            //var end = $("#end").val();
+            var end = $("#start").val();
             var medico = $("#medico").val();
 
             var url = 'relpresencamedica.php?start=' + start + '&end=' + end + '&medico=' + medico;
