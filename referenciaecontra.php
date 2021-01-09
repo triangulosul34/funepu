@@ -147,15 +147,15 @@ span {
         <br />
         <br />
         <br />
-        <span class="sansserif" style="line-height: 1.5;">' . $justificativa . '</span>
+        <span class="sansserif" style="line-height: 1.5;">' . str_replace('>', '&gt;', str_replace('<', '&lt;', $justificativa)) . '</span>
         <br />
         <br />
         <b class="sansserif" style="line-height: 1.5;">Diagnóstico ou Hipótese Diagnóstica:</b>
-        <span class="sansserif" style="line-height: 1.5;">' . $diagnostico . '</span>
+        <span class="sansserif" style="line-height: 1.5;">' . str_replace('>', '&gt;', str_replace('<', '&lt;', $diagnostico)) . '</span>
         <br />
         <br />
         <b class="sansserif" style="line-height: 1.5;">Exames Realizados - Data e Resultados:</b>
-        <span class="sansserif" style="line-height: 1.5;">' . $resultado . '</span>
+        <span class="sansserif" style="line-height: 1.5;">' . str_replace('>', '&gt;', str_replace('<', '&lt;', $resultado)) . '</span>
     </div>
     <br />
     <br />
