@@ -1011,7 +1011,7 @@ if ($destino != '') {
                 inner join tabela_precos c on a.procedimentos_id = c.procedimento_id where modalidade_id not in (32 , 22) and a.procedimentos_id in (746, 769) and c.convenio_id = 1 ORDER BY a.descricao';
 						} else {
 							$sql = "select a.procedimentos_id as procedimento_id, a.descricao, a.codigo from procedimentos a
-                inner join modalidades b on a.setor = b.modalidade_id where modalidade_id not in (32 , 22) and a.descricao not in('GLICOSE', 'PROTEINA C REATIVA - [ULTRA-SENSIVEL]') ORDER BY a.descricao";
+                inner join modalidades b on a.setor = b.modalidade_id where modalidade_id not in (32 , 22) and a.descricao not in('GLICOSE', 'PROTEINA C REATIVA - [ULTRA-SENSIVEL]','HIV 1 E 2 - ANTÍGENO E ANTICORPOS - ECLIA - TESTE DE TRIAGEM') ORDER BY a.descricao";
 						}
 						$sth = pg_query($sql) or die($sql);
 						echo '<option value="">Selecione o Procedimento</option>';
@@ -1066,8 +1066,8 @@ if ($destino != '') {
                             <div class="col-5">
                                 <div class="form-group">
                                     <label>Modo de usar</label>
-                                    <input id="usar-1" name="usar-1" maxlength="50" class="form-control" value=""
-                                        onkeyup="maiuscula(this)">
+                                    <textarea id="usar-1" name="usar-1" class="form-control" value=""
+                                        onkeyup="maiuscula(this)"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -1453,8 +1453,8 @@ if ($destino != '') {
                                         style="background-color: #12a1a6;border-radius: 20px; margin-right: 20px; padding:15px; max-width: 170px; justify-content: space-evenly;">
                                         <div class="col-12 d-flex flex-column align-items-center"
                                             style="justify-content: space-between; padding: 0">
-                                            <img src="assets/photos/senhora.jpg" alt="\" height="70" width="70"
-                                                style="border-radius: 50%;">
+                                            <img src="app-assets/img/gallery/user-circle.png" alt="\" height="70"
+                                                width="70" style="border-radius: 50%;">
                                             <h6 style="color: white"><b id="nome"><?php if ($nome_social == '') {
 					echo $nome;
 				} else {
@@ -2706,9 +2706,9 @@ if ($destino != '') {
                 contador +
                 '" class="form-control" value="" maxlength="100" onkeyup="maiuscula(this)"></div></div><div class="col-2"><div class="form-group"><label class="control-label">Quantidade</label><input id="quantidade-' +
                 contador +
-                '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-5"><div class="form-group"><label class="control-label">Modo de usar</label><input id="usar-' +
+                '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-5"><div class="form-group"><label class="control-label">Modo de usar</label><textarea id="usar-' +
                 contador +
-                '" maxlength="50" class="form-control" value="" onkeyup="maiuscula(this)"></div></div><div class="col-1"><div class="form-group"><button onclick="apagar_item_receituario(this)" value="' +
+                '" class="form-control" value="" onkeyup="maiuscula(this)"></textarea></div></div><div class="col-1"><div class="form-group"><button onclick="apagar_item_receituario(this)" value="' +
                 contador +
                 '" class="btn mr-1 mb-1 btn-danger btn-sm" style="margin-top: 28px">X</button></div></div></div></div>'
             );
