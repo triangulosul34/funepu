@@ -591,6 +591,11 @@ if (isset($_POST['excel'])) {
                                                             value="<?php echo ts_decodifica($nome); ?>"
                                                             onkeyup="maiuscula(this)" />
                                                     </div>
+                                                    <div class="col-md-1">
+                                                        <label class="control-label">prontuario</label>
+                                                        <input type="text" class="form-control" name="prontuario"
+                                                            value="<?php echo $prontuario; ?>">
+                                                    </div>
 
                                                     <div class="col-md-2">
                                                         <label class="control-label">Situacao</label>
@@ -657,7 +662,7 @@ if (isset($_POST['excel'])) {
 
 
 
-                                                    <div class="col-8 text-center">
+                                                    <div class="col-7 text-center">
                                                         <label class="control-label">Ação</label><br>
 
                                                         <button type="submit" name="pesquisa" value="semana"
