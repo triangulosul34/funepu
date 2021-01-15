@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			while ($row = pg_fetch_object($sthRel)) {
 				$html .= '<tr>';
 				$html .= '<td>' . $row->data . '</td>';
-				$html .= '<td>' . ts_decodifica($row->nome) . '</td>';
+				$html .= '<td>' . $row->nome . '</td>';
 				$html .= '<td>' . $row->descricao . '</td>';
 				$html .= '</tr>';
 			}
