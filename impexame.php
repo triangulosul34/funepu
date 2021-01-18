@@ -44,7 +44,7 @@ if ($sexo == 'M') {
 $dum = inverteData(substr($row->dum, 0, 10));
 $peso = $row->peso;
 $deficiencia = $row->nec_especiais;
-$solicitante = $row->solicitante;
+$solicitante = ts_decodifica($row->solicitante);
 $dt_solicitacao = inverteData(substr($row->dt_solicitacao, 0, 10));
 $convenio = $row->convenio_id;
 $nome_convenio = $row->sigla;
