@@ -11,6 +11,7 @@ function inverteData($data)
 
 require_once 'fpdf/fpdf.php';
 require '../vendor/autoload.php';
+require 'tsul_ssl.php';
 
 $atendimento_id = $_GET['atendimento_id'];
 

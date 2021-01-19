@@ -30,7 +30,7 @@ $sql = "SELECT * FROM pessoas WHERE username='$myusername' and password='$mypass
 $result = pg_query($con, $sql) or die($sql);
 $row = pg_fetch_array($result);
 
-if ($box == $_POST['conf_consultorio'] && $box != '') {
+//if ($box == $_POST['conf_consultorio'] && $box != '') {
 	if ($row['username'] != '') {
 		session_start();
 		$_SESSION['myusername'] = $myusername;
@@ -55,11 +55,12 @@ if ($box == $_POST['conf_consultorio'] && $box != '') {
 		$row = pg_fetch_array($result);
 
 		//validaçao de acesso
-		if ($box == '20' or $box == '21') {
-			header('location:index.php');
-		} elseif ($box == '11') {
-			header('location:painel_at_ala_vermelha.php');
-		} elseif ($_SESSION['perfil'] == '03') {
+		// if ($box == '20' or $box == '21') {
+		// 	header('location:index.php');
+		// } elseif ($box == '11') {
+		// 	header('location:painel_at_ala_vermelha.php');
+		// } else
+		if ($_SESSION['perfil'] == '03') {
 			if ($box >= 1 and $box <= 5) {
 				header('location:monitor_medico.php');
 			} elseif ($box == 6) {
@@ -89,6 +90,6 @@ if ($box == $_POST['conf_consultorio'] && $box != '') {
 			header('location:loginbox.php');
 		}
 	}
-} else {
-	header('location:loginbox.php');
-}
+// } else {
+// 	header('location:loginbox.php');
+// }

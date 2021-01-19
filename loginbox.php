@@ -65,7 +65,7 @@
                               </p>
                               <input type="text" class="form-control mb-2" id="myusername" name="myusername" placeholder="Usuário">
                               <input type="password" class="form-control mb-2" id="mypassword" name="mypassword" placeholder="Senha">
-                              <select name='box' class="form-control mb-3" id="box" style="display: none;">
+                              <select name='box' class="form-control mb-3" id="box">
                                 <option value="">Selecione o consultório</option>
                                 <?php
 								include 'conexao.php';
@@ -128,8 +128,8 @@
       }
     }
 
-    document.getElementById("box").value = localStorage.getItem("consultorio");
-    document.getElementById("conf_consultorio").value = localStorage.getItem("consultorio");
+    // document.getElementById("box").value = localStorage.getItem("consultorio");
+    // document.getElementById("conf_consultorio").value = localStorage.getItem("consultorio");
   </script>
 </body>
 
