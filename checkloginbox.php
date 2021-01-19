@@ -57,6 +57,8 @@ if ($box == $_POST['conf_consultorio'] && $box != '') {
 		//validaçao de acesso
 		if ($box == '20' or $box == '21') {
 			header('location:index.php');
+		} elseif ($box == '11') {
+			header('location:painel_at_ala_vermelha.php');
 		} elseif ($_SESSION['perfil'] == '03') {
 			if ($box >= 1 and $box <= 5) {
 				header('location:monitor_medico.php');
