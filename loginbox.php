@@ -65,21 +65,22 @@
                               </p>
                               <input type="text" class="form-control mb-2" id="myusername" name="myusername" placeholder="Usuário">
                               <input type="password" class="form-control mb-2" id="mypassword" name="mypassword" placeholder="Senha">
-                              <select name='box' class="form-control mb-3" id="box">
+                              <select name='box' class="form-control mb-3" id="box" style="display: none;">
                                 <option value="">Selecione o consultório</option>
                                 <?php
-                                include('conexao.php');
-                                $stmt = "Select * from boxes where situacao='0' order by descricao";
-                                $sth = pg_query($stmt) or die($stmt);
-                                while ($row = pg_fetch_object($sth)) {
-                                  echo "<option value=\"" . $row->box_id . "\"";
-                                  if ($row->box_id == $box) {
-                                    echo "selected";
-                                  }
-                                  echo ">" . $row->descricao . "</option>";
-                                }
-                                ?>
+								include 'conexao.php';
+								$stmt = "Select * from boxes where situacao='0' order by descricao";
+								$sth = pg_query($stmt) or die($stmt);
+								while ($row = pg_fetch_object($sth)) {
+									echo '<option value="' . $row->box_id . '"';
+									if ($row->box_id == $box) {
+										echo 'selected';
+									}
+									echo '>' . $row->descricao . '</option>';
+								}
+								?>
                               </select>
+                              <input type="hidden" name="conf_consultorio" id="conf_consultorio">
                               <div class="row">
                                 <div class='col-md-6' align='left'>
                                   <button class="btn btn-primary" type='submit' onClick="return valida()">Acessar</button>
@@ -126,6 +127,9 @@
         return false;
       }
     }
+
+    document.getElementById("box").value = localStorage.getItem("consultorio");
+    document.getElementById("conf_consultorio").value = localStorage.getItem("consultorio");
   </script>
 </body>
 

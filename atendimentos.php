@@ -855,16 +855,16 @@ if (isset($_POST['excel'])) {
 
 															echo '<td>';
 															//if ($row->status != 'Aguardando Triagem' and ($perfil == '06' or $perfil == '03')) {
-																if ($row->status == 'Atendimento Finalizado') {
-																	echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\" style=\"color:$color\"><i class=\"fas fa-file-medical\"></i></a>";
-																	//}
+															if ($row->status == 'Atendimento Finalizado') {
+																echo "<a href=\"atendimentoclinico.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"Visualizar\" style=\"color:$color\"><i class=\"fas fa-file-medical\"></i></a>";
+																//}
 
-																	if ($row->tipo == 9) {
-																		echo "<a href=\"relOdonto.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"ODONTOLOGICO\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
-																	} else {
-																		echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
-																	}
+																if ($row->tipo == 9) {
+																	echo "<a href=\"relOdonto.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"ODONTOLOGICO\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
+																} else {
+																	echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
 																}
+															}
 															// if ($perfil == '06' or $perfil == '04') {
 														?>
                                                         <?php if ($row->status != 'Atendimento Finalizado') { ?>

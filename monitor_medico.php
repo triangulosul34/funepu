@@ -36,6 +36,12 @@ if (rtrim($tipo_atendimento) == 'ADULTO') {
 	$consultorio = 'Ortopedia';
 }
 
+if ($box == 14) {
+	$where = $where . ' and coronavirus = 1';
+} else {
+	$where = $where . ' and coronavirus <> 1';
+}
+
 include 'conexao.php';
 $qtdatmed = 0;
 $stmtqtdmd = "SELECT count(*) as qtd from atendimentos where med_atendimento = '$usuario' and dat_cad = '" . date('Y-m-d') . "' ";
@@ -85,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
 		}
 
-		$stmt = $stmt . " and cast(a.tipo as integer) != 9 and dat_cad > '2019-08-11' order by a.dat_cad,prioridade_cor,pidade, a.hora_cad limit 1";
+		$stmt = $stmt . " and cast(a.tipo as integer) != 9 $where and dat_cad > '2019-08-11' order by a.dat_cad,prioridade_cor,pidade, a.hora_cad limit 1";
 		$sth = pg_query($stmt) or die($stmt);
 		$row = pg_fetch_object($sth);
 
@@ -101,53 +107,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$transacao = $row->transacao;
 		$observacao_triagem = $row->observacao_triagem;
 
-		if ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03') {
-			// if ($transacao != "") {
-			//     include('conexao.php');
-			//     $sql = "select * from painel_atendimento where transacao = $row->transacao";
-			//     $result = pg_query($sql) or die($sql);
-			//     $rowt = pg_fetch_object($result);
-			//     if ($rowt->transacao == '') {
-			//         include('conexao.php');
-			//         $sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "')";
-			//         $result = pg_query($sql) or die($sql);
+		if ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03' and $box != '14') {
+			if ($transacao != '') {
+				include 'conexao.php';
+				$sql = "select * from painel_atendimento where transacao = $row->transacao";
+				$result = pg_query($sql) or die($sql);
+				$rowt = pg_fetch_object($result);
+				if ($rowt->transacao == '') {
+					include 'conexao.php';
+					$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "')";
+					$result = pg_query($sql) or die($sql);
 
-			//         $data = date('Y-m-d');
-			//         $hora = date('H:i');
-			//         include('conexao.php');
-			//         $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-			// 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
-			//         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-			//     } elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
-			//         include('conexao.php');
-			//         $sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null where transacao = $row->transacao";
-			//         $result = pg_query($sql) or die($sql);
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				} elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+					include 'conexao.php';
+					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null where transacao = $row->transacao";
+					$result = pg_query($sql) or die($sql);
 
-			//         $data = date('Y-m-d');
-			//         $hora = date('H:i');
-			//         include('conexao.php');
-			//         $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-			// 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
-			//         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-			//     } elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
-			//         include('conexao.php');
-			//         $sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
-			//         $result = pg_query($sql) or die($sql);
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				} elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+					include 'conexao.php';
+					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+					$result = pg_query($sql) or die($sql);
 
-			//         $data = date('Y-m-d');
-			//         $hora = date('H:i');
-			//         include('conexao.php');
-			//         $stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-			// 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
-			//         $sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-			//     } elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
-			//         $erro = "Paciente ainda esta sendo chamado";
-			//     } else {
-			//         $erro = "Paciente chamado por outro consultorio";
-			//         $nome = '';
-			//         $transacao = '';
-			//     }
-			// }
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+				values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				} elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+					$erro = 'Paciente ainda esta sendo chamado';
+				} else {
+					$erro = 'Paciente chamado por outro consultorio';
+					$nome = '';
+					$transacao = '';
+				}
+			}
 		} else {
 			$controle_reavaliação = 1;
 		}
@@ -282,6 +288,7 @@ if (rtrim($tipo_atendimento) == 'ADULTO') {
 } elseif (rtrim($tipo_atendimento) == 'PORTA') {
 	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
 }
+$stmtCount = $stmtCount . $where;
 
 //$stmtCount=$stmtCount."and cast(tipo as integer) != 9";
 
