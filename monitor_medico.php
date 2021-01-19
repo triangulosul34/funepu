@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$rowt = pg_fetch_object($result);
 				if ($rowt->transacao == '') {
 					include 'conexao.php';
-					$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "')";
+					$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora,profissional) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "','$usuario')";
 					$result = pg_query($sql) or die($sql);
 
 					$data = date('Y-m-d');
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 				} elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
 					include 'conexao.php';
-					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null where transacao = $row->transacao";
+					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, profissional='$usuario' where transacao = $row->transacao";
 					$result = pg_query($sql) or die($sql);
 
 					$data = date('Y-m-d');
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 				} elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
 					include 'conexao.php';
-					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala' where transacao = $row->transacao";
+					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala', profissional='$usuario' where transacao = $row->transacao";
 					$result = pg_query($sql) or die($sql);
 
 					$data = date('Y-m-d');
