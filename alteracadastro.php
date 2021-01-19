@@ -116,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$nome_mae = ts_codifica($_POST['nome_mae']);
 	$nome_pai = ts_codifica($_POST['nome_pai']);
 	$sexo = $_POST['sexo'];
-	$cpf = $_POST['cpf'];
+	$cpf = ts_codifica($_POST['cpf']);
 	$dtnasc = $_POST['dtnasc'];
 	$raca_cor = $_POST['raca_cor'];
 	$endereco = $_POST['endereco'];
@@ -142,8 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$facebook = $_POST['facebook'];
 	$twitter = $_POST['twitter'];
 	$email = $_POST['email'];
-	$nome_mae = ts_codifica($_POST['nome_mae']);
-	$nome_pai = ts_codifica($_POST['nome_pai']);
 	$conselho = $_POST['conselho'];
 	$num_conselho = $_POST['num_conselho'];
 	$especialidade = $_POST['especialidade'];
@@ -211,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$stmt = $stmt . "password=md5('$password'),";
 		}
 		if ($identidade <> '') {
-			$stmt = $stmt . "identidade=$identidade,";
+			$stmt = $stmt . "identidade='$identidade',";
 		}
 		if ($raca_cor <> '') {
 			$stmt = $stmt . "raca_cor='$raca_cor',";
