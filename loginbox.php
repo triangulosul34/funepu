@@ -59,7 +59,7 @@
                           </div>
                           <div class="col-lg-6 col-md-12 bg-white px-4 pt-3">
                             <form name='formulario' method='POST' action='checkloginbox.php'>
-                              <h4 class="mb-2 card-title">CONECTE-SE</h4>
+                              <h4 class="mb-2 card-title">ACESSO PROFISSIONAL DE SAUDE</h4>
                               <p class="card-text mb-3">
                                 Bem-vindo - Entre com suas credenciais.
                               </p>
