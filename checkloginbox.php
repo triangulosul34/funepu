@@ -1,36 +1,37 @@
 <?php
 
-error_reporting(0);
+if ($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '189.41.99.44') {
+	error_reporting(0);
 
-include 'conexao.php';
-include 'tsul_ssl.php';
+	include 'conexao.php';
+	include 'tsul_ssl.php';
 
-$myusername = $_POST['myusername'];
-$mypassword = md5($_POST['mypassword']);
-$box = $_POST['box'];
+	$myusername = $_POST['myusername'];
+	$mypassword = md5($_POST['mypassword']);
+	$box = $_POST['box'];
 
-$myusername = stripslashes($myusername);
-$mypassword = stripslashes($mypassword);
+	$myusername = stripslashes($myusername);
+	$mypassword = stripslashes($mypassword);
 
-$unidade = '';
+	$unidade = '';
 
-$ip = getenv('REMOTE_ADDR');
-if ($ip = '201.48.4.1') {
-	$unidade == '1';
-	$unid_desc = 'Mirante';
-} elseif ($ip = '201.48.4.2') {
-	$unidade == '2';
-	$unid_desc = 'São Benedito';
-}
+	$ip = getenv('REMOTE_ADDR');
+	if ($ip = '201.48.4.1') {
+		$unidade == '1';
+		$unid_desc = 'Mirante';
+	} elseif ($ip = '201.48.4.2') {
+		$unidade == '2';
+		$unid_desc = 'São Benedito';
+	}
 
-$myusername = pg_escape_string($myusername);
-$mypassword = pg_escape_string($mypassword);
+	$myusername = pg_escape_string($myusername);
+	$mypassword = pg_escape_string($mypassword);
 
-$sql = "SELECT * FROM pessoas WHERE username='$myusername' and password='$mypassword'";
-$result = pg_query($con, $sql) or die($sql);
-$row = pg_fetch_array($result);
+	$sql = "SELECT * FROM pessoas WHERE username='$myusername' and password='$mypassword'";
+	$result = pg_query($con, $sql) or die($sql);
+	$row = pg_fetch_array($result);
 
-//if ($box == $_POST['conf_consultorio'] && $box != '') {
+	//if ($box == $_POST['conf_consultorio'] && $box != '') {
 	if ($row['username'] != '') {
 		session_start();
 		$_SESSION['myusername'] = $myusername;
@@ -90,6 +91,9 @@ $row = pg_fetch_array($result);
 			header('location:loginbox.php');
 		}
 	}
-// } else {
+	// } else {
 // 	header('location:loginbox.php');
 // }
+} else {
+	echo "<script>alert('Acesso não permitido por esse dispositivo!!!');window.location.href = 'http://www.google.com.br';</script>";
+}
