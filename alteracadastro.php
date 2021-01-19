@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	$uf = $row->estado;
 	$nome_mae = ts_decodifica($row->nome_mae);
 	$nome_pai = ts_decodifica($row->nome_pai);
-	$identidade = $row->identidade;
+	$identidade = ts_decodifica($row->identidade);
 	$org_exped = $row->org_expeditor;
 	$raca_cor = $row->raca_cor;
 	$est_civil = $row->est_civil;
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$conselho = $_POST['conselho'];
 	$num_conselho = $_POST['num_conselho'];
 	$especialidade = $_POST['especialidade'];
-	$identidade = $_POST['identidade'];
+	$identidade = ts_codifica($_POST['identidade']);
 	$org_exped = $_POST['org_exped'];
 	$dtn = inverteData($_POST['dtnasc']);
 	$whatsup = $_POST['whatsup'];
