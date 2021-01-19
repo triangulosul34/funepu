@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$rowt = pg_fetch_object($result);
 				if ($rowt->transacao == '') {
 					include 'conexao.php';
-					$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '$row->nome','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "')";
+					$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "')";
 					$result = pg_query($sql) or die($sql);
 
 					$data = date('Y-m-d');
