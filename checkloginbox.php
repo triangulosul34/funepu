@@ -1,6 +1,6 @@
 <?php
 
-if ($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '189.41.99.44') {
+//if ($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '189.41.99.44') {
 	error_reporting(0);
 
 	include 'conexao.php';
@@ -94,6 +94,6 @@ if ($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '1
 	// } else {
 // 	header('location:loginbox.php');
 // }
-} else {
-	echo "<script>alert('Acesso não permitido por esse dispositivo!!!');window.location.href = 'http://www.google.com.br';</script>";
-}
+//} else {
+	//echo "<script>alert('Acesso não permitido por esse dispositivo!!!');window.location.href = 'http://www.google.com.br';</script>";
+//}
