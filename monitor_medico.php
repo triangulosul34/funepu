@@ -455,11 +455,11 @@ $qtdAtendiemento = $rowCount->qtd;
                                             <div class="col-sm-12" align="center">
                                                 <?php
 												if ($nome != '' and ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03')) {
-													// echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+													echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
 
 													echo '<button type="button" name="nrchamada" onclick="chamada()" id="nrchamada" value="nrchamada" class="btn btn-warning">Não Respondeu Chamada</button>';
 												} elseif ($destino_paciente) {
-													// echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+													echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
 
 													echo '<button type="button" name="nrchamadalab" onclick="chamadalab()" id="nrchamadalab" value="nrchamadalab" class="btn btn-warning">Não Respondeu Retorno Resultado de Exames</button>';
 												} else {

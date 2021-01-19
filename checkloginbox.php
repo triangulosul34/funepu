@@ -55,7 +55,9 @@ if ($box == $_POST['conf_consultorio'] && $box != '') {
 		$row = pg_fetch_array($result);
 
 		//validaçao de acesso
-		if ($_SESSION['perfil'] == '03') {
+		if ($box == '20' or $box == '21') {
+			header('location:index.php');
+		} elseif ($_SESSION['perfil'] == '03') {
 			if ($box >= 1 and $box <= 5) {
 				header('location:monitor_medico.php');
 			} elseif ($box == 6) {
