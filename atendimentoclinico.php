@@ -895,6 +895,17 @@ if ($destino != '') {
                                 </div>
                             </div>
 
+                            <div class="col-md-12">
+                                <div class="custom-control custom-checkbox ">
+                                    <input type="checkbox" class="custom-control-input" name="isolamento"
+                                        id="isolamento" value='isolamento' <?php if ($isolamento == 1) {
+	echo 'checked';
+} ?>>
+                                    <label class="custom-control-label" style="font-size: 10pt" for="isolamento">Termos
+                                        de Responsabilidade de Isolamento</label>
+                                </div>
+                            </div>
+
                         </div>
 
 
@@ -2025,7 +2036,7 @@ if ($destino != '') {
                                                                         <?php
 																			include 'conexao.php';
 																			$sql = "SELECT procedimento_id, descricao, sigtap FROM procedimentos a 
-                                                                        WHERE descricao <> '%EXCLUIDO%' AND procedimento_id NOT IN (729,730,822,821,779) AND descricao NOT IN ('DOSAGEM DE FOLATO',
+                                                                        WHERE case when modalidade_id = 2 then sigtap in ('0205020038','0205020046','0205020054','0205020062','0205020070','0205020127','0205020160','0205010040','0205020135') and valor <> 0 else modalidade_id is not null end and descricao <> '%EXCLUIDO%' AND procedimento_id NOT IN (729,730,822,821,779) AND descricao NOT IN ('DOSAGEM DE FOLATO',
                                                                         'DOSAGEM DE PROTEINAS TOTAIS',
                                                                         'TROPONINA T',
                                                                         'DOSAGEM DE FERRITINA',

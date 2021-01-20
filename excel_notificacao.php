@@ -194,6 +194,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <a type="button" class="btn btn-warning"
                                                         href="anduplicidade_notificacao.php">Analise de
                                                         Duplicidades</a>
+                                                    <a type="button" class="btn btn-success"
+                                                        href="arquivo_notificacao.php">Arquivos</a>
                                                 </div>
                                             </div>
                                             <div class="row mt-3">

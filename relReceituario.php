@@ -60,11 +60,11 @@ while ($row = pg_fetch_object($sth2)) {
 	$pdf->Cell(80, 5, utf8_decode($row->medicamentos), 0, 0, 'L');
 	$pdf->Cell(25, 5, $row->quantidade, 0, 0, 'L');
 	$pdf->Ln(5);
-
-	$pdf->Cell(10, 5, '', 0, 0, 'L');
-	$pdf->Cell(105, 5, utf8_decode($row->modo_usar), 0, 0, 'L');
-	$pdf->Cell(46, 5, '', 0, 0, 'L');
-	$pdf->Cell(105, 5, utf8_decode($row->modo_usar), 0, 0, 'L');
+	$y = $pdf->getY();
+	$pdf->SetXY(20, $y);
+	$pdf->MultiCell(100, 5, utf8_decode($row->modo_usar), 0);
+	$pdf->SetXY(171, $y);
+	$pdf->MultiCell(100, 5, utf8_decode($row->modo_usar), 0);
 	$pdf->Ln(7);
 
 	$i = $i + 7;

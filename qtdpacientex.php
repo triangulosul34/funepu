@@ -1,42 +1,48 @@
 <?php
-include('verifica.php');
+include 'verifica.php';
 $tipo_atendimento = $_GET['tipo_atendimento'];
 $data = date('Y-m-d');
 
 $consultorio = '';
 if (rtrim($tipo_atendimento) == 'ADULTO') {
-    $consultorio = 'Consultorio Adulto';
+	$consultorio = 'Consultorio Adulto';
 } else {
-    $consultorio = 'Ortopedia';
+	$consultorio = 'Ortopedia';
 }
 
-$qtdAtendiemento = "";
-include('conexao.php');
-$stmtCount = "SELECT count(*) as qtd from atendimentos ";
+if ($box == 14) {
+	$where = $where . ' and coronavirus = 1';
+} else {
+	$where = $where . ' and coronavirus <> 1';
+}
+
+$qtdAtendiemento = '';
+include 'conexao.php';
+$stmtCount = 'SELECT count(*) as qtd from atendimentos ';
 if (rtrim($tipo_atendimento) == 'ADULTO') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' ";
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' ";
 } elseif (rtrim($tipo_atendimento) == 'ORTOPEDIA') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Ortopedia' ";
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Ortopedia' ";
 } elseif (rtrim($tipo_atendimento) == 'EXAME') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Triagem') AND tipo = '6' ";
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Triagem') AND tipo = '6' ";
 } elseif (rtrim($tipo_atendimento) == 'PORTA') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
 } elseif (rtrim($tipo_atendimento) == 'ALA VERMELHA') {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
 }
 
 if ($tipo_atendimento != 'Todos') {
-    $stmtCount = $stmtCount . " and cast(tipo as integer) != 9";
+	$stmtCount = $stmtCount . ' and cast(tipo as integer) != 9';
 } else {
-    $stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime("-1 days")) . "' and '" . date('Y-m-d') . "' and cast(tipo as integer) != 9";
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and cast(tipo as integer) != 9";
 }
+$stmtCount = $stmtCount . $where;
 
 $sthCount = pg_query($stmtCount) or die($stmtCount . $tipo_atendimento);
 $rowCount = pg_fetch_object($sthCount);
 $qtdAtendiemento = $rowCount->qtd;
 
-
-include('conexao.php');
+include 'conexao.php';
 $qtdatmed = 0;
 $stmtqtdmd = "SELECT count(*) as qtd from atendimentos where med_atendimento = '$usuario' and dat_cad = '" . date('Y-m-d') . "' ";
 $sthqtdmd = pg_query($stmtqtdmd) or die($stmtqtdmd);
@@ -45,19 +51,19 @@ $qtdatmed = $rowCountqtdmd->qtd;
 ?>
 <h3 style="text-align: center;">Aguardando Atendimento: <?php echo $qtdAtendiemento; ?>
     <?php if ($qtdAtendiemento > 1) {
-        echo 'pacientes';
-    } else {
-        echo 'paciente';
-    }
-    ?>
+	echo 'pacientes';
+} else {
+	echo 'paciente';
+}
+	?>
 </h3>
 <h4 style="text-align: center;">Você atendeu: <?php echo $qtdatmed; ?>
 
 
     <?php if ($qtdatmed > 1) {
-        echo 'pacientes';
-    } else {
-        echo 'paciente';
-    }
-    ?>
+		echo 'pacientes';
+	} else {
+		echo 'paciente';
+	}
+	?>
 </h4>

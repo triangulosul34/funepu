@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		}
 	}
 }
-(!empty($where)) ?: $where = $where . " AND data_notificacao = '" . date('d/m/Y') . "'";
+(!empty($where)) ?: $where = $where . " AND data_secretaria = '" . date('d/m/Y') . "'";
 ?>
 <!DOCTYPE html>
 <html lang="pt-br" class="loading">
@@ -271,6 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                           <th scope="col">Tipo</th>
                                           <th scope="col">Resultado</th>
                                        </tr>
+                                    </thead>
                                     <tbody>
                                        <?php
 										  if (isset($_POST['option1']) && isset($_POST['option2'])) {
@@ -279,18 +280,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 										  	} else {
 										  		$un = CON1;
 										  	}
-										  	$sql = "SELECT nome,data_notificacao,data_secretaria,tipo,resultados 
-                                   FROM excel_notificacao 
-                                   WHERE controle = 1 $where 
-                                    UNION 
-                                   SELECT nome,data_notificacao,data_secretaria,tipo,resultados 
-                                   FROM dblink('host=localhost
-                                                user=postgres
-                                                password=tsul2020## 
-                                                dbname=$un', 'SELECT nome,data_notificacao,data_secretaria,tipo,resultados 
-                                                                  FROM excel_notificacao 
-                                                                  WHERE controle = 1 " . str_replace("'", "''", $where) . "') 
-                                                                  AS a(nome character varying,data_notificacao character varying,data_secretaria character varying,tipo character varying,resultados character varying)";
+										  	$sql = "SELECT nome,data_nascimento,nome_mae,cpf,data_notificacao,data_secretaria,tipo,resultados 
+                                 FROM excel_notificacao 
+                                 WHERE controle = 1 $where 
+                                 UNION 
+                                 SELECT nome,data_nascimento,nome_mae,cpf,data_notificacao,data_secretaria,tipo,resultados
+                                 FROM dblink('host=localhost
+                                             user=postgres
+                                             password=tsul2020## 
+                                             dbname=$un', 'SELECT nome,data_nascimento,nome_mae,cpf,data_notificacao,data_secretaria,tipo,resultados
+                                                               FROM excel_notificacao 
+                                                               WHERE controle = 1 " . str_replace("'", "''", $where) . "') 
+                                                               AS a(nome character varying,data_nascimento character varying,nome_mae character varying,cpf character varying,data_notificacao character varying,data_secretaria character varying,tipo character varying,resultados character varying)";
 										  	$result = pg_query($sql) or die($sql);
 										  } elseif (isset($_POST['option1'])) {
 										  	if (UNIDADEABV_CONFIG == 'mr') {

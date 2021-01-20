@@ -20,6 +20,7 @@ $hora_atendimento = $_POST['hora_atendimento'];
 $dias_atestado = $_POST['dias_atestado'];
 $cidAtestado = $_POST['cidAtestado'];
 $atendimento = $_POST['atendimento'];
+$isolamento = $_POST['isolamento'];
 
 include 'conexao.php';
 $stmt = "SELECT * FROM atendimentos a
@@ -36,13 +37,15 @@ if ($row->nome_social != '') {
 	$nome = ts_decodifica($row->nome);
 }
 $pessoa_id = $row->pessoa_id;
+$cpf = $row->cpf;
+$rg = $row->identidade;
 $med_atendimento = $row->med_atendimento;
 
 $next = "select nextval('atestados_atestado_id_seq'::regclass)";
 $sthnext = pg_query($next);
 $rownext = pg_fetch_object($sthnext);
 
-$sql = "INSERT INTO atestados(atestado_id,pessoa_id,profissional_id,atendimento_id,hora_atendimento,qtd_dias,partir_dia,cid) VALUES($rownext->nextval,$pessoa_id,'$med_atendimento',$atendimento,'$hora_atendimento','$dias_atestado','$data_atendimento','$cidAtestado')";
+$sql = "INSERT INTO atestados(atestado_id,pessoa_id,profissional_id,atendimento_id,hora_atendimento,qtd_dias,partir_dia,cid,termo_isolamento) VALUES($rownext->nextval,$pessoa_id,'$med_atendimento',$atendimento,'$hora_atendimento','$dias_atestado','$data_atendimento','$cidAtestado','$isolamento')";
 $result = pg_query($sql) or die($sql);
 
 $pdf = new FPDI();
@@ -72,10 +75,30 @@ $pdf->SetXY(200, 93);
 $pdf->Write(8, $cidAtestado);
 
 $pdf->SetXY(35, 132);
-$pdf->Write(8, $data_atendimento);
+$pdf->Write(8, date('d/m/Y'));
 
 $pdf->SetFont('Arial', '', 6);
 $pdf->SetXY(11, 121);
 $pdf->Write(8, utf8_decode('código de verificação de veracidade'));
+
+if ($isolamento) {
+	$pdf->AddPage();
+	$pdf->Image('formularios/termo_covid.png', 0, 0, $pdf->GetPageWidth(), $pdf->GetPageHeight());
+	$pdf->SetFont('Arial', '', 10);
+	$pdf->SetXY(33, 68);
+	$pdf->Write(8, $nome);
+	$pdf->SetXY(125, 81);
+	$pdf->Write(8, ts_decodifica($cpf));
+	$pdf->SetXY(30, 89);
+	$pdf->Write(8, ts_decodifica($rg));
+	$pdf->SetXY(90, 177);
+	$pdf->Write(8, $data_atendimento);
+	$pdf->SetXY(120, 177);
+	$pdf->Write(8, date('d/m/Y', strtotime('+' . preg_replace('/[^0-9]/', '', $dias_atestado) . ' days', strtotime(inverteData($data_atendimento)))));
+	$pdf->SetXY(169, 189);
+	$pdf->Write(8, date('d     m'));
+	$pdf->AddPage();
+	$pdf->Image('formularios/orientecoes_domicilio.png', 0, 0, $pdf->GetPageWidth(), $pdf->GetPageHeight());
+}
 
 $pdf->Output();
