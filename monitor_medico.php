@@ -108,52 +108,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$observacao_triagem = $row->observacao_triagem;
 
 		if ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03' and $box != '14') {
-			if ($transacao != '') {
-				include 'conexao.php';
-				$sql = "select * from painel_atendimento where transacao = $row->transacao";
-				$result = pg_query($sql) or die($sql);
-				$rowt = pg_fetch_object($result);
-				if ($rowt->transacao == '') {
-					include 'conexao.php';
-					$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora,profissional) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "','$usuario')";
-					$result = pg_query($sql) or die($sql);
+			// if ($transacao != '') {
+			// 	include 'conexao.php';
+			// 	$sql = "select * from painel_atendimento where transacao = $row->transacao";
+			// 	$result = pg_query($sql) or die($sql);
+			// 	$rowt = pg_fetch_object($result);
+			// 	if ($rowt->transacao == '') {
+			// 		include 'conexao.php';
+			// 		$sql = "insert into painel_atendimento(transacao, nome, prioridade, consultorio, status, data_hora,profissional) values($row->transacao, '" . ts_decodifica($row->nome) . "','$row->prioridade','$sala','atendimento','" . date('Y-m-d H:i:00') . "','$usuario')";
+			// 		$result = pg_query($sql) or die($sql);
 
-					$data = date('Y-m-d');
-					$hora = date('H:i');
-					include 'conexao.php';
-					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-				values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
-					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-				} elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
-					include 'conexao.php';
-					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, profissional='$usuario' where transacao = $row->transacao";
-					$result = pg_query($sql) or die($sql);
+			// 		$data = date('Y-m-d');
+			// 		$hora = date('H:i');
+			// 		include 'conexao.php';
+			// 		$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+			// 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+			// 		$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			// 	} elseif ($rowt->consultorio == $sala and $rowt->painel_hora_chamada != null) {
+			// 		include 'conexao.php';
+			// 		$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, profissional='$usuario' where transacao = $row->transacao";
+			// 		$result = pg_query($sql) or die($sql);
 
-					$data = date('Y-m-d');
-					$hora = date('H:i');
-					include 'conexao.php';
-					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-				values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
-					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-				} elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
-					include 'conexao.php';
-					$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala', profissional='$usuario' where transacao = $row->transacao";
-					$result = pg_query($sql) or die($sql);
+			// 		$data = date('Y-m-d');
+			// 		$hora = date('H:i');
+			// 		include 'conexao.php';
+			// 		$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+			// 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+			// 		$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			// 	} elseif ($rowt->consultorio != $sala and $rowt->painel_hora_chamada != null) {
+			// 		include 'conexao.php';
+			// 		$sql = "update painel_atendimento set status = 'atendimento', painel_hora_chamada = null, consultorio = '$sala', profissional='$usuario' where transacao = $row->transacao";
+			// 		$result = pg_query($sql) or die($sql);
 
-					$data = date('Y-m-d');
-					$hora = date('H:i');
-					include 'conexao.php';
-					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
-				values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
-					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
-				} elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
-					$erro = 'Paciente ainda esta sendo chamado';
-				} else {
-					$erro = 'Paciente chamado por outro consultorio';
-					$nome = '';
-					$transacao = '';
-				}
-			}
+			// 		$data = date('Y-m-d');
+			// 		$hora = date('H:i');
+			// 		include 'conexao.php';
+			// 		$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora)
+			// 	values ('$usuario','CHAMOU O PACIENTE PARA O ATENDIMENTO','$row->transacao','$data','$hora')";
+			// 		$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+			// 	} elseif ($rowt->transacao != '' and $rowt->painel_hora_chamada == null) {
+			// 		$erro = 'Paciente ainda esta sendo chamado';
+			// 	} else {
+			// 		$erro = 'Paciente chamado por outro consultorio';
+			// 		$nome = '';
+			// 		$transacao = '';
+			// 	}
+			// }
 		} else {
 			$controle_reavaliação = 1;
 		}
@@ -455,11 +455,11 @@ $qtdAtendiemento = $rowCount->qtd;
                                             <div class="col-sm-12" align="center">
                                                 <?php
 												if ($nome != '' and ($destino_paciente != '09' and $destino_paciente != '10' and $destino_paciente != '03')) {
-													echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+													// echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
 
 													echo '<button type="button" name="nrchamada" onclick="chamada()" id="nrchamada" value="nrchamada" class="btn btn-warning">Não Respondeu Chamada</button>';
 												} elseif ($destino_paciente) {
-													echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
+													// echo '<button type="submit" name="chamar_novamente" id="chamar_novamente" value="chamar_novamente" class="btn btn-primary m-2">Chamar Novamente</button>';
 
 													echo '<button type="button" name="nrchamadalab" onclick="chamadalab()" id="nrchamadalab" value="nrchamadalab" class="btn btn-warning">Não Respondeu Retorno Resultado de Exames</button>';
 												} else {

@@ -44,13 +44,19 @@ while ($row = pg_fetch_object($sth)) {
 
 	$ip = getenv('REMOTE_ADDR');
 	echo '<tr ' . $classe . '>';
+	if ($row->nec_especiais != 'Nenhuma' or $row->pidade == '0') {
+		$tdnc = 'border: 2px solid #ff0000;';
+	}
 	if ($row->coronavirus == 1) {
 		echo "<td class='blink'>" . $row->transacao . '</td>';
 		echo "<td class='blink'>" . date('d/m/Y', strtotime($row->dat_cad)) . ' - ' . $row->hora_cad . '</td>';
 		if ($row->nome_social == '') {
-			echo "<td class='blink'>" . ts_decodifica($row->nome);
+			echo "<td class='blink' style='$tdnc'>" . ts_decodifica($row->nome);
 		} else {
-			echo "<td class='blink'>" . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+			echo "<td class='blink' style='$tdnc'>" . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+		}
+		if ($row->pidade == '0') {
+			echo '<br>Paciente acima de 60 anos';
 		}
 		if ($row->nec_especiais != 'Nenhuma') {
 			echo "<br>Paciente com deficiencia $row->nec_especiais";
@@ -63,9 +69,12 @@ while ($row = pg_fetch_object($sth)) {
 		echo '<td>' . $row->transacao . '</td>';
 		echo '<td>' . date('d/m/Y', strtotime($row->dat_cad)) . ' - ' . $row->hora_cad . '</td>';
 		if ($row->nome_social == '') {
-			echo '<td>' . ts_decodifica($row->nome);
+			echo "<td style='$tdnc'>" . ts_decodifica($row->nome);
 		} else {
-			echo '<td>' . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+			echo "<td style='$tdnc'>" . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+		}
+		if ($row->pidade == '0') {
+			echo '<br>Paciente acima de 60 anos';
 		}
 		if ($row->nec_especiais != 'Nenhuma') {
 			echo "<br>Paciente com deficiencia $row->nec_especiais";
@@ -84,6 +93,7 @@ while ($row = pg_fetch_object($sth)) {
 
 	echo '</tr>';
 	$i++;
+	$tdnc = '';
 }
 echo "
 	<tr align=\"center\">

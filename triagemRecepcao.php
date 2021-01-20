@@ -421,13 +421,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 														$ip = getenv('REMOTE_ADDR');
 														echo '<tr ' . $classe . '>';
+														if ($row->nec_especiais != 'Nenhuma' or $row->pidade == '0') {
+															$tdnc = 'border: 2px solid #ff0000;';
+														}
 														if ($row->coronavirus == 1) {
 															echo '<td>' . $row->transacao . '</td>';
 															echo "<td class='blink'>" . inverteData(substr($row->dat_cad, 0, 10)) . ' - ' . $row->hora_cad . '</td>';
 															if ($row->nome_social == '') {
-																echo "<td class='blink'>" . ts_decodifica($row->nome);
+																echo "<td class='blink' style='$tdnc'>" . ts_decodifica($row->nome);
 															} else {
-																echo "<td class='blink'>" . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+																echo "<td class='blink' style='$tdnc'>" . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+															}
+															if ($row->pidade == '0') {
+																echo '<br>Paciente acima de 60 anos';
 															}
 															if ($row->nec_especiais != 'Nenhuma') {
 																echo "<br>Paciente com deficiencia $row->nec_especiais";
@@ -440,9 +446,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 															echo '<td>' . $row->transacao . '</td>';
 															echo '<td>' . inverteData(substr($row->dat_cad, 0, 10)) . ' - ' . $row->hora_cad . '</td>';
 															if ($row->nome_social == '') {
-																echo '<td>' . ts_decodifica($row->nome);
+																echo "<td style='$tdnc'>" . ts_decodifica($row->nome);
 															} else {
-																echo '<td>' . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+																echo "<td style='$tdnc'>" . $row->nome_social . ' (' . ts_decodifica($row->nome) . ')';
+															}
+															if ($row->pidade == '0') {
+																echo '<br>Paciente acima de 60 anos';
 															}
 															if ($row->nec_especiais != 'Nenhuma') {
 																echo "<br>Paciente com deficiencia $row->nec_especiais";
@@ -459,6 +468,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 														//}
 														echo '</td>';
 														echo '</tr>';
+														$tdnc = '';
 													}
 													?>
                                                 </tbody>
