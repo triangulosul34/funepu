@@ -281,10 +281,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                         <div class="col-sm-12">
 
-                                            <div class="col-md-12">
+                                            <div class="col-md-12 col-sm-4 col-3 mt-3">
                                                 <div class="form-group">
-                                                    <table
-                                                        class="table table-hover table-condensed table-striped width-full">
+                                                    <table id="dttable"
+                                                        class="table table-hover table-condensed table-striped width-full col-sm-12">
                                                         <thead>
                                                             <tr>
                                                                 <th>Ação
@@ -388,6 +388,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"
             type="text/javascript"></script>
         <script>
+            $('#dttable').DataTable({
+                "order": [
+                    [1, "asc"]
+                ]
+            });
             $("#pesquisa").keydown(function() {
                 if (window.event.keyCode == 13) {
                     document.getElementById("form_pesquisa").submit();
