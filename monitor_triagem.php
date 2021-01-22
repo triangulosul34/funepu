@@ -37,6 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$classificacao = $_POST['classificacao'];
 	;
 
+	if ($_SESSION['box'] == 8) {
+		$where = $where . ' and coronavirus = 0';
+	} elseif ($_SESSION['box'] == 9) {
+		$where = $where . ' and coronavirus <> 0';
+	}
+
 	if (isset($_POST['proximo'])) {
 		include 'conexao.php';
 		$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, a.dat_cad as cadastro,c.nome, 
@@ -46,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			left join especialidade f on a.especialidade = f.descricao 
 			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
-			cast(tipo as integer) != '6' and cast(tipo as integer) != '11'
+			cast(tipo as integer) != '6' $where and cast(tipo as integer) != '11'
 			order by 3, 1 asc limit 1
 			";
 		$sth = pg_query($stmt) or die($stmt);

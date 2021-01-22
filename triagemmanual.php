@@ -103,13 +103,14 @@ $rowRetorno = pg_fetch_object($sthRetorno);
 
 $hoje = date('Y-m-d');
 include 'conexao.php';
-$stmtNome = "select nome,idade,dt_nasc,extract(year from age(dt_nasc)) as idadenormal,num_carteira_convenio,p.nome_social, paciente_id, a.nec_especiais
+$stmtNome = "select coronavirus,nome,idade,dt_nasc,extract(year from age(dt_nasc)) as idadenormal,num_carteira_convenio,p.nome_social, paciente_id, a.nec_especiais
 	from atendimentos a
 					left join pessoas p on p.pessoa_id=a.paciente_id
 					where transacao = '$transacao'";
 $sthNome = pg_query($stmtNome) or die($stmtNome);
 $rowNome = pg_fetch_object($sthNome);
 $cns = $rowNome->num_carteira_convenio;
+$coronavirus = $rowNome->coronavirus;
 
 include 'conexao.php';
 $stmtCns = "
@@ -371,6 +372,18 @@ if ($rowcns->descricao != '') {
             value="<?= $rowRetorno->observacao ?>">
     </div>
 </div>
+<div class="row mt-1 mb-1">
+    <div class="col-md-12">
+        <div class="custom-control custom-checkbox ">
+            <input type="checkbox" class="custom-control-input"
+                onclick="respiratorio(<?= $transacao; ?>)"
+                name="coronavirus" id="coronavirus" value='CM' <?php if ($coronavirus == 1) {
+					echo 'checked';
+				} ?>>
+            <label class="custom-control-label" style="font-size: 10pt" for="coronavirus">Problema Respirátorio</label>
+        </div>
+    </div>
+</div>
 <?php
 $prioridades = [
 	'VERMELHO' => utf8_decode('EMERGÊNCIA - VERMELHO'),
@@ -481,4 +494,14 @@ $prioridades = [
             }
         });
     });
+
+    function respiratorio(a) {
+        if (coronavirus.checked == true) {
+            crvs = 1
+        } else {
+            crvs = 0
+        }
+
+        $.get('tri_respiratorio.php?id=' + a + '&crvs=' + crvs, function(dataReturn) {});
+    }
 </script>

@@ -388,6 +388,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                                 <tbody id="atualizaTriagem">
                                                     <?php
+													if ($_SESSION['box'] == 8) {
+														$where = $where . ' and coronavirus = 0';
+													} elseif ($_SESSION['box'] == 9) {
+														$where = $where . ' and coronavirus <> 0';
+													}
 													$i = 0;
 													include 'conexao.php';
 													$stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.nec_especiais, a.status, a.prioridade, a.hora_cad,a.hora_triagem,a.hora_atendimento, 
@@ -396,7 +401,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             left join pessoas c on a.paciente_id=c.pessoa_id 
                                                             left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
                                                             WHERE status in ('Aguardando Triagem', 'Em Triagem') and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
-                                                            cast(tipo as integer) != '6' and tipo_at is null 
+                                                            cast(tipo as integer) != '6' and tipo_at is null $where
                                                             ORDER by 3, 1";
 													$sth = pg_query($stmt) or die($stmt);
 													while ($row = pg_fetch_object($sth)) {
