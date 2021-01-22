@@ -40,6 +40,8 @@ $pessoa_id = $row->pessoa_id;
 $cpf = $row->cpf;
 $rg = $row->identidade;
 $med_atendimento = $row->med_atendimento;
+$endereco = $row->endereco;
+$bairro = $row->bairro;
 
 $next = "select nextval('atestados_atestado_id_seq'::regclass)";
 $sthnext = pg_query($next);
@@ -91,6 +93,14 @@ if ($isolamento) {
 	$pdf->Write(8, ts_decodifica($cpf));
 	$pdf->SetXY(30, 89);
 	$pdf->Write(8, ts_decodifica($rg));
+	$pdf->SetXY(135, 89);
+	$pdf->Write(8, $endereco);
+	$pdf->SetXY(25, 96);
+	$pdf->Write(8, $bairro);
+	$pdf->SetXY(70, 162);
+	$pdf->Write(8, 'UPA ' . UNIDADE_CONFIG);
+	$pdf->SetXY(165, 162);
+	$pdf->Write(8, UNIDADE_TEL);
 	$pdf->SetXY(90, 177);
 	$pdf->Write(8, $data_atendimento);
 	$pdf->SetXY(120, 177);

@@ -37,7 +37,7 @@ if (isset($_SESSION['myusername'])) {
 	} elseif ($box == 8) {
 		$sala = 'Triagem 01';
 	} elseif ($box == 9) {
-		$sala = 'Triagem respiratorio';
+		$sala = 'Triagem respiratório';
 	}
 } else {
 	header('location:login.html');
