@@ -120,7 +120,7 @@ $pdf->SetXY(27.5, 42.75);
 $pdf->Write(8, utf8_decode(strtoupper($row->cidade . '-' . $row->estado))); //localidade
 
 $pdf->SetXY(22.5, 47.25);
-$pdf->Write(8, utf8_decode(strtoupper($row->nome_mae))); //filiacao
+$pdf->Write(8, utf8_decode(strtoupper(ts_decodifica($row->nome_mae)))); //filiacao
 
 $pdf->SetFont('Helvetica', '', 8);
 $pdf->SetXY(86, 42.70);
