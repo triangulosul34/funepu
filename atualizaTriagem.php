@@ -24,7 +24,7 @@ $stmt = "select a.transacao, a.paciente_id, case when EXTRACT(year from AGE(CURR
 	left join pessoas c on a.paciente_id=c.pessoa_id 
 	left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 	WHERE status in ('Aguardando Triagem', 'Em Triagem') and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
-	cast(tipo as integer) != '6' and tipo_at is null $where
+	cast(tipo as integer) != '6' and tipo_at is null $where 
 	ORDER by 3, 1";
 $sth = pg_query($stmt) or die($stmt);
 //echo $stmt;

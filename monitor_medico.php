@@ -488,7 +488,8 @@ $qtdAtendiemento = $rowCount->qtd;
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" name="pesquisa_paciente">
+                                                    <input type="text" class="form-control" name="pesquisa_paciente"
+                                                        style="text-transform:uppercase">
                                                     <button type="submit" name='busca' class="btn btn-primary"><i
                                                             class="fas fa-search"></i></button>
                                                 </div>

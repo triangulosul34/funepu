@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			left join especialidade f on a.especialidade = f.descricao 
 			left join tipo_origem k on k.tipo_id=cast(a.tipo as integer) 
 			WHERE status = 'Aguardando Triagem' and dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and 
-			cast(tipo as integer) != '6' $where and cast(tipo as integer) != '11'
+			cast(tipo as integer) != '6' $where and origem <> 'ODONTOLOGIA' and cast(tipo as integer) != '11'
 			order by 3, 1 asc limit 1
 			";
 		$sth = pg_query($stmt) or die($stmt);
