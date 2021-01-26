@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$html .= '<td><b>Data de Envio</b></td>';
 		$html .= '</tr>';
 		include 'conexao.php';
-		$stmt = 'select a.status, a.dat_cad, a.hora_cad,a.hora_triagem, c.nome, a.hora_destino, k.origem from atendimentos a 
+		$stmt = 'select a.status, a.dat_cad, a.hora_cad,a.hora_triagem, c.nome, a.hora_destino, k.origem, data_envio from atendimentos a 
                         left join pessoas c on a.paciente_id = c.pessoa_id
                         left join tipo_origem k on cast(k.tipo_id as varchar) = a.tipo';
 
@@ -160,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$html .= '<td>' . $row->hora_triagem . '</td>';
 			$html .= '<td>' . $row->hora_destino . '</td>';
 			$html .= '<td>' . $row->status . '</td>';
-			$html .= '<td></td>';
+			$html .= '<td>' . $row->data_envio . '</td>';
 			$html .= '</tr>';
 
 			$qtde = $qtde + 1;
@@ -320,6 +320,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 												<label class="control-label">Ação</label><br>
 												<button type="submit" name="gerarrelatorio" class="btn btn-primary"
 													style="width:100%">Pesquisar</button>
+											</div>
+										</div>
+										<div class="row mb-2">
+											<div class="col-sm-4" id="idbaixaprontuario">
+												<div class="form-group">
+													<label>Baixa de Protuario</label>
+													<div class="input-group">
+														<div
+															class="custom-control custom-checkbox custom-control-inline">
+															<input type="checkbox" id="baixa_prontuario"
+																name="baixa_prontuario" class="custom-control-input"
+																onclick="baixaprontuario()">
+															<label class="custom-control-label"
+																for="baixa_prontuario">Sim</label>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4" style="display: none;" id="prontuario">
+												<label class="control-label">Baixa de Protuario</label> <input
+													type="text" name="baixar_prontuario" id="baixar_prontuario"
+													class="form-control" value="" style="font-weight: bold;"
+													onkeyup="maiuscula(this)">
 											</div>
 										</div>
 										<div class="row">
@@ -490,6 +513,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			</div>
 		</div>
 	</div>
+	<div id="response"></div>
 	<?php include 'footer.php'; ?>
 	<!-- </div> -->
 
@@ -513,6 +537,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
 	<script defer src="/your-path-to-fontawesome/js/all.js"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script>
+		function baixaprontuario() {
+			document.getElementById("idbaixaprontuario").style.display = 'none';
+			document.getElementById("prontuario").style.display = 'block';
+		}
+
+		$(document).ready(function() {
+			$(window).keydown(function(event) {
+				if (event.keyCode == 13) {
+					if (document.getElementById("baixar_prontuario").value != '') {
+						$.get('baixar_prontuario.php?a=' + document.getElementById("baixar_prontuario").value,
+							function(dataReturn) {
+								$("#response").html(dataReturn);
+							});
+					}
+					document.getElementById("baixar_prontuario").value = '';
+					event.preventDefault();
+					return false;
+				}
+			});
+		});
+	</script>
 </body>
 
 </html>
