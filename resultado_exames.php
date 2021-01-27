@@ -415,11 +415,11 @@ if ($perfil == '03') { ?>
 													<?php
 													$date = date('Y-m-d');
 													include 'conexao.php';
-													$stmt = 'select solicitante_id,p.nome as paciente, q.nome as medico,a.atendimento_id,dat_cad as cadastrado
+													$stmt = "select solicitante_id,p.nome as paciente, q.nome as medico,case when a.atendimento_id is null then a.exame_nro||'1' else a.atendimento_id||'0' end atendimento_id,dat_cad as cadastrado
 											from itenspedidos a 
 											left join pedidos b on b.transacao=a.transacao 
 											left join pessoas p on p.pessoa_id = a.pessoa_id
-											left join pessoas q on q.username = b.cad_user ';
+											left join pessoas q on q.username = b.cad_user ";
 													if ($where != '') {
 														$stmt = $stmt . ' where ' . $where;
 													} else {
@@ -435,8 +435,12 @@ if ($perfil == '03') { ?>
 														echo '<td>' . ts_decodifica($row->paciente) . '</td>';
 														echo '<td>' . ts_decodifica($row->medico) . '</td>';
 														echo '<td>' . date('d/m/Y', strtotime($row->cadastrado)) . '</td>';
-
-														echo "<td><button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"\"><i class=\"fas fa-search\" onclick=\"openInNewTab('exames_pacientes.php?id=$row->atendimento_id')\"></i></button>";
+														if (substr($row->atendimento_id, -1) == '0') {
+															echo "<td><button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"\"><i class=\"fas fa-search\" onclick=\"openInNewTab('exames_pacientes.php?id=" . substr($row->atendimento_id, 0, -1) . "')\"></i></button>";
+														} else {
+															echo "<td><button type=\"button\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"\"><i class=\"fas fa-search\" onclick=\"openInNewTab('rellaudo.php?id=" . substr($row->atendimento_id, 0, -1) . "')\"></i></button>";
+														}
+														echo '</td>';
 														echo '</tr>';
 													}
 													?>
