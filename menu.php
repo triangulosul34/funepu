@@ -267,6 +267,10 @@
                     <a href="novopedido.php"><i class="fas fa-clinic-medical"></i><span class="menu-title">SOLICITAR
                             EXAMES</span></a>
                 </li>
+                <li class="nav-item">
+                    <a href="pedidos.php"><i class="fas fa-clinic-medical"></i><span
+                            class="menu-title">PEDIDOS</span></a>
+                </li>
                 <?php } ?>
             </ul>
         </div>
