@@ -723,7 +723,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 																<label class="control-label">Nome </label> <input
 																	type="text" name="nome" id="nome"
 																	class="form-control" style="font-weight: bold;"
-																	value="<?php echo $nome; ?>"
+																	value="<?php echo ts_decodifica($nome); ?>"
 																	onkeyup="maiuscula(this)">
 															</div>
 															<div class="col-sm-3">
@@ -770,13 +770,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 																	type="text" name="cpf"
 																	OnKeyPress="formatar('###.###.###-##', this)"
 																	maxlength="14" id="cpf" class="form-control"
-																	value="<?php echo $cpf; ?>">
+																	value="<?php echo ts_decodifica($cpf); ?>">
 															</div>
 
 															<div class="col-sm-2">
 																<label class="control-label">RG</label> <input
 																	type="text" name="rg" id="rg" class="form-control"
-																	value="<?php echo $identidade; ?>">
+																	value="<?php echo ts_decodifica($identidade); ?>">
 															</div>
 															<div class="col-sm-2">
 																<label class="control-label">Expedição</label> <input
@@ -1064,7 +1064,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 												echo '<td></td>';
 												echo '<td>' . $row->guia . '</td>';
 												echo '<td>' . $row->situacao . '</td>';
-												echo "<td><button type=\"button\" name=\"apagalinha\" onclick=\"window.location.href='apagaitempedido.php?id=" . $row->exame_nro . "'\" class=\"btn btn-pure btn-danger icon wb-close\"></button></td>";
+												// echo "<td><button type=\"button\" name=\"apagalinha\" onclick=\"window.location.href='apagaitempedido.php?id=" . $row->exame_nro . "'\" class=\"btn btn-pure btn-danger\">X</button></td>";
+												echo '<td></td>';
 												echo '</tr>';
 												$total_devido = $total_devido + $row->valor;
 											}

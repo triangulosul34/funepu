@@ -594,7 +594,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 															for="inputBasicFirstName">Paciente</label>
 														<input type="text" class="form-control" id="inputBasicFirstName"
 															name="nome" placeholder="Parte do Nome" autocomplete="off"
-															value="<?php echo ts_decodifica( $nome); ?>"
+															value="<?php echo ts_decodifica($nome); ?>"
 															onkeyup="maiuscula(this)" />
 													</div>
 
@@ -602,7 +602,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 														<label class="control-label">Situacao</label>
 														<select class="form-control" name="situacao" id="situacao">
 															<option value="">Todos</option>
-															<option value="Pendentes"  <?php if ($situacao == 'Pendentes') {
+															<option value="Pendentes" <?php if ($situacao == 'Pendentes') {
 																echo 'selected';
 															} ?>>Pendentes
 															</option>
@@ -610,15 +610,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 																echo 'selected';
 															} ?>>Cadastrado
 															</option>
-															<option value="Realizado"  <?php if ($situacao == 'Realizado') {
+															<option value="Realizado" <?php if ($situacao == 'Realizado') {
 																echo 'selected';
 															} ?>>Realizado
 															</option>
-															<option value="Alterado"   <?php if ($situacao == 'Alterado') {
+															<option value="Alterado" <?php if ($situacao == 'Alterado') {
 																echo 'selected';
 															} ?>>Alterado
 															</option>
-															<option value="Editado"    <?php if ($situacao == 'Editado') {
+															<option value="Editado" <?php if ($situacao == 'Editado') {
 																echo 'selected';
 															} ?>>Editado
 															</option>
