@@ -1,0 +1,22 @@
+{
+    "name": "Funepu Upas",
+    "short_name": "Funepu Upas",
+    "icons": [
+        {
+            "src": "https://mr.midaspa.com.br/pwa/assets/images/icon-azul-152.png",
+            "sizes": "152x152",
+            "type": "image/png"
+        },
+        {
+            "src": "https://mr.midaspa.com.br/pwa/assets/images/icon-azul-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ],
+    "display": "standalone",
+    // "scope": "login_cliente.php",
+    "start_url": "/pwa/",
+    "theme_color": "#FFF",
+    "background_color": "#FFF",
+    "orientation": "portrait"
+}
