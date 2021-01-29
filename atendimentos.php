@@ -52,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$profissional = $_POST['prof_transfere'];
 	$cb_meus = $_POST['cb_meus'];
 	$cb_conf = $_POST['cb_CONFERENCIA'];
+	$cid = strtoupper($_POST['cid']);
 	$prontuario = $_POST['prontuario'];
 	$trs = $_POST['trs'];
 	$palavras = explode(' ', $nome);
@@ -95,6 +96,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$where = $where . " and a.exame_id = $procedimentox";
 		} else {
 			$where = $where . " a.exame_id = $procedimentox";
+		}
+	}
+
+	if ($cid != '') {
+		if ($where != '') {
+			$where = $where . " and a.cid_principal like '$cid%'";
+		} else {
+			$where = $where . " a.cid_principal like '$cid%'";
 		}
 	}
 
@@ -591,6 +600,10 @@ if (isset($_POST['excel'])) {
                                                             value="<?php echo ts_decodifica($nome); ?>"
                                                             onkeyup="maiuscula(this)" />
                                                     </div>
+                                                    <div class="col-md-1"><label class="control-label">CID</label><input
+                                                            type="text" class="form-control" name="cid" maxlength="4"
+                                                            value="<?php echo $cid; ?>">
+                                                    </div>
                                                     <div class="col-md-1">
                                                         <label class="control-label">prontuario</label>
                                                         <input type="text" class="form-control" name="prontuario"
@@ -662,7 +675,7 @@ if (isset($_POST['excel'])) {
 
 
 
-                                                    <div class="col-7 text-center">
+                                                    <div class="col-6 text-center">
                                                         <label class="control-label">Ação</label><br>
 
                                                         <button type="submit" name="pesquisa" value="semana"

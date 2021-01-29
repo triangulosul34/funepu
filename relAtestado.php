@@ -104,7 +104,9 @@ if ($isolamento) {
 	$pdf->SetXY(90, 177);
 	$pdf->Write(8, $data_atendimento);
 	$pdf->SetXY(120, 177);
-	$pdf->Write(8, date('d/m/Y', strtotime('+' . preg_replace('/[^0-9]/', '', $dias_atestado) . ' days', strtotime(inverteData($data_atendimento)))));
+	if (preg_replace('/[^0-9]/', '', $dias_atestado) != '') {
+		$pdf->Write(8, date('d/m/Y', strtotime('+' . preg_replace('/[^0-9]/', '', $dias_atestado) . ' days', strtotime(inverteData($data_atendimento)))));
+	}
 	$pdf->SetXY(169, 189);
 	$pdf->Write(8, date('d     m'));
 	$pdf->AddPage();

@@ -277,7 +277,7 @@
     </div>
     <div class="row" style="position: absolute;bottom: 5%;left: 18%;z-index: 2;">
         <div class="col-7">
-            <img src="app-assets/img/gallery/logotsul.png" width="150px" height="130px">
+          
         </div>
     </div>
     <div class="sidebar-background"></div>
