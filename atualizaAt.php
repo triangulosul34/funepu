@@ -115,9 +115,10 @@ function inverteData($data)
 			</tfoot>
 			<tbody id="atualizaAtAdulto">
 				<?php
+				$qtAtendimento = 0;
 				include 'conexao.php';
 				$stmt = "select a.transacao, a.paciente_id, extract(year from age(c.dt_nasc)) as idade, case when EXTRACT(year from AGE(CURRENT_DATE, c.dt_nasc)) >= 60 then 0 else 1 end pidade, a.status, a.prioridade, a.hora_cad,a.hora_triagem,
-							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, 
+							a.hora_atendimento, a.dat_cad, c.nome, k.origem, a.tipo, coronavirus, 
 							CASE
                             WHEN a.prioridade = 'VERMELHO' and a.destino_paciente is null THEN '0' 
                             WHEN a.prioridade = 'LARANJA' and a.destino_paciente is null THEN '1' 
@@ -156,18 +157,29 @@ function inverteData($data)
 
 					$ip = getenv('REMOTE_ADDR');
 					echo '<tr ' . $classe . '>';
-					echo '<td>' . date('d/m/Y', strtotime($row->dat_cad)) . '<br>' . $row->hora_cad . '</td>';
-					echo '<td>' . ts_decodifica($row->nome) . '</td>';
+					if ($row->coronavirus == 1) {
+						echo '<td class=\'blink\'>' . date('d/m/Y', strtotime($row->dat_cad)) . '<br>' . $row->hora_cad . '</td>';
+						echo '<td class=\'blink\'>' . ts_decodifica($row->nome) . '</td>';
 
-					echo '<td>' . $row->hora_triagem . '</td>';
-					echo '<td>' . $row->status . '</td>';
-					echo '<td>';
+						echo '<td class=\'blink\'>' . $row->hora_triagem . '</td>';
+						echo '<td class=\'blink\'>' . $row->status . '</td>';
+					} else {
+						echo '<td>' . date('d/m/Y', strtotime($row->dat_cad)) . '<br>' . $row->hora_cad . '</td>';
+						echo '<td>' . ts_decodifica($row->nome) . '</td>';
+
+						echo '<td>' . $row->hora_triagem . '</td>';
+						echo '<td>' . $row->status . '</td>';
+					}
 
 					echo '</tr>';
+
+					$qtAtendimento += 1;
 				}
 				?>
 			</tbody>
 		</table>
+		<h2>Quantidade de Pacientes: <?= $qtAtendimento; ?>
+		</h2>
 	</div>
 </div>
 <div class="row mt-5">
