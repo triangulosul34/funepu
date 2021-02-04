@@ -85,6 +85,8 @@ $pdf->Write(8, utf8_decode('código de verificação de veracidade'));
 
 if ($isolamento) {
 	$pdf->AddPage();
+	$pdf->Image('formularios/orientecoes_domicilio.png', 0, 0, $pdf->GetPageWidth(), $pdf->GetPageHeight());
+	$pdf->AddPage();
 	$pdf->Image('formularios/termo_covid.png', 0, 0, $pdf->GetPageWidth(), $pdf->GetPageHeight());
 	$pdf->SetFont('Arial', '', 10);
 	$pdf->SetXY(33, 68);
@@ -109,8 +111,6 @@ if ($isolamento) {
 	}
 	$pdf->SetXY(169, 189);
 	$pdf->Write(8, date('d     m'));
-	$pdf->AddPage();
-	$pdf->Image('formularios/orientecoes_domicilio.png', 0, 0, $pdf->GetPageWidth(), $pdf->GetPageHeight());
 }
 
 $pdf->Output();
