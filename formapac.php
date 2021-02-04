@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	if ($erro == '') {
 		include 'conexao.php';
-		$stmt = "INSERT into apacs_solicitadas (pessoa_id, procedimento_id, raca_cor, cid10, justificativa, med_solicitante, crm, data_solicitacao)
-		values ($pessoa_id, $procedimento,'$raca_cor', '$cid10','$justificativa', '$med_solicitante', '$crm','$data') RETURNING apac_id ";
+		$stmt = "INSERT into apacs_solicitadas (pessoa_id, procedimento_id, raca_cor, cid10, justificativa, med_solicitante, crm, data_solicitacao, data_cad)
+		values ($pessoa_id, $procedimento,'$raca_cor', '$cid10','$justificativa', '$med_solicitante', '$crm','$data', '" . date('Y-m-d') . "') RETURNING apac_id ";
 		$sth = pg_query($stmt) or die($stmt);
 		$row = pg_fetch_object($sth);
 
@@ -162,7 +162,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </div>
                                             <div class="col-10">
                                                 <div class="row">
-                                                    <div class="col-8">
+                                                    <div class="col-3"><label for="">Data Solicitação</label>
+                                                        <input type="text" name="data_solicitacao" id="data_solicitacao"
+                                                            class="form-control square"
+                                                            OnKeyPress="formatar('##/##/####', this)"
+                                                            value="<?php echo date('d/m/Y') ?>" />
+                                                    </div>
+                                                    <div class="col-5">
                                                         <div class="form-group">
                                                             <label>Nome</label>
                                                             <input type="hidden" name="usuario"
@@ -179,9 +185,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <input type="hidden" name="celular" id="celular">
                                                             <input type="hidden" name="nomeMae" id="nomeMae">
                                                             <input type="hidden" name="origem" id="origem">
-                                                            <input type="hidden" name="data_solicitacao"
-                                                                id="data_solicitacao" onkeypress="mascaraData(this)"
-                                                                value="<?php echo date('d/m/Y') ?>" />
                                                             <input type="text" class="form-control square" id="nome"
                                                                 name="nome"
                                                                 value="<?php echo $nome; ?>"
@@ -748,6 +751,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 })
             } else {
                 $("form").submit()
+            }
+        }
+
+        function formatar(mascara, documento) {
+            var i = documento.value.length;
+            var saida = mascara.substring(0, 1);
+            var texto = mascara.substring(i)
+
+            if (texto.substring(0, 1) != saida) {
+                documento.value += texto.substring(0, 1);
             }
         }
     </script>
