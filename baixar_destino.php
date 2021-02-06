@@ -1,6 +1,7 @@
 <?php
 
 require 'tsul_ssl.php';
+require 'verifica.php';
 
 function inverteData($data)
 {
@@ -58,11 +59,11 @@ $row = pg_fetch_object($sth);
 
 if ($row->qtd == 0) {
 	include 'conexao.php';
-	$stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, data_controle) 
-					values ($atendimento, $destino, '$motivoalta', '$data', '$hora','$data_controle')";
+	$stmt = "insert into destino_paciente (atendimento_id, destino_encaminhamento, motivo,data, hora, data_controle,usuario) 
+					values ($atendimento, $destino, '$motivoalta', '$data', '$hora','$data_controle','$usuario')";
 	$sth = pg_query($stmt) or die($stmt);
-} elseif ($row->destino_encaminhamento == 3 or $row->destino_encaminhamento == 20 or $row->destino_encaminhamento == 7 or $row->destino_encaminhamento == 10) {
-	$stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, data_controle = '$data_controle'
+} elseif ($row->destino_encaminhamento == 3 or $row->destino_encaminhamento == 20 or $row->destino_encaminhamento == 7 or $row->destino_encaminhamento == 10 or $row->destino_encaminhamento == 21) {
+	$stmt = "update destino_paciente set destino_encaminhamento = '$destino', motivo= '$motivoalta', data = '$data', hora = '$hora', setor = null, hospital = null, clinica = null, data_controle = '$data_controle', usuario='$usuario'
     where atendimento_id = '$atendimento'";
 	$sth = pg_query($stmt) or die($stmt);
 } else {
