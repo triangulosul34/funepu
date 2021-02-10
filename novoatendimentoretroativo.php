@@ -1,5 +1,6 @@
 <?php
 require '../vendor/autoload.php';
+require 'tsul_ssl.php';
 function inverteData($data)
 {
 	if (count(explode('/', $data)) > 1) {
@@ -76,8 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$hora_transacao = $row->hora_transacao;
 		$prontuario = $row->paciente_id;
 		$sexo = $row->sexo;
-		$nome = ts_decodifica($row->nome);
-		$nomeMae = ts_decodifica($row->nome_mae);
+		$nome = $row->nome;
+		$nomeMae = $row->nome_mae;
 		$dt_nascimento = inverteData($row->dt_nasc);
 		$sexo = $row->sexo;
 		$enderecox = $row->endereco;
@@ -310,7 +311,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$dt_transacao = inverteData($data_transacao);
 				$dt_solicitacao = inverteData($dt_nsolicitacao);
 				$horacad = $hora_transacao;
-				$stmt = "update atendimentos set  transacao=$transacao, cad_user='$usuario_transacao',  paciente_id=$prontuario, tipo='$origem',  observacao='$observacao', box='1', hora_cad='$horacad', local='01',
+				$stmt = "update atendimentos set  transacao=$transacao, cad_user='$usuario_transacao',  paciente_id=$prontuario, tipo='$origem',  observacao='$observacao', dat_cad='$dt_transacao', box='1', hora_cad='$horacad', local='01',
 				peso='0', nec_especiais='$deficiencia', oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', com_oqfaz='$com_oqfaz' where transacao=$transacao ";
 				$sth = pg_query($stmt) or die($stmt);
 
@@ -320,6 +321,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
 						values ('$usuario','ALTEROU INFORMAÇÃO DO CADASTRO DO ATENDIMENTO','$transacao','$data','$hora')";
 				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+
+				header('location: atendimentos.php');
 			}
 		}
 	}
@@ -968,7 +971,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 															<label class="control-label">Nome </label> <input
 																type="text" name="nome" id="nome" class="form-control"
 																style="font-weight: bold;"
-																value="<?php echo $nome; ?>"
+																value="<?php echo ts_decodifica($nome); ?>"
 																onkeyup="maiuscula(this)">
 														</div>
 
@@ -1039,7 +1042,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 														<div class="col-sm-2">
 															<label class="control-label">CPF</label> <input type="text"
 																name="cpf" maxlength="14" id="cpf" class="form-control"
-																value="<?php echo $cpf; ?>">
+																value="<?php echo ts_decodifica($cpf); ?>">
 														</div>
 
 														<div class="col-sm-2">
@@ -1075,7 +1078,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 														<font color='red'>Nome da Mae</font>
 													</label> <input type="text" name="nomeMae" id="nome_mae"
 														class="form-control"
-														value="<?php echo $nomeMae; ?>"
+														value="<?php echo ts_decodifica($nomeMae); ?>"
 														onkeyup="maiuscula(this)">
 												</div>
 
