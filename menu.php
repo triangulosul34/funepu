@@ -1,4 +1,4 @@
-<?php include 'verifica.php'; ?>
+<?php include 'verifica.php'; include 'Config.php'; ?>
 <div data-active-color="white" data-background-color="primary" data-image="app-assets/img/sidebar-bg/01.jpg"
     class="app-sidebar">
     <div class="sidebar-header">
@@ -63,7 +63,8 @@
                     </ul>
                 </li>
                 <?php
-				if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
+				if (UNIDADEABV_CONFIG == 'mr') {
+					if ($id == '1892217' or $id == '1') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-user-plus"></i><span class="menu-title">CADASTRO</span></a>
                     <ul class="menu-content">
@@ -90,7 +91,39 @@
                         <?php } ?>
                     </ul>
                 </li>
-                <?php }
+                <?php
+				}
+				} else {
+					if ($id == '0') { ?>
+                <li class="has-sub nav-item">
+                    <a href="#"><i class="fas fa-user-plus"></i><span class="menu-title">CADASTRO</span></a>
+                    <ul class="menu-content">
+                        <?php
+									if ($perfil == '06' or $perfil == '04' or $perfil == '01') { ?>
+                        <li class="is-shown">
+                            <a href="clientes.php" class="menu-item">PACIENTES</a>
+                        </li>
+                        <?php }
+									if ($perfil == '06' or $perfil == '04') { ?>
+                        <li class="is-shown">
+                            <a href="medicos.php" class="menu-item">MEDICOS/LAUDADORES</a>
+                        </li>
+                        <?php }
+									if ($perfil == '06' or $perfil == '04') { ?>
+                        <li class="is-shown">
+                            <a href="colaboradores.php" class="menu-item">COLABORADORES</a>
+                        </li>
+                        <?php }
+									if ($perfil == '06' or $perfil == '04') { ?>
+                        <li class="is-shown">
+                            <a href="procedimentos.php" class="menu-item">PROCEDIMENTOS</a>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                </li>
+                <?php
+						}
+				}
 				if ($perfil == '06' or $perfil == '04') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-tasks"></i><span class="menu-title">GESTÃO</span></a>
@@ -159,7 +192,7 @@
                     </ul>
                 </li>
                 <?php }
-				if ($perfil == '06' or $perfil == '08' or $perfil == '04') { ?>
+				if ($perfil == '06' or $perfil == '08' or $perfil == '04' or $perfil == '05') { ?>
                 <li class="has-sub nav-item"><a href="#"><i class="fas fa-tv"></i><span
                             class="menu-title">MONITORAMENTO</span></a>
                     <ul class="menu-content">
@@ -187,6 +220,9 @@
                     <ul class="menu-content">
                         <li class="is-shown">
                             <a href="sindrome_gripal.php" class="menu-item">FICHA SÍNDROME GRIPAL</a>
+                        </li>
+                        <li class="is-shown">
+                            <a href="fichadengue.php" class="menu-item">FICHA DENGUE E CHIKUNGUNYA</a>
                         </li>
                     </ul>
                 </li>
@@ -256,9 +292,11 @@
                         <li class="is-shown">
                             <a href="farmacia.php">MEDICAMENTOS</a>
                         </li>
+                        <?php if ($perfil == '06') { ?>
                         <li class="is-shown">
                             <a href="controle_antibioticos.php">CONTROLE ANTIBIOTICOS</a>
                         </li>
+                        <?php } ?>
                     </ul>
                 </li>
                 <?php }
@@ -271,13 +309,18 @@
                     <a href="pedidos.php"><i class="fas fa-clinic-medical"></i><span
                             class="menu-title">PEDIDOS</span></a>
                 </li>
+                <?php } if ($perfil == '06') { ?>
+                <li class="nav-item">
+                    <a href="protocolos.php"><i class="fas fa-clinic-medical"></i><span
+                            class="menu-title">PROTOCOLOS</span></a>
+                </li>
                 <?php } ?>
             </ul>
         </div>
     </div>
     <div class="row" style="position: absolute;bottom: 5%;left: 18%;z-index: 2;">
         <div class="col-7">
-          
+
         </div>
     </div>
     <div class="sidebar-background"></div>
