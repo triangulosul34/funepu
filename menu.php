@@ -64,7 +64,7 @@
                 </li>
                 <?php
 				if (UNIDADEABV_CONFIG == 'mr') {
-					if ($id == '1' or $id == '2578808' or $id == '955044' or $id == '2591294') { ?>
+					if ($id == '1' or $id == '2578808' or $id == '955044' or $id == '2591294' or $id == '1991599') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-user-plus"></i><span class="menu-title">CADASTRO</span></a>
                     <ul class="menu-content">
@@ -94,7 +94,7 @@
                 <?php
 				}
 				} else {
-					if ($id == '1') { ?>
+					if ($id == '1' or $id == '2595119') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-user-plus"></i><span class="menu-title">CADASTRO</span></a>
                     <ul class="menu-content">
