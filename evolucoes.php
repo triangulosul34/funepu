@@ -506,6 +506,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 															if ($perfil == '03' or $perfil == '06' or $perfil == '13') {
 																echo "<a href=\"prescricao_enfermagemx.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" data-original-title=\"Prescrição\"><i class=\"fas fa-pills\"></i></a>";
 															}
+															$stmtevolucao = 'SELECT a.evolucao_id,a.atendimento_id,a.tipo,a.data,a.hora,b.nome,a.evolucao 
+                                                            FROM evolucoes a
+                                                                left join pessoas b ON b.username = a.usuario
+                                                            WHERE a.atendimento_id =' . $row->transacao . ' order by 1 desc';
+															$sthevolucao = pg_query($stmtevolucao) or die($stmtevolucao);
+															$rowevolucao = pg_fetch_object($sthevolucao);
+															if ($perfil == '04' and $rowevolucao) {
+																echo "<a href=\"evolucoes_atendimento.php?id=$row->transacao\" target=\"_blank\" class=\"btn\" data-toggle=\"tooltip\" data-original-title=\"Evolução\"><i class=\"fas fa-file-medical\"></i></a>";
+															}
 															echo '</tr>';
 														}
 														?>
