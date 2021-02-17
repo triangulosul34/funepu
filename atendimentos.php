@@ -878,7 +878,7 @@ if (isset($_POST['excel'])) {
 																echo "<a href=\"relFAA.php?id=$row->transacao\" target=\"_blank\" class=\"btn btn-sm btn-icon btn-pure btn-default delete-row-btn\" data-toggle=\"tooltip\" data-original-title=\"FAA\" style=\"color:$color\"><i class=\"fas fa-print\"></i></a>";
 															}
 
-															if ($perfil == '06' or $perfil == '04') {
+															if ($perfil == '06' or $perfil == '04' or $perfil == '08') {
 																?>
                                                         <?php //if ($row->status != 'Atendimento Finalizado') {?>
                                                         <a id="triagemmanual"
@@ -895,7 +895,7 @@ if (isset($_POST['excel'])) {
 															} ?>
                                                         <?php //}
 
-															if ($perfil == '06' or $perfil == '04' or $perfil == '01' or $perfil == '15') {
+															if ($perfil == '06' or $perfil == '04' or $perfil == '01' or $perfil == '15' or $perfil == '08') {
 																?>
                                                         <a id="mudasituacao"
                                                             data-id="<?php echo $row->transacao; ?>"
