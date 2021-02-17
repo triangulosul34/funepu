@@ -895,7 +895,7 @@ if (isset($_POST['excel'])) {
 															} ?>
                                                         <?php //}
 
-															if ($perfil == '06' or $perfil == '04' or $perfil == '01') {
+															if ($perfil == '06' or $perfil == '04' or $perfil == '01' or $perfil == '15') {
 																?>
                                                         <a id="mudasituacao"
                                                             data-id="<?php echo $row->transacao; ?>"
