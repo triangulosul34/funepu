@@ -57,13 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$html = '';
 		$html .= '<table style="font-size:12px" border="1">';
 		$html .= '<tr>';
-		$html .= '<td colspan="9" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - TEMPO DE PERMANENCIA -- ' . inverteData($start) . '</td>';
+		$html .= '<td colspan="10" align=\'center\'>UPA ' . UNIDADE_CONFIG . ' - TEMPO DE PERMANENCIA -- ' . inverteData($start) . '</td>';
 		$html .= '</tr>';
 		$html .= '<tr>';
 		$html .= '<tr align=\'center\'>';
 		$html .= '<td><b>Atendimento</b></td>';
 		$html .= '<td><b>Paciente</b></td>';
 		$html .= '<td><b>Contato</b></td>';
+		$html .= '<td><b>Bairro</b></td>';
 		$html .= '<td><b>Origem</b></td>';
 		$html .= '<td><b>Prioridade</b></td>';
 		$html .= '<td><b>Hora Entrada</b></td>';
@@ -86,13 +87,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$stmt = $stmt . " where dat_cad='" . date('Y-m-d') . "'";
 		}
 
-		$stmt = $stmt . ' and (p.destino_encaminhamento <> 6 or p.destino_encaminhamento is null)  order by c.nome';
+		$stmt = $stmt . " and (p.destino_encaminhamento <> 6 or p.destino_encaminhamento is null) and a.hora_destino <> '' and a.hora_cad<> '' order by c.nome";
 		$sth = pg_query($stmt) or die($stmt);
 		while ($row = pg_fetch_object($sth)) {
 			$html .= '<tr>';
 			$html .= '<td>' . $row->transacao . '</td>';
 			$html .= '<td>' . ts_decodifica($row->nome) . '</td>';
 			$html .= '<td>' . $row->contato . '</td>';
+			$html .= '<td>' . $row->bairro . '</td>';
 			$html .= '<td>' . $row->origem . '</td>';
 			$html .= '<td>' . $row->prioridade . '</td>';
 			$html .= '<td>' . $row->hora_cad . '</td>';
