@@ -1029,7 +1029,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <tr>
                                                         <td><?= inverteData($data_alta); ?>
                                                         </td>
-                                                        <td><?= $medico; ?>
+                                                        <td><?= ts_decodifica($medico); ?>
                                                         </td>
                                                         <td><button data-target="#modal_sumario_alta"
                                                                 data-toggle="modal"
