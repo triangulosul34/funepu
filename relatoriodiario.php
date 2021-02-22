@@ -15,6 +15,8 @@ function inverteData($data)
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$start = $_POST['start'];
 	$end = $_POST['end'];
+	$start_baixa = $_POST['start_baixa'];
+	$end_baixa = $_POST['end_baixa'];
 	$hora_inicial = $_POST['hora_cad_inicial'];
 	$hora_final = $_POST['hora_cad_final'];
 
@@ -33,6 +35,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$where = $where . " and (a.dat_cad <= '$data')";
 		} else {
 			$where = $where . " (a.dat_cad <= '$data')";
+		}
+	}
+
+	if ($start_baixa != '') {
+		$data = inverteData($start_baixa);
+		if ($where != '') {
+			$where = $where . " and (a.data_envio >= '$data')";
+		} else {
+			$where = $where . " (a.data_envio >= '$data')";
+		}
+	}
+
+	if ($end_baixa != '') {
+		$data = inverteData($end_baixa);
+		if ($where != '') {
+			$where = $where . " and (a.data_envio <= '$data')";
+		} else {
+			$where = $where . " (a.data_envio <= '$data')";
 		}
 	}
 
@@ -349,6 +369,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 													type="text" name="baixar_prontuario" id="baixar_prontuario"
 													class="form-control" value="" style="font-weight: bold;"
 													onkeyup="maiuscula(this)">
+											</div>
+											<div class="col-3">
+												<div class="form-group">
+													<label>Data Baixa</label>
+													<input type="date" class="form-control square" id="start_baixa"
+														name="start_baixa"
+														value="<?php echo $_POST['start_baixa']; ?>"
+														onkeydown="mascaraData(this)">
+												</div>
+											</div>
+											<div class="col-3">
+												<div class="form-group">
+													<label>Data Baixa</label>
+													<input type="date" class="form-control square" id="end_baixa"
+														name="end_baixa"
+														value="<?php echo $_POST['end_baixa']; ?>"
+														onkeydown="mascaraData(this)">
+												</div>
 											</div>
 										</div>
 										<div class="row">
