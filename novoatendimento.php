@@ -617,6 +617,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
+        function regra_sus() {
+            if (parseInt(document.getElementById('cns').value.substr(0, 1)) != '7') {
+                alert("Numero do cartao sus deve ser atualizado e começar com o numero 7");
+                document.getElementById('cns').value = '';
+            }
+
+            if (document.getElementById('cns').value.length >= 3 &&
+                parseInt(document.getElementById('cns').value.substr(0, 3)) < 700) {
+                alert("Numero do cartao sus deve ser atualizado e começar com o numero maior que 700");
+                document.getElementById('cns').value = '';
+            }
+        }
+
         function SomenteNumero(e) {
             var tecla = (window.event) ? event.keyCode : e.which;
             if ((tecla > 47 && tecla < 58)) return true;
@@ -1044,7 +1057,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             </label> <input type="text" name="cns" id="cns"
                                                                 class="form-control"
                                                                 value="<?php echo $cns; ?>"
-                                                                onkeypress='return SomenteNumero(event)'>
+                                                                onkeypress='return SomenteNumero(event);'
+                                                                onkeyup="regra_sus(event)">
                                                         </div>
                                                     </div>
 
