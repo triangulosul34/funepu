@@ -32,7 +32,7 @@ $sql = "SELECT * FROM pessoas WHERE username='$myusername' and password='$mypass
 $result = pg_query($con, $sql) or die($sql);
 $row = pg_fetch_array($result);
 if (CONTROLE_ACESSO) {
-	if (($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '189.41.99.44') and ($row['pessoa_id'] == USUARIO[0] or $row['pessoa_id'] == USUARIO[1] or $row['pessoa_id'] == USUARIO[2] or $row['pessoa_id'] == USUARIO[3] or $row['pessoa_id'] == USUARIO[4] or $row['pessoa_id'] == USUARIO[5] or $row['pessoa_id'] == USUARIO[6] or $row['pessoa_id'] == USUARIO[7] or $row['pessoa_id'] == USUARIO[8])) {
+	if (($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '189.41.99.44') or ($row['pessoa_id'] == USUARIO[0] or $row['pessoa_id'] == USUARIO[1] or $row['pessoa_id'] == USUARIO[2] or $row['pessoa_id'] == USUARIO[3] or $row['pessoa_id'] == USUARIO[4] or $row['pessoa_id'] == USUARIO[5] or $row['pessoa_id'] == USUARIO[6] or $row['pessoa_id'] == USUARIO[7] or $row['pessoa_id'] == USUARIO[8])) {
 		//if ($box == $_POST['conf_consultorio'] && $box != '') {
 		if ($row['username'] != '') {
 			session_start();
