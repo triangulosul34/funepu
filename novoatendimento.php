@@ -1057,8 +1057,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             </label> <input type="text" name="cns" id="cns"
                                                                 class="form-control"
                                                                 value="<?php echo $cns; ?>"
-                                                                onkeypress='return SomenteNumero(event);'
-                                                                onkeyup="regra_sus(event)">
+                                                                onkeypress='return SomenteNumero(event);'>
                                                         </div>
                                                     </div>
 
