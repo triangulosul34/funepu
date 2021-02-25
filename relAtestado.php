@@ -62,7 +62,7 @@ $pdf->SetFont('Helvetica', 'B', 16);
 
 $pdf->SetXY(115, 59);
 $pdf->Write(8, $nome);
-$pdf->Image('https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=http%3A%2F%2F' . UNIDADEABV_CONFIG . '.midaspa.com.br%2Fqratestado.php%3Fa%3D' . $rownext->nextval . '%26c%3D' . $atendimento . ';&choe=UTF-8', 18, 105, 20, 20, 'png');
+//$pdf->Image('https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=http%3A%2F%2F' . UNIDADEABV_CONFIG . '.midaspa.com.br%2Fqratestado.php%3Fa%3D' . $rownext->nextval . '%26c%3D' . $atendimento . ';&choe=UTF-8', 18, 105, 20, 20, 'png');
 
 $pdf->SetXY(25, 82);
 $pdf->Write(8, $hora_atendimento);
@@ -96,7 +96,7 @@ if ($isolamento) {
 	$pdf->SetXY(30, 89);
 	$pdf->Write(8, ts_decodifica($rg));
 	$pdf->SetXY(135, 89);
-	$pdf->Write(8, $endereco);
+	$pdf->Write(8, mb_strimwidth($endereco, 0, 27, ''));
 	$pdf->SetXY(25, 96);
 	$pdf->Write(8, $bairro);
 	$pdf->SetXY(70, 162);
@@ -107,7 +107,7 @@ if ($isolamento) {
 	$pdf->Write(8, $data_atendimento);
 	$pdf->SetXY(120, 177);
 	if (preg_replace('/[^0-9]/', '', $dias_atestado) != '') {
-		$pdf->Write(8, date('d/m/Y', strtotime('+' . preg_replace('/[^0-9]/', '', $dias_atestado) . ' days', strtotime(inverteData($data_atendimento)))));
+		$pdf->Write(8, date('d/m/Y', strtotime('+' . (preg_replace('/[^0-9]/', '', $dias_atestado) - 1) . ' days', strtotime(inverteData($data_atendimento)))));
 	}
 	$pdf->SetXY(169, 189);
 	$pdf->Write(8, date('d     m'));
