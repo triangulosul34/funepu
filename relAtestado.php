@@ -62,7 +62,7 @@ $pdf->SetFont('Helvetica', 'B', 16);
 
 $pdf->SetXY(115, 59);
 $pdf->Write(8, $nome);
-//$pdf->Image('https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=http%3A%2F%2F' . UNIDADEABV_CONFIG . '.midaspa.com.br%2Fqratestado.php%3Fa%3D' . $rownext->nextval . '%26c%3D' . $atendimento . ';&choe=UTF-8', 18, 105, 20, 20, 'png');
+$pdf->Image('https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=http%3A%2F%2F' . UNIDADEABV_CONFIG . '.midaspa.com.br%2Fqratestado.php%3Fa%3D' . $rownext->nextval . '%26c%3D' . $atendimento . ';&choe=UTF-8', 18, 105, 20, 20, 'png');
 
 $pdf->SetXY(25, 82);
 $pdf->Write(8, $hora_atendimento);
