@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
 	if ($transacao != '') {
 		include 'conexao.php';
-		$stmt = "select a.transacao,a.hora_cad, a.cid_principal, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.hora_destino, a.especialidade, z.data, z.hora, d.nome as medico, d.num_conselho_reg as crm, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
+		$stmt = "select a.transacao,a.hora_cad, a.cid_principal, solicitacao_internacao_dt, solicitacao_sisreg_dt, case when z.destino_encaminhamento::varchar is null then a.destino_paciente else z.destino_encaminhamento::varchar end as destino_paciente, a.data_destino, a.hora_destino, a.especialidade, z.data, z.hora, d.nome as medico, d.num_conselho_reg as crm, a.queixa, a.exame_fisico, a.diagnostico_principal,a.prioridade,
 		a.paciente_id, a.status, a.tipo, a.dat_cad as cadastro, c.nome, c.nome_mae, c.dt_nasc, c.sexo, c.telefone, c.celular, c.endereco, a.oque_faz, a.com_oqfaz, 
 		a.tempo_faz, a.como_faz, c.numero, c.complemento, c.bairro, c.num_carteira_convenio, c.cep, c.cpf, c.cidade, c.estado, a.observacao, k.origem,  
 		x.peso, x.pressaodiastolica, x.pressaosistolica, x.queixa as relato, x.pulso, x.temperatura,x.discriminador, x.prioridade as atendprioridade
@@ -122,6 +122,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		$senha = $row->num_senha;
 		$deficiencia = $_POST['deficiencia'];
 		$origem = $row->origem;
+		$solinternacao = $row->solicitacao_internacao_dt;
+		$sisreg = $row->solicitacao_sisreg_dt;
 		$deficiencia = $row->nec_especiais;
 		$especialidade = $row->especialidade;
 		$data_inicial = $data_destino;
@@ -947,11 +949,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 value="<?php echo $cns; ?>"
                                                 onkeypress='return SomenteNumero(event)' readOnly>
                                         </div>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-3">
                                             <label>Origem</label>
                                             <input type="text" name="origem" id="origem" class="form-control square"
                                                 value="<?php echo $origem; ?>"
                                                 readonly>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label>Sol. Internacao</label>
+                                            <input type="text" name="solinternacao" id="solinternacao"
+                                                class="form-control square"
+                                                value="<?php if ($solinternacao) {
+																												echo date('d/m/Y H:i:s', strtotime($solinternacao));
+																											} ?>"
+                                                readonly>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label>SisReg</label>
+                                            <input type="text" name="sisreg" id="sisreg" class="form-control square"
+                                                value="<?php if ($sisreg) {
+																												echo date('d/m/Y H:i:s', strtotime($sisreg));
+																											} ?>" readonly>
                                         </div>
                                     </div>
                                     <div class="row mt-3">

@@ -233,6 +233,10 @@
                         <?php
 							if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
                         <li class="is-shown">
+                            <a href="painel_sisreg.php" class="menu-item">PAINEL SISREG</a>
+                        </li>
+                        <?php } if ($perfil == '06' or $perfil == '05' or $perfil == '04') { ?>
+                        <li class="is-shown">
                             <a href="painel_us.php" class="menu-item">PAINEL US</a>
                         </li>
                         <?php }
