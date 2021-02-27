@@ -64,7 +64,7 @@
                 </li>
                 <?php
 				if (UNIDADEABV_CONFIG == 'mr') {
-					if ($id == '1' or $id == '2578808' or $id == '955044' or $id == '2591294' or $id == '1991599') { ?>
+					//if ($id == '1' or $id == '2578808' or $id == '955044' or $id == '2591294' or $id == '1991599') {?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-user-plus"></i><span class="menu-title">CADASTRO</span></a>
                     <ul class="menu-content">
@@ -74,17 +74,17 @@
                             <a href="clientes.php" class="menu-item">PACIENTES</a>
                         </li>
                         <?php }
-							if ($perfil == '06' or $perfil == '04') { ?>
+					if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="medicos.php" class="menu-item">MEDICOS/LAUDADORES</a>
                         </li>
                         <?php }
-							if ($perfil == '06' or $perfil == '04') { ?>
+					if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="colaboradores.php" class="menu-item">COLABORADORES</a>
                         </li>
                         <?php }
-							if ($perfil == '06' or $perfil == '04') { ?>
+					if ($perfil == '06' or $perfil == '04') { ?>
                         <li class="is-shown">
                             <a href="procedimentos.php" class="menu-item">PROCEDIMENTOS</a>
                         </li>
@@ -92,7 +92,7 @@
                     </ul>
                 </li>
                 <?php
-				}
+				//}
 				} else {
 					if ($id == '1' or $id == '2595119') { ?>
                 <li class="has-sub nav-item">
