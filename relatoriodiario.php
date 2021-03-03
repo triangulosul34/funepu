@@ -581,6 +581,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	<script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
 	<script defer src="/your-path-to-fontawesome/js/all.js"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 	<script>
 		function baixaprontuario() {
 			document.getElementById("idbaixaprontuario").style.display = 'none';
@@ -601,6 +602,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					return false;
 				}
 			});
+			Swal.fire({
+				position: 'top-end',
+				icon: 'success',
+				title: 'Registro salvo com secuesso',
+				showConfirmButton: false,
+				timer: 1000
+			})
 		});
 	</script>
 </body>
