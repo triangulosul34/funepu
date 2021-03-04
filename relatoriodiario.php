@@ -593,8 +593,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				if (event.keyCode == 13) {
 					if (document.getElementById("baixar_prontuario").value != '') {
 						$.get('baixar_prontuario.php?a=' + document.getElementById("baixar_prontuario").value,
-							function(dataReturn) {
-								$("#response").html(dataReturn);
+								function(dataReturn) {
+									$("#response").html(dataReturn);
+								}).done(function() {
+								Swal.fire({
+									position: 'top-end',
+									icon: 'success',
+									title: 'Registro salvo com secuesso',
+									showConfirmButton: false,
+									timer: 1000
+								})
+							})
+							.fail(function() {
+								Swal.fire({
+									icon: 'error',
+									title: 'Oops...',
+									text: 'Erro no registro'
+								})
 							});
 					}
 					document.getElementById("baixar_prontuario").value = '';
@@ -602,13 +617,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					return false;
 				}
 			});
-			Swal.fire({
-				position: 'top-end',
-				icon: 'success',
-				title: 'Registro salvo com secuesso',
-				showConfirmButton: false,
-				timer: 1000
-			})
 		});
 	</script>
 </body>
