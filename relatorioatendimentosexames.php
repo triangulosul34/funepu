@@ -41,9 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		$html .= '<td><b>Descricao</b></td>';
 		$html .= '</tr>';
 		if ($modalidade == 5) {
+			if (isset($_POST['coronavirus'])) {
+				$where = ' and c.exame_id in (962, 1145,960)';
+			}
 			include 'conexao_laboratorio.php';
 			$sql = "select TO_CHAR(a.data, 'DD/MM/YYYY') as data, e.nome, d.descricao from pedidos a inner join pedido_guia b on a.pedido_id = b.pedido_id inner join pedido_item c on b.pedido_guia_id = c.pedido_guia_id inner join procedimentos d on c.exame_id = d.procedimentos_id inner join pessoas e on a.pessoa_id = e.pessoa_id
-			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' and b.origem = '" . ORIGEM_CONFIG . "' and c.situacao = 'Liberado' order by 3,2,1";
+			where a.data between '" . inverteData($start) . "' and '" . inverteData($end) . "' $where and b.origem = '" . ORIGEM_CONFIG . "' and c.situacao = 'Liberado' order by 3,2,1";
 			$sthRel = pg_query($sql) or die($sql);
 			while ($row = pg_fetch_object($sthRel)) {
 				$html .= '<tr>';
@@ -239,6 +242,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 <label class="control-label">Ação</label><br>
                                                 <button type="submit" name="gerarexcel" class="btn btn-success"
                                                     style="width:100%">Gerar Excel</button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="custom-control custom-checkbox ">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                        name="coronavirus" id="coronavirus" value=''>
+                                                    <label class="custom-control-label" style="font-size: 10pt"
+                                                        for="coronavirus">Exames covid</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </form>
