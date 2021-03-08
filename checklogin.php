@@ -32,7 +32,7 @@ $result = pg_query($con, $sql) or die($sql);
 $row = pg_fetch_array($result);
 if (CONTROLE_ACESSO) {
 	session_start();
-	if (($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '189.41.99.44' or $_SERVER['REMOTE_ADDR'] == '179.104.234.190') or ($row['pessoa_id'] == USUARIO[0] or $row['pessoa_id'] == USUARIO[1] or $row['pessoa_id'] == USUARIO[2] or $row['pessoa_id'] == USUARIO[3] or $row['pessoa_id'] == USUARIO[4] or $row['pessoa_id'] == USUARIO[5] or $row['pessoa_id'] == USUARIO[6] or $row['pessoa_id'] == USUARIO[7] or $row['pessoa_id'] == USUARIO[8] or $row['pessoa_id'] == USUARIO[9] or $row['pessoa_id'] == USUARIO[10] or $row['pessoa_id'] == USUARIO[11] or $row['pessoa_id'] == USUARIO[12] or $row['pessoa_id'] == USUARIO[13])) {
+	if (($_SERVER['REMOTE_ADDR'] == '179.104.42.235' or $_SERVER['REMOTE_ADDR'] == '189.41.99.44' or $_SERVER['REMOTE_ADDR'] == '179.104.234.190') or ($row['pessoa_id'] == USUARIO[0] or $row['pessoa_id'] == USUARIO[1] or $row['pessoa_id'] == USUARIO[2] or $row['pessoa_id'] == USUARIO[3] or $row['pessoa_id'] == USUARIO[4] or $row['pessoa_id'] == USUARIO[5] or $row['pessoa_id'] == USUARIO[6] or $row['pessoa_id'] == USUARIO[7] or $row['pessoa_id'] == USUARIO[8] or $row['pessoa_id'] == USUARIO[9] or $row['pessoa_id'] == USUARIO[10] or $row['pessoa_id'] == USUARIO[11] or $row['pessoa_id'] == USUARIO[12] or $row['pessoa_id'] == USUARIO[13] or $row['pessoa_id'] == USUARIO[14])) {
 		if ($row['username'] != '' and $row['perfil'] != '08' and $row['perfil'] != '03') {
 			session_start();
 			$_SESSION['myusername'] = $myusername;
