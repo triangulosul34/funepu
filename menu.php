@@ -94,7 +94,7 @@
                 <?php
 				//}
 				} else {
-					if ($id == '1' or $id == '2595119') { ?>
+					if ($id == '1' or $id == '2595119' or $id == '2578808' or $id == '2585886') { ?>
                 <li class="has-sub nav-item">
                     <a href="#"><i class="fas fa-user-plus"></i><span class="menu-title">CADASTRO</span></a>
                     <ul class="menu-content">
