@@ -55,7 +55,7 @@
 			$stmt = $stmt . " and a.status = '" . $_GET['situacao'] . "' ";
 		}
 		if ($_GET['nome'] != '') {
-			$stmt = $stmt . " and c.nome like upper('%" . $_GET['nome'] . "%') ";
+			$stmt = $stmt . " and c.nome like '" . ts_codifica(strtoupper($_GET['nome'])) . "%' ";
 		}
 		$stmt = $stmt . ' order by 12,5 ';
 		$sth = pg_query($stmt) or die($stmt);
