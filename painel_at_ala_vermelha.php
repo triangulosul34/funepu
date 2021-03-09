@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$procedimentox = $_POST['procedimentox'];
 	$situacao = $_POST['situacao'];
-	$nome = ts_codifica($_POST['nome']);
+	$nome = $_POST['nome'];
 	$xbox = $_POST['xbox'];
 	$RX = $_POST['cb_rx'];
 	$US = $_POST['cb_us'];
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$modalidades = substr($modalidades, 0, -1);
 
 	if ($nome != '') {
-		$where = $where . " c.nome like '%" . $nome . "%' ";
+		$where = $where . " c.nome like '" . $nome . "%' ";
 	}
 
 	if ($procedimentox != '') {
@@ -338,7 +338,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <input type="text" class="form-control square"
                                                         id="inputBasicFirstName" name="nome" placeholder="Parte do Nome"
                                                         autocomplete="off"
-                                                        value="<?php echo ts_decodifica($nome); ?>"
+                                                        value="<?php echo $nome; ?>"
                                                         onkeyup="maiuscula(this)" />
                                                 </div>
                                             </div>
@@ -806,7 +806,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 });
             }
 
-            setInterval("atualizar()", 5000);
+            //setInterval("atualizar()", 5000);
 
             $(function() {
                 // Faz a primeira atualização
