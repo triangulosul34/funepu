@@ -180,17 +180,20 @@ class PDF extends FPDF
 			$oque_faz,    $com_oqfaz, $tempo_faz,    $como_faz, $queixa, $exame_fisico, $cid_internacao, $pressaodiastolica, $pressaosistolica, $peso,
 			$temperatura, $relato, $discriminador, $destino, $tipo_leito, $prioridade, $atendprioridade, $cns, $diagnostico_principal, $horacad, $datacad,
 			$data_destino, $hora_destino, $destino_paciente, $obs_modal, $dor, $pulso,$glicemia,$pa_sitolica,$pa_distolica,$oxigenio,$temperatura,$ecg,$frequencia_respiratoria,$data_internacao,$hora_internacao;
-		$this->Image('app-assets/img/gallery/logo.png', 10, 5, 48);
-		$this->Image('app-assets/img/gallery/sus.jpg', 80, 3, 22);
+		$this->Image('app-assets/img/gallery/sisreg.jpg', 10, 5, 48);
+		//$this->Image('app-assets/img/gallery/sisreg.jpg', 80, 2, 40);
 		$this->Ln(5);
 		$this->SetFont('Arial', '', 9);
-		$this->Cell(185, 5, 'SECRETARIA MUNICIPAL DE SAUDE-UBERABA', 0, 0, 'C');
+		$this->Cell(50, 5, ' ', 0, 0, 'L');
+                $this->Cell(185, 5, 'SECRETARIA MUNICIPAL DE SAUDE-UBERABA', 0, 0, 'L');
 		$this->Ln(4);
 		$this->SetFont('Arial', 'B', 10);
-		$this->Cell(185, 5, 'FORMULARIO - DIRETORIA TECNICA', 0, 0, 'C');
+		$this->Cell(50, 5, ' ', 0, 0, 'L');
+                $this->Cell(185, 5, 'FORMULARIO - DIRETORIA TECNICA', 0, 0, 'L');
 		$this->Ln(4);
 		$this->SetFont('Arial', 'B', 14);
-		$this->Cell(185, 5, utf8_decode('SOLICITAÇÃO DE INTERNAÇÃO / URGÊNCIA'), 0, 0, 'C');
+		$this->Cell(50, 5, ' ', 0, 0, 'L');
+		$this->Cell(185, 5, utf8_decode('SOLICITAÇÃO DE INTERNAÇÃO / URGÊNCIA'), 0, 0, 'L');
 
 		// Arial bold 15
 		$this->SetFont('Arial', 'B', 14);

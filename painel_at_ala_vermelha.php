@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$modalidades = substr($modalidades, 0, -1);
 
 	if ($nome != '') {
-		$where = $where . " c.nome like '" . $nome . "%' ";
+		$where = $where . " c.nome like '" . ts_codifica(strtoupper($nome)) . "%' ";
 	}
 
 	if ($procedimentox != '') {
@@ -810,7 +810,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $(function() {
                 // Faz a primeira atualização
-                atualizar();
+                //atualizar();
             });
         </script>
 </body>

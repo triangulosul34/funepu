@@ -211,37 +211,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </div>
                                     </div>
                                     <div class="row mt-5">
-                                        <div class="col-12" id="dados">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th width='8%'>Data</th>
-                                                        <th width='5%'>AN</th>
-                                                        <th width='5%'>ID Pac</th>
-                                                        <th width='33%'>Nome</th>
-                                                        <th>Data de Nascimento</th>
-                                                        <th width='25%'>Solicitante</th>
-                                                        <th width='32%'>Descricao</th>
-                                                        <th width='5%'>Situação</th>
-                                                        <th width='2%'>Ação</th>
 
-                                                    </tr>
-                                                </thead>
-                                                <tfoot>
-                                                    <tr>
-                                                        <th width='8%'>Data</th>
-                                                        <th width='5%'>AN</th>
-                                                        <th width='5%'>ID Pac</th>
-                                                        <th width='33%'>Nome</th>
-                                                        <th>Data de Nascimento</th>
-                                                        <th width='25%'>Solicitante</th>
-                                                        <th width='32%'>Descricao</th>
-                                                        <th width='5%'>Situação</th>
-                                                        <th width='2%'>Ação</th>
-                                                    </tr>
-                                                </tfoot>
-                                                <tbody>
-                                                    <?php
+                                        <th width='8%'>Data</th>
+                                        <th width='5%'>AN</th>
+                                        <th width='5%'>ID Pac</th>
+                                        <th width='33%'>Nome</th>
+                                        <th>Data de Nascimento</th>
+                                        <th width='25%'>Solicitante</th>
+                                        <th width='32%'>Descricao</th>
+                                        <th width='5%'>Situação</th>
+                                        <th width='2%'>Ação</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                            <tr>
+                                                <th width='8%'>Data</th>
+                                                <th width='5%'>AN</th>
+                                                <th width='5%'>ID Pac</th>
+                                                <th width='33%'>Nome</th>
+                                                <th>Data de Nascimento</th>
+                                                <th width='25%'>Solicitante</th>
+                                                <th width='32%'>Descricao</th>
+                                                <th width='5%'>Situação</th>
+                                                <th width='2%'>Ação</th>
+                                            </tr>
+                                        </tfoot>
+                                        <tbody>
+                                            <?php
 													include 'conexao.php';
 													$stmt = "select a.transacao, a.exame_nro, a.exame_id, a.situacao, a.contraste, b.transacao, a.med_analise, b.dat_cad as cadastro, b.dt_solicitacao, b.dt_realizacao, b.convenio_id, a.pedido,
 						c.nome, d.sigla as convenio, a.exame_id, e.descricao as desc_exames, f.sigla as modalidade, z.coronavirus from itenspedidos a left join pedidos b on 
@@ -283,9 +280,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 														echo '</tr>';
 													}
 													?>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -294,42 +290,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-        <?php include 'footer.php'; ?>
-        <!-- </div> -->
+    </div>
+    <?php include 'footer.php'; ?>
+    <!-- </div> -->
 
-        <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/core/popper.min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/core/bootstrap.min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/perfect-scrollbar.jquery.min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/prism.min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/jquery.matchHeight-min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/screenfull.min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/pace/pace.min.js" type="text/javascript"></script>
-        <script src="app-assets/vendors/js/chartist.min.js" type="text/javascript"></script>
-        <script src="app-assets/js/app-sidebar.js" type="text/javascript"></script>
-        <script src="app-assets/js/notification-sidebar.js" type="text/javascript"></script>
-        <script src="app-assets/js/customizer.js" type="text/javascript"></script>
-        <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
-        </script>
-        <script src="app-assets/js/scripts.js" type="text/javascript"></script>
-        <script src="app-assets/js/popover.js" type="text/javascript"></script>
-        <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
-        <script defer src="/your-path-to-fontawesome/js/all.js"></script>
-        <script>
-            function atualizar() {
-                var data = $('#data').val();
-                var modalidade = $('#modalidade_id').val();
-                var url = 'ajax_buscar_painel_especialidade.php?data=' + data + '&modalidade=' + modalidade;
+    <script src="app-assets/vendors/js/core/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/core/popper.min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/core/bootstrap.min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/perfect-scrollbar.jquery.min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/prism.min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/jquery.matchHeight-min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/screenfull.min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/pace/pace.min.js" type="text/javascript"></script>
+    <script src="app-assets/vendors/js/chartist.min.js" type="text/javascript"></script>
+    <script src="app-assets/js/app-sidebar.js" type="text/javascript"></script>
+    <script src="app-assets/js/notification-sidebar.js" type="text/javascript"></script>
+    <script src="app-assets/js/customizer.js" type="text/javascript"></script>
+    <script src="app-assets/js/dashboard1.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
+    </script>
+    <script src="app-assets/js/scripts.js" type="text/javascript"></script>
+    <script src="app-assets/js/popover.js" type="text/javascript"></script>
+    <script src="app-assets/js/pick-a-datetime.js" type="text/javascript"></script>
+    <script defer src="/your-path-to-fontawesome/js/all.js"></script>
+    <script>
+        function atualizar() {
+            var data = $('#data').val();
+            var modalidade = $('#modalidade_id').val();
+            var url = 'ajax_buscar_painel_especialidade.php?data=' + data + '&modalidade=' + modalidade;
 
-                $.get(url, function(dataReturn) {
-                    $('#dados').html(dataReturn);
-                });
-            }
+            $.get(url, function(dataReturn) {
+                $('#dados').html(dataReturn);
+            });
+        }
 
-            setInterval("atualizar()", 5000);
-        </script>
+        setInterval("atualizar()", 5000);
+    </script>
 </body>
 
 </html>

@@ -1,12 +1,13 @@
 <?php
 
-require("../vendor/autoload.php");
-require('fpdf/fpdf.php');
+require '../vendor/autoload.php';
+require 'fpdf/fpdf.php';
+require 'tsul_ssl.php';
 
 $atendimento_id = $_GET['atendimento_id'];
 
-include('conexao.php');
-$sql="SELECT * FROM sumario_alta WHERE atendimento_id = $atendimento_id";
+include 'conexao.php';
+$sql = "SELECT * FROM sumario_alta WHERE atendimento_id = $atendimento_id";
 $result = pg_query($sql) or die($sql);
 $row = pg_fetch_object($result);
 $responsavel_sumario = $row->responsavel_sumario;
@@ -14,27 +15,27 @@ $crm_sumario = $row->crm_sumario;
 
 class PDF extends FPDF
 {
-    // Page header
-    public function Header()
-    {
-        $this->Image('app-assets/img/gallery/logo.png', 10, 5, 48);
-        $this->Image('app-assets/img/gallery/sus.jpg', 170, 5, 22);
-    }
+	// Page header
+	public function Header()
+	{
+		$this->Image('app-assets/img/gallery/logo.png', 10, 5, 48);
+		$this->Image('app-assets/img/gallery/sus.jpg', 170, 5, 22);
+	}
 
-    public function Footer()
-    {
-        global $responsavel_sumario,$crm_sumario;
-        if ($this->isFinished) {
-            $this->SetY(-15);
-            $this->SetFont('Arial', '', 10);
-            $this->SetX(40);
-            $this->Cell(180, 5, '_____________________________________________________________', 0, 1, 'C');
-            $this->SetX(40);
-            $this->Cell(180, 5, 'Dr. '.$responsavel_sumario.' CRM: '.$crm_sumario, 0, 1, 'C');
-        }
-    }
+	public function Footer()
+	{
+		global $responsavel_sumario,$crm_sumario;
+		if ($this->isFinished) {
+			$this->SetY(-15);
+			$this->SetFont('Arial', '', 10);
+			$this->SetX(40);
+			$this->Cell(180, 5, '_____________________________________________________________', 0, 1, 'C');
+			$this->SetX(40);
+			$this->Cell(180, 5, 'Dr. ' . ts_decodifica($responsavel_sumario) . ' CRM: ' . $crm_sumario, 0, 1, 'C');
+		}
+	}
 }
-$pdf=new PDF('P', 'mm', array(210,297));
+$pdf = new PDF('P', 'mm', [210, 297]);
 $pdf->SetMargins(10, 20);
 $pdf->AddPage();
 $pdf->AliasNbPages();
@@ -105,11 +106,11 @@ $pdf->Cell(35, 5, utf8_decode($row->carater_internacao_sumario), 0, 0, 'L');
 $pdf->SetFont('Arial', 'B', 11);
 $pdf->Cell(26, 5, utf8_decode('Permanência:'), 0, 0, 'L');
 $pdf->SetFont('Arial', '', 11);
-$pdf->Cell(15, 5, $row->permanencia_sumario.' dias', 0, 0, 'L');
+$pdf->Cell(15, 5, $row->permanencia_sumario . ' dias', 0, 0, 'L');
 $pdf->SetFont('Arial', 'B', 11);
 $pdf->Cell(32, 5, utf8_decode('Resposável Alta:'), 0, 0, 'L');
 $pdf->SetFont('Arial', '', 11);
-$pdf->Cell(60, 5, $row->responsavel_sumario, 0, 1, 'L');
+$pdf->Cell(60, 5, ts_decodifica($row->responsavel_sumario), 0, 1, 'L');
 $pdf->ln(5);
 $pdf->setX(7);
 $pdf->SetFont('Arial', 'B', 12);

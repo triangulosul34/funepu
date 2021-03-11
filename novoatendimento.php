@@ -877,7 +877,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 </style>
 
-<body class="pace-done" cz-shortcut-listen="true">
+<body class="pace-done" cz-shortcut-listen="true" onload="error()">
     <!-- <div class="pace pace-inactive">
         <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
             <div class="pace-progress-inner"></div>
@@ -1091,9 +1091,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 																} ?>>Masculino
                                                                 </option>
                                                             </select> <input type="hidden" name="pendencia"
-                                                                id="pendencia" class="form-control"
-                                                                value="<?php echo $pendencia; ?>"
-                                                                readonly> <input type="hidden" name="pendencia"
                                                                 id="pendencia" class="form-control"
                                                                 value="<?php echo $pendencia; ?>"
                                                                 readonly>
@@ -1368,6 +1365,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js" type="text/javascript">
         </script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
         <script src="app-assets/js/scripts.js" type="text/javascript"></script>
         <script defer src="/your-path-to-fontawesome/js/all.js"></script>
         <script>
@@ -1531,6 +1530,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 document.getElementById("idpnomesocial").style.display = 'none';
                 document.getElementById("nnome_social").style.display = 'block';
             }
+
+            <?php
+							if ($erro != '') { ?>
+            function error() {
+                Swal.fire({
+                    title: 'ATENÇÃO!!!',
+                    text: "<?= $erro ?>",
+                    icon: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok'
+                })
+            }
+            <?php	} ?>
         </script>
 </body>
 

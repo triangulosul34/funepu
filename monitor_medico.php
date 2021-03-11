@@ -287,6 +287,8 @@ if (rtrim($tipo_atendimento) == 'ADULTO') {
 	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Triagem') AND tipo = '6' ";
 } elseif (rtrim($tipo_atendimento) == 'PORTA') {
 	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
+} elseif (rtrim($tipo_atendimento) == 'ODONTOLOGIA') {
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "'";
 }
 $stmtCount = $stmtCount . $where;
 
