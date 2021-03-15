@@ -82,16 +82,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 		 ";
 
 		if (rtrim($tipo_atendimento) == 'ADULTO') {
-			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' ";
+			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and cast(a.tipo as integer) != 9";
 		} elseif (rtrim($tipo_atendimento) == 'PEDIATRIA') {
-			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Ortopedia' ";
+			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Ortopedia' and cast(a.tipo as integer) != 9";
 		} elseif (rtrim($tipo_atendimento) == 'EXAME') {
-			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Triagem') AND a.tipo = '6' ";
+			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Triagem') AND a.tipo = '6' and cast(a.tipo as integer) != 9";
 		} elseif (rtrim($tipo_atendimento) == 'PORTA') {
-			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
+			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') and cast(a.tipo as integer) != 9";
+		} elseif (rtrim($tipo_atendimento) == 'ODONTOLOGIA') {
+			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' AND tipo = '9' and status <> 'Atendimento Finalizado'";
 		}
 
-		$stmt = $stmt . " and cast(a.tipo as integer) != 9 $where and dat_cad > '2019-08-11' order by a.dat_cad,prioridade_cor,pidade, a.hora_cad limit 1";
+		$stmt = $stmt . "  $where and dat_cad > '2019-08-11' order by a.dat_cad,prioridade_cor,pidade, a.hora_cad limit 1";
 		$sth = pg_query($stmt) or die($stmt);
 		$row = pg_fetch_object($sth);
 
@@ -181,6 +183,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d') . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Triagem') AND a.tipo = '6' ";
 		} elseif (rtrim($tipo_atendimento) == 'PORTA') {
 			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (a.status = 'Aguardando Atendimento') AND a.especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
+		} elseif (rtrim($tipo_atendimento) == 'ODONTOLOGIA') {
+			$stmt = $stmt . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' AND tipo = '9' and status <> 'Atendimento Finalizado'";
 		}
 
 		$stmt = $stmt . " and cast(a.tipo as integer) != 9 and dat_cad > '2019-08-11' and transacao = $transacao order by prioridade_cor,pidade, a.hora_cad limit 1";
@@ -288,7 +292,7 @@ if (rtrim($tipo_atendimento) == 'ADULTO') {
 } elseif (rtrim($tipo_atendimento) == 'PORTA') {
 	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' and (status = 'Aguardando Atendimento') AND especialidade = 'Consultorio Adulto' and prioridade in ('AZUL','VERDE') ";
 } elseif (rtrim($tipo_atendimento) == 'ODONTOLOGIA') {
-	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "'";
+	$stmtCount = $stmtCount . " where dat_cad between '" . date('Y-m-d', strtotime('-1 days')) . "' and '" . date('Y-m-d') . "' AND tipo = '9' and status <> 'Atendimento Finalizado'";
 }
 $stmtCount = $stmtCount . $where;
 

@@ -1,6 +1,7 @@
 <?php
 
 require 'tsul_ssl.php';
+require 'Config.php';
 
 function inverteData($data)
 {
@@ -102,8 +103,8 @@ $pdf->Write(8, utf8_decode($row->hora_cad)); //hora
 $pdf->SetXY(145, 16);
 $pdf->Write(8, str_pad($prontuario, 8, '0', STR_PAD_LEFT)); //codigo do paciente
 
-$pdf->SetFont('Helvetica', 'B', 8);
-$pdf->SetXY(173.5, 16);
+$pdf->SetFont('Helvetica', 'B', 5);
+$pdf->SetXY(172, 16);
 $pdf->Write(8, str_pad($row->num_carteira_convenio, 15, '0', STR_PAD_LEFT)); //cartao sus
 
 $pdf->SetFont('Helvetica', '', 9);

@@ -3,6 +3,14 @@
 require 'tsul_ssl.php';
 
 include 'verifica.php';
+
+include 'conexao.php';
+$stmt = "select descricao, tipo_atendimento from boxes where box_id='$box'";
+$sth = pg_query($stmt) or die($stmt);
+$row = pg_fetch_object($sth);
+$box_descricao = $row->descricao;
+$tipo_atendimento = $row->tipo_atendimento;
+
 $transacao = $_GET['atendimento'];
 include 'conexao.php';
 $bloqueiaAt = "select transacao,status, count(*) as total,nome
@@ -20,7 +28,17 @@ if ($valBlock->total > 0) {
 			win.focus();
 		</script>";
 } else {
-	if ($perfil == '03') {
+	if (rtrim($tipo_atendimento) == 'ODONTOLOGIA') {
+		echo "
+			<script>
+				var win = window.open('relOdonto.php?id='+" . $transacao . ", '_blank');
+				win.focus();
+			</script>";
+
+		include 'conexao.php';
+		$stmtnrc = "update atendimentos set dat_atendimento='" . date('Y-m-d') . "', hora_atendimento='" . date('H:i') . "', status = 'Atendimento Finalizado' where transacao = '$transacao' ";
+		$sthnrc = pg_query($stmtnrc) or die($stmtnrc);
+	} elseif ($perfil == '03') {
 		echo "
 			<script>
 				var win = window.open('atendimentoclinico.php?med=1&id='+" . $transacao . ", '_blank');
