@@ -776,6 +776,44 @@ if ($destino != '') {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
+    <div class="modal fade text-left" id="convenio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary white">
+                    <h4 class="modal-title" id="myModalLabel8">Informação Obrigatoria</h4>
+                </div>
+
+                <div class="modal-body col-md-12">
+                    <div class="form-group">
+                        <label for="">Paciente possui convenio?</label>
+                        <div class="input-group">
+                            <div class="custom-control custom-radio d-inline-block">
+                                <input type="radio" id="pconvenio1" name="pconvenio" <?php if ($rowget->pconvenio == 'sim') {
+	echo 'checked';
+} ?>
+                                class="custom-control-input" value="sim">
+                                <label class="custom-control-label" for="pconvenio1">Sim</label>
+                            </div>
+                            <div class="custom-control custom-radio d-inline-block ml-2">
+                                <input type="radio" id="pconvenio2" name="pconvenio" <?php if ($rowget->pconvenio == 'nao') {
+	echo 'checked';
+} ?>
+                                class="custom-control-input" value="nao">
+                                <label class="custom-control-label" for="pconvenio2">Nao</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <input type='button' name='confconvenio' id="confconvenio"
+                        onclick="salvar_convenio(<?php echo $transacao; ?>)"
+                        class="btn btn-success width-full" value='Salvar'>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade text-left" id="modalFimEvolucao" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -3082,6 +3120,13 @@ if ($destino != '') {
 
 
         function preencheCid(cid, descricao) {
+            if (cid == 'B340') {
+                $("#convenio").modal({
+                    show: true,
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            }
             $("#CID").val(cid);
             $("#cidAtestado").val(cid);
             $("#diag_pri").val(descricao);
@@ -3297,6 +3342,14 @@ if ($destino != '') {
             var url = 'ajax_buscar_cid.php?cid=' + codcid;
             $.get(url, function(dataReturn) {
                 $('#diag_pri').val(dataReturn);
+                console.log(dataReturn);
+                if (codcid == 'B340') {
+                    $("#convenio").modal({
+                        show: true,
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                }
             });
         });
 
@@ -3605,6 +3658,20 @@ if ($destino != '') {
                 }
             });
         });
+
+        function salvar_convenio(a) {
+            var radios = document.getElementsByName("pconvenio");
+
+            if (radios[0].checked) {
+                $.get('sconvenio.php?transacao=' + a + '&resposta=1', function(dataReturn) {});
+                $("#convenio").modal('hide');
+            } else if (radios[1].checked) {
+                $.get('sconvenio.php?transacao=' + a + '&resposta=0', function(dataReturn) {});
+                $("#convenio").modal('hide');
+            } else {
+                swal("Esta informação é obrigatoria", "", "warning")
+            }
+        }
     </script>
 
 </body>
