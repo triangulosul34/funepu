@@ -282,21 +282,133 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$erro = 'O endereço completo deve ser Informado';
 		}
 		if ($erro == '') {
-			include 'conexao.php';
-			$stmt = "Update pessoas set nome='$nome',";
-			if ($documento != '') {
-				$stmt = $stmt . "documento='$documento',";
-				$target_dir = __DIR__ . '/documents';
-				$target_file = $target_dir . '/' . basename($_FILES['doc']['name']);
-				if (move_uploaded_file($_FILES['doc']['tmp_name'], $target_file)) {
-					echo  '<script type="text/javascript">alert("Arquivo Enviado com Sucesso!");</script>';
-				} else {
-					$erro = 'Arquivo nao Enviado! Entre para editar o cadastro e tente enviar novamente';
+			if ($transacao == '') {
+				include 'conexao.php';
+				$stmt = "Update pessoas set nome='$nome',";
+				if ($documento != '') {
+					$stmt = $stmt . "documento='$documento',";
+					$target_dir = __DIR__ . '/documents';
+					$target_file = $target_dir . '/' . basename($_FILES['doc']['name']);
+					if (move_uploaded_file($_FILES['doc']['tmp_name'], $target_file)) {
+						echo  '<script type="text/javascript">alert("Arquivo Enviado com Sucesso!");</script>';
+					} else {
+						$erro = 'Arquivo nao Enviado! Entre para editar o cadastro e tente enviar novamente';
+					}
 				}
-			}
-			$stmt = $stmt . "cpf='$cpf',identidade='$identidade',org_expeditor='$org_expeditor', sexo='$sexo', dt_nasc='" . inverteData($dt_nascimento) . "', endereco='$enderecox', numero='$end_numero', complemento='$complemento', bairro='$bairro', cidade='$cidade',
+				$stmt = $stmt . "cpf='$cpf',identidade='$identidade',org_expeditor='$org_expeditor', sexo='$sexo', dt_nasc='" . inverteData($dt_nascimento) . "', endereco='$enderecox', numero='$end_numero', complemento='$complemento', bairro='$bairro', cidade='$cidade',
 			estado='$estado', cep='$cep', telefone='$telefone', celular='$celular', num_carteira_convenio='$cns', nome_mae='$nomeMae', email='$email', imagem='$imagem', nome_social='$nome_social' where pessoa_id=$prontuario";
-			$sth = pg_query($stmt) or die($stmt);
+				$sth = pg_query($stmt) or die($stmt);
+			} else {
+				include 'conexao.php';
+				$sql = "select * from pessoas where pessoa_id=$prontuario";
+				$result = pg_query($sql) or die($sql);
+				$row = pg_fetch_object($result);
+
+				if ($row->cpf != $cpf) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O CPF','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->identidade != $identidade) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU A IDENTIDADE','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->org_expeditor != $org_expeditor) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O ORGAO EXPEDITOR','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->sexo != $sexo) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O SEXO','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->dt_nasc != inverteData($dt_nascimento)) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU A DATA DE NASCIMENTO','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->endereco != $enderecox or $row->numero != $end_numero or $row->complemento != $complemento or $row->bairro != $bairro or $row->cep != $cep or $row->cidade != $cidade or $row->estado != $estado) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O ENDERECO','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->telefone != $telefone or $row->celular != $celular) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O TELEFONE','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->num_carteira_convenio != $cns) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O SEXO','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->nome_mae != $nomeMae) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O NOME DA MAE','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->email != $email) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O EMAIL','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+				if ($row->nome_social != $nome_social) {
+					$data = date('Y-m-d');
+					$hora = date('H:i');
+					include 'conexao.php';
+					$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
+						values ('$usuario','ALTEROU O NOME SOCIAL','$transacao','$data','$hora')";
+					$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
+				}
+
+				include 'conexao.php';
+				$stmt = "Update pessoas set nome='$nome',";
+				if ($documento != '') {
+					$stmt = $stmt . "documento='$documento',";
+					$target_dir = __DIR__ . '/documents';
+					$target_file = $target_dir . '/' . basename($_FILES['doc']['name']);
+					if (move_uploaded_file($_FILES['doc']['tmp_name'], $target_file)) {
+						echo  '<script type="text/javascript">alert("Arquivo Enviado com Sucesso!");</script>';
+					} else {
+						$erro = 'Arquivo nao Enviado! Entre para editar o cadastro e tente enviar novamente';
+					}
+				}
+				$stmt = $stmt . "cpf='$cpf',identidade='$identidade',org_expeditor='$org_expeditor', sexo='$sexo', dt_nasc='" . inverteData($dt_nascimento) . "', endereco='$enderecox', numero='$end_numero', complemento='$complemento', bairro='$bairro', cidade='$cidade',
+			estado='$estado', cep='$cep', telefone='$telefone', celular='$celular', num_carteira_convenio='$cns', nome_mae='$nomeMae', email='$email', imagem='$imagem', nome_social='$nome_social' where pessoa_id=$prontuario";
+				$sth = pg_query($stmt) or die($stmt);
+			}
 		}
 	}
 
@@ -376,13 +488,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 				$stmt = "update atendimentos set  transacao=$transacao, cad_user='$usuario_transacao',  paciente_id=$prontuario, tipo='$origem',  observacao='$observacao', box='1', local='01',
 				peso='0', nec_especiais='$deficiencia', oque_faz='$oque_faz', como_faz='$como_faz', tempo_faz='$tempo_faz', acompanhante = '$nome_acompanhante', com_oqfaz='$com_oqfaz', coronavirus = $coronavirus where transacao=$transacao ";
 				$sth = pg_query($stmt) or die($stmt);
-
-				$data = date('Y-m-d');
-				$hora = date('H:i');
-				include 'conexao.php';
-				$stmtLogs = "insert into logs (usuario,tipo_acao,atendimento_id,data,hora) 
-						values ('$usuario','ALTEROU INFORMAÇÃO DO CADASTRO DO ATENDIMENTO','$transacao','$data','$hora')";
-				$sthLogs = pg_query($stmtLogs) or die($stmtLogs);
 
 				header("location: novoatendimento.php?id=$transacao");
 			}
@@ -952,9 +1057,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             <div>
                                                                 <?php
 																if ($imagem == '') {
-																	echo "<img id=\"blah\" src=\"app-assets/img/gallery/user-transp.png\"  alt=\"\" height=\"120\" width=\"130\" ondblclick=\" window.open('popcam/index.html', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=800, height=600'); return false;\">";
+																	echo '<img id="blah" src="app-assets/img/gallery/user-transp.png"  alt="" height="120" width="130" >';
 																} else {
-																	echo "<img id=\"blah\" src=\"app-assets/img/gallery/user-transp.png\"         alt=\"\" height=\"120\" width=\"130\" ondblclick=\" window.open('popcam/index.html', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=800, height=600'); return false;\">";
+																	echo '<img id="blah" src="app-assets/img/gallery/user-transp.png"         alt="" height="120" width="130" >';
 																}
 																?>
                                                             </div>
@@ -968,11 +1073,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         </label> -->
                                                             <div class="input-group ">
                                                                 <span class="input-group-btn">
+                                                                    <?php if ($transacao == '') { ?>
                                                                     <button type="button" class="btn btn-primary"
-                                                                        onClick="window.open('poppac.php', 'Janela', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=700, height=500'); return false;"
+                                                                        onClick="window.open('poppac.php','Janela', 'toolbar=no, location=no,directories=no, status=no,menubar=no,scrollbars=yes, resizable=yes,width=700, height=500'); return false;"
                                                                         style="margin-left: 50px">
                                                                         <i class="fa fa-search" aria-hidden="true"></i>
                                                                     </button>
+                                                                    <?php } ?>
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -1281,7 +1388,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <!-- <hr style="width: 100%; color: gray; height: 1px; background-color: gray;" /> -->
                                         <input id="usuario-autorizado" name="usuario-autorizado" type="hidden" />
                                         <input id="senha-autorizado" name="senha-autorizado" type="hidden" />
-
+                                        <?php if ($transacao == '') { ?>
                                         <div class="col-md-12 mt-3" align="center">
                                             <div class="form-group">
                                                 <input type='submit' name='gravar' onclick="return valida()" id='gravar'
@@ -1291,8 +1398,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     onclick="javascript:location.href='http://mr.midaspa.com.br/mr/funepu/atendimentos.php'">
                                             </div>
                                         </div>
-
-
+                                        <?php } else {?>
+                                        <div class="col-md-12 mt-3" align="center">
+                                            <button type="button" class="btn btn-secondary"
+                                                onClick="window.open('poppac.php','Janela', 'toolbar=no, location=no,directories=no, status=no,menubar=no,scrollbars=yes, resizable=yes,width=700, height=500'); return false;">Trocar
+                                                Paciente
+                                            </button>
+                                            <input type='submit' name='gravar' onclick="return valida()" id='gravar'
+                                                class="btn btn-success" value='Gravar'>
+                                        </div>
+                                        <?php }?>
                                         <!-- FINAL DADOS PACIENTE -->
                                         <?php
 										if ($transacao != '') {

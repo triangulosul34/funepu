@@ -82,6 +82,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             celular, cep, ocorrencia, cpf, imagem, nome_mae, carteirinha, identidade, org_expeditor, doc
         ) //passando um parametro 
         {
+            if (window.opener.document.pedido.prontuario.value != id) {
+                alert('paciente_cadastro_ficha.php?atendimento=' + window.opener.document.pedido.transacao.value +
+                    '&id=' + id);
+                $.get('paciente_cadastro_ficha.php?atendimento=' + window.opener.document.pedido.transacao.value +
+                    '&id=' + id,
+                    function(dataReturn) {});
+            };
             window.opener.document.pedido.prontuario.value =
                 id; //a janela mãe recebe o id, você precisa passar o nome do formulario e do textfield que receberá o valor passado por parametro. 
             window.opener.document.pedido.nome.value = nome;
