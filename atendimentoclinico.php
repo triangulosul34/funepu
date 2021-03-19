@@ -2436,6 +2436,7 @@ if ($destino != '') {
                                                                         <th>Itens/Medicamentos</th>
                                                                         <th width="20%">Quantidade</th>
                                                                         <th>Modo de usar</th>
+                                                                        <!-- <th>Ações</th> -->
                                                                     </tr>
                                                                 </thead>
 
@@ -2451,6 +2452,7 @@ if ($destino != '') {
 																		echo '<td>' . $row->medicamentos . '</td>';
 																		echo '<td>' . $row->quantidade . '</td>';
 																		echo '<td>' . $row->modo_usar . '</td>';
+																		// echo '<td><button type="button" class="btn btn-success" onclick="edit_receituario(' . $transacao . ',\'' . $row->medicamentos . '\')"><i class="fas fa-file-medical"></i></button></td>';
 																		echo '</tr>';
 																	}
 																	?>
@@ -2493,19 +2495,21 @@ if ($destino != '') {
                                                                 <tr>
                                                                     <th>Data</th>
                                                                     <th>Hora</th>
+                                                                    <th>Dias</th>
                                                                 </tr>
                                                             </thead>
 
                                                             <tbody>
                                                                 <?php
 																include 'conexao.php';
-																$stmt = 'select distinct partir_dia, max(hora_atendimento) hora from atestados where pessoa_id =' . $prontuario . ' group by 1 order by 1 desc';
+																$stmt = 'select distinct partir_dia, qtd_dias, max(hora_atendimento) hora from atestados where pessoa_id =' . $prontuario . ' group by 1,2 order by 1 desc';
 																$sth = pg_query($stmt) or die($stmt);
 																//echo $stmt;
 																while ($row = pg_fetch_object($sth)) {
 																	echo '<tr>';
 																	echo '<td>' . inverteData(substr($row->partir_dia, 0, 10)) . '</td>';
 																	echo "<td>$row->hora</td>";
+																	echo "<td>$row->qtd_dias</td>";
 																	echo '</tr>';
 																}
 																?>
@@ -3671,6 +3675,10 @@ if ($destino != '') {
             } else {
                 swal("Esta informação é obrigatoria", "", "warning")
             }
+        }
+
+        function edit_receituario(a, b) {
+            $.get('editar_receituario.php?transacao=' + a + 'medicamento=' + b, function(dataReturn) {});
         }
     </script>
 
