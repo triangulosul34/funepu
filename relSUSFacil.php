@@ -325,7 +325,7 @@ class PDF extends FPDF
 		$this->Cell(185, 9, utf8_decode(' PROCEDIMENTO A SER REALIZADO (de acordo com o CID): '), 1, 0, 'L');
 		$this->Ln(9);
 		$this->SetFont('Arial', '', 9);
-		$this->Cell(185, 5, utf8_decode(' Carater de Internação:     (   ) Urgência          (   ) Sofrimento Intenso         (   ) Eletiva            (   ) Risco de Morte'), 1, 0, 'L');
+		$this->Cell(185, 5, utf8_decode(' Carater de Internação:     (   ) Urgência          (   ) Vaga Zero '), 1, 0, 'L');
 		$this->Ln(5);
 		// $this->Cell(185, 5, utf8_decode(' Condições que justifiquem'), 0, 0, 'L');
 		// $this->Ln(7);

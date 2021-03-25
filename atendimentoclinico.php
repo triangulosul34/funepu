@@ -776,6 +776,7 @@ if ($destino != '') {
 </style>
 
 <body class="pace-done" cz-shortcut-listen="true">
+    <div id="modal"></div>
     <div class="modal fade text-left" id="convenio" tabindex="-1" role="dialog" aria-labelledby="myModalLabel8"
         aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -2436,7 +2437,7 @@ if ($destino != '') {
                                                                         <th>Itens/Medicamentos</th>
                                                                         <th width="20%">Quantidade</th>
                                                                         <th>Modo de usar</th>
-                                                                        <!-- <th>Ações</th> -->
+                                                                        <th>Ações</th>
                                                                     </tr>
                                                                 </thead>
 
@@ -2452,7 +2453,7 @@ if ($destino != '') {
 																		echo '<td>' . $row->medicamentos . '</td>';
 																		echo '<td>' . $row->quantidade . '</td>';
 																		echo '<td>' . $row->modo_usar . '</td>';
-																		// echo '<td><button type="button" class="btn btn-success" onclick="edit_receituario(' . $transacao . ',\'' . $row->medicamentos . '\')"><i class="fas fa-file-medical"></i></button></td>';
+																		echo '<td><button type="button" class="btn btn-success" onclick="edit_receituario(' . $transacao . ',\'' . $row->medicamentos . '\')"><i class="fas fa-file-medical"></i></button></td>';
 																		echo '</tr>';
 																	}
 																	?>
@@ -3678,7 +3679,38 @@ if ($destino != '') {
         }
 
         function edit_receituario(a, b) {
-            $.get('editar_receituario.php?transacao=' + a + 'medicamento=' + b, function(dataReturn) {});
+            $.get('editar_receituario.php?transacao=' + a + '&medicamento=' + b, function(dataReturn) {
+                $('#modal').html(dataReturn);
+                $("#modalEditaReceituario").modal({
+                    show: true,
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
+
+
+        }
+
+        function salvar_edicao_prescricao() {
+            var medicamento = $("#medicamentoedit").val();
+            var quantidade = $("#quantidadeedit").val();
+            var usar = $("#usaredit").val();
+            var transacao = $("#transacao").val();
+            if (medicamento != undefined && (medicamento != '')) {
+                $.post('salvar_edicao_receituario.php', {
+                    medicamento: medicamento,
+                    quantidade: quantidade,
+                    usar: usar,
+                    transacao: transacao
+                }, function(data, status) {
+                    $('#receit').html(data);
+                })
+            } else {
+                swal("Informe o medicamento", "", "warning");
+            }
+
+            $("#modalEditaReceituario").modal('hide');
+            window.open("relReceituario.php?transacao=" + transacao, '_blank');
         }
     </script>
 
